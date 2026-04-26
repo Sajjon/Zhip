@@ -25,12 +25,27 @@
 import UIKit
 import Zesame
 
+/// Outcomes the restore-wallet sub-flow surfaces to its parent
+/// (`ChooseWalletCoordinator`).
 enum RestoreWalletCoordinatorNavigationStep {
-    case finishedRestoring(wallet: Wallet), cancel
+    /// User entered valid restore material (keystore or private key) + password
+    /// and the use case successfully decrypted/derived the `Wallet`.
+    case finishedRestoring(wallet: Wallet)
+    /// User cancelled.
+    case cancel
 }
 
+/// Coordinator owning the linear "restore wallet" sub-flow:
+///
+/// 1. `EnsureThatYouAreNotBeingWatched` — privacy gate.
+/// 2. `RestoreWallet` — segmented chooser between keystore vs private-key restore,
+///    each with its own embedded sub-view.
+///
+/// Cancel at the privacy gate aborts; `finishedRestoring` only fires once
+/// the restore use case successfully resolves a wallet.
 final class RestoreWalletCoordinator: BaseCoordinator<RestoreWalletCoordinatorNavigationStep> {
 
+    /// Begins at the privacy gate.
     override func start(didStart _: Completion? = nil) {
         toEnsureThatYouAreNotBeingWatched()
     }
@@ -39,6 +54,7 @@ final class RestoreWalletCoordinator: BaseCoordinator<RestoreWalletCoordinatorNa
 // MARK: - Private
 
 private extension RestoreWalletCoordinator {
+    /// Step 1 — privacy gate. `.understand` advances; `.cancel` aborts.
     func toEnsureThatYouAreNotBeingWatched() {
         let viewModel = EnsureThatYouAreNotBeingWatchedViewModel()
         push(scene: EnsureThatYouAreNotBeingWatched.self, viewModel: viewModel) { [unowned self] userDid in
@@ -49,6 +65,8 @@ private extension RestoreWalletCoordinator {
         }
     }
 
+    /// Step 2 — restore screen with segmented control. Forwards the resolved
+    /// `Wallet` to the parent.
     func toRestoreWallet() {
         let viewModel = RestoreWalletViewModel()
 
@@ -59,10 +77,12 @@ private extension RestoreWalletCoordinator {
         }
     }
 
+    /// Bubble the freshly-restored wallet up to the parent for persistence.
     func finishedRestoring(wallet: Wallet) {
         navigator.next(.finishedRestoring(wallet: wallet))
     }
 
+    /// Bubble `.cancel` to the parent.
     func cancel() {
         navigator.next(.cancel)
     }

@@ -24,8 +24,10 @@
 
 import Foundation
 
+/// `SceneController` glue for the wallet-restore screen.
 final class RestoreWallet: Scene<RestoreWalletView> {}
 
+/// Localized navigation title.
 extension RestoreWallet {
     static let title = String(localized: .RestoreWallet.title)
 }

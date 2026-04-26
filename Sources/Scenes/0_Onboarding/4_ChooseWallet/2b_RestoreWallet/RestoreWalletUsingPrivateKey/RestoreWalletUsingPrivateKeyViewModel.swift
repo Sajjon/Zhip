@@ -25,13 +25,20 @@
 import Combine
 import Zesame
 
+/// Strict password mode — restoring from a raw private key means we're picking
+/// a *new* keystore password, so we enforce the new-wallet minimum length.
 private let encryptionPasswordMode = WalletEncryptionPassword.Mode.newOrRestorePrivateKey
 
 // MARK: - RestoreWalletUsingPrivateKeyViewModel
 
+/// Reactive view-model for the private-key-restore sub-view. Not a
+/// `BaseViewModel` — exposes its `Output` directly so the parent can re-export it.
 final class RestoreWalletUsingPrivateKeyViewModel {
+    /// Reactive bindings the embedding view installs.
     let output: Output
 
+    /// Wires private key + new password + confirmation publishers into
+    /// validation streams + a `KeyRestoration?` payload + show/hide-toggle state.
     init(inputFromView: InputFromView) {
         let validator = InputValidator()
 
@@ -109,38 +116,63 @@ final class RestoreWalletUsingPrivateKeyViewModel {
 }
 
 extension RestoreWalletUsingPrivateKeyViewModel {
+    /// User-event publishers the view-model consumes.
     struct InputFromView {
+        /// Current private-key text.
         let privateKey: AnyPublisher<String, Never>
+        /// `true` while the private-key field is the first responder.
         let isEditingPrivateKey: AnyPublisher<Bool, Never>
+        /// Fires when the user taps the show/hide button.
         let showPrivateKeyTrigger: AnyPublisher<Void, Never>
+        /// Current new-password text.
         let newEncryptionPassword: AnyPublisher<String, Never>
+        /// `true` while the new-password field is the first responder.
         let isEditingNewEncryptionPassword: AnyPublisher<Bool, Never>
+        /// Current confirm-password text.
         let confirmEncryptionPassword: AnyPublisher<String, Never>
+        /// `true` while the confirm-password field is the first responder.
         let isEditingConfirmedEncryptionPassword: AnyPublisher<Bool, Never>
     }
 
+    /// Reactive bindings the embedding view installs.
     struct Output {
+        /// "Show"/"Hide" string for the toggle button — derived from secure-entry state.
         let togglePrivateKeyVisibilityButtonTitle: AnyPublisher<String, Never>
+        /// Drives `privateKeyField.isSecureTextEntryBinder` — flips on each show-button tap.
         let privateKeyFieldIsSecureTextEntry: AnyPublisher<Bool, Never>
+        /// Drives `privateKeyField.validationBinder`.
         let privateKeyValidation: AnyPublisher<AnyValidation, Never>
+        /// Drives the new-password placeholder (includes the min-length hint).
         let encryptionPasswordPlaceholder: AnyPublisher<String, Never>
+        /// Drives `encryptionPasswordField.validationBinder`.
         let encryptionPasswordValidation: AnyPublisher<AnyValidation, Never>
+        /// Drives `confirmEncryptionPasswordField.validationBinder`.
         let confirmEncryptionPasswordValidation: AnyPublisher<AnyValidation, Never>
+        /// `KeyRestoration.privateKey(...)` payload, or `nil` while any field is invalid.
+        /// Re-exported by the parent screen for the restore CTA.
         let keyRestoration: AnyPublisher<KeyRestoration?, Never>
     }
 
+    /// Composes a `PrivateKeyValidator` with `EncryptionPasswordValidator`
+    /// instances configured for the strict new-wallet password policy.
     struct InputValidator {
         private let privateKeyValidator = PrivateKeyValidator()
 
+        /// Validates the hex-encoded private key string.
         func validatePrivateKey(_ privateKey: String?) -> PrivateKeyValidator.ValidationResult {
             privateKeyValidator.validate(input: privateKey)
         }
 
+        /// Validates only the password (without confirmation) — used to surface
+        /// length errors as soon as the user types in the new-password field,
+        /// before they touch the confirmation field.
         func validateNewEncryptionPassword(_ password: String) -> EncryptionPasswordValidator.ValidationResult {
             let validator = EncryptionPasswordValidator(mode: encryptionPasswordMode)
             return validator.validate(input: (password, password))
         }
 
+        /// Cross-field check that both password and confirmation match (and pass
+        /// the length rule). Used to gate the restore CTA.
         func validateConfirmedEncryptionPassword(
             _ password: String,
             confirmedBy confirming: String

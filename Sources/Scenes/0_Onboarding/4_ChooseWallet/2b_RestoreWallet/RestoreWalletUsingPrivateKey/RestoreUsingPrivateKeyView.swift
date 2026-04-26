@@ -25,18 +25,27 @@
 import Combine
 import UIKit
 
+/// Sub-view of the RestoreWallet screen for the "I have a raw private key,
+/// encrypt it with a new password" restore method.
 final class RestoreUsingPrivateKeyView: ScrollableStackViewOwner {
     typealias ViewModel = RestoreWalletUsingPrivateKeyViewModel
 
+    /// Private-key entry field (secure by default; toggleable via the show button).
     private lazy var privateKeyField = FloatingLabelTextField()
+    /// "Show"/"Hide" button overlaid bottom-right of the private-key field.
     private lazy var showPrivateKeyButton = privateKeyField
         .addBottomAlignedButton(titled: String(localized: .Generic.show))
 
+    /// New encryption password (the user picks this — it'll encrypt the keystore).
     private lazy var encryptionPasswordField = FloatingLabelTextField()
+    /// Confirm-the-password field — both must match for the restore CTA to enable.
     private lazy var confirmEncryptionPasswordField = FloatingLabelTextField()
 
+    /// Subscription bag for the view-model bindings.
     private var cancellables = Set<AnyCancellable>()
 
+    /// Owned view-model. Wires private key + new password + confirmation into a
+    /// `KeyRestoration?` payload the parent screen surfaces upstream.
     private lazy var viewModel = ViewModel(
         inputFromView: ViewModel.InputFromView(
             privateKey: privateKeyField.textPublisher.orEmpty,
@@ -49,8 +58,10 @@ final class RestoreUsingPrivateKeyView: ScrollableStackViewOwner {
         )
     )
 
+    /// Re-exported view-model output — the parent reads `keyRestoration` here.
     lazy var viewModelOutput = viewModel.output
 
+    /// Vertical layout: private key, new password, confirm password, spacer.
     lazy var stackViewStyle: UIStackView.Style = [
         privateKeyField,
         encryptionPasswordField,
@@ -58,6 +69,7 @@ final class RestoreUsingPrivateKeyView: ScrollableStackViewOwner {
         .spacer,
     ]
 
+    /// Override-hook from `ScrollableStackViewOwner` — wires styling + bindings.
     override func setup() {
         setupSubviews()
         setupViewModelBinding()
@@ -67,6 +79,7 @@ final class RestoreUsingPrivateKeyView: ScrollableStackViewOwner {
 // MARK: - Private
 
 private extension RestoreUsingPrivateKeyView {
+    /// Styling pass — private-key field, two password fields with placeholders.
     func setupSubviews() {
         privateKeyField.withStyle(.privateKey) {
             $0.placeholder(String(localized: .RestoreWallet.privateKeyField))
@@ -79,6 +92,8 @@ private extension RestoreUsingPrivateKeyView {
         }
     }
 
+    /// Binds all six view-model outputs (show-button title, secure-entry toggle,
+    /// password placeholder, three validations) to their fields/buttons.
     func setupViewModelBinding() {
         let showPrivateKeyButtonTitleBinder = Binder<String>(showPrivateKeyButton) { button, title in
             button.setTitle(title, for: .normal)
@@ -95,6 +110,7 @@ private extension RestoreUsingPrivateKeyView {
 }
 
 extension UITextField {
+    /// Binder that toggles `isSecureTextEntry` — used by the show/hide button on private-key fields.
     var isSecureTextEntryBinder: Binder<Bool> {
         Binder(self) {
             $0.isSecureTextEntry = $1
