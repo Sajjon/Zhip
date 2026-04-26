@@ -89,7 +89,12 @@ final class PrepareTransactionViewModel: BaseViewModel< // swiftlint:disable:thi
         }
         .eraseToAnyPublisher()
 
-        let nonce = latestBalanceAndNonce.map(\.nonce).prepend(0)
+        // Do NOT `prepend(0)`. Without a real network nonce the Review button
+        // would enable on a stale 0 — the network rejects nonce-too-low and
+        // the user gets a confusing error mid-Send. The downstream `payment`
+        // construction stays nil until the first balance fetch lands, which
+        // also keeps the Review CTA disabled until the network is reachable.
+        let nonce = latestBalanceAndNonce.map(\.nonce)
         let startingBalance: Amount = transactionUseCase.cachedBalance ?? 0
         let balance: AnyPublisher<Amount, Never> = latestBalanceAndNonce.map(\.balance).prepend(startingBalance).eraseToAnyPublisher()
 
