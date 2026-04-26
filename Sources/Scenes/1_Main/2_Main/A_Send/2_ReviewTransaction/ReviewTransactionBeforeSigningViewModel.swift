@@ -83,13 +83,20 @@ final class ReviewTransactionBeforeSigningViewModel: BaseViewModel<
             minFractionDigits: 5,
             showUnit: true
         ) }
-        let totalCost = payment.map { amountFormatter.format(
-            amount: $0.totalCostInZil,
-            in: .zil,
-            formatThousands: true,
-            minFractionDigits: 2,
-            showUnit: true
-        ) }
+        // `totalCostInZil` is optional — if amount-overflow ever rejects the
+        // arithmetic the user sees "—" instead of the app crashing on the
+        // funds-display step. There is no transaction-correctness consequence:
+        // the actual signing math runs in Zesame against the same `Payment`.
+        let totalCost = payment.map { (payment: Payment) -> String in
+            guard let total = payment.totalCostInZil else { return "—" }
+            return amountFormatter.format(
+                amount: total,
+                in: .zil,
+                formatThousands: true,
+                minFractionDigits: 2,
+                showUnit: true
+            )
+        }
 
         return Output(
             isHasReviewedNowProceedWithSigningButtonEnabled: input.fromView.isHasReviewedPaymentCheckboxChecked,
@@ -123,7 +130,9 @@ private extension Payment {
         (try? Payment.estimatedTotalTransactionFee(gasPrice: gasPrice, gasLimit: gasLimit)) ?? gasPrice.asQa
     }
 
-    var totalCostInZil: Amount {
+    /// Computed total. `Optional` (was a crashing `try!`) so a future
+    /// tightening of `Amount` validation cannot crash the Send-review screen.
+    var totalCostInZil: Amount? {
         if let estimatedTotal = try? Payment.estimatedTotalCostOfTransaction(
             amount: amount,
             gasPrice: gasPrice,
@@ -132,8 +141,7 @@ private extension Payment {
             return estimatedTotal
         } else {
             let totalInQa = amount.asQa + transactionFee
-            // swiftlint:disable:next force_try
-            return try! Amount(qa: totalInQa)
+            return try? Amount(qa: totalInQa)
         }
     }
 }

@@ -55,7 +55,7 @@ final class MainCoordinator: BaseCoordinator<MainCoordinatorNavigationStep> {
     ) {
         self.deeplinkedTransaction = deeplinkedTransaction
         super.init(navigationController: navigationController)
-        deeplinkedTransaction.mapToVoid().sink { [unowned self] in self.toSendPrefilTransaction() }.store(in: &cancellables)
+        deeplinkedTransaction.mapToVoid().sink { [weak self] in self?.toSendPrefilTransaction() }.store(in: &cancellables)
     }
 
     /// Begins by pushing the Main hub.

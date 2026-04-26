@@ -238,9 +238,12 @@ final class PrepareTransactionViewModel: BaseViewModel< // swiftlint:disable:thi
             showUnit: true
         ) }.eraseToAnyPublisher()
 
-        // It is deliberate that we do NOT auto checksum the address here. We would like to be able to inform the user
-        // that
-        // she might have pasted an unchecksummed address.
+        // The displayed recipient string is the raw parsed address. NOTE: the
+        // `payment` construction above silently checksums via
+        // `toChecksummedLegacyAddress()`, so the user is *not* warned about
+        // unchecksummed input today. If we want to surface that, gate `payment`
+        // on a deliberate "did you mean…?" confirmation step instead of auto
+        // -correcting in the background.
         let recipientFormatted: AnyPublisher<String, Never> = recipient.filterNil().map(\.asString).eraseToAnyPublisher()
 
         let amountFormatted: AnyPublisher<String?, Never> = amountBoundByBalance.filterNil()

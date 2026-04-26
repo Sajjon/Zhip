@@ -34,8 +34,19 @@ extension KeychainSwift: KeyValueStoring {
 
     /// Tries each `KeychainSwift` accessor in turn — `Data`, `Bool`, `String` —
     /// since the underlying Keychain item could be any of them.
-    /// Order matters: `getData` is tried first because our `Codable` blobs are
-    /// always `Data`, and we don't want to mistake them for strings.
+    ///
+    /// **INVARIANT — must be preserved**: each `KeychainKey` is always written
+    /// with one specific value type for the *lifetime* of the key. We rely on
+    /// this because `KeychainSwift` stores `Bool`/`String` internally as raw
+    /// bytes, so `getData` would *also* return non-nil for keys that were
+    /// written as `Bool`/`String` — it would just hand back the underlying
+    /// representation rather than the typed value. The `getData → getBool →
+    /// get` ordering here is "safe" only because no key is read with a type
+    /// other than the one it was written with.
+    ///
+    /// If you ever introduce a `KeychainKey` that needs to be read as a
+    /// different type than it was written, switch to a length-prefixed type
+    /// tag in the value blob — don't try to disambiguate by accessor order.
     func loadValue(for key: String) -> Any? {
         if let data = getData(key) {
             data

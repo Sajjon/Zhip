@@ -23,6 +23,7 @@
 //
 
 import Combine
+import Factory
 import UIKit
 import Zesame
 
@@ -45,6 +46,10 @@ enum SendCoordinatorNavigationStep {
 /// QR-scan output and inbound deep links converge into a single `transactionIntent`
 /// publisher consumed by step 1.
 final class SendCoordinator: BaseCoordinator<SendCoordinatorNavigationStep> {
+    /// URL opener — injected so tests can register a no-op and we keep the
+    /// "view tx in browser" call behind the same DI surface as everything else.
+    @Injected(\.urlOpener) private var urlOpener: UrlOpener
+
     /// Merged stream of "incoming pre-filled payments" — either a deep link
     /// (passed in by the parent) or a freshly-scanned QR code.
     private let transactionIntent: AnyPublisher<TransactionIntent, Never>
@@ -77,9 +82,12 @@ private extension SendCoordinator {
     /// Step 1 — push the prepare screen. Filters incoming intents to only
     /// surface them when prepare is the topmost scene (so a QR-scan return
     /// doesn't accidentally pre-fill while review/sign is up).
+    /// `[weak self]` because `transactionIntent` includes the parent's
+    /// deep-link publisher, which can outlive this coordinator.
     func toPrepareTransaction() {
         let viewModel = PrepareTransactionViewModel(
-            scannedOrDeeplinkedTransaction: transactionIntent.filter { [unowned self] _ in
+            scannedOrDeeplinkedTransaction: transactionIntent.filter { [weak self] _ in
+                guard let self else { return false }
                 let prepareTransactionIsCurrentScene = self.navigationController.viewControllers
                     .isEmpty || self.isTopmost(scene: PrepareTransaction.self)
                 guard prepareTransactionIsCurrentScene else {
@@ -158,16 +166,16 @@ private extension SendCoordinator {
         }
     }
 
-    /// Opens the transaction details on viewblock.io in the system browser.
-    /// Bypasses our `UrlOpener` injection because this is fire-and-forget and
-    /// not unit-tested (the Send tests stop at the polling step).
+    /// Opens the transaction details on viewblock.io via the injected
+    /// `UrlOpener`. Routed through DI so tests can record the call instead of
+    /// triggering a real workspace round-trip in the simulator.
     func openInBrowserDetailsForTransaction(id transactionId: String) {
         let baseURL = "https://viewblock.io/zilliqa/"
         let urlString = "tx/\(transactionId)"
         guard let url = URL(string: urlString, relativeTo: URL(string: baseURL)) else {
             return
         }
-        UIApplication.shared.open(url, options: [:], completionHandler: nil)
+        urlOpener.open(url)
     }
 
     /// Bubble `.finish` to the parent. `triggerBalanceFetching: true` signals
