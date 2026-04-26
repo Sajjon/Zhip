@@ -24,9 +24,20 @@
 
 import Foundation
 
-/// Box referencing a value, without retaining it
+/// A reference-type box that holds a *weak* pointer to its underlying value.
+///
+/// Useful for storing references in collections (`Array<Weak<T>>`, dictionaries, …)
+/// without preventing the referenced object from being deallocated. Once the underlying
+/// object is released elsewhere, `value` becomes `nil` automatically.
 final class Weak<Value: AnyObject> {
+    /// The boxed reference, or `nil` if the underlying object has been deallocated.
+    /// `private(set)` so callers can read but not reassign — to point at a different
+    /// object, construct a fresh `Weak` instance.
     private(set) weak var value: Value?
+
+    /// Wraps `value` in a weak box. The box itself does not retain `value`,
+    /// so the caller is responsible for keeping at least one strong reference
+    /// alive somewhere else if they want `Weak.value` to stay non-nil.
     init(_ value: Value) {
         self.value = value
     }

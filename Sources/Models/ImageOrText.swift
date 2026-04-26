@@ -24,7 +24,12 @@
 
 import UIKit
 
+/// Lightweight sum type used wherever a UI element can equally well render a piece
+/// of text *or* an image — typically labels, list rows, and bar-button items where
+/// the choice is data-driven.
 enum ImageOrText {
+    /// Render the associated `String` value as text.
     case text(String)
+    /// Render the associated `UIImage` value (e.g. a glyph or asset).
     case image(UIImage)
 }
