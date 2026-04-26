@@ -24,12 +24,15 @@
 
 import Foundation
 
+/// `SceneController` glue for the pincode confirmation screen.
 final class ConfirmNewPincode: Scene<ConfirmNewPincodeView> {}
 
+/// Localized navigation title.
 extension ConfirmNewPincode {
     static let title = String(localized: .ConfirmNewPincode.title)
 }
 
+/// Right "Skip" bar-button — even at the confirm step the user can bail out.
 extension ConfirmNewPincode: RightBarButtonMaking {
     static let makeRight = BarButton.skip
 }

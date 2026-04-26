@@ -25,11 +25,19 @@
 import Combine
 import UIKit
 
+/// Pincode confirmation screen — input + "I have backed up" checkbox + done CTA.
+/// `isClearedOnValidInput: false` keeps the entered pincode visible on mismatch
+/// so the user can see what they typed.
 final class ConfirmNewPincodeView: ScrollableStackViewOwner {
+    /// Pincode re-entry input — preserves text on mismatch (vs. the chooser
+    /// which clears on completion).
     private lazy var inputPincodeView = InputPincodeView(isClearedOnValidInput: false)
+    /// "I have backed up the pincode" checkbox — must be checked to enable confirm.
     private lazy var haveBackedUpPincodeCheckbox = CheckboxWithLabel()
+    /// Bottom CTA — gated on (pincode matches) && (checkbox checked).
     private lazy var confirmPincodeButton = UIButton()
 
+    /// Vertical layout: pincode input, checkbox, CTA, spacer.
     lazy var stackViewStyle: UIStackView.Style = [
         inputPincodeView,
         haveBackedUpPincodeCheckbox,
@@ -37,6 +45,7 @@ final class ConfirmNewPincodeView: ScrollableStackViewOwner {
         .spacer,
     ]
 
+    /// Override-hook from `ScrollableStackViewOwner` — wires styling.
     override func setup() {
         setupSubviews()
     }
@@ -45,6 +54,7 @@ final class ConfirmNewPincodeView: ScrollableStackViewOwner {
 extension ConfirmNewPincodeView: ViewModelled {
     typealias ViewModel = ConfirmNewPincodeViewModel
 
+    /// Surfaces the pincode publisher, checkbox state, and confirm-tap.
     var inputFromView: InputFromView {
         InputFromView(
             pincode: inputPincodeView.pincodePublisher,
@@ -53,6 +63,8 @@ extension ConfirmNewPincodeView: ViewModelled {
         )
     }
 
+    /// Binds focus on appear, validation feedback (red box on mismatch),
+    /// and the confirm-button enabled state.
     func populate(with viewModel: ConfirmNewPincodeViewModel.Output) -> [AnyCancellable] {
         [
             viewModel.inputBecomeFirstResponder --> inputPincodeView.becomeFirstResponderBinder,
@@ -63,6 +75,7 @@ extension ConfirmNewPincodeView: ViewModelled {
 }
 
 private extension ConfirmNewPincodeView {
+    /// Styling pass — backup-confirmation checkbox copy + primary done button.
     func setupSubviews() {
         haveBackedUpPincodeCheckbox.withStyle(.default) {
             $0.text(String(localized: .ConfirmNewPincode.pincodeIsBackedUp))
