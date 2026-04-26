@@ -71,10 +71,10 @@ private extension CreateNewWalletCoordinator {
     /// `.cancel` aborts the whole sub-flow.
     func toEnsureThatYouAreNotBeingWatched() {
         let viewModel = EnsureThatYouAreNotBeingWatchedViewModel()
-        push(scene: EnsureThatYouAreNotBeingWatched.self, viewModel: viewModel) { [unowned self] userDid in
+        push(scene: EnsureThatYouAreNotBeingWatched.self, viewModel: viewModel) { [weak self] userDid in
             switch userDid {
-            case .understand: self.toCreateWallet()
-            case .cancel: self.cancel()
+            case .understand: self?.toCreateWallet()
+            case .cancel: self?.cancel()
             }
         }
     }
@@ -86,7 +86,8 @@ private extension CreateNewWalletCoordinator {
     func toCreateWallet() {
         let viewModel = CreateNewWalletViewModel()
 
-        push(scene: CreateNewWallet.self, viewModel: viewModel) { [unowned self] userDid in
+        push(scene: CreateNewWallet.self, viewModel: viewModel) { [weak self] userDid in
+            guard let self else { return }
             switch userDid {
             case let .createWallet(wallet):
                 // Persist immediately. Mark "not yet backed up" — the flag
@@ -111,7 +112,8 @@ private extension CreateNewWalletCoordinator {
                 navigationController: navigationController,
                 wallet: Just(wallet).eraseToAnyPublisher()
             )
-        ) { [unowned self] userFinished in
+        ) { [weak self] userFinished in
+            guard let self else { return }
             switch userFinished {
             case .cancel: self.cancel()
             case .backUp:

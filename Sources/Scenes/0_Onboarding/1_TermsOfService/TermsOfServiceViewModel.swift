@@ -84,9 +84,9 @@ final class TermsOfServiceViewModel: BaseViewModel<
         }
 
         [
-            input.fromView.didAcceptTerms.sink { [unowned self] in
+            input.fromView.didAcceptTerms.sink { [weak self] in
                 // Persist *first* so re-entering onboarding from a kill picks up the new state.
-                self.useCase.didAcceptTermsOfService()
+                self?.useCase.didAcceptTermsOfService()
                 userDid(.acceptTermsOfService)
             },
         ].forEach { $0.store(in: &cancellables) }

@@ -57,10 +57,10 @@ private extension RestoreWalletCoordinator {
     /// Step 1 — privacy gate. `.understand` advances; `.cancel` aborts.
     func toEnsureThatYouAreNotBeingWatched() {
         let viewModel = EnsureThatYouAreNotBeingWatchedViewModel()
-        push(scene: EnsureThatYouAreNotBeingWatched.self, viewModel: viewModel) { [unowned self] userDid in
+        push(scene: EnsureThatYouAreNotBeingWatched.self, viewModel: viewModel) { [weak self] userDid in
             switch userDid {
-            case .understand: self.toRestoreWallet()
-            case .cancel: self.cancel()
+            case .understand: self?.toRestoreWallet()
+            case .cancel: self?.cancel()
             }
         }
     }
@@ -70,9 +70,9 @@ private extension RestoreWalletCoordinator {
     func toRestoreWallet() {
         let viewModel = RestoreWalletViewModel()
 
-        push(scene: RestoreWallet.self, viewModel: viewModel) { [unowned self] userIntendsTo in
+        push(scene: RestoreWallet.self, viewModel: viewModel) { [weak self] userIntendsTo in
             switch userIntendsTo {
-            case let .restoreWallet(wallet): self.finishedRestoring(wallet: wallet)
+            case let .restoreWallet(wallet): self?.finishedRestoring(wallet: wallet)
             }
         }
     }

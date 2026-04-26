@@ -84,10 +84,10 @@ private extension DecryptKeystoreCoordinator {
     func toDecryptKeystore() {
         let viewModel = DecryptKeystoreToRevealKeyPairViewModel(wallet: wallet)
 
-        push(scene: DecryptKeystoreToRevealKeyPair.self, viewModel: viewModel) { [unowned self] userDid in
+        push(scene: DecryptKeystoreToRevealKeyPair.self, viewModel: viewModel) { [weak self] userDid in
             switch userDid {
-            case .dismiss: self.dismiss()
-            case let .decryptKeystoreReavealing(keyPair): self.toBackUpRevealed(keyPair: keyPair)
+            case .dismiss: self?.dismiss()
+            case let .decryptKeystoreReavealing(keyPair): self?.toBackUpRevealed(keyPair: keyPair)
             }
         }
     }
@@ -96,9 +96,9 @@ private extension DecryptKeystoreCoordinator {
     func toBackUpRevealed(keyPair: KeyPair) {
         let viewModel = BackUpRevealedKeyPairViewModel(keyPair: keyPair)
 
-        push(scene: BackUpRevealedKeyPair.self, viewModel: viewModel) { [unowned self] userDid in
+        push(scene: BackUpRevealedKeyPair.self, viewModel: viewModel) { [weak self] userDid in
             switch userDid {
-            case .finish: self.finish()
+            case .finish: self?.finish()
             }
         }
     }

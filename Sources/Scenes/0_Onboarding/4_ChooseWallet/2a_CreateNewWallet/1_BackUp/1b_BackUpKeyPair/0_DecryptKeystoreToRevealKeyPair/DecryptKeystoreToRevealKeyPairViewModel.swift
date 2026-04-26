@@ -94,11 +94,13 @@ final class DecryptKeystoreToRevealKeyPairViewModel: BaseViewModel<
                 // flatMapLatest (not flatMap) so a second tap while the first
                 // decryption is still running cancels the in-flight call —
                 // the user expects only the most recent attempt to surface.
-                .flatMapLatest { [unowned self] in
-                    self.extractKeyPairUseCase.extractKeyPairFrom(wallet: $0.wallet, encryptedBy: $0.password)
+                .flatMapLatest { [weak self] input -> AnyPublisher<KeyPair, Never> in
+                    guard let self else { return Empty().eraseToAnyPublisher() }
+                    return self.extractKeyPairUseCase.extractKeyPairFrom(wallet: input.wallet, encryptedBy: input.password)
                         .trackActivity(activityIndicator)
                         .trackError(errorTracker)
                         .replaceErrorWithEmpty()
+                        .eraseToAnyPublisher()
                 }
                 .sink { userDid(.decryptKeystoreReavealing(keyPair: $0)) },
         ].forEach { $0.store(in: &cancellables) }

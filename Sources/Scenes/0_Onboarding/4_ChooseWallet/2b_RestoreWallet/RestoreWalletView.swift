@@ -185,7 +185,7 @@ private extension RestoreWalletView {
             .map { [weak restorationMethodSegmentedControl] _ in restorationMethodSegmentedControl?.selectedSegmentIndex ?? 0 }
             .map { Segment(rawValue: $0) }
             .filterNil()
-            .sink { [unowned self] in self.switchToViewFor(selectedSegment: $0) }.store(in: &cancellables)
+            .sink { [weak self] in self?.switchToViewFor(selectedSegment: $0) }.store(in: &cancellables)
 
         selectSegment(.privateKey)
     }

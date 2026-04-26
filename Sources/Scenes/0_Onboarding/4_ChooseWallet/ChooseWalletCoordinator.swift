@@ -69,16 +69,16 @@ final class ChooseWalletCoordinator: BaseCoordinator<ChooseWalletCoordinatorNavi
 private extension ChooseWalletCoordinator {
     /// Step 1 — push the "create or restore?" scene and dispatch on the user's choice.
     ///
-    /// Uses `[unowned self]` because the coordinator outlives the pushed scene
-    /// (it owns the navigation stack), so a strong reference would not leak but
-    /// would be needlessly retain-heavy.
+    /// Uses `[weak self]` so a late navigation pulse arriving after the
+    /// coordinator has been torn down (e.g. parent finished the flow first)
+    /// is silently dropped instead of crashing.
     func toChooseWallet() {
         let viewModel = ChooseWalletViewModel()
 
-		push(scene: ChooseWallet.self, viewModel: viewModel) { [unowned self] userIntendsTo in
+		push(scene: ChooseWallet.self, viewModel: viewModel) { [weak self] userIntendsTo in
             switch userIntendsTo {
-            case .createNewWallet: self.toCreateNewWallet()
-            case .restoreWallet: self.toRestoreWallet()
+            case .createNewWallet: self?.toCreateNewWallet()
+            case .restoreWallet: self?.toRestoreWallet()
             }
         }
     }
@@ -96,11 +96,11 @@ private extension ChooseWalletCoordinator {
     func toCreateNewWallet() {
         presentModalCoordinator(
             makeCoordinator: { CreateNewWalletCoordinator(navigationController: $0) },
-            navigationHandler: { [unowned self] userDid, dismissFlow in
+            navigationHandler: { [weak self] userDid, dismissFlow in
                 defer { dismissFlow(true) }
                 switch userDid {
                 case let .create(wallet):
-                    self.finishChoosing(wallet: wallet, persistFirst: false)
+                    self?.finishChoosing(wallet: wallet, persistFirst: false)
                 case .cancel: break
                 }
             }
@@ -116,11 +116,11 @@ private extension ChooseWalletCoordinator {
     func toRestoreWallet() {
         presentModalCoordinator(
             makeCoordinator: { RestoreWalletCoordinator(navigationController: $0) },
-            navigationHandler: { [unowned self] userDid, dismissFlow in
+            navigationHandler: { [weak self] userDid, dismissFlow in
                 defer { dismissFlow(true) }
                 switch userDid {
                 case let .finishedRestoring(wallet):
-                    self.finishChoosing(wallet: wallet, persistFirst: true)
+                    self?.finishChoosing(wallet: wallet, persistFirst: true)
                 case .cancel: break
                 }
             }

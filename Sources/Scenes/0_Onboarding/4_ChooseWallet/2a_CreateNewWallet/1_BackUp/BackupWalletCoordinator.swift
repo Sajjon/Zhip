@@ -100,7 +100,8 @@ private extension BackupWalletCoordinator {
     func toBackUpWallet() {
         let viewModel = BackupWalletViewModel(wallet: wallet, mode: mode)
 
-        push(scene: BackupWallet.self, viewModel: viewModel) { [unowned self] userDid in
+        push(scene: BackupWallet.self, viewModel: viewModel) { [weak self] userDid in
+            guard let self else { return }
             switch userDid {
             case .revealKeystore: self.toRevealKeystore()
             case .revealPrivateKey: self.toDecryptKeystoreToRevealKeyPair()

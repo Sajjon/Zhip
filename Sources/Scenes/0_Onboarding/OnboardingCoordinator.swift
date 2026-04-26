@@ -58,9 +58,9 @@ final class OnboardingCoordinator: BaseCoordinator<OnboardingCoordinatorNavigati
 private extension OnboardingCoordinator {
     /// Pushes the welcome scene; user tap of "start" advances to `toNextStep`.
     func toWelcome() {
-        push(scene: Welcome.self, viewModel: WelcomeViewModel()) { [unowned self] userIntendsTo in
+        push(scene: Welcome.self, viewModel: WelcomeViewModel()) { [weak self] userIntendsTo in
             switch userIntendsTo {
-            case .start: self.toNextStep()
+            case .start: self?.toNextStep()
             }
         }
     }
@@ -97,9 +97,9 @@ private extension OnboardingCoordinator {
     /// the next step — there is no "no" option in this onboarding.
     func toTermsOfService() {
         let viewModel = TermsOfServiceViewModel(useCase: onboardingUseCase, isDismissible: false)
-        push(scene: TermsOfService.self, viewModel: viewModel) { [unowned self] userDid in
+        push(scene: TermsOfService.self, viewModel: viewModel) { [weak self] userDid in
             switch userDid {
-            case .acceptTermsOfService, .dismiss: self.toAnalyticsPermission()
+            case .acceptTermsOfService, .dismiss: self?.toAnalyticsPermission()
             }
         }
     }
@@ -109,9 +109,9 @@ private extension OnboardingCoordinator {
     func toAnalyticsPermission() {
         let viewModel = AskForCrashReportingPermissionsViewModel(useCase: onboardingUseCase, isDismissible: false)
 
-        push(scene: AskForCrashReportingPermissions.self, viewModel: viewModel) { [unowned self] userDid in
+        push(scene: AskForCrashReportingPermissions.self, viewModel: viewModel) { [weak self] userDid in
             switch userDid {
-            case .answerQuestionAboutCrashReporting, .dismiss: self.toCustomECCWarning()
+            case .answerQuestionAboutCrashReporting, .dismiss: self?.toCustomECCWarning()
             }
         }
     }
@@ -124,9 +124,9 @@ private extension OnboardingCoordinator {
             isDismissible: false
         )
 
-        push(scene: WarningCustomECC.self, viewModel: viewModel) { [unowned self] userDid in
+        push(scene: WarningCustomECC.self, viewModel: viewModel) { [weak self] userDid in
             switch userDid {
-            case .acceptRisks, .dismiss: self.toChooseWallet()
+            case .acceptRisks, .dismiss: self?.toChooseWallet()
             }
         }
     }
@@ -138,9 +138,9 @@ private extension OnboardingCoordinator {
             navigationController: navigationController
         )
 
-        start(coordinator: coordinator) { [unowned self] in
+        start(coordinator: coordinator) { [weak self] in
             switch $0 {
-            case .finishChoosingWallet: self.toChoosePincode()
+            case .finishChoosingWallet: self?.toChoosePincode()
             }
         }
     }
@@ -153,9 +153,9 @@ private extension OnboardingCoordinator {
                 navigationController: navigationController,
                 useCase: pincodeUseCase
             )
-        ) { [unowned self] (userDid: SetPincodeCoordinatorNavigationStep) in
+        ) { [weak self] (userDid: SetPincodeCoordinatorNavigationStep) in
             switch userDid {
-            case .setPincode: self.finish()
+            case .setPincode: self?.finish()
             }
         }
     }

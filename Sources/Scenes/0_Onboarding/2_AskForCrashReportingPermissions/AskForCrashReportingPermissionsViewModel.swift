@@ -80,7 +80,8 @@ final class AskForCrashReportingPermissionsViewModel: BaseViewModel<
         }
 
         [
-            hasAnsweredAnalyticsPermissionsQuestionTrigger.sink { [unowned self] in
+            hasAnsweredAnalyticsPermissionsQuestionTrigger.sink { [weak self] in
+                guard let self else { return }
                 // Persist *first* so re-entering onboarding from a kill picks up the new state.
                 self.useCase.answeredCrashReportingQuestion(acceptsCrashReporting: $0)
                 self.navigator.next(.answerQuestionAboutCrashReporting)

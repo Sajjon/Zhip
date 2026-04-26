@@ -85,11 +85,13 @@ final class RestoreWalletViewModel: BaseViewModel<
             input.fromView.restoreTrigger.withLatestFrom(keyRestoration.filterNil()) { $1 }
                 // flatMapLatest cancels any in-flight restore when the user taps again —
                 // useful if scrypt is mid-decryption with the wrong password.
-                .flatMapLatest { [unowned self] in
-                    self.restoreWalletUseCase.restoreWallet(from: $0)
+                .flatMapLatest { [weak self] restoration -> AnyPublisher<Wallet, Never> in
+                    guard let self else { return Empty().eraseToAnyPublisher() }
+                    return self.restoreWalletUseCase.restoreWallet(from: restoration)
                         .trackActivity(activityIndicator)
                         .trackError(errorTracker)
                         .replaceErrorWithEmpty()
+                        .eraseToAnyPublisher()
                 }
                 .sink { userIntends(to: .restoreWallet($0)) },
         ].forEach { $0.store(in: &cancellables) }

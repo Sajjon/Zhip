@@ -75,9 +75,9 @@ final class WarningCustomECCViewModel: BaseViewModel<
         }
 
         [
-            input.fromView.didAcceptTerms.sink { [unowned self] in
+            input.fromView.didAcceptTerms.sink { [weak self] in
                 // Persist *first* so re-entering onboarding from a kill picks up the new state.
-                self.useCase.didAcceptCustomECCWarning()
+                self?.useCase.didAcceptCustomECCWarning()
                 userDid(.acceptRisks)
             },
         ].forEach { $0.store(in: &cancellables) }
