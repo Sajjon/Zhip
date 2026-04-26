@@ -59,18 +59,31 @@ class SceneController<View: ContentView>: AbstractController
 
     // MARK: View Lifecycle
 
+    /// Sets up window chrome (background, root view, title, bar buttons, swipe-back),
+    /// then fires the `viewDidLoad` lifecycle subject so the ViewModel's pipelines see it.
+    ///
+    /// Each opt-in protocol (`TitledScene`, `Right/LeftBarButtonContentMaking`,
+    /// `BackButtonHiding`) is detected via runtime cast — there is no required
+    /// override in subclasses, and absence is the no-op default.
     override func viewDidLoad() {
         super.viewDidLoad()
 
+        // App-wide background colour goes on the controller's view (visible behind
+        // the content view during animations); content view is transparent so it
+        // composes against this colour rather than masking it.
         view.backgroundColor = .deepBlue
         rootContentView.backgroundColor = .clear
         view.addSubview(rootContentView)
         rootContentView.edgesToSuperview()
 
+        // Auto-set the navigation title only if a non-empty `TitledScene.title` is provided.
+        // `case let sceneTitle = …` is just a destructuring binding — could be a plain `let`.
         if let titled = self as? TitledScene, case let sceneTitle = titled.sceneTitle, !sceneTitle.isEmpty {
             title = sceneTitle
         }
 
+        // Opt-in static bar-button installation. Dynamic per-screen changes go
+        // through the `…BarButtonContentSubject` instead (see `makeAndSubscribeToInputFromController`).
         if let rightButtonMaker = self as? RightBarButtonContentMaking {
             rightButtonMaker.setRightBarButton(for: self)
         }
@@ -79,21 +92,30 @@ class SceneController<View: ContentView>: AbstractController
             leftButtonMaker.setLeftBarButton(for: self)
         }
 
+        // BackButtonHiding screens both hide the chevron AND disable interactive
+        // pop — typically used on flow-terminating screens like a successful-create
+        // confirmation, where backing up would re-enter an inconsistent state.
         if self is BackButtonHiding {
             navigationItem.hidesBackButton = true
         }
 
         navigationController?.interactivePopGestureRecognizer?.isEnabled = !(self is BackButtonHiding)
 
+        // Last — fire the lifecycle pulse only after all chrome is in place,
+        // so any view-model handler observing `viewDidLoad` can safely assume
+        // the navigation bar is configured.
         viewDidLoadSubject.send(())
     }
 
+    /// Re-applies the navigation bar layout (in case it was changed by a previous
+    /// scene) and forwards the lifecycle event.
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         applyLayoutIfNeeded()
         viewWillAppearSubject.send(())
     }
 
+    /// Forwards the `viewDidAppear` lifecycle event to the ViewModel pipeline.
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         viewDidAppearSubject.send(())
@@ -103,10 +125,18 @@ class SceneController<View: ContentView>: AbstractController
 // MARK: Private
 
 private extension SceneController {
+    /// Called from the designated initializer. Currently a thin wrapper so
+    /// future setup steps can be added without touching the init body.
     func setup() {
         bindViewToViewModel()
     }
 
+    /// Constructs the ViewModel-facing `InputFromController`, eagerly subscribing
+    /// the controller-side sinks (title text, toasts, dynamic bar-button updates)
+    /// so the ViewModel can fire-and-forget those subjects.
+    ///
+    /// All sinks hop to `RunLoop.main` because they touch UIKit; `[weak self]`
+    /// avoids a retain cycle with the long-lived controller-owned subjects.
     func makeAndSubscribeToInputFromController() -> InputFromController {
         let titleSubject = PassthroughSubject<String, Never>()
         let leftBarButtonContentSubject = PassthroughSubject<BarButtonContent, Never>()
@@ -114,11 +144,14 @@ private extension SceneController {
         let toastSubject = PassthroughSubject<Toast, Never>()
 
         [
+            // Dynamic title updates emitted by the ViewModel.
             titleSubject.receive(on: RunLoop.main).sink { [weak self] in self?.title = $0 },
+            // Toasts are presented by the toast itself using `self` as the host VC.
             toastSubject.receive(on: RunLoop.main).sink { [weak self] in
                 guard let self else { return }
                 $0.present(using: self)
             },
+            // Dynamic bar-button content swaps (e.g. enable/disable, change icon).
             leftBarButtonContentSubject.receive(on: RunLoop.main).sink { [weak self] in
                 self?.setLeftBarButtonUsing(content: $0)
             },
@@ -140,6 +173,11 @@ private extension SceneController {
         )
     }
 
+    /// Performs the central wiring step:
+    ///   View → InputFromView, Controller → InputFromController,
+    ///   ViewModel.transform(_:) → Output, View.populate(with:) → bindings.
+    /// Each cancellable returned by `populate` is stored so the bindings live as
+    /// long as this controller does.
     func bindViewToViewModel() {
         let inputFromView = rootContentView.inputFromView
         let inputFromController = makeAndSubscribeToInputFromController()
@@ -150,6 +188,15 @@ private extension SceneController {
         rootContentView.populate(with: output).forEach { $0.store(in: &cancellables) }
     }
 
+    /// Drives `NavigationBarLayoutingNavigationController` to apply the right
+    /// nav-bar layout for the current scene each time it appears.
+    ///
+    /// Logic ladder:
+    ///   1. No nav controller? Nothing to do.
+    ///   2. Nav controller is the wrong class? That's a programming error — crash loudly.
+    ///   3. Scene doesn't own a layout? Use the `.opaque` default.
+    ///   4. Same layout as last applied? Skip the work (avoid pointless animations).
+    ///   5. Otherwise apply the new layout.
     func applyLayoutIfNeeded() {
         guard let navigationController else { return }
         guard let barLayoutingNavController = navigationController as? NavigationBarLayoutingNavigationController else {
