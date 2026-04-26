@@ -72,7 +72,8 @@ private extension SettingsCoordinator {
     func toSettings() { // swiftlint:disable:this cyclomatic_complexity
         let viewModel = SettingsViewModel(useCase: pincodeUseCase)
 
-        push(scene: Settings.self, viewModel: viewModel) { [unowned self] userIntendsTo in
+        push(scene: Settings.self, viewModel: viewModel) { [weak self] userIntendsTo in
+            guard let self else { return }
             switch userIntendsTo {
             // Navigation bar
             case .closeSettings: self.finish()
@@ -201,8 +202,8 @@ private extension SettingsCoordinator {
             switch userDid {
             case .cancel: dismissScene(true, nil)
             case .confirm:
-                dismissScene(true) { [unowned self] in
-                    self.toChooseWallet()
+                dismissScene(true) { [weak self] in
+                    self?.toChooseWallet()
                 }
             }
         }

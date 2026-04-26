@@ -24,6 +24,7 @@
 
 import Combine
 import Factory
+import Foundation
 import Zesame
 
 // MARK: - MainUserAction
@@ -85,19 +86,21 @@ final class MainViewModel: BaseViewModel<
         // a new trigger fires (e.g. user pulls again before the first fetch returns).
         // handleEvents caches the balance for the next launch's pre-fetch UI.
         let latestBalanceAndNonce: AnyPublisher<BalanceResponse, Never> = fetchTrigger.withLatestFrom(wallet)
-            .flatMapLatest { [unowned self] in
-                self.transactionUseCase
-                    .getBalance(for: $0.legacyAddress)
+            .flatMapLatest { [weak self] wallet -> AnyPublisher<BalanceResponse, Never> in
+                guard let self else { return Empty().eraseToAnyPublisher() }
+                return self.transactionUseCase
+                    .getBalance(for: wallet.legacyAddress)
                     .trackActivity(activityIndicator)
                     .replaceErrorWithEmpty()
-                    .handleEvents(receiveOutput: { [unowned self] in self.transactionUseCase.cacheBalance($0.balance) })
+                    .handleEvents(receiveOutput: { [weak self] in self?.transactionUseCase.cacheBalance($0.balance) })
+                    .eraseToAnyPublisher()
             }
             .eraseToAnyPublisher()
 
         // Sample balanceUpdatedAt at fetch time for the "Updated N min ago" label.
-        let balanceWasUpdatedAt = fetchTrigger.map { [unowned self] in
-            self.transactionUseCase.balanceUpdatedAt
-        }
+        let balanceWasUpdatedAt: AnyPublisher<Date?, Never> = fetchTrigger.map { [weak self] _ -> Date? in
+            self?.transactionUseCase.balanceUpdatedAt
+        }.eraseToAnyPublisher()
 
         // Format output
         // Show the cached balance immediately on first launch so the user

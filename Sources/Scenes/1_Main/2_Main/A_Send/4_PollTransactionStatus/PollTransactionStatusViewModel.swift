@@ -90,7 +90,8 @@ final class PollTransactionStatusViewModel: BaseViewModel<
 
         [
             input.fromView.copyTransactionIdTrigger
-                .sink { [unowned self, pasteboard] in
+                .sink { [weak self, pasteboard] in
+                    guard let self else { return }
                     pasteboard.copy(self.transactionId)
                     input.fromController.toastSubject
                         .send(Toast(String(localized: .PollTransaction.copiedTransactionId)))

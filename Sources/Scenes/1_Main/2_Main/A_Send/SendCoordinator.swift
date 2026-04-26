@@ -98,7 +98,8 @@ private extension SendCoordinator {
             }.eraseToAnyPublisher()
         )
 
-        push(scene: PrepareTransaction.self, viewModel: viewModel) { [unowned self] userIntendsTo in
+        push(scene: PrepareTransaction.self, viewModel: viewModel) { [weak self] userIntendsTo in
+            guard let self else { return }
             switch userIntendsTo {
             case .cancel: self.finish()
             case .scanQRCode: self.toScanQRCode()
@@ -114,11 +115,11 @@ private extension SendCoordinator {
         modallyPresent(
             scene: ScanQRCode.self,
             viewModel: ScanQRCodeViewModel()
-        ) { [unowned self] userDid, dismissScene in
+        ) { [weak self] userDid, dismissScene in
             switch userDid {
             case let .scanQRContainingTransaction(transaction):
                 dismissScene(true) {
-                    self.scannedQRTransactionSubject.send(transaction)
+                    self?.scannedQRTransactionSubject.send(transaction)
                 }
             case .cancel:
                 dismissScene(true, nil)
@@ -132,10 +133,10 @@ private extension SendCoordinator {
             paymentToReview: payment
         )
 
-        push(scene: ReviewTransactionBeforeSigning.self, viewModel: viewModel) { [unowned self] userDid in
+        push(scene: ReviewTransactionBeforeSigning.self, viewModel: viewModel) { [weak self] userDid in
             switch userDid {
             case let .acceptPaymentProceedWithSigning(reviewedPayment):
-                self.toSignPayment(reviewedPayment)
+                self?.toSignPayment(reviewedPayment)
             }
         }
     }
@@ -147,7 +148,8 @@ private extension SendCoordinator {
     func toSignPayment(_ payment: Payment) {
         let viewModel = SignTransactionViewModel(paymentToSign: payment)
 
-        push(scene: SignTransaction.self, viewModel: viewModel) { [unowned self] userDid in
+        push(scene: SignTransaction.self, viewModel: viewModel) { [weak self] userDid in
+            guard let self else { return }
             switch userDid {
             case let .sign(transactionResponse):
                 self.toWaitForReceiptForTransactionWith(id: transactionResponse.transactionIdentifier)
@@ -162,7 +164,8 @@ private extension SendCoordinator {
     func toWaitForReceiptForTransactionWith(id transactionId: String) {
         let viewModel = PollTransactionStatusViewModel(transactionId: transactionId)
 
-        push(scene: PollTransactionStatus.self, viewModel: viewModel) { [unowned self] userDid in
+        push(scene: PollTransactionStatus.self, viewModel: viewModel) { [weak self] userDid in
+            guard let self else { return }
             switch userDid {
             case .skip, .waitUntilTimeout: self.finish()
             case .dismiss: self.finish(triggerBalanceFetching: true)

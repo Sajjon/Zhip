@@ -91,7 +91,8 @@ private extension MainCoordinator {
             scene: Main.self,
             viewModel: viewModel,
             navigationPresentationCompletion: didStart
-        ) { [unowned self] userIntendsTo in
+        ) { [weak self] userIntendsTo in
+            guard let self else { return }
             switch userIntendsTo {
             case .send: self.toSend()
             case .receive: self.toReceive()
@@ -109,11 +110,11 @@ private extension MainCoordinator {
                 deeplinkedTransaction: deeplinkedTransaction
             )
             },
-            navigationHandler: { [unowned self] userDid, dismissModalFlow in
+            navigationHandler: { [weak self] userDid, dismissModalFlow in
                 switch userDid {
                 case let .finish(triggerBalanceFetching):
                     if triggerBalanceFetching {
-                        self.triggerFetchingOfBalance()
+                        self?.triggerFetchingOfBalance()
                     }
                     dismissModalFlow(true)
                 }
@@ -138,9 +139,9 @@ private extension MainCoordinator {
     func toSettings() {
         presentModalCoordinator(
             makeCoordinator: { SettingsCoordinator(navigationController: $0) },
-            navigationHandler: { [unowned self] userIntendsTo, dismissModalFlow in
+            navigationHandler: { [weak self] userIntendsTo, dismissModalFlow in
                 switch userIntendsTo {
-                case .removeWallet: self.navigator.next(.removeWallet)
+                case .removeWallet: self?.navigator.next(.removeWallet)
                 case .closeSettings: dismissModalFlow(true)
                 }
             }

@@ -84,14 +84,14 @@ final class ScanQRCodeViewModel: BaseViewModel<
             input.fromController.leftBarButtonTrigger
                 .sink { userDid(.cancel) },
 
-            transactionIntentResult.sink { [unowned self] in
+            transactionIntentResult.sink { [weak self] in
                 switch $0 {
                 case .failure:
                     let toast = Toast(
                         String(localized: .ScanQRCode.incompatibleQRTitle),
                         dismissing: .manual(dismissButtonTitle: String(localized: .ScanQRCode.dismiss))
                     ) {
-                        self.startScanningSubject.send(())
+                        self?.startScanningSubject.send(())
                     }
                     input.fromController.toastSubject.send(toast)
                 case let .success(transactionIntent): userDid(.scanQRContainingTransaction(transactionIntent))

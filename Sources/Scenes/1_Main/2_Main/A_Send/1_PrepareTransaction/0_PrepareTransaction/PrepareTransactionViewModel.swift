@@ -83,8 +83,8 @@ final class PrepareTransactionViewModel: BaseViewModel< // swiftlint:disable:thi
                 .trackActivity(activityIndicator)
                 .trackError(errorTracker)
                 .replaceErrorWithEmpty()
-                .handleEvents(receiveOutput: { [unowned self] in
-                    self.transactionUseCase.cacheBalance($0.balance)
+                .handleEvents(receiveOutput: { [weak self] in
+                    self?.transactionUseCase.cacheBalance($0.balance)
                 })
         }
         .eraseToAnyPublisher()
@@ -282,8 +282,8 @@ final class PrepareTransactionViewModel: BaseViewModel< // swiftlint:disable:thi
             .map { formatter.format(amount: $0, in: .li, formatThousands: true) }
             .eraseToAnyPublisher()
 
-        let balanceWasUpdatedAt: AnyPublisher<Date?, Never> = fetchTrigger.map { [unowned self] in
-            self.transactionUseCase.balanceUpdatedAt
+        let balanceWasUpdatedAt: AnyPublisher<Date?, Never> = fetchTrigger.map { [weak self] _ -> Date? in
+            self?.transactionUseCase.balanceUpdatedAt
         }.eraseToAnyPublisher()
 
         let refreshControlLastUpdatedTitle: AnyPublisher<String, Never> = balanceWasUpdatedAt.map {

@@ -79,8 +79,8 @@ final class RemovePincodeViewModel: BaseViewModel<
             // First valid match wires straight to delete-then-emit.
             pincodeValidationValue.filter(\.isValid)
                 .mapToVoid()
-                .sink { [unowned useCase] in
-                    useCase.deletePincode()
+                .sink { [weak useCase] in
+                    useCase?.deletePincode()
                     userDid(.removePincode)
                 },
         ].forEach { $0.store(in: &cancellables) }
