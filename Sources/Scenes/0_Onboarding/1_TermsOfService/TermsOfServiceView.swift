@@ -28,14 +28,21 @@ import Foundation
 import UIKit
 import WebKit
 
+/// Scrollable Terms of Service screen with a "must scroll to bottom" gate
+/// before the accept button enables.
 final class TermsOfServiceView: ScrollableStackViewOwner {
+    /// Hero analytics illustration at the top.
     private lazy var imageView = UIImageView()
+    /// "Terms of Service" header.
     private lazy var headerLabel = UILabel()
+    /// Renders the localized HTML (loaded via `Container.shared.htmlLoader`).
     private lazy var textView = UITextView()
+    /// Bottom CTA — disabled until the user has scrolled the textView near the bottom.
     private lazy var acceptTermsButton = UIButton()
 
     // MARK: - StackViewStyling
 
+    /// Stack of the four subviews above, in vertical order.
     lazy var stackViewStyle: UIStackView.Style = [
         imageView,
         headerLabel,
@@ -43,6 +50,7 @@ final class TermsOfServiceView: ScrollableStackViewOwner {
         acceptTermsButton,
     ]
 
+    /// Override-hook from `ScrollableStackViewOwner` — wires styling.
     override func setup() {
         setupSubviews()
     }
@@ -51,6 +59,7 @@ final class TermsOfServiceView: ScrollableStackViewOwner {
 extension TermsOfServiceView: ViewModelled {
     typealias ViewModel = TermsOfServiceViewModel
 
+    /// Binds the view-model's two `Output` publishers to the accept button's visibility and enabled state.
     func populate(with viewModel: ViewModel.Output) -> [AnyCancellable] {
         [
             viewModel.isAcceptButtonVisible --> acceptTermsButton.isVisibleBinder,
@@ -58,6 +67,8 @@ extension TermsOfServiceView: ViewModelled {
         ]
     }
 
+    /// Surfaces "did scroll to bottom" (used to enable the accept button) and
+    /// "did accept terms" (used to record acceptance and advance the flow).
     var inputFromView: InputFromView {
         InputFromView(
             didScrollToBottom: textView.didScrollNearBottomPublisher(),
@@ -67,6 +78,9 @@ extension TermsOfServiceView: ViewModelled {
 }
 
 private extension TermsOfServiceView {
+    /// Styling pass — sets the hero image, header text, accept button (disabled
+    /// initially) and loads the Terms HTML through the injected `HtmlLoader` so
+    /// tests can substitute a stub.
     func setupSubviews() {
         imageView.withStyle(.default) {
             $0.image(UIImage(resource: .analyticsLarge))

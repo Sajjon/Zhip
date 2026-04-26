@@ -24,19 +24,30 @@
 
 import Foundation
 
+/// `SceneController` glue for the Terms of Service screen.
+///
+/// Used in two different presentation contexts: as a hidden-bar onboarding
+/// step (the Terms scrolls under a custom hero) and as a translucent-bar
+/// modal opened from Settings. Each context picks the navigation bar layout
+/// at construction time.
 final class TermsOfService: Scene<TermsOfServiceView>, NavigationBarLayoutOwner {
+    /// Per-presentation navigation bar layout (hidden during onboarding,
+    /// translucent in the Settings modal).
     let navigationBarLayout: NavigationBarLayout
 
+    /// Designated init that lets the call site pick the bar layout explicitly.
     init(viewModel: ViewModel, navigationBarLayout: NavigationBarLayout) {
         self.navigationBarLayout = navigationBarLayout
         super.init(viewModel: viewModel)
     }
 
+    /// Convenience init used by the onboarding flow — defaults to a hidden bar.
     required init(viewModel: ViewModel) {
         navigationBarLayout = .hidden
         super.init(viewModel: viewModel)
     }
 
+    /// Storyboards/xibs aren't used in this app.
     required init?(coder _: NSCoder) {
         interfaceBuilderSucks
     }
