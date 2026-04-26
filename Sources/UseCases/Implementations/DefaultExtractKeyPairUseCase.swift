@@ -30,10 +30,14 @@ import Zesame
 /// Default implementation of `ExtractKeyPairUseCase`.
 final class DefaultExtractKeyPairUseCase: ExtractKeyPairUseCase {
 
+    /// Reactive Zesame façade — performs the actual keystore decryption work.
     @Injected(\.zilliqaService) private var zilliqaService: ZilliqaServiceReactive
 
+    /// No-op designated initializer — all dependencies are resolved through `@Injected`.
     init() {}
 
+    /// Decrypts `keystore` with `password` and emits the underlying `KeyPair`.
+    /// Errors from Zesame are lifted to the protocol's generic `Swift.Error`.
     func extractKeyPairFrom(keystore: Keystore, encryptedBy password: String) -> AnyPublisher<KeyPair, Swift.Error> {
         zilliqaService.extractKeyPairFrom(keystore: keystore, encryptedBy: password)
             .mapError { $0 as Swift.Error }

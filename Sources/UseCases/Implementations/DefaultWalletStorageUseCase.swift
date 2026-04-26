@@ -31,22 +31,29 @@ import Zesame
 /// `SecurePersistence` for keychain-backed wallet reads and writes.
 final class DefaultWalletStorageUseCase: WalletStorageUseCase {
 
+    /// Keychain-backed secure store. Resolved via Factory so tests can register
+    /// an in-memory `SecurePersistence` to keep the suite hermetic.
     @Injected(\.securePersistence) private var securePersistence: SecurePersistence
 
+    /// No-op designated initializer — all dependencies are resolved through `@Injected`.
     init() {}
 
+    /// Persists `wallet` to the secure store, replacing any previously saved wallet.
     func save(wallet: Wallet) {
         securePersistence.save(wallet: wallet)
     }
 
+    /// Removes the persisted wallet, if any.
     func deleteWallet() {
         securePersistence.deleteWallet()
     }
 
+    /// Loads the persisted wallet, or `nil` if none exists.
     func loadWallet() -> Wallet? {
         securePersistence.wallet
     }
 
+    /// `true` iff a wallet is currently persisted in the secure store.
     var hasConfiguredWallet: Bool {
         securePersistence.hasConfiguredWallet
     }

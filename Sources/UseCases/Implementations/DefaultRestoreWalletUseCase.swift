@@ -30,11 +30,20 @@ import Zesame
 /// Default implementation of `RestoreWalletUseCase`.
 final class DefaultRestoreWalletUseCase: RestoreWalletUseCase {
 
+    /// Reactive Zesame façade — performs the actual wallet restoration.
     @Injected(\.zilliqaService) private var zilliqaService: ZilliqaServiceReactive
 
+    /// No-op designated initializer — all dependencies are resolved through `@Injected`.
     init() {}
 
+    /// Restores a wallet from the supplied `KeyRestoration` and tags the result with
+    /// the matching `Wallet.Origin`. The origin tag is critical — it determines which
+    /// `WalletEncryptionPassword.Mode` (and thus minimum-length policy) applies later
+    /// when the user re-enters the password, e.g. for backup or transactions.
     func restoreWallet(from restoration: KeyRestoration) -> AnyPublisher<Wallet, Swift.Error> {
+        // Map the input restoration variant to its provenance tag — keystore imports
+        // get `.importedKeystore` (looser password rules from the keystore itself),
+        // private-key imports get `.importedPrivateKey` (strict app-side rules).
         let origin: Wallet.Origin = switch restoration {
         case .keystore: .importedKeystore
         case .privateKey: .importedPrivateKey
