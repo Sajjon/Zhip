@@ -30,26 +30,43 @@ import Zesame
 
 // MARK: - User action and navigation steps
 
+/// Outcomes of step 4 of Send.
 enum PollTransactionStatusUserAction {
-    case /* user did */ skip, dismiss, viewTransactionDetailsInBrowser(id: String), waitUntilTimeout
+    /// User tapped Skip — close before the receipt resolves.
+    case skip
+    /// Receipt resolved (or user tapped done) — close + trigger balance refetch.
+    case dismiss
+    /// User tapped "View on viewblock.io" — coordinator opens the URL externally.
+    case viewTransactionDetailsInBrowser(id: String)
+    /// Polling timed out without a receipt — close anyway.
+    case waitUntilTimeout
 }
 
 // MARK: - PollTransactionStatusViewModel
 
+/// View model for step 4 of Send. Polls the network for the transaction receipt
+/// (linear backoff, 20 attempts), routes user actions (skip/copy/view details),
+/// and surfaces a loading-indicator while the poll is in flight.
 final class PollTransactionStatusViewModel: BaseViewModel<
     PollTransactionStatusUserAction,
     PollTransactionStatusViewModel.InputFromView,
     PollTransactionStatusViewModel.Output
 > {
+    /// Receipt-polling use case.
     @Injected(\.transactionReceiptUseCase) private var transactionReceiptUseCase: TransactionReceiptUseCase
+    /// Pasteboard wrapper for the copy-tx-id button.
     @Injected(\.pasteboard) private var pasteboard: Pasteboard
 
+    /// The transaction identifier returned by the broadcast call in step 3.
     private let transactionId: String
 
+    /// Captures the transaction id to poll.
     init(transactionId: String) {
         self.transactionId = transactionId
     }
 
+    /// Wires the polling pipeline, the three user actions (skip/copy/view), and
+    /// the activity-indicator-driven button states.
     override func transform(input: Input) -> Output {
         func userDid(_ userAction: NavigationStep) {
             navigator.next(userAction)

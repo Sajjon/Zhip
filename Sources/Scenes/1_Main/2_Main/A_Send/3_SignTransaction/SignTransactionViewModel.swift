@@ -27,24 +27,35 @@ import Factory
 import Foundation
 import Zesame
 
+/// Outcome of step 3 of Send.
 enum SignTransactionUserAction {
+    /// Transaction successfully signed + broadcast — carries the network response.
     case sign(TransactionResponse)
 }
 
+/// View model for step 3 of Send. Validates the password against the saved
+/// keystore and (on tap) runs the sign+broadcast use case. Errors are tracked
+/// so wrong-password feedback flips the floating-label field red.
 final class SignTransactionViewModel: BaseViewModel<
     SignTransactionUserAction,
     SignTransactionViewModel.InputFromView,
     SignTransactionViewModel.Output
 > {
+    /// Use case that signs the payment with the keystore-derived private key and broadcasts.
     @Injected(\.sendTransactionUseCase) private var sendTransactionUseCase: SendTransactionUseCase
+    /// Wallet source for the keystore.
     @Injected(\.walletStorageUseCase) private var walletStorageUseCase: WalletStorageUseCase
 
+    /// The payment to sign.
     private let payment: Payment
 
+    /// Captures the payment to sign.
     init(paymentToSign: Payment) {
         payment = paymentToSign
     }
 
+    /// Wires real-time password validation, the sign-tap (cancellable
+    /// flatMapLatest), and the loading-spinner / error-tracker plumbing.
     override func transform(input: Input) -> Output {
         func userDid(_ userAction: NavigationStep) {
             navigator.next(userAction)

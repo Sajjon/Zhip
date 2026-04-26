@@ -24,8 +24,11 @@
 
 import Foundation
 
+/// `SceneController` glue for the review-transaction screen (step 2 of Send).
+/// Shows the prepared payment for the user to confirm before signing.
 final class ReviewTransactionBeforeSigning: Scene<ReviewTransactionBeforeSigningView> {}
 
+/// Localized navigation title.
 extension ReviewTransactionBeforeSigning {
     static let title = String(localized: .ReviewTransaction.title)
 }

@@ -26,16 +26,32 @@ import Combine
 import UIKit
 import Zesame
 
+/// Outcome the Send sub-flow surfaces to its parent (`MainCoordinator`).
 enum SendCoordinatorNavigationStep {
+    /// Send flow finished. `fetchBalance: true` means a transaction was
+    /// successfully signed and broadcast — Main should refetch the balance.
     case finish(fetchBalance: Bool)
 }
 
 // MARK: - SendCoordinator
 
+/// Coordinator owning the four-step send-transaction sub-flow:
+///
+/// 1. `PrepareTransaction` — enter recipient/amount/gas (or scan QR).
+/// 2. `ReviewTransactionBeforeSigning` — confirm the prepared payment.
+/// 3. `SignTransaction` — re-enter password, sign + broadcast.
+/// 4. `PollTransactionStatus` — wait for the network to confirm the receipt.
+///
+/// QR-scan output and inbound deep links converge into a single `transactionIntent`
+/// publisher consumed by step 1.
 final class SendCoordinator: BaseCoordinator<SendCoordinatorNavigationStep> {
+    /// Merged stream of "incoming pre-filled payments" — either a deep link
+    /// (passed in by the parent) or a freshly-scanned QR code.
     private let transactionIntent: AnyPublisher<TransactionIntent, Never>
+    /// Subject used to push QR-scanned intents into `transactionIntent`.
     private let scannedQRTransactionSubject = PassthroughSubject<TransactionIntent, Never>()
 
+    /// Captures the deep-link source and merges it with the QR subject.
     init(
         navigationController: UINavigationController,
         deeplinkedTransaction: AnyPublisher<TransactionIntent, Never>
@@ -44,6 +60,7 @@ final class SendCoordinator: BaseCoordinator<SendCoordinatorNavigationStep> {
         super.init(navigationController: navigationController)
     }
 
+    /// Begins at step 1.
     override func start(didStart _: Completion? = nil) {
         toFirst()
     }
@@ -52,10 +69,14 @@ final class SendCoordinator: BaseCoordinator<SendCoordinatorNavigationStep> {
 // MARK: - Navigate
 
 private extension SendCoordinator {
+    /// Convenience wrapper for the entry point.
     func toFirst() {
         toPrepareTransaction()
     }
 
+    /// Step 1 — push the prepare screen. Filters incoming intents to only
+    /// surface them when prepare is the topmost scene (so a QR-scan return
+    /// doesn't accidentally pre-fill while review/sign is up).
     func toPrepareTransaction() {
         let viewModel = PrepareTransactionViewModel(
             scannedOrDeeplinkedTransaction: transactionIntent.filter { [unowned self] _ in
@@ -78,6 +99,9 @@ private extension SendCoordinator {
         }
     }
 
+    /// Side-trip from prepare — modally presents the QR scanner. On success,
+    /// dismiss *first* then push the scanned intent through the subject so the
+    /// prepare screen receives it after it's regained focus.
     func toScanQRCode() {
         modallyPresent(
             scene: ScanQRCode.self,
@@ -94,6 +118,7 @@ private extension SendCoordinator {
         }
     }
 
+    /// Step 2 — review the prepared payment. Acceptance advances to signing.
     func toReviewPaymentBeforeSigning(_ payment: Payment) {
         let viewModel = ReviewTransactionBeforeSigningViewModel(
             paymentToReview: payment
@@ -107,6 +132,7 @@ private extension SendCoordinator {
         }
     }
 
+    /// Step 3 — re-enter password, sign, broadcast. On success, advance to status polling.
     func toSignPayment(_ payment: Payment) {
         let viewModel = SignTransactionViewModel(paymentToSign: payment)
 
@@ -118,6 +144,8 @@ private extension SendCoordinator {
         }
     }
 
+    /// Step 4 — poll the network for the transaction receipt. `.dismiss`
+    /// (user saw "confirmed") triggers a balance refetch on Main.
     func toWaitForReceiptForTransactionWith(id transactionId: String) {
         let viewModel = PollTransactionStatusViewModel(transactionId: transactionId)
 
@@ -130,6 +158,9 @@ private extension SendCoordinator {
         }
     }
 
+    /// Opens the transaction details on viewblock.io in the system browser.
+    /// Bypasses our `UrlOpener` injection because this is fire-and-forget and
+    /// not unit-tested (the Send tests stop at the polling step).
     func openInBrowserDetailsForTransaction(id transactionId: String) {
         let baseURL = "https://viewblock.io/zilliqa/"
         let urlString = "tx/\(transactionId)"
@@ -139,6 +170,8 @@ private extension SendCoordinator {
         UIApplication.shared.open(url, options: [:], completionHandler: nil)
     }
 
+    /// Bubble `.finish` to the parent. `triggerBalanceFetching: true` signals
+    /// that a transaction was broadcast and Main should refresh.
     func finish(triggerBalanceFetching: Bool = false) {
         navigator.next(.finish(fetchBalance: triggerBalanceFetching))
     }

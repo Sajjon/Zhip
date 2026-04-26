@@ -27,21 +27,35 @@ import Foundation
 
 // MARK: - User action and navigation steps
 
+/// Outcomes of the QR-scan modal.
 enum ScanQRCodeUserAction {
-    case /* user did */ cancel, scanQRContainingTransaction(TransactionIntent)
+    /// User tapped Cancel.
+    case cancel
+    /// QR code scanned and successfully decoded into a `TransactionIntent`.
+    case scanQRContainingTransaction(TransactionIntent)
 }
 
 // MARK: - ScanQRCodeViewModel
 
+/// View model for the QR scanner. Decodes scanned strings into a
+/// `TransactionIntent` and routes them upstream.
+///
+/// Accepts both raw JSON-payload QRs and ones prefixed with `zilliqa://`
+/// (the QR scheme other Zilliqa wallets emit).
 final class ScanQRCodeViewModel: BaseViewModel<
     ScanQRCodeUserAction,
     ScanQRCodeViewModel.InputFromView,
     ScanQRCodeViewModel.Output
 > {
+    /// Result type for the scan→decode pipeline.
     typealias ScannedQRResult = Result<TransactionIntent, Swift.Error>
 
+    /// Currently unused side-channel for "start scanning" pulses (kept for
+    /// future use if the reader needs an explicit start trigger).
     private let startScanningSubject = CurrentValueSubject<Void, Never>(())
 
+    /// Decodes scanned strings, strips an optional `zilliqa://` prefix, and
+    /// surfaces the resulting `TransactionIntent` (or cancel on bar-button tap).
     override func transform(input: Input) -> Output {
         func userDid(_ userAction: NavigationStep) {
             navigator.next(userAction)

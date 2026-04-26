@@ -24,12 +24,15 @@
 
 import UIKit
 
+/// `SceneController` glue for the QR-code scanner side-trip from PrepareTransaction.
 final class ScanQRCode: Scene<ScanQRCodeView> {}
 
+/// Localized navigation title.
 extension ScanQRCode {
     static let title = String(localized: .ScanQRCode.title)
 }
 
+/// Left "Cancel" bar-button — closes the scanner without picking a transaction.
 extension ScanQRCode: LeftBarButtonMaking {
     static let makeLeft: BarButton = .cancel
 }

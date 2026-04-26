@@ -24,12 +24,15 @@
 
 import UIKit
 
+/// `SceneController` glue for the prepare-transaction screen (step 1 of Send).
 final class PrepareTransaction: Scene<PrepareTransactionView> {}
 
+/// Localized title; back arrow hidden because cancel is the only "back" path.
 extension PrepareTransaction: BackButtonHiding {
     static let title = String(localized: .PrepareTransaction.title)
 }
 
+/// Right "Cancel" button — aborts the entire Send flow.
 extension PrepareTransaction: RightBarButtonMaking {
     static let makeRight: BarButton = .cancel
 }

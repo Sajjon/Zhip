@@ -25,10 +25,16 @@
 import Combine
 import UIKit
 
+/// Wallet hub screen — shows balance with pull-to-refresh + send/receive CTAs.
+/// `PullToRefreshCapable` brings in the refresh control + its publishers.
 final class MainView: ScrollableStackViewOwner, PullToRefreshCapable {
+    /// Container hosting the parallax aurora background.
     private lazy var motionEffectAuroraImageView = UIView()
+    /// "Balance" label above the value.
     private lazy var balanceTitleLabel = UILabel()
+    /// The big balance number — uses the impression font.
     private lazy var balanceValueLabel = UILabel()
+    /// Zilliqa logo aligned bottom-left of the balance number.
     private lazy var zilliqaBalanceImageView = UIImageView()
     private lazy var zilliqaImageVerticalPositioner = UIStackView(arrangedSubviews: [
         .spacer,
@@ -59,6 +65,7 @@ final class MainView: ScrollableStackViewOwner, PullToRefreshCapable {
 extension MainView: ViewModelled {
     typealias ViewModel = MainViewModel
 
+    /// Surfaces pull-to-refresh + the two CTA taps.
     var inputFromView: InputFromView {
         InputFromView(
             pullToRefreshTrigger: pullToRefreshTriggerPublisher,
@@ -67,6 +74,8 @@ extension MainView: ViewModelled {
         )
     }
 
+    /// Binds fetching state → refresh-spinner, balance string → big number,
+    /// and last-updated copy → the refresh control's title.
     func populate(with viewModel: MainViewModel.Output) -> [AnyCancellable] {
         [
             viewModel.isFetchingBalance --> isRefreshingBinder,
@@ -77,6 +86,9 @@ extension MainView: ViewModelled {
 }
 
 private extension MainView {
+    /// Styling pass — labels, logo image, two image-above-label buttons,
+    /// and the parallax aurora background inserted *behind* the scrollView
+    /// so it stays put while content scrolls.
     func setupSubviews() {
         balanceTitleLabel.withStyle(.init(
             text: String(localized: .Main.balanceTitle),
@@ -117,6 +129,8 @@ private extension MainView {
     }
 }
 
+/// Shared helper that wires the three-layer aurora parallax into `effectView`.
+/// Used by both `MainView` and `LockAppScene` so the visual effect is identical.
 func addAuroraImagesWithMotionEffect(to effectView: UIView) {
     effectView.backgroundColor = .clear
     effectView.translatesAutoresizingMaskIntoConstraints = false

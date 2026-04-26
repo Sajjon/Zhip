@@ -25,6 +25,7 @@
 import Combine
 import UIKit
 
+/// Step 3 of Send — re-prompt for the keystore password and sign+broadcast on tap.
 final class SignTransactionView: ScrollableStackViewOwner {
     private lazy var confirmTransactionLabel = UILabel()
     private lazy var encryptionPasswordField = FloatingLabelTextField()

@@ -29,25 +29,37 @@ import Zesame
 
 // MARK: - PrepareTransactionUserAction
 
+/// Outcomes of step 1 of Send.
 enum PrepareTransactionUserAction {
+    /// User tapped the right-bar Cancel.
     case cancel
+    /// User submitted a fully-validated payment for review (advances to step 2).
     case reviewPayment(Payment)
+    /// User tapped the QR-scan icon — coordinator presents the scanner modal.
     case scanQRCode
 }
 
 // MARK: - PrepareTransactionViewModel
 
-// swiftlint:disable:next type_body_length
-final class PrepareTransactionViewModel: BaseViewModel<
+/// View model for step 1 of Send. Handles four parallel concerns:
+/// - balance fetch (with pull-to-refresh + cached-balance fallback);
+/// - real-time per-field validation (recipient, amount, gas limit, gas price);
+/// - cross-field "sufficient funds" check;
+/// - pre-fill from inbound `TransactionIntent` (deep-link or QR scan).
+final class PrepareTransactionViewModel: BaseViewModel< // swiftlint:disable:this type_body_length
     PrepareTransactionUserAction,
     PrepareTransactionViewModel.InputFromView,
     PrepareTransactionViewModel.Output
 > {
+    /// Network façade for balance + gas-price fetches.
     @Injected(\.transactionsUseCase) private var transactionUseCase: TransactionsUseCase
+    /// Wallet source for the recipient/amount/balance pipeline.
     @Injected(\.walletStorageUseCase) private var walletStorageUseCase: WalletStorageUseCase
 
+    /// Pre-fill source — merged stream of QR-scanned and deep-linked intents from the coordinator.
     private let scannedOrDeeplinkedTransaction: AnyPublisher<TransactionIntent, Never>
 
+    /// Captures the pre-fill source.
     init(scannedOrDeeplinkedTransaction: AnyPublisher<TransactionIntent, Never>) {
         self.scannedOrDeeplinkedTransaction = scannedOrDeeplinkedTransaction
     }

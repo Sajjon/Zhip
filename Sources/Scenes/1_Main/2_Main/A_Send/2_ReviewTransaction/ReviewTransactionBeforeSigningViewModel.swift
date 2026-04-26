@@ -26,21 +26,30 @@ import Combine
 import Foundation
 import Zesame
 
+/// Outcome of step 2 of Send.
 enum ReviewTransactionBeforeSigningUserAction {
+    /// User checked "I have reviewed" and tapped accept; payment forwarded to signing.
     case acceptPaymentProceedWithSigning(Payment)
 }
 
+/// View model for step 2 of Send. Displays the prepared payment in human-readable
+/// form (formatted amounts, both legacy hex + bech32 recipient addresses) and
+/// gates the accept CTA on the "I have reviewed" checkbox.
 final class ReviewTransactionBeforeSigningViewModel: BaseViewModel<
     ReviewTransactionBeforeSigningUserAction,
     ReviewTransactionBeforeSigningViewModel.InputFromView,
     ReviewTransactionBeforeSigningViewModel.Output
 > {
+    /// The payment to display + forward.
     private let paymentToReview: Payment
 
+    /// Captures the payment to display.
     init(paymentToReview: Payment) {
         self.paymentToReview = paymentToReview
     }
 
+    /// Wires the accept-tap (carries `paymentToReview` upstream) and formats
+    /// the four displayed values (recipient hex/bech32, amount, fee, total).
     override func transform(input: Input) -> Output {
         func userDid(_ userAction: NavigationStep) {
             navigator.next(userAction)
