@@ -23,6 +23,7 @@
 //
 
 import Combine
+import Factory
 import UIKit
 import Zesame
 
@@ -40,11 +41,22 @@ enum CreateNewWalletCoordinatorNavigationStep {
 ///
 /// 1. `EnsureThatYouAreNotBeingWatched` — privacy gate.
 /// 2. `CreateNewWallet` — password entry + key derivation.
-/// 3. `BackupWalletCoordinator` — show keystore + private key for backup.
+/// 3. **persist immediately** so an app kill between key derivation and
+///    backup confirmation doesn't lose the freshly-derived wallet (the
+///    private key is randomly generated; without persistence it would be
+///    unrecoverable).
+/// 4. `BackupWalletCoordinator` — show keystore + private key for backup.
+/// 5. On confirm, flip `hasConfirmedNewWalletBackup = true`.
 ///
 /// Cancel at any step short-circuits to `.cancel`. A successful backup
 /// completion advances to `.create(wallet:)`.
 final class CreateNewWalletCoordinator: BaseCoordinator<CreateNewWalletCoordinatorNavigationStep> {
+    /// Wallet persistence — used to save the freshly-derived wallet
+    /// immediately on creation so it survives an app kill before backup.
+    @Injected(\.walletStorageUseCase) private var walletStorageUseCase: WalletStorageUseCase
+    /// Preferences — used to track whether the user has confirmed the backup
+    /// for the wallet they created in this flow.
+    @Injected(\.preferences) private var preferences: Preferences
 
     /// Begins at step 1 — the privacy gate.
     override func start(didStart _: Completion? = nil) {
@@ -68,13 +80,22 @@ private extension CreateNewWalletCoordinator {
     }
 
     /// Step 2 — password entry + keystore derivation. `.createWallet(wallet)`
-    /// hands the freshly-derived wallet to the backup sub-coordinator.
+    /// **persists the wallet immediately** (so an app kill between here and
+    /// backup confirmation doesn't lose the random private key) and then
+    /// hands it to the backup sub-coordinator.
     func toCreateWallet() {
         let viewModel = CreateNewWalletViewModel()
 
         push(scene: CreateNewWallet.self, viewModel: viewModel) { [unowned self] userDid in
             switch userDid {
-            case let .createWallet(wallet): self.toBackupWallet(wallet: wallet)
+            case let .createWallet(wallet):
+                // Persist immediately. Mark "not yet backed up" — the flag
+                // flips to true after BackupWalletCoordinator finishes.
+                // Future work can gate Send behind this flag and surface a
+                // "back up your wallet" banner.
+                self.walletStorageUseCase.save(wallet: wallet)
+                self.preferences.save(value: false, for: .hasConfirmedNewWalletBackup)
+                self.toBackupWallet(wallet: wallet)
             case .cancel: self.cancel()
             }
         }
@@ -93,7 +114,10 @@ private extension CreateNewWalletCoordinator {
         ) { [unowned self] userFinished in
             switch userFinished {
             case .cancel: self.cancel()
-            case .backUp: self.toMain(wallet: wallet)
+            case .backUp:
+                // User confirmed they recorded the backup — flip the flag.
+                self.preferences.save(value: true, for: .hasConfirmedNewWalletBackup)
+                self.toMain(wallet: wallet)
             }
         }
     }

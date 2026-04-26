@@ -40,6 +40,13 @@ enum PreferencesKey: String, KeyConvertible {
     case hasAcceptedCrashReporting
     /// User explicitly chose "skip pincode setup" — suppresses the prompt on subsequent launches.
     case skipPincodeSetup
+    /// User confirmed they have backed up the wallet they generated through
+    /// the create-new-wallet flow. Set to `false` immediately after creation
+    /// (the wallet is persisted right away to survive an app kill) and
+    /// flipped to `true` after `BackupWalletCoordinator` finishes. Currently
+    /// purely informational — future work can gate Send behind this flag and
+    /// surface a "back up your wallet" banner until it is true.
+    case hasConfirmedNewWalletBackup
     /// Last-known wallet balance, cached to render UI before the network call resolves.
     case cachedBalance
     /// Timestamp accompanying `cachedBalance`; used to render "updated N minutes ago" labels.

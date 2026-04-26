@@ -37,13 +37,19 @@ final class CreateNewWalletCoordinatorTests: XCTestCase {
     private var window: UIWindow!
     private var navigationController: NavigationBarLayoutingNavigationController!
     private var mockWallet: MockWalletUseCase!
+    private var preferences: Preferences!
     private var cancellables: Set<AnyCancellable> = []
     private var sut: CreateNewWalletCoordinator!
 
     override func setUp() {
         super.setUp()
         mockWallet = MockWalletUseCase()
+        // In-memory preferences so the new persist-on-create flow's
+        // `hasConfirmedNewWalletBackup` flag write doesn't leak into real
+        // UserDefaults during the test.
+        preferences = TestStoreFactory.makePreferences()
         Container.shared.walletStorageUseCase.register { [unowned self] in self.mockWallet }
+        Container.shared.preferences.register { [unowned self] in self.preferences }
         navigationController = NavigationBarLayoutingNavigationController()
         window = UIWindow(frame: .init(x: 0, y: 0, width: 320, height: 480))
         window.rootViewController = navigationController
@@ -60,6 +66,7 @@ final class CreateNewWalletCoordinatorTests: XCTestCase {
         navigationController = nil
         Container.shared.manager.reset()
         mockWallet = nil
+        preferences = nil
         super.tearDown()
     }
 
@@ -133,6 +140,33 @@ final class CreateNewWalletCoordinatorTests: XCTestCase {
 
         XCTAssertTrue(top(as: BackupWallet.self) != nil)
         XCTAssertTrue(sut.childCoordinators.contains { $0 is BackupWalletCoordinator })
+    }
+
+    func test_createWalletCreateWallet_persistsImmediatelyAndMarksNotBackedUp() {
+        // The wallet must be persisted on derivation so an app kill before
+        // the user reaches "I have backed up" doesn't lose the random
+        // private key. The backup-confirmed flag should be `false` until
+        // the user finishes the BackupWalletCoordinator.
+        sut.start()
+        top(as: EnsureThatYouAreNotBeingWatched.self)!.viewModel.navigator.next(.understand)
+        drainRunLoop()
+        let create = top(as: CreateNewWallet.self)!
+        let wallet = TestWalletFactory.makeWallet()
+
+        create.viewModel.navigator.next(.createWallet(wallet))
+        drainRunLoop()
+
+        XCTAssertNotNil(mockWallet.storedWallet, "wallet must be persisted on creation, not deferred to backup confirm")
+        XCTAssertTrue(preferences.isFalse(.hasConfirmedNewWalletBackup), "backup-confirmed flag must start false")
+    }
+
+    func test_backupWalletBackUp_marksBackupConfirmed() {
+        let backup = driveToBackupWallet()
+
+        backup.viewModel.navigator.next(.backupWallet)
+        drainRunLoop()
+
+        XCTAssertTrue(preferences.isTrue(.hasConfirmedNewWalletBackup), "flag should flip true after backup confirmation")
     }
 
     // MARK: - BackupWalletCoordinator completion branches
