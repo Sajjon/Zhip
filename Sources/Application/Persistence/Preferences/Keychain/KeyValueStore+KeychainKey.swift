@@ -31,25 +31,14 @@ import Zesame
 extension KeyValueStore where KeyType == KeychainKey {
     /// The persisted `Wallet`, or `nil` if none.
     ///
-    /// Also implements **reinstall detection**: iOS does not clear the Keychain
-    /// when the app is uninstalled, but it *does* clear `UserDefaults`. If the
-    /// `hasRunAppBefore` flag (in `UserDefaults`) is missing, we infer "fresh
-    /// install" and proactively wipe any stale Keychain data left by a previous
-    /// install — otherwise the user would inherit a wallet they no longer hold
-    /// the encryption password for.
+    /// Pure read — no side effects. The reinstall-wipe behaviour (iOS keeps
+    /// the Keychain across uninstalls but clears UserDefaults; without a
+    /// wipe a reinstalling user would inherit a wallet they no longer hold
+    /// the encryption password for) lives in
+    /// `wipeStaleKeychainOnReinstallIfNeeded(...)` in `Bootstrap.swift` and
+    /// runs once at launch via `AppDelegate.application(_:didFinishLaunching…)`.
     var wallet: Wallet? {
-        // Delete wallet upon reinstall if needed. This makes sure that after a reinstall of the app, the flag
-        // `hasRunAppBefore`, which recides in UserDefaults - which gets reset after uninstalls, will be false
-        // thus we should not have any wallet configured. Delete previous one if needed and always return nil
-        guard Preferences.default.isTrue(.hasRunAppBefore) else {
-            Preferences.default.save(value: true, for: .hasRunAppBefore)
-            deleteWallet()
-            deletePincode()
-            Preferences.default.deleteValue(for: .cachedBalance)
-            Preferences.default.deleteValue(for: .balanceWasUpdatedAt)
-            return nil
-        }
-        return loadCodable(Wallet.self, for: .keystore)
+        loadCodable(Wallet.self, for: .keystore)
     }
 
     /// `true` iff `wallet` resolves to a non-`nil` value.

@@ -23,6 +23,7 @@
 //
 
 import CoreText
+import Factory
 import FirebaseAnalytics
 import FirebaseCore
 import Foundation
@@ -40,13 +41,46 @@ let log = SwiftyBeaver.self
 /// 2. `setupAppearance` so every view created later inherits the right styling.
 /// 3. `setupKeyboardHiding` (IQKeyboardManager).
 /// 4. `setupCrashReportingIfAllowed` — gated on the user's `hasAcceptedCrashReporting` preference.
-/// 5. `setupLogging` — debug-only console destination.
+/// 5. `wipeStaleKeychainOnReinstallIfNeeded` — must run *before* anything reads
+///    the wallet, so the destructive reinstall path can't interleave with a
+///    legitimate read elsewhere.
+/// 6. `setupLogging` — debug-only console destination.
 func bootstrap() {
     registerFonts()
     AppAppearance.setupDefault()
     setupKeyboardHiding()
     setupCrashReportingIfAllowed()
+    wipeStaleKeychainOnReinstallIfNeeded()
     setupLogging()
+}
+
+/// Reinstall-detection wipe.
+///
+/// iOS does **not** clear the Keychain when the app is uninstalled, but it
+/// **does** clear `UserDefaults`. So a user who uninstalls and reinstalls the
+/// app would inherit a wallet they no longer hold the encryption password for
+/// (the password lives in their head, not on disk). We detect the "fresh
+/// install" state by the absence of the `hasRunAppBefore` flag in
+/// `UserDefaults` and proactively delete any leftover Keychain material.
+///
+/// Was previously hidden inside `KeyValueStore<KeychainKey>.wallet`'s getter,
+/// which made the property destructive on first call and bypassed the
+/// project's DI (it referenced `Preferences.default` and a hardcoded
+/// `UserDefaults.standard`). Routed through the injected stores so tests can
+/// fully control the path.
+///
+/// Safe to call multiple times — second call is a no-op because the flag is
+/// already set.
+func wipeStaleKeychainOnReinstallIfNeeded(
+    preferences: Preferences = Container.shared.preferences(),
+    securePersistence: SecurePersistence = Container.shared.securePersistence()
+) {
+    guard !preferences.isTrue(.hasRunAppBefore) else { return }
+    securePersistence.deleteWallet()
+    securePersistence.deletePincode()
+    preferences.deleteValue(for: .cachedBalance)
+    preferences.deleteValue(for: .balanceWasUpdatedAt)
+    preferences.save(value: true, for: .hasRunAppBefore)
 }
 
 /// Registers every `Barlow-*.ttf` font shipped in the bundle with CoreText so

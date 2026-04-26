@@ -82,14 +82,21 @@ final class UnlockAppWithPincodeViewModel: BaseViewModel<
                 .eraseToAnyPublisher()
         }
 
-        let unlockUsingBiometricsTrigger = input.fromController.viewDidAppear
+        // `.prefix(1)` so the biometric prompt fires only on the *first*
+        // viewDidAppear — without it, dismissing the prompt and returning to
+        // the screen (rotation, app-switcher, etc.) re-triggers it.
+        let unlockUsingBiometricsTrigger = input.fromController.viewDidAppear.prefix(1)
 
         [
-            // Either path emits a void pulse to `.unlockApp`. The biometric
-            // prompt fires on viewDidAppear (not willAppear) so the system
-            // alert isn't competing with our presentation animation.
+            // `.first()` so only the *first* unlock signal is honoured — without
+            // it, biometrics succeeding while the user was mid-pincode entry
+            // would fire `userDid(.unlockApp)` twice and double-trigger the
+            // navigation transition. The biometric prompt fires on
+            // viewDidAppear (not willAppear) so the system alert isn't
+            // competing with our presentation animation.
             pincodeValidationValue.filter(\.isValid).mapToVoid()
                 .merge(with: unlockUsingBiometricsTrigger.flatMapLatest { unlockUsingBiometrics() })
+                .first()
                 .sinkOnMain { userDid(.unlockApp) },
         ].forEach { $0.store(in: &cancellables) }
 
