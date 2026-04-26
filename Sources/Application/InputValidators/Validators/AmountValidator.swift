@@ -24,9 +24,16 @@
 
 import Zesame
 
+/// Validates an amount string in a specific Zilliqa `Unit` (Zil/Li/Qa).
+///
+/// Generic over the target `Amount` type so it works for `Amount`, `Zil`,
+/// `Li`, `Qa`, and `GasPrice` alike — each call site picks the strongest
+/// type the use case will eventually receive.
 struct AmountValidator<Amount: ExpressibleByAmount>: InputValidator {
     typealias Error = AmountError<Amount>
 
+    /// Delegates to `AmountFromText.init(string:unit:)` and translates any
+    /// `Zesame.AmountError<*>` into our user-facing `AmountError`.
     func validate(
         input: (amountString: String, unit: Zesame.Unit)
     ) -> Validation<AmountFromText<Amount>, Error> {
@@ -39,12 +46,23 @@ struct AmountValidator<Amount: ExpressibleByAmount>: InputValidator {
     }
 }
 
+/// User-facing amount error generic over the unit the message should be rendered in.
+///
+/// `ConvertTo.unit` controls how `tooLarge`/`tooSmall` numbers are formatted in
+/// the message — the parser may have failed in `Qa` but if the field shows `Zil`,
+/// we want to show "max 1.0 ZIL" not "max 1_000_000_000_000 QA".
 enum AmountError<ConvertTo: ExpressibleByAmount>: Swift.Error, InputError {
+    /// Amount exceeds the per-unit upper bound.
     case tooLarge(max: String, unit: Unit)
+    /// Amount falls below the per-unit lower bound.
     case tooSmall(min: String, unit: Unit, showUnit: Bool = true)
+    /// String didn't parse as a number at all.
     case nonNumericString
+    /// Catch-all wrapper for unexpected errors.
     case other(Swift.Error)
 
+    /// Reflective initializer that tries each typed `Zesame.AmountError<*>`
+    /// in turn and falls back to `.other` if none match.
     init(error: Swift.Error) {
         if let zilError = error as? Zesame.AmountError<Zil> {
             self.init(zesameError: zilError)
@@ -61,6 +79,9 @@ enum AmountError<ConvertTo: ExpressibleByAmount>: Swift.Error, InputError {
         }
     }
 
+    /// Translation for bounded amount types (`Zil`, `Li`, `Qa`, `GasPrice`).
+    /// The bound values are converted to `ConvertTo.unit` so the message
+    /// renders in whatever unit the field is currently displaying.
     init(zesameError: Zesame.AmountError<some ExpressibleByAmount & Upperbound & Lowerbound>) {
         switch zesameError {
         case .nonNumericString, .endsWithDecimalSeparator, .moreThanOneDecimalSeparator, .tooManyDecimalPlaces,
@@ -74,6 +95,8 @@ enum AmountError<ConvertTo: ExpressibleByAmount>: Swift.Error, InputError {
         }
     }
 
+    /// Translation for unbounded amount types (`Amount`). `tooLarge`/`tooSmall`
+    /// shouldn't reach this overload; if they do it indicates a logic bug.
     init(zesameError: Zesame.AmountError<some ExpressibleByAmount & Unbound>) {
         switch zesameError {
         case .nonNumericString, .endsWithDecimalSeparator, .moreThanOneDecimalSeparator, .tooManyDecimalPlaces,
@@ -83,6 +106,7 @@ enum AmountError<ConvertTo: ExpressibleByAmount>: Swift.Error, InputError {
         }
     }
 
+    /// Localized error string rendered on the Send/Gas screens.
     var errorMessage: String {
         switch self {
         case let .tooLarge(

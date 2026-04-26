@@ -27,6 +27,8 @@ import Foundation
 // MARK: - ValidationConvertible
 
 extension Validation: ValidationConvertible {
+    /// Erases the typed `Value`/`Error` to the view-friendly `AnyValidation`.
+    /// Loses the typed payload but preserves the user-facing error/remark message.
     var validation: AnyValidation {
         switch self {
         case let .invalid(invalid):

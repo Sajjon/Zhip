@@ -24,11 +24,18 @@
 
 import Zesame
 
+/// Validates a Zilliqa address string (bech32 or hex), producing a typed `Address`.
+///
+/// Used on the Send screen and the address-import screens. Falls back to the
+/// `Zesame.Address(string:)` initializer for the heavy lifting and translates
+/// the library's error vocabulary into our user-facing `Error` enum.
 struct AddressValidator: InputValidator {
     typealias Input = String
     typealias Output = Address
 //    typealias Error = Address.Error
 
+    /// Tries to construct an `Address`; on failure, maps the `Zesame.Address.Error`
+    /// to our local `Error` so the floating-label field can render a localized message.
     func validate(input: Input) -> Validation<Output, Error> {
         do {
             let address = try Address(string: input)
@@ -43,14 +50,23 @@ struct AddressValidator: InputValidator {
 }
 
 extension AddressValidator {
+    /// User-facing error enum. Each case maps to a localized string in
+    /// `Errors.strings` via `errorMessage` below.
     enum Error: InputError {
+        /// Length mismatch — address is too short or too long.
         case incorrectLength(expectedLength: Int, butGot: Int)
+        /// Address parses but its checksum digit doesn't validate.
         case notChecksummed
+        /// Input is neither a valid bech32 nor a valid hex string.
         case noBech32NorHexstring
     }
 }
 
 extension AddressValidator.Error {
+    /// Translates `Zesame.Address.Error` to our user-facing error enum.
+    /// Several `Zesame` cases collapse to `noBech32NorHexstring` because the
+    /// distinction between "bad bech32 prefix" and "non-hex chars" is not
+    /// useful for the user.
     init(fromAddressError: Zesame.Address.Error) {
         switch fromAddressError {
         case let .incorrectLength(expected, _, butGot): self = .incorrectLength(
@@ -67,6 +83,7 @@ extension AddressValidator.Error {
         }
     }
 
+    /// Localized error string rendered on the Send screen's address field.
     var errorMessage: String {
         switch self {
         case .noBech32NorHexstring: String(localized: .Errors.addressInvalid)

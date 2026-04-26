@@ -25,17 +25,27 @@
 import Foundation
 import Zesame
 
+/// Either a fully-parsed `Amount` (success) or the raw string the user is in
+/// the middle of typing (mid-edit, e.g. "12.").
+///
+/// Storing the raw string for the "user just typed a decimal separator" case
+/// lets the view continue showing what they typed without rolling back the
+/// caret or losing the trailing separator.
 enum AmountFromText<Amount: ExpressibleByAmount> {
+    /// Successful parse with the resolved unit.
     case amount(Amount, in: Zesame.Unit)
+    /// In-progress text that's not yet a valid number (e.g. "12.").
     case string(String)
 }
 
 extension AmountFromText {
+    /// The parsed `Amount` if available, else `nil`.
     var amount: Amount? {
         guard case let .amount(amount, _) = self else { return nil }
         return amount
     }
 
+    /// The raw in-progress string if available, else `nil`.
     var string: String? {
         guard case let .string(text) = self else { return nil }
         return text
@@ -43,6 +53,12 @@ extension AmountFromText {
 }
 
 extension AmountFromText {
+    /// Parses `amountString` in `unit`, normalizing the decimal separator to
+    /// the current locale (so "1,5" entered on a Swedish keyboard works just
+    /// like "1.5" entered on a US keyboard).
+    ///
+    /// Special-cases `endsWithDecimalSeparator` to keep the raw string visible
+    /// rather than blowing up while the user is mid-typing.
     init(string amountString: String, unit: Zesame.Unit) throws {
         let correctSeparator = Locale.current.decimalSeparatorForSure
         let wrongSeparator = correctSeparator == "." ? "," : "."
@@ -62,6 +78,8 @@ extension AmountFromText {
             }
             self = .amount(amount, in: unit)
         } catch {
+            // Special-case: the user just typed "1." — not a valid number yet,
+            // but we want to preserve their text so the caret stays put.
             if let zilAmountError = error as? Zesame.AmountError<Amount>, zilAmountError == .endsWithDecimalSeparator {
                 self = .string(incorrectDecimalSeparatorRemoved)
             } else if let zilError = error as? Zesame.AmountError<Zil>, zilError == .endsWithDecimalSeparator {

@@ -25,17 +25,28 @@
 import Foundation
 import Zesame
 
+/// Validates a hex-encoded Zilliqa private-key string, producing a `PrivateKey`.
+///
+/// Used on the "restore wallet from private key" screen. Catches the obvious
+/// length errors before doing the cryptographic check (which is more expensive).
 struct PrivateKeyValidator: InputValidator {
+    /// Zilliqa private keys are 32 bytes = 64 hex chars.
     static let expectedLengthOfPrivateKey = 64
     typealias Input = String
     typealias Output = PrivateKey
 
+    /// Validation failures surfaced to the user.
     enum Error: InputError {
+        /// Fewer than 64 hex chars submitted.
         case tooShort(lengthKeySubmitted: Int)
+        /// More than 64 hex chars submitted.
         case tooLong(lengthKeySubmitted: Int)
+        /// Right length, but `PrivateKey(rawRepresentation:)` rejected it.
         case badPrivateKey
     }
 
+    /// Length-checks the hex string and then asks `PrivateKey` to parse it.
+    /// Length errors short-circuit before the more expensive crypto check.
     func validate(input: Input) -> Validation<Output, Error> {
         func validate(privateKeyHex: String) throws -> PrivateKey {
             let lengthKeySubmitted = privateKeyHex.count
@@ -68,6 +79,8 @@ struct PrivateKeyValidator: InputValidator {
 }
 
 extension PrivateKeyValidator.Error {
+    /// Localized message — the length cases include "missing N chars" / "excess N chars"
+    /// hints to help the user spot a copy-paste truncation/duplication.
     var errorMessage: String {
         let expectedLength = PrivateKeyValidator.expectedLengthOfPrivateKey
 

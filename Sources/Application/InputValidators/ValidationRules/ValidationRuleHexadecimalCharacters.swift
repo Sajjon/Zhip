@@ -24,10 +24,20 @@
 
 import Foundation
 
+/// Rule that accepts a string only if every character is a hex digit
+/// (`0-9`, `a-f`, `A-F`) or part of a leading `0x` prefix.
+///
+/// Used by the `PrivateKey` and `Address` validators to reject obviously
+/// non-hexadecimal input before the deeper crypto validation kicks in.
 public struct ValidationRuleHexadecimalCharacters: ValidationRule {
     public typealias InputType = String
+    /// Error to surface when the input contains a non-hex character.
     public var error: ValidationError
+    /// Underlying closure-based rule that captures the character-set check.
     private let nestedRule: ValidationRuleCondition<InputType>
+    /// Builds the rule with a configurable `error` so each call site can
+    /// surface its own typed error (e.g. `Address.Error.notHex` vs
+    /// `PrivateKey.Error.notHex`).
     public init(error: ValidationError) {
         nestedRule = ValidationRuleCondition<InputType>(error: error) {
             guard let inputString = $0 else { return false }
@@ -36,6 +46,7 @@ public struct ValidationRuleHexadecimalCharacters: ValidationRule {
         self.error = error
     }
 
+    /// Forwards to the captured nested rule.
     public func validate(input: InputType?) -> Bool {
         nestedRule.validate(input: input)
     }
