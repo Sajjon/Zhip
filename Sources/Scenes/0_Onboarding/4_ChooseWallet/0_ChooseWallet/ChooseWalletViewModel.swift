@@ -26,18 +26,25 @@ import Combine
 
 // MARK: - ChooseWalletUserAction
 
+/// Outcomes the chooser screen surfaces to `ChooseWalletCoordinator`.
 enum ChooseWalletUserAction {
+    /// User tapped "Create new wallet" — coordinator presents the create flow.
     case createNewWallet
+    /// User tapped "Restore wallet" — coordinator presents the restore flow.
     case restoreWallet
 }
 
 // MARK: - ChooseWalletViewModel
 
+/// View model for the chooser screen. The screen has no UI state to bind —
+/// `Output` is empty — so `transform(input:)` only wires the two button taps
+/// to navigation steps.
 final class ChooseWalletViewModel: BaseViewModel<
     ChooseWalletUserAction,
     ChooseWalletViewModel.InputFromView,
     ChooseWalletViewModel.Output
 > {
+    /// Wires both button taps directly to navigator steps and returns an empty `Output`.
     override func transform(input: Input) -> Output {
         func userIntends(to intention: NavigationStep) {
             navigator.next(intention)
@@ -55,10 +62,14 @@ final class ChooseWalletViewModel: BaseViewModel<
 }
 
 extension ChooseWalletViewModel {
+    /// User-event publishers the view-model consumes.
     struct InputFromView {
+        /// Fires when the user taps "Create new wallet".
         let createNewWalletTrigger: AnyPublisher<Void, Never>
+        /// Fires when the user taps "Restore wallet".
         let restoreWalletTrigger: AnyPublisher<Void, Never>
     }
 
+    /// No outputs — the screen is entirely static.
     struct Output {}
 }

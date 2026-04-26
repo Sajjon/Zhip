@@ -24,13 +24,21 @@
 
 import UIKit
 
+/// "Create new vs restore existing" wallet chooser. Mirrors `WelcomeView`'s
+/// layout but with two buttons (primary/secondary) and a different parallax background.
 final class ChooseWalletView: UIView {
+    /// Container hosting the three-layer parallax planet illustration.
     private lazy var motionEffectPlanetsImageView = UIView()
+    /// Hero headline label.
     private lazy var impressionLabel = UILabel()
+    /// Body copy below the hero.
     private lazy var subtitleLabel = UILabel()
+    /// Primary CTA — emit `.createNewWallet`.
     private lazy var createNewWalletButton = UIButton()
+    /// Secondary CTA — emit `.restoreWallet`.
     private lazy var restoreWalletButton = UIButton()
 
+    /// Bottom-aligned vertical stack with a spacer pushing content down.
     private lazy var stackView = UIStackView(arrangedSubviews: [
         .spacer,
         impressionLabel,
@@ -39,11 +47,13 @@ final class ChooseWalletView: UIView {
         restoreWalletButton,
     ])
 
+    /// Designated init — wires constraints + styling via `setup()`.
     init() {
         super.init(frame: .zero)
         setup()
     }
 
+    /// Storyboards/xibs aren't used in this app.
     required init?(coder _: NSCoder) {
         interfaceBuilderSucks
     }
@@ -51,6 +61,7 @@ final class ChooseWalletView: UIView {
 
 extension ChooseWalletView: ViewModelled {
     typealias ViewModel = ChooseWalletViewModel
+    /// Surfaces both button taps so the view-model can route them to navigation steps.
     var inputFromView: InputFromView {
         InputFromView(
             createNewWalletTrigger: createNewWalletButton.tapPublisher,
@@ -60,6 +71,7 @@ extension ChooseWalletView: ViewModelled {
 }
 
 private extension ChooseWalletView {
+    /// Builds the layout — same vertical-stack-on-parallax recipe as Welcome.
     func setup() {
         stackView.withStyle(.default) {
             $0.spacing(0)
@@ -91,6 +103,7 @@ private extension ChooseWalletView {
         }
     }
 
+    /// Wires the three-layer planet parallax (planets near, stars middle, abyss far).
     func setupPlanetsImageWithMotionEffect() {
         motionEffectPlanetsImageView.backgroundColor = .clear
         motionEffectPlanetsImageView.translatesAutoresizingMaskIntoConstraints = false
@@ -104,6 +117,10 @@ private extension ChooseWalletView {
 }
 
 extension UIImage {
+    /// Returns a vertically-flipped copy of the receiver. Used by parallax
+    /// helpers that want to mirror an asset rather than ship two image files.
+    /// Crashes (`incorrectImplementation`) if the underlying `cgImage` is
+    /// missing or the bitmap context fails to produce an output image.
     func withVerticallyFlippedOrientation(yOffset: CGFloat = 0) -> UIImage {
         guard let cgImage else {
             incorrectImplementation("should be able to read cgImage")

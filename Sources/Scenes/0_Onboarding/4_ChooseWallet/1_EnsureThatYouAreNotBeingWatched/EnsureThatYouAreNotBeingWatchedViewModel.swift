@@ -27,17 +27,24 @@ import Foundation
 
 // MARK: - User action and navigation steps
 
+/// Outcomes the privacy-gate screen surfaces to its parent coordinator.
 enum EnsureThatYouAreNotBeingWatchedUserAction {
-    case /* user did */ understand, cancel
+    /// User tapped "I understand" — proceed to wallet creation.
+    case understand
+    /// User tapped the cancel "X" — abort and return to chooser.
+    case cancel
 }
 
 // MARK: - EnsureThatYouAreNotBeingWatchedViewModel
 
+/// Wires the cancel bar-button and the understand CTA to navigation steps.
+/// No `Output` — the screen is entirely static.
 final class EnsureThatYouAreNotBeingWatchedViewModel: BaseViewModel<
     EnsureThatYouAreNotBeingWatchedUserAction,
     EnsureThatYouAreNotBeingWatchedViewModel.InputFromView,
     EnsureThatYouAreNotBeingWatchedViewModel.Output
 > {
+    /// Wires both inputs (cancel bar-button + understand CTA) directly to navigator steps.
     override func transform(input: Input) -> Output {
         func userDid(_ userAction: NavigationStep) {
             navigator.next(userAction)
@@ -58,9 +65,12 @@ final class EnsureThatYouAreNotBeingWatchedViewModel: BaseViewModel<
 }
 
 extension EnsureThatYouAreNotBeingWatchedViewModel {
+    /// User-event publishers the view-model consumes.
     struct InputFromView {
+        /// Fires when the user taps "I understand".
         let understandTrigger: AnyPublisher<Void, Never>
     }
 
+    /// No outputs — entirely static screen.
     struct Output {}
 }

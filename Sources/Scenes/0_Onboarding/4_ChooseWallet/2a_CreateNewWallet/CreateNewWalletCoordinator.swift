@@ -26,12 +26,27 @@ import Combine
 import UIKit
 import Zesame
 
+/// Outcomes the create-new-wallet sub-flow surfaces to its parent
+/// (`ChooseWalletCoordinator`).
 enum CreateNewWalletCoordinatorNavigationStep {
-    case create(wallet: Wallet), cancel
+    /// User completed all three steps (privacy gate → password → backup) and
+    /// produced a `Wallet` ready to persist.
+    case create(wallet: Wallet)
+    /// User cancelled at some point during the flow.
+    case cancel
 }
 
+/// Coordinator owning the linear "create a brand-new wallet" sub-flow:
+///
+/// 1. `EnsureThatYouAreNotBeingWatched` — privacy gate.
+/// 2. `CreateNewWallet` — password entry + key derivation.
+/// 3. `BackupWalletCoordinator` — show keystore + private key for backup.
+///
+/// Cancel at any step short-circuits to `.cancel`. A successful backup
+/// completion advances to `.create(wallet:)`.
 final class CreateNewWalletCoordinator: BaseCoordinator<CreateNewWalletCoordinatorNavigationStep> {
 
+    /// Begins at step 1 — the privacy gate.
     override func start(didStart _: Completion? = nil) {
         toEnsureThatYouAreNotBeingWatched()
     }
@@ -40,6 +55,8 @@ final class CreateNewWalletCoordinator: BaseCoordinator<CreateNewWalletCoordinat
 // MARK: Private
 
 private extension CreateNewWalletCoordinator {
+    /// Step 1 — privacy gate. `.understand` advances to password entry,
+    /// `.cancel` aborts the whole sub-flow.
     func toEnsureThatYouAreNotBeingWatched() {
         let viewModel = EnsureThatYouAreNotBeingWatchedViewModel()
         push(scene: EnsureThatYouAreNotBeingWatched.self, viewModel: viewModel) { [unowned self] userDid in
@@ -50,6 +67,8 @@ private extension CreateNewWalletCoordinator {
         }
     }
 
+    /// Step 2 — password entry + keystore derivation. `.createWallet(wallet)`
+    /// hands the freshly-derived wallet to the backup sub-coordinator.
     func toCreateWallet() {
         let viewModel = CreateNewWalletViewModel()
 
@@ -61,6 +80,10 @@ private extension CreateNewWalletCoordinator {
         }
     }
 
+    /// Step 3 — hands off to `BackupWalletCoordinator` so the user can
+    /// eyeball/save their keystore and private key. Wraps the wallet in a
+    /// `Just` publisher because the backup coordinator's API is reactive
+    /// (it can also receive a wallet that's still being decrypted).
     func toBackupWallet(wallet: Wallet) {
         start(
             coordinator: BackupWalletCoordinator(
@@ -75,10 +98,12 @@ private extension CreateNewWalletCoordinator {
         }
     }
 
+    /// Bubble `.cancel` to the parent so it can dismiss the modal.
     func cancel() {
         navigator.next(.cancel)
     }
 
+    /// Bubble the freshly-created wallet up to the parent for persistence.
     func toMain(wallet: Wallet) {
         navigator.next(.create(wallet: wallet))
     }

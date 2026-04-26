@@ -24,8 +24,13 @@
 
 import UIKit
 
+/// `SceneController` glue for the privacy-warning gate that appears between
+/// "Create new wallet" and the actual wallet-generation step. Cancellable so
+/// the user can back out without committing to a fresh wallet.
 final class EnsureThatYouAreNotBeingWatched: Scene<EnsureThatYouAreNotBeingWatchedView> {}
 
+/// Provides the cancel "X" left bar-button — the navigation back-arrow is
+/// suppressed in this flow because tapping it could leak partial state.
 extension EnsureThatYouAreNotBeingWatched: LeftBarButtonMaking {
     static let makeLeft: BarButton = .cancel
 }

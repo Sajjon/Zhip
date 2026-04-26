@@ -24,12 +24,19 @@
 
 import UIKit
 
+/// "Make sure you're alone" privacy gate shown right before the user is asked
+/// to commit to a fresh wallet password. Has a single CTA — "I understand".
 final class EnsureThatYouAreNotBeingWatchedView: ScrollableStackViewOwner {
+    /// Hero shield illustration.
     private lazy var imageView = UIImageView()
+    /// "Security" header.
     private lazy var headerLabel = UILabel()
+    /// Body copy explaining "make sure no one is looking over your shoulder".
     private lazy var makeSureAloneLabel = UILabel()
+    /// "I understand" CTA — only input on the screen.
     private lazy var understandButton = UIButton()
 
+    /// Vertical layout: hero, header, body, spacer pushing CTA to the bottom.
     lazy var stackViewStyle: UIStackView.Style = [
         imageView,
         headerLabel,
@@ -38,6 +45,7 @@ final class EnsureThatYouAreNotBeingWatchedView: ScrollableStackViewOwner {
         understandButton,
     ]
 
+    /// Override-hook from `ScrollableStackViewOwner` — wires styling.
     override func setup() {
         setupSubviews()
     }
@@ -46,6 +54,7 @@ final class EnsureThatYouAreNotBeingWatchedView: ScrollableStackViewOwner {
 extension EnsureThatYouAreNotBeingWatchedView: ViewModelled {
     typealias ViewModel = EnsureThatYouAreNotBeingWatchedViewModel
 
+    /// Surfaces the single "understand" tap.
     var inputFromView: InputFromView {
         InputFromView(
             understandTrigger: understandButton.tapPublisher
@@ -54,6 +63,7 @@ extension EnsureThatYouAreNotBeingWatchedView: ViewModelled {
 }
 
 private extension EnsureThatYouAreNotBeingWatchedView {
+    /// Styling pass — sets the shield hero, header, body and primary CTA.
     func setupSubviews() {
         imageView.withStyle(.default) {
             $0.image(UIImage(resource: .shield))

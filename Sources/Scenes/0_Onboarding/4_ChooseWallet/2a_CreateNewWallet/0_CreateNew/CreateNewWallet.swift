@@ -24,12 +24,15 @@
 
 import Foundation
 
+/// `SceneController` glue for the password-entry step of wallet creation.
 final class CreateNewWallet: Scene<CreateNewWalletView> {}
 
+/// Localized navigation title — set by `SceneController` via `TitledScene`.
 extension CreateNewWallet {
     static let title = String(localized: .CreateNewWallet.title)
 }
 
+/// Provides the cancel "X" left bar-button.
 extension CreateNewWallet: LeftBarButtonMaking {
     static let makeLeft: BarButton = .cancel
 }

@@ -24,8 +24,11 @@
 
 import UIKit
 
+/// `SceneController` glue for the "create new vs restore existing" wallet
+/// chooser screen.
 final class ChooseWallet: Scene<ChooseWalletView> {}
 
+/// Full-bleed planet parallax background, so the navigation bar stays hidden.
 extension ChooseWallet: NavigationBarLayoutOwner {
     var navigationBarLayout: NavigationBarLayout {
         .hidden
