@@ -25,17 +25,30 @@
 import UIKit
 
 extension PincodeTextField {
+    /// The visible row of `DigitView` cells inside `PincodeTextField`.
+    /// Receives no user interaction itself — the underlying invisible
+    /// `UITextField` collects the keystrokes and forwards them via
+    /// `setPincode(_:)`.
     final class Presentation: UIStackView {
+        /// Filtered view of `arrangedSubviews` — drops the leading/trailing
+        /// spacer views, leaving only the digit cells. The assert protects
+        /// against accidental subview manipulation breaking the count.
         private var digitViews: [DigitView] {
             let digitViews = arrangedSubviews.compactMap { $0 as? DigitView }
             assert(digitViews.count == length)
             return digitViews
         }
 
+        /// Number of digit cells.
         let length: Int
+        /// Per-cell width.
         private let widthOfDigitView: CGFloat
+        /// Whether each cell renders the entered digit or a "•".
         private let isSecureTextEntry: Bool
 
+        /// Designated initialiser. Defaults `isSecureTextEntry` to `true`
+        /// since pincode entry should be secure unless a caller explicitly
+        /// opts out (e.g. for tests).
         init(length: Int, widthOfDigitView: CGFloat, isSecureTextEntry: Bool = true) {
             self.length = length
             self.widthOfDigitView = widthOfDigitView
@@ -44,16 +57,21 @@ extension PincodeTextField {
             setup()
         }
 
+        /// Storyboard init — unsupported, traps to enforce programmatic-only use.
         required init(coder _: NSCoder) {
             interfaceBuilderSucks
         }
 
+        /// Re-tints every digit cell's underline (validation feedback).
         func colorUnderlineViews(with color: UIColor) {
             for digitView in digitViews {
                 digitView.colorUnderlineView(with: color)
             }
         }
 
+        /// Updates the cells to reflect the supplied digit sequence. Clears
+        /// every cell first so that shorter sequences leave trailing cells
+        /// blank rather than carrying over the previous state.
         func setPincode(_ digits: [Digit]) {
             for digitView in digitViews {
                 digitView.updateWithNumberOrBullet(text: nil)
@@ -63,6 +81,9 @@ extension PincodeTextField {
             }
         }
 
+        /// Build the row: equal-centring horizontal stack with `length`
+        /// `DigitView` cells flanked by spacer views so the cells centre
+        /// regardless of the field's overall width.
         private func setup() {
             withStyle(.horizontalEqualCentering)
             [Void](repeating: (), count: length).map { DigitView(isSecureTextEntry: isSecureTextEntry) }.forEach {

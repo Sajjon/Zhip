@@ -24,6 +24,12 @@
 
 import Foundation
 
+/// Reflects `enumToMirror` and returns the name of the active case
+/// (e.g. `.foo(42)` → `"foo"`), falling back to the case's string value if
+/// no label is present, and `String(describing:)` for cases without payloads.
+///
+/// Used by analytics / logging code that wants to emit a stable identifier for
+/// an enum case without enumerating every variant by hand.
 func nameOf(enumCase enumToMirror: Any) -> String? {
     guard isEnum(type: enumToMirror) else { return nil }
     let mirror = Mirror(reflecting: enumToMirror)
@@ -34,6 +40,7 @@ func nameOf(enumCase enumToMirror: Any) -> String? {
     }
 }
 
+/// `true` iff `type` is an enum value (i.e. its `Mirror.displayStyle` is `.enum`).
 func isEnum(type: Any) -> Bool {
     let mirror = Mirror(reflecting: type)
     guard

@@ -25,6 +25,7 @@
 import Foundation
 
 extension Validation: CustomStringConvertible {
+    /// Debug-friendly description used in test failures and `po self` output.
     var description: String {
         switch self {
         case let .valid(_, remark):

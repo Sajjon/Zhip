@@ -29,25 +29,55 @@ import Zesame
 
 /// Default implementation of `WalletStorageUseCase` — thin wrapper over
 /// `SecurePersistence` for keychain-backed wallet reads and writes.
+///
+/// Caches the wallet in a `CurrentValueSubject` so subscribers don't pay
+/// Keychain I/O + JSON-decode on every subscription. The subject is the
+/// single source of truth for the reactive `wallet` publisher; `save` and
+/// `deleteWallet` push through it.
 final class DefaultWalletStorageUseCase: WalletStorageUseCase {
 
+    /// Keychain-backed secure store. Resolved via Factory so tests can register
+    /// an in-memory `SecurePersistence` to keep the suite hermetic.
     @Injected(\.securePersistence) private var securePersistence: SecurePersistence
 
+    /// In-memory cache for the persisted wallet. Lazily seeded from the
+    /// Keychain on first access (one read per app session), then driven
+    /// entirely by writes — `save` and `deleteWallet` push the new value
+    /// through this subject.
+    private lazy var walletSubject: CurrentValueSubject<Wallet?, Never> =
+        CurrentValueSubject(securePersistence.wallet)
+
+    /// No-op designated initializer — all dependencies are resolved through `@Injected`.
     init() {}
 
+    /// Persists `wallet` to the secure store, replacing any previously saved
+    /// wallet, and updates the cached subject so subscribers see the new value.
     func save(wallet: Wallet) {
         securePersistence.save(wallet: wallet)
+        walletSubject.send(wallet)
     }
 
+    /// Removes the persisted wallet (if any) and notifies subscribers.
     func deleteWallet() {
         securePersistence.deleteWallet()
+        walletSubject.send(nil)
     }
 
+    /// Returns the cached wallet — synchronous accessor used by sites that
+    /// need the value immediately and don't want to subscribe.
     func loadWallet() -> Wallet? {
-        securePersistence.wallet
+        walletSubject.value
     }
 
+    /// `true` iff a wallet is currently cached.
     var hasConfiguredWallet: Bool {
-        securePersistence.hasConfiguredWallet
+        walletSubject.value != nil
+    }
+
+    /// Reactive cache: emits the current wallet immediately on subscribe and
+    /// re-emits whenever `save` or `deleteWallet` is called. Single Keychain
+    /// read at first access; everything else is in-memory.
+    var wallet: AnyPublisher<Wallet?, Never> {
+        walletSubject.eraseToAnyPublisher()
     }
 }

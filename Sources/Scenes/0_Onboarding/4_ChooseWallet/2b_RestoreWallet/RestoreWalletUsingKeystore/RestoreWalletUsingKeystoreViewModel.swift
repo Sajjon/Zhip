@@ -25,13 +25,22 @@
 import Combine
 import Zesame
 
+/// Looser password mode for keystore restore — the keystore is already
+/// encrypted with whatever the user picked at creation time, so we don't enforce
+/// the strict new-wallet minimum length here.
 private let encryptionPasswordMode: WalletEncryptionPassword.Mode = .restoreKeystore
 
 // MARK: - RestoreWalletViewModel
 
+/// Reactive view-model for the keystore-restore sub-view. Not a `BaseViewModel`
+/// because it's not a top-level scene — instead it exposes its `Output` directly
+/// so the parent (`RestoreWalletView`) can re-export it.
 final class RestoreWalletUsingKeystoreViewModel {
+    /// Reactive bindings the embedding view installs.
     let output: Output
 
+    /// Wires keystore + password publishers into validation streams + a final
+    /// `KeyRestoration?` payload for the parent screen.
     init(inputFromView: InputFromView) {
         // MARK: - Validate input
 
@@ -90,31 +99,51 @@ final class RestoreWalletUsingKeystoreViewModel {
 }
 
 extension RestoreWalletUsingKeystoreViewModel {
+    /// User-event publishers the view-model consumes.
     struct InputFromView {
+        /// Fires the first time the keystore textview becomes the first responder
+        /// (used to clear the placeholder text).
         let keystoreDidBeginEditing: AnyPublisher<Void, Never>
+        /// `true` while the keystore textview is the first responder.
         let isEditingKeystore: AnyPublisher<Bool, Never>
+        /// The current keystore JSON text.
         let keystoreText: AnyPublisher<String, Never>
+        /// The current encryption password text.
         let encryptionPassword: AnyPublisher<String, Never>
+        /// `true` while the password field is the first responder.
         let isEditingEncryptionPassword: AnyPublisher<Bool, Never>
     }
 
+    /// Reactive bindings the embedding view installs.
     struct Output {
+        /// Drives the keystore textview's placeholder text (cleared on first edit).
         let keystoreTextFieldPlaceholder: AnyPublisher<String, Never>
+        /// Drives the password field's placeholder (includes the min-length hint).
         let encryptionPasswordPlaceholder: AnyPublisher<String, Never>
+        /// Drives the keystore textview's border color via `validationBorderBinder`.
         let keyRestorationValidation: AnyPublisher<AnyValidation, Never>
+        /// Drives the password field's `validationBinder`.
         let encryptionPasswordValidation: AnyPublisher<AnyValidation, Never>
+        /// `KeyRestoration.keystore(...)` payload, or `nil` when either field is invalid.
+        /// Re-exported by the parent screen for the restore CTA.
         let keyRestoration: AnyPublisher<KeyRestoration?, Never>
     }
 
+    /// Composes a `KeystoreValidator` with an `EncryptionPasswordValidator`
+    /// so the view-model can validate both fields with one type.
     struct InputValidator {
         private let encryptionPasswordValidator = EncryptionPasswordValidator(mode: encryptionPasswordMode)
 
         private let keystoreValidator = KeystoreValidator()
 
+        /// Validates the pasted keystore JSON.
         func validateKeystore(_ keystore: String) -> KeystoreValidator.ValidationResult {
             keystoreValidator.validate(input: keystore)
         }
 
+        /// Validates the password against the looser keystore-restore policy.
+        /// Same string for both `password` and `confirmingPassword` since
+        /// the keystore-restore screen has only one password field.
         func validateEncryptionPassword(_ password: String) -> EncryptionPasswordValidator.ValidationResult {
             encryptionPasswordValidator.validate(input: (password: password, confirmingPassword: password))
         }

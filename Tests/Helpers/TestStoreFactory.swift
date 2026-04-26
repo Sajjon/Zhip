@@ -36,12 +36,12 @@ enum TestStoreFactory {
 
     /// Builds an isolated `SecurePersistence` backed by an empty in-memory store.
     ///
-    /// The in-memory store is fully isolated, but the `KeyValueStore.wallet` getter
-    /// hard-references `Preferences.default` (`UserDefaults.standard`) to detect a
-    /// first launch. To prevent that side-effect from deleting test data, this
-    /// helper pre-writes `hasRunAppBefore = true` to `UserDefaults.standard`.
+    /// (Previously this helper had to pre-seed `hasRunAppBefore` because the
+    /// `KeyValueStore.wallet` getter had a destructive reinstall-detect side
+    /// effect that hard-referenced `Preferences.default`. The reinstall logic
+    /// now lives in `wipeStaleKeychainOnReinstallIfNeeded()` in Bootstrap and
+    /// is only invoked from production launch — tests never trigger it.)
     static func makeSecurePersistence() -> SecurePersistence {
-        Preferences.default.save(value: true, for: .hasRunAppBefore)
-        return KeyValueStore(InMemoryKeyValueStore<KeychainKey>())
+        KeyValueStore(InMemoryKeyValueStore<KeychainKey>())
     }
 }

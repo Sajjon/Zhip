@@ -25,15 +25,28 @@
 import Foundation
 import Zesame
 
+/// Validates a pasted keystore JSON string, producing a typed `Keystore`.
+///
+/// Used on the "restore wallet from keystore" screen. Only validates the JSON
+/// shape — the password isn't checked here (that happens later in
+/// `RestoreWalletUseCase`); `incorrectPassword` is included to allow the
+/// downstream use case to surface the same error type via `ErrorTracker`.
 struct KeystoreValidator: InputValidator {
     typealias Input = String
     typealias Output = Keystore
 
+    /// Validation failures surfaced to the user.
     enum Error: InputError {
+        /// The input string couldn't be UTF-8 encoded into `Data` (impossible in practice).
         case stringToDataConversionFailed
+        /// JSON decoding failed — either malformed JSON or wrong shape for `Keystore`.
         case badJSON(Swift.DecodingError)
+        /// Password used to derive the keystore is wrong (surfaced from the
+        /// downstream use case via `ErrorTracker`, not produced here).
         case incorrectPassword
 
+        /// Adapts a `Zesame.Error.WalletImport` to our error type. Returns
+        /// `nil` for any case other than `.incorrectPassword`.
         init?(walletImportError: Zesame.Error.WalletImport) {
             switch walletImportError {
             case .incorrectPassword: self = .incorrectPassword
@@ -41,6 +54,8 @@ struct KeystoreValidator: InputValidator {
             }
         }
 
+        /// Reflective adapter for arbitrary `Swift.Error` values arriving from
+        /// the use case layer. Returns `nil` if the error isn't a wallet-import error.
         init?(error: Swift.Error) {
             guard
                 let zesameError = error as? Zesame.Error,
@@ -50,6 +65,8 @@ struct KeystoreValidator: InputValidator {
         }
     }
 
+    /// Parses `input` as `Keystore` JSON. Catches `DecodingError`s and surfaces
+    /// them as `.badJSON`; any other error indicates a logic bug.
     func validate(input: Input) -> Validation<Output, Error> {
         func validate() throws -> Keystore {
             guard let json = input.data(using: .utf8) else {
@@ -76,6 +93,10 @@ struct KeystoreValidator: InputValidator {
 }
 
 extension KeystoreValidator.Error {
+    /// Localized message rendered on the keystore-restore screen.
+    /// `badJSON` and `stringToDataConversionFailed` collapse to the same
+    /// "bad format" message because the user has nothing actionable to do
+    /// with the difference.
     var errorMessage: String {
         switch self {
         case .badJSON, .stringToDataConversionFailed: String(localized: .Errors.keystoreBadFormat)

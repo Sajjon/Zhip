@@ -25,11 +25,16 @@
 import Foundation
 
 extension Array {
+    /// Returns an array of `Void` values with the same count as `self`.
+    /// Mirrors the Combine `mapToVoid` operator at the collection level for
+    /// places that need a void-typed sequence purely as a "shape" argument.
     func mapToVoid() -> [Void] {
         map { _ in () }
     }
 }
 
+/// Single-element `+=` so call sites can write `array += element` without
+/// wrapping the right-hand side in a one-element array.
 func += <E>(array: inout [E], element: E) {
     array.append(element)
 }

@@ -25,16 +25,23 @@
 import Combine
 import UIKit
 
+/// Pincode-unlock screen — N-digit input + descriptive label. No CTA — entering
+/// a matching pincode auto-unlocks (the view-model emits `.unlockApp` as soon
+/// as the entered digits match).
 final class UnlockAppWithPincodeView: ScrollableStackViewOwner {
+    /// Custom N-digit pincode input view.
     private lazy var inputPincodeView = InputPincodeView()
+    /// Body description / instruction label.
     private lazy var descriptionLabel = UILabel()
 
+    /// Vertical layout: input, description, spacer.
     lazy var stackViewStyle: UIStackView.Style = [
         inputPincodeView,
         descriptionLabel,
         .spacer,
     ]
 
+    /// Override-hook from `ScrollableStackViewOwner` — wires styling.
     override func setup() {
         setupSubviews()
     }
@@ -43,6 +50,7 @@ final class UnlockAppWithPincodeView: ScrollableStackViewOwner {
 extension UnlockAppWithPincodeView: ViewModelled {
     typealias ViewModel = UnlockAppWithPincodeViewModel
 
+    /// Binds focus on appear + validation styling on the pincode input.
     func populate(with viewModel: UnlockAppWithPincodeViewModel.Output) -> [AnyCancellable] {
         [
             viewModel.inputBecomeFirstResponder --> inputPincodeView.becomeFirstResponderBinder,
@@ -50,6 +58,7 @@ extension UnlockAppWithPincodeView: ViewModelled {
         ]
     }
 
+    /// Surfaces only the pincode publisher.
     var inputFromView: InputFromView {
         InputFromView(
             pincode: inputPincodeView.pincodePublisher
@@ -58,6 +67,7 @@ extension UnlockAppWithPincodeView: ViewModelled {
 }
 
 private extension UnlockAppWithPincodeView {
+    /// Styling pass — center-aligned body label.
     func setupSubviews() {
         descriptionLabel.withStyle(.body) {
             $0.text(String(localized: .UnlockApp.label)).textAlignment(.center)

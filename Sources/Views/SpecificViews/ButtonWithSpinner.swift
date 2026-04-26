@@ -24,26 +24,42 @@
 
 import UIKit
 
+/// `UIButton` subclass that overlays a spinner during async work, surfaced to
+/// the reactive layer via `isLoadingBinder`. Used as the primary continue button
+/// across onboarding/restore/send flows.
 final class ButtonWithSpinner: UIButton {
+    /// Where the spinner sits relative to the button's text.
     enum SpinnerMode {
+        /// Hide the title and centre the spinner — used on full-width primary
+        /// buttons where the spinner is the only feedback during work.
         case replaceText
+        /// Keep the title visible and put the spinner on the leading edge —
+        /// used on inline buttons where the user needs the label context.
         case nextToText
     }
 
+    /// The overlay spinner. Lazy because not every button is animated, and
+    /// we shouldn't pay layer setup costs upfront.
     private lazy var spinnerView = SpinnerView()
+    /// Chosen spinner placement. Stored so `start`/`stopSpinning` can branch.
     private let mode: SpinnerMode
+    /// Designated initialiser. `mode` defaults to `.replaceText` since that's
+    /// the most common use across the app.
     init(mode: SpinnerMode = .replaceText) {
         self.mode = mode
         super.init(frame: .zero)
         setup()
     }
 
+    /// Storyboard init — unsupported, traps to enforce programmatic-only use.
     required init?(coder _: NSCoder) {
         interfaceBuilderSucks
     }
 }
 
 extension ButtonWithSpinner {
+    /// Begin the spinner. In `.replaceText` mode also zeroes the title's
+    /// opacity (rather than removing it, so the button keeps its sized layout).
     func startSpinning() {
         switch mode {
         case .replaceText:
@@ -55,6 +71,8 @@ extension ButtonWithSpinner {
         spinnerView.startSpinning()
     }
 
+    /// Stop the spinner and restore the title. `.replaceText` mode pushes the
+    /// (now-hidden) spinner back below the title for cleanliness.
     func stopSpinning() {
         switch mode {
         case .replaceText:
@@ -67,6 +85,9 @@ extension ButtonWithSpinner {
 }
 
 private extension ButtonWithSpinner {
+    /// Seats the spinner inside the button. `.replaceText` centres it (with a
+    /// small vertical inset so the rotation isn't clipped); `.nextToText`
+    /// pins it to the leading edge at a fixed 32×32.
     func setup() {
         addSubview(spinnerView)
         switch mode {
@@ -79,6 +100,7 @@ private extension ButtonWithSpinner {
         }
     }
 
+    /// Bool→start/stop bridge used by `isLoadingBinder`.
     func changeTo(isSpinning: Bool) {
         if isSpinning {
             startSpinning()
@@ -89,6 +111,8 @@ private extension ButtonWithSpinner {
 }
 
 extension ButtonWithSpinner {
+    /// Reactive sink: bind a `Bool` publisher (typically the ViewModel's
+    /// `ActivityIndicator.asPublisher()`) to drive the spinner.
     var isLoadingBinder: Binder<Bool> {
         Binder(self) {
             $0.changeTo(isSpinning: $1)

@@ -92,15 +92,18 @@ extension DefaultTransactionsUseCase: TransactionsUseCase {
     func sendTransaction(for payment: Payment, wallet: Wallet, encryptionPassword: String)
         -> AnyPublisher<TransactionResponse, Swift.Error> {
         zilliqaService.getNetworkFromAPI()
-            .flatMapLatest { [unowned self] networkResponse in
-                self.zilliqaService.sendTransaction(
+            .mapError { $0 as Swift.Error }
+            .flatMapLatest { [weak self] networkResponse -> AnyPublisher<TransactionResponse, Swift.Error> in
+                guard let self else { return Empty().eraseToAnyPublisher() }
+                return self.zilliqaService.sendTransaction(
                     for: payment,
                     keystore: wallet.keystore,
                     password: encryptionPassword,
                     network: networkResponse.network
                 )
+                .mapError { $0 as Swift.Error }
+                .eraseToAnyPublisher()
             }
-            .mapError { $0 as Swift.Error }
             .eraseToAnyPublisher()
     }
 

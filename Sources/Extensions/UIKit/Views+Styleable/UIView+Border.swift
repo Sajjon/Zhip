@@ -25,15 +25,24 @@
 import UIKit
 
 extension UIView {
+    /// Lightweight value type describing a border's appearance.
+    /// Stored as `CGColor` because `CALayer.borderColor` only accepts that —
+    /// converting eagerly avoids a re-conversion on every `addBorder` call.
     struct Border {
+        /// Border colour (already converted to `CGColor` for direct use on `CALayer`).
         let color: CGColor
+        /// Border width in points. Default 1.5pt matches the form-input style.
         let width: CGFloat
+        /// Designated initialiser — accepts a `UIColor` for ergonomic call sites
+        /// and converts internally.
         init(color: UIColor, width: CGFloat = 1.5) {
             self.color = color.cgColor
             self.width = width
         }
     }
 
+    /// Applies a border by writing through to `layer.borderWidth` /
+    /// `layer.borderColor`. Pure mutation — no animation.
     func addBorder(_ border: Border) {
         layer.borderWidth = border.width
         layer.borderColor = border.color
@@ -41,14 +50,21 @@ extension UIView {
 }
 
 extension UIView.Border {
+    /// Border style used when the field has no validation state to convey
+    /// (subtle, low-emphasis colour from `AnyValidation.Color.empty`).
     static var empty: UIView.Border {
         UIView.Border(color: AnyValidation.Color.empty)
     }
 
+    /// Border style for the error state — typically red, `AnyValidation.Color.error`.
     static var error: UIView.Border {
         UIView.Border(color: AnyValidation.Color.error)
     }
 
+    /// Maps an `AnyValidation` value to the appropriate border style — the
+    /// single source of truth for "what does this field look like right now?".
+    /// Distinguishes `.valid(nil)` (clean valid) from `.valid(remark)` (valid
+    /// with helpful note) so the two can carry different colours.
     static func fromValidation(_ validation: AnyValidation) -> UIView.Border {
         switch validation {
         case .empty: return .empty

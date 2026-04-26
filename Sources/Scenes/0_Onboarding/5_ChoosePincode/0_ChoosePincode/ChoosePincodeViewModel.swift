@@ -25,16 +25,23 @@
 import Combine
 import Foundation
 
+/// Outcomes of the pincode chooser screen.
 enum ChoosePincodeUserAction {
+    /// User completed a full pincode and tapped done — coordinator advances to confirm step.
     case chosePincode(Pincode)
+    /// User tapped the right-bar "Skip" button.
     case skip
 }
 
+/// View model for the pincode chooser. Forwards the entered pincode (or skip)
+/// to the parent coordinator and auto-focuses the input on appear.
 final class ChoosePincodeViewModel: BaseViewModel<
     ChoosePincodeUserAction,
     ChoosePincodeViewModel.InputFromView,
     ChoosePincodeViewModel.Output
 > {
+    /// Wires done-tap (with the latest entered pincode) and skip-tap; gates the
+    /// done button on pincode-completeness; auto-focuses the input on appear.
     override func transform(input: Input) -> Output {
         func userDid(_ step: NavigationStep) {
             navigator.next(step)
@@ -43,6 +50,7 @@ final class ChoosePincodeViewModel: BaseViewModel<
         let pincode = input.fromView.pincode
 
         [
+            // withLatestFrom + filterNil: only trigger when a complete pincode exists.
             input.fromView.doneTrigger.withLatestFrom(pincode.filterNil())
                 .sink { userDid(.chosePincode($0)) },
 
@@ -51,6 +59,7 @@ final class ChoosePincodeViewModel: BaseViewModel<
         ].forEach { $0.store(in: &cancellables) }
 
         return Output(
+            // Auto-focus on viewWillAppear so the numeric keyboard is up immediately.
             inputBecomeFirstResponder: input.fromController.viewWillAppear,
             isDoneButtonEnabled: pincode.map { $0 != nil }.eraseToAnyPublisher()
         )
@@ -58,13 +67,19 @@ final class ChoosePincodeViewModel: BaseViewModel<
 }
 
 extension ChoosePincodeViewModel {
+    /// User-event publishers the view-model consumes.
     struct InputFromView {
+        /// Latest pincode value — `nil` while the user hasn't entered all digits yet.
         let pincode: AnyPublisher<Pincode?, Never>
+        /// Fires when the user taps the done CTA.
         let doneTrigger: AnyPublisher<Void, Never>
     }
 
+    /// Reactive bindings the view installs.
     struct Output {
+        /// Pulses on `viewWillAppear` to put the pincode input in focus.
         let inputBecomeFirstResponder: AnyPublisher<Void, Never>
+        /// Drives `doneButton.isEnabledBinder` — true once a complete pincode is entered.
         let isDoneButtonEnabled: AnyPublisher<Bool, Never>
     }
 }

@@ -27,6 +27,8 @@ import Foundation
 // MARK: - Equatable
 
 extension AnyValidation: Equatable {
+    /// Field-by-field equality. `.valid` matches on the remark string;
+    /// `.errorMessage` matches on the message; `.empty` matches itself only.
     static func == (lhs: AnyValidation, rhs: AnyValidation) -> Bool {
         switch (lhs, rhs) {
         case let (.valid(lhsRemark), .valid(rhsRemark)): lhsRemark == rhsRemark

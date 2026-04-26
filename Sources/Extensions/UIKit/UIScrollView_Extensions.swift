@@ -25,6 +25,17 @@
 import UIKit
 
 extension UIScrollView {
+    /// `true` when the user has scrolled "near the bottom" of the content,
+    /// where "near" is within `precision` points (default 50).
+    ///
+    /// The three guards encode three distinct exclusions:
+    ///   1. `yOffset > 0` — they haven't started scrolling at all.
+    ///   2. `contentSize.height > precision` — content is shorter than the precision
+    ///      window (e.g. an empty list); concept of "near bottom" doesn't apply.
+    ///   3. The remaining distance below the visible viewport is < `precision`.
+    ///
+    /// Used by infinite-scroll / paginated table views to decide when to
+    /// pre-fetch the next page.
     func isContentOffsetNearBottom(precision: CGFloat = 50) -> Bool {
         let yOffset = contentOffset.y
         guard

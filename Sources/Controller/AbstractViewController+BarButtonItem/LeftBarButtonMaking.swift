@@ -24,21 +24,39 @@
 
 import Foundation
 
+/// Low-level opt-in for a screen that wants a custom left bar button.
+///
+/// Conformers supply a fully-formed `BarButtonContent` directly. Use this when
+/// you need a one-off design that doesn't fit the predefined `BarButton` cases.
+/// For the common case prefer `LeftBarButtonMaking`.
 protocol LeftBarButtonContentMaking {
+    /// The content to install as the left bar button on `viewDidLoad`.
     static var makeLeftContent: BarButtonContent { get }
 }
 
+/// High-level opt-in for a screen that wants a left bar button chosen from the
+/// app's `BarButton` library (skip / cancel / done).
+///
+/// Refines `LeftBarButtonContentMaking` and supplies `makeLeftContent` for free
+/// by reading `makeLeft.content` — so conformers only need to declare the case.
 protocol LeftBarButtonMaking: LeftBarButtonContentMaking {
+    /// The predefined `BarButton` case to install as the left button.
     static var makeLeft: BarButton { get }
 }
 
 extension LeftBarButtonMaking {
+    /// Default bridge: derive the content from the chosen predefined `BarButton`.
+    /// Allows any `LeftBarButtonMaking` conformer to satisfy
+    /// `LeftBarButtonContentMaking` without writing the bridge themselves.
     static var makeLeftContent: BarButtonContent {
         makeLeft.content
     }
 }
 
 extension LeftBarButtonContentMaking {
+    /// Convenience used by `SceneController.viewDidLoad()` to install the left
+    /// bar button on the supplied controller without exposing the static
+    /// indirection at every call site.
     func setLeftBarButton(for viewController: AbstractController) {
         viewController.setLeftBarButtonUsing(content: Self.makeLeftContent)
     }

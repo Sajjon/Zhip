@@ -18,14 +18,20 @@ import Combine
 import UIKit
 
 extension InputPincodeView {
+    /// Re-exports the field's `becomeFirstResponderBinder` so scenes can
+    /// reactively focus the input without reaching through `pinField`.
     var becomeFirstResponderBinder: Binder<Void> {
         pinField.becomeFirstResponderBinder
     }
 
+    /// Re-exports the field's pincode publisher. Emits the parsed `Pincode`
+    /// value (or `nil` while incomplete) on each digit change.
     var pincodePublisher: AnyPublisher<Pincode?, Never> {
         pinField.pincodePublisher
     }
 
+    /// Reactive sink that drives `validate(_:)` from a publisher of validation
+    /// results — the standard hook used by `populate(with:)` in pincode scenes.
     var validationBinder: Binder<AnyValidation> {
         Binder<AnyValidation>(self) {
             $0.validate($1)

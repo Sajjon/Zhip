@@ -26,6 +26,9 @@ import Foundation
 import Zesame
 
 extension CharacterSet {
+    /// Hex digits (`0-9`, `a-f`, `A-F`) plus the literal `0x` prefix characters.
+    /// Used to validate user-pasted hex addresses / private keys where the prefix
+    /// is optional.
     static var hexadecimalDigitsIncluding0x: CharacterSet {
         let afToAF = CharacterSet(charactersIn: "abcdefABCDEF")
         return CharacterSet.decimalDigits
@@ -33,6 +36,8 @@ extension CharacterSet {
             .union(CharacterSet(charactersIn: "0x"))
     }
 
+    /// Bech32 alphabet (both cases) plus the network's Bech32 prefix character(s).
+    /// Used to validate `zil1…` / `tzil1…` style addresses pasted by the user.
     static var bech32IncludingPrefix: CharacterSet {
         let lowercase = Zesame.Bech32.alphabetString.lowercased()
         let uppercase = Zesame.Bech32.alphabetString.uppercased()
@@ -42,10 +47,16 @@ extension CharacterSet {
             .union(CharacterSet(charactersIn: network.bech32Prefix))
     }
 
+    /// Permissive set accepting *either* a Bech32 address *or* a hex-style address —
+    /// the address-input field accepts both representations interchangeably.
     static var bech32OrHexIncludingPrefix: CharacterSet {
         CharacterSet.bech32IncludingPrefix.union(hexadecimalDigitsIncluding0x)
     }
 
+    /// Digits plus the user's locale-specific decimal separator and both the
+    /// dot and comma fallback. Used to validate amount inputs in a way that
+    /// accommodates `1,5` (DE/SE/...) and `1.5` (US/UK) without forcing the user
+    /// to switch keyboard.
     static var decimalWithSeparator: CharacterSet {
         CharacterSet.decimalDigits
             .union(CharacterSet(charactersIn: Locale.current.decimalSeparatorForSure))

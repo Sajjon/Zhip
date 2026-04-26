@@ -24,12 +24,16 @@
 
 import Foundation
 
+/// `SceneController` glue for the password-gate that decrypts the keystore
+/// and reveals the underlying private key + address.
 final class DecryptKeystoreToRevealKeyPair: Scene<DecryptKeystoreToRevealKeyPairView> {}
 
+/// Localized navigation title.
 extension DecryptKeystoreToRevealKeyPair {
     static let title = String(localized: .DecryptKeystore.title)
 }
 
+/// Right "Done" bar button — used as the dismiss action when entering from a modal.
 extension DecryptKeystoreToRevealKeyPair: RightBarButtonMaking {
     static let makeRight: BarButton = .done
 }

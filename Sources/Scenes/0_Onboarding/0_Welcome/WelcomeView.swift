@@ -24,12 +24,20 @@
 
 import UIKit
 
+/// First-run welcome screen: a parallax spaceship illustration with a
+/// "Get Started" CTA. The view owns the layout, the view model just bridges
+/// the button tap to the onboarding coordinator.
 final class WelcomeView: UIView {
+    /// Container hosting the three-layer parallax spaceship illustration.
     private lazy var motionEffectSpaceshipImageView = UIView()
+    /// Hero headline label ("Welcome").
     private lazy var impressionLabel = UILabel()
+    /// Body copy below the hero.
     private lazy var subtitleLabel = UILabel()
+    /// Primary CTA — its tap is the only user input on this screen.
     private lazy var startButton = UIButton()
 
+    /// Bottom-aligned vertical stack with a spacer pushing the content down.
     private lazy var stackView = UIStackView(arrangedSubviews: [
         .spacer,
         impressionLabel,
@@ -37,11 +45,13 @@ final class WelcomeView: UIView {
         startButton,
     ])
 
+    /// Designated init — wires constraints + styling via `setup()`.
     init() {
         super.init(frame: .zero)
         setup()
     }
 
+    /// Storyboards/xibs aren't used in this app.
     required init?(coder _: NSCoder) {
         interfaceBuilderSucks
     }
@@ -50,6 +60,7 @@ final class WelcomeView: UIView {
 extension WelcomeView: ViewModelled {
     typealias ViewModel = WelcomeViewModel
 
+    /// Single-input bridge: the start button's tap publisher.
     var inputFromView: InputFromView {
         InputFromView(
             startTrigger: startButton.tapPublisher
@@ -60,6 +71,9 @@ extension WelcomeView: ViewModelled {
 // MARK: - Private
 
 private extension WelcomeView {
+    /// Builds the layout: the spaceship motion-effect view sits behind a
+    /// vertical stack of (spacer, hero, body, CTA). Custom spacings tighten
+    /// the hero/body cluster and gap the body away from the button.
     func setup() {
         stackView.withStyle(.default) {
             $0.spacing(0)
@@ -70,6 +84,8 @@ private extension WelcomeView {
         addSubview(stackView)
         stackView.edgesToSuperview()
 
+        // Background spaceship sits behind the text stack so the motion
+        // parallax is visible through the (transparent) stackView.
         insertSubview(motionEffectSpaceshipImageView, belowSubview: stackView)
         motionEffectSpaceshipImageView.edgesToSuperview()
         setupSpaceshipImageWithMotionEffect()
@@ -87,6 +103,8 @@ private extension WelcomeView {
         }
     }
 
+    /// Wires the three-layer parallax (clouds far, spaceship middle, blast-off near)
+    /// driven by device motion via `UIInterpolatingMotionEffect`.
     func setupSpaceshipImageWithMotionEffect() {
         motionEffectSpaceshipImageView.backgroundColor = .clear
         motionEffectSpaceshipImageView.translatesAutoresizingMaskIntoConstraints = false

@@ -24,12 +24,16 @@
 
 import UIKit
 
+/// `SceneController` glue for the pincode chooser screen.
 final class ChoosePincode: Scene<ChoosePincodeView> {}
 
+/// Localized navigation title.
 extension ChoosePincode {
     static let title = String(localized: .ChoosePincode.title)
 }
 
+/// Right "Skip" bar-button + suppress the back arrow — this is an opt-in
+/// onboarding step but the only "back" path is via skip, not the nav stack.
 extension ChoosePincode: RightBarButtonMaking, BackButtonHiding {
     static let makeRight = BarButton.skip
 }

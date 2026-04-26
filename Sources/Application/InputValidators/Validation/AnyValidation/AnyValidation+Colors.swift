@@ -27,10 +27,16 @@ import UIKit
 // MARK: - Coloring
 
 extension AnyValidation {
+    /// Color tokens used by `FloatingLabelTextField.validationBinder` to tint
+    /// the floating-label text + underline based on the validation state.
     enum Color {
+        /// Plain "valid" — calm brand teal.
         static let validWithoutRemark: UIColor = .teal
+        /// Valid but worth flagging (e.g. weak-but-acceptable password) — mellow yellow.
         static let validWithRemark: UIColor = .mellowYellow
+        /// Error — alert red.
         static let error: UIColor = .bloodRed
+        /// Empty / untouched — neutral grey.
         static let empty: UIColor = .silverGrey
     }
 }

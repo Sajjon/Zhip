@@ -24,4 +24,6 @@
 
 import Foundation
 
+/// `SceneController` glue for the sign-transaction screen (step 3 of Send).
+/// Re-prompts for the wallet password and runs the actual signing + broadcast.
 final class SignTransaction: Scene<SignTransactionView> {}

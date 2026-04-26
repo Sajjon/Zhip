@@ -27,15 +27,22 @@ import UIKit
 
 // MARK: - SettingsView
 
+/// Settings hub — a `.grouped` table view backed by `SingleCellTypeTableView`
+/// (via `HeaderlessTableViewSceneView`). All sections + cells are produced
+/// reactively by the view-model.
 final class SettingsView: HeaderlessTableViewSceneView<SettingsTableViewCell> {
+    /// Default initializer — picks `.grouped` style for the section dividers.
     init() {
         super.init(style: .grouped)
     }
 
+    /// Storyboards/xibs aren't used in this app.
     required init?(coder _: NSCoder) {
         interfaceBuilderSucks
     }
 
+    /// Override-hook from `HeaderlessTableViewSceneView` — adds bottom inset
+    /// so the version-string footer doesn't crowd the screen edge.
     override func setup() {
         tableView.contentInset = UIEdgeInsets(top: 0, bottom: 30)
     }
@@ -44,6 +51,8 @@ final class SettingsView: HeaderlessTableViewSceneView<SettingsTableViewCell> {
 extension SettingsView: ViewModelled {
     typealias ViewModel = SettingsViewModel
 
+    /// Routes the section snapshots into the diffable data source and the
+    /// footer-text into the table footer.
     func populate(with viewModel: ViewModel.Output) -> [AnyCancellable] {
         [
             viewModel.sections --> tableView.sections,
@@ -51,6 +60,7 @@ extension SettingsView: ViewModelled {
         ]
     }
 
+    /// Surfaces only row selection — the view-model maps each `IndexPath` to a navigation step.
     var inputFromView: InputFromView {
         InputFromView(
             selectedIndexPath: tableView.selectionPublisher

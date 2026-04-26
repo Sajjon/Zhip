@@ -24,26 +24,34 @@
 
 import UIKit
 
+/// Two-line centred-text footer used by `UITableView.setFooterLabel(text:height:)`
+/// to attach a small grey caption below the table content (e.g. version info,
+/// help links).
 final class FooterView: UITableViewHeaderFooterView {
+    /// Label inside the footer's `contentView`. Updated via `updateLabel(text:)`.
     private lazy var label = UILabel()
 
+    /// Designated initialiser — runs `setup()` to install and style the label.
     override init(reuseIdentifier: String?) {
         super.init(reuseIdentifier: reuseIdentifier)
         setup()
     }
 
+    /// Storyboard init — unsupported, traps to enforce programmatic-only use.
     required init?(coder _: NSCoder) {
         interfaceBuilderSucks
     }
 }
 
 extension FooterView {
+    /// Updates the footer's caption text. Called by `UITableView.setFooterLabel(text:)`.
     func updateLabel(text: String) {
         label.text = text
     }
 }
 
 private extension FooterView {
+    /// Centres a 2-line silver-grey hint label inside the footer's content view.
     func setup() {
         label.withStyle(.init(textAlignment: .center, textColor: .silverGrey, font: .hint, numberOfLines: 2))
 

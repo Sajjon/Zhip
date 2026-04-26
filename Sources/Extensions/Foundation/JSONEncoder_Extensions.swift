@@ -25,6 +25,9 @@
 import Foundation
 
 extension JSONEncoder {
+    /// Convenience initialiser that lets call sites construct a `JSONEncoder`
+    /// pre-configured with `outputFormatting` in one expression instead of two
+    /// statements (`let e = JSONEncoder(); e.outputFormatting = .pretty`).
     convenience init(outputFormatting: JSONEncoder.OutputFormatting) {
         self.init()
         self.outputFormatting = outputFormatting

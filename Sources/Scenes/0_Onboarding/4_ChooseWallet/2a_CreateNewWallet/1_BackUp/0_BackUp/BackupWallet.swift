@@ -24,8 +24,10 @@
 
 import Foundation
 
+/// `SceneController` glue for the wallet-backup hub screen.
 final class BackupWallet: Scene<BackupWalletView> {}
 
+/// Localized navigation title.
 extension BackupWallet {
     static let title = String(localized: .BackupWallet.title)
 }

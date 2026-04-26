@@ -53,16 +53,20 @@ extension Coordinating {
     ) {
         // Start the child coordinator (which is responsible for setting up its root UIViewController and presenting it)
         // and pass along the `didStart` closure, which the child should invoke or delegate to invoke.
-        let startChild = { [unowned child] in
-            child.start(didStart: didStart)
+        let startChild = { [weak child] in
+            child?.start(didStart: didStart)
         }
 
         // Add the child coordinator to the childCoordinator array
         switch transition {
         case .replace:
+            // .replace wipes the current navigation stack first so the user
+            // doesn't see the previous flow's controllers flash through.
+            // Starting the child is deferred to the wipe's completion.
             childCoordinators = [child]
             navigationController.removeAllViewControllers { startChild() }
         case .append:
+            // .append keeps the existing stack and starts the child synchronously.
             childCoordinators.append(child)
             startChild()
         }
@@ -76,14 +80,21 @@ extension Coordinating {
 }
 
 private extension UINavigationController {
+    /// Empties the navigation stack and any presented controller, invoking
+    /// `completion` once the teardown finishes. Used by `CoordinatorTransition.replace`
+    /// to clear the slate before starting the replacement child.
     func removeAllViewControllers(animated: Bool = true, completion: @escaping Completion) {
         func removeAllViewControllers() {
             if !viewControllers.isEmpty {
                 viewControllers = []
             }
+            // Hop to the next runloop tick so callers observe the empty
+            // viewControllers array, not the in-flight one.
             DispatchQueue.main.async { completion() }
         }
 
+        // If a modal is up, we must dismiss it before clearing the stack —
+        // otherwise the modal's reference into our viewControllers becomes stale.
         if let presented = presentedViewController {
             presented.dismiss(animated: animated) {
                 removeAllViewControllers()

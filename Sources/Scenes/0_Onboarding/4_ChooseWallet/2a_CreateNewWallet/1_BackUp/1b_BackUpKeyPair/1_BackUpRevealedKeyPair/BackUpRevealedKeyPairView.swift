@@ -25,17 +25,26 @@
 import Combine
 import UIKit
 
+/// Reveals the user's private key + uncompressed public key in titled
+/// `TitledValueView`s with copy-to-pasteboard buttons next to each.
 final class BackUpRevealedKeyPairView: ScrollableStackViewOwner {
+    /// Title-value pair for the private key (hex string).
     private lazy var privateKeyTextView = TitledValueView()
+    /// Title-value pair for the uncompressed public key (hex string).
     private lazy var publicKeyUncompressedTextView = TitledValueView()
+    /// Copies the private key hex to the pasteboard.
     private lazy var copyPrivateKeyButton = UIButton()
+    /// Horizontal container so the copy button doesn't fill width.
     private lazy var copyPrivateKeyButtonContainer = UIStackView(arrangedSubviews: [copyPrivateKeyButton, .spacer])
+    /// Copies the uncompressed public key hex to the pasteboard.
     private lazy var copyUncompressedPublicKeyButton = UIButton()
+    /// Horizontal container so the copy button doesn't fill width.
     private lazy var copyPublicKeyButtonContainer = UIStackView(arrangedSubviews: [
         copyUncompressedPublicKeyButton,
         .spacer,
     ])
 
+    /// Vertical layout: private key title-value + copy, public key title-value + copy, spacer.
     lazy var stackViewStyle: UIStackView.Style = [
         privateKeyTextView,
         copyPrivateKeyButtonContainer,
@@ -44,6 +53,7 @@ final class BackUpRevealedKeyPairView: ScrollableStackViewOwner {
         .spacer,
     ]
 
+    /// Override-hook from `ScrollableStackViewOwner` — wires styling.
     override func setup() {
         setupSubviews()
     }
@@ -52,6 +62,7 @@ final class BackUpRevealedKeyPairView: ScrollableStackViewOwner {
 extension BackUpRevealedKeyPairView: ViewModelled {
     typealias ViewModel = BackUpRevealedKeyPairViewModel
 
+    /// Routes the private/public key strings into their respective titled views.
     func populate(with viewModel: ViewModel.Output) -> [AnyCancellable] {
         [
             viewModel.privateKey --> privateKeyTextView.valueBinder,
@@ -59,6 +70,7 @@ extension BackUpRevealedKeyPairView: ViewModelled {
         ]
     }
 
+    /// Surfaces the two copy-button taps.
     var inputFromView: InputFromView {
         InputFromView(
             copyPrivateKeyTrigger: copyPrivateKeyButton.tapPublisher,
@@ -68,6 +80,9 @@ extension BackUpRevealedKeyPairView: ViewModelled {
 }
 
 private extension BackUpRevealedKeyPairView {
+    /// Styling pass — labels both `TitledValueView`s, configures hollow-style copy
+    /// buttons (pinned to 136pt to match other backup screens), and hugs the
+    /// private-key view vertically so it doesn't expand.
     func setupSubviews() {
         privateKeyTextView.withStyles {
             $0.text(String(localized: .BackUpRevealedKeyPair.privateKeyLabel))

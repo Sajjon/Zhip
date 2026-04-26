@@ -24,11 +24,18 @@
 
 import UIKit
 
+/// A type that can be rendered as a `UIImage`.
+///
+/// Lets call sites accept either a `UIImage` directly or some richer wrapper
+/// (e.g. a tinted asset descriptor) without forcing the wrapper type to leak
+/// into the API.
 protocol ImageConvertible {
+    /// The image representation of the receiver.
     var image: UIImage { get }
 }
 
 extension UIImage: ImageConvertible {
+    /// Identity conformance — `UIImage` *is* the image.
     var image: UIImage {
         self
     }

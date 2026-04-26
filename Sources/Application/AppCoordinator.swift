@@ -114,9 +114,9 @@ private extension AppCoordinator {
             navigationController: navigationController
         )
 
-        start(coordinator: onboarding, transition: .replace) { [unowned self] userDid in
+        start(coordinator: onboarding, transition: .replace) { [weak self] userDid in
             switch userDid {
-            case .finishOnboarding: self.toMain()
+            case .finishOnboarding: self?.toMain()
             }
         }
     }
@@ -127,13 +127,13 @@ private extension AppCoordinator {
             deeplinkedTransaction: deepLinkHandler.navigation.map(\.asTransaction).filterNil().eraseToAnyPublisher()
         )
 
-        start(coordinator: main, transition: .replace, didStart: { [unowned self] in
+        start(coordinator: main, transition: .replace, didStart: { [weak self] in
             if displayUnlockScene {
-                self.toUnlockAppWithPincodeIfNeeded()
+                self?.toUnlockAppWithPincodeIfNeeded()
             }
-        }, navigationHandler: { [unowned self] userDid in
+        }, navigationHandler: { [weak self] userDid in
             switch userDid {
-            case .removeWallet: self.toOnboarding()
+            case .removeWallet: self?.toOnboarding()
             }
         })
     }

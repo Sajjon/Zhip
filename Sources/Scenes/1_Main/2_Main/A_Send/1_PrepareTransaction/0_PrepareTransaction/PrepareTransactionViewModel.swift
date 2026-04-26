@@ -29,25 +29,37 @@ import Zesame
 
 // MARK: - PrepareTransactionUserAction
 
+/// Outcomes of step 1 of Send.
 enum PrepareTransactionUserAction {
+    /// User tapped the right-bar Cancel.
     case cancel
+    /// User submitted a fully-validated payment for review (advances to step 2).
     case reviewPayment(Payment)
+    /// User tapped the QR-scan icon — coordinator presents the scanner modal.
     case scanQRCode
 }
 
 // MARK: - PrepareTransactionViewModel
 
-// swiftlint:disable:next type_body_length
-final class PrepareTransactionViewModel: BaseViewModel<
+/// View model for step 1 of Send. Handles four parallel concerns:
+/// - balance fetch (with pull-to-refresh + cached-balance fallback);
+/// - real-time per-field validation (recipient, amount, gas limit, gas price);
+/// - cross-field "sufficient funds" check;
+/// - pre-fill from inbound `TransactionIntent` (deep-link or QR scan).
+final class PrepareTransactionViewModel: BaseViewModel< // swiftlint:disable:this type_body_length
     PrepareTransactionUserAction,
     PrepareTransactionViewModel.InputFromView,
     PrepareTransactionViewModel.Output
 > {
+    /// Network façade for balance + gas-price fetches.
     @Injected(\.transactionsUseCase) private var transactionUseCase: TransactionsUseCase
+    /// Wallet source for the recipient/amount/balance pipeline.
     @Injected(\.walletStorageUseCase) private var walletStorageUseCase: WalletStorageUseCase
 
+    /// Pre-fill source — merged stream of QR-scanned and deep-linked intents from the coordinator.
     private let scannedOrDeeplinkedTransaction: AnyPublisher<TransactionIntent, Never>
 
+    /// Captures the pre-fill source.
     init(scannedOrDeeplinkedTransaction: AnyPublisher<TransactionIntent, Never>) {
         self.scannedOrDeeplinkedTransaction = scannedOrDeeplinkedTransaction
     }
@@ -71,13 +83,18 @@ final class PrepareTransactionViewModel: BaseViewModel<
                 .trackActivity(activityIndicator)
                 .trackError(errorTracker)
                 .replaceErrorWithEmpty()
-                .handleEvents(receiveOutput: { [unowned self] in
-                    self.transactionUseCase.cacheBalance($0.balance)
+                .handleEvents(receiveOutput: { [weak self] in
+                    self?.transactionUseCase.cacheBalance($0.balance)
                 })
         }
         .eraseToAnyPublisher()
 
-        let nonce = latestBalanceAndNonce.map(\.nonce).prepend(0)
+        // Do NOT `prepend(0)`. Without a real network nonce the Review button
+        // would enable on a stale 0 — the network rejects nonce-too-low and
+        // the user gets a confusing error mid-Send. The downstream `payment`
+        // construction stays nil until the first balance fetch lands, which
+        // also keeps the Review CTA disabled until the network is reachable.
+        let nonce = latestBalanceAndNonce.map(\.nonce)
         let startingBalance: Amount = transactionUseCase.cachedBalance ?? 0
         let balance: AnyPublisher<Amount, Never> = latestBalanceAndNonce.map(\.balance).prepend(startingBalance).eraseToAnyPublisher()
 
@@ -226,14 +243,16 @@ final class PrepareTransactionViewModel: BaseViewModel<
             showUnit: true
         ) }.eraseToAnyPublisher()
 
-        // It is deliberate that we do NOT auto checksum the address here. We would like to be able to inform the user
-        // that
-        // she might have pasted an unchecksummed address.
+        // The displayed recipient string is the raw parsed address. NOTE: the
+        // `payment` construction above silently checksums via
+        // `toChecksummedLegacyAddress()`, so the user is *not* warned about
+        // unchecksummed input today. If we want to surface that, gate `payment`
+        // on a deliberate "did you mean…?" confirmation step instead of auto
+        // -correcting in the background.
         let recipientFormatted: AnyPublisher<String, Never> = recipient.filterNil().map(\.asString).eraseToAnyPublisher()
 
         let amountFormatted: AnyPublisher<String?, Never> = amountBoundByBalance.filterNil()
             .map { formatter.format(amount: $0, in: .zil, formatThousands: false) as String? }
-            .eraseToAnyPublisher()
             .ifEmpty(switchTo: amountWithoutSufficientFundsCheckValidationValue.map {
                 guard let value = $0.value else { return nil }
                 switch value {
@@ -246,11 +265,11 @@ final class PrepareTransactionViewModel: BaseViewModel<
 
         let isReviewButtonEnabled: AnyPublisher<Bool, Never> = payment.map { $0 != nil }.eraseToAnyPublisher()
 
-        let gasLimitPlaceholder: AnyPublisher<String, Never> = Just(GasLimit.minimum).eraseToAnyPublisher().map {
+        let gasLimitPlaceholder: AnyPublisher<String, Never> = Just(GasLimit.minimum).map {
             String(localized: .PrepareTransaction.gasLimitField(minimum: $0.description))
         }.eraseToAnyPublisher()
 
-        let gasPricePlaceholder: AnyPublisher<String, Never> = Just(GasPrice.min).eraseToAnyPublisher().map {
+        let gasPricePlaceholder: AnyPublisher<String, Never> = Just(GasPrice.min).map {
             String(localized: .PrepareTransaction.gasPriceField(
                 minQa: formatter.format(amount: $0, in: .li, formatThousands: true, showUnit: false),
                 minZil: formatter.format(amount: $0, in: .zil, formatThousands: true, showUnit: true)
@@ -262,8 +281,8 @@ final class PrepareTransactionViewModel: BaseViewModel<
             .map { formatter.format(amount: $0, in: .li, formatThousands: true) }
             .eraseToAnyPublisher()
 
-        let balanceWasUpdatedAt: AnyPublisher<Date?, Never> = fetchTrigger.map { [unowned self] in
-            self.transactionUseCase.balanceUpdatedAt
+        let balanceWasUpdatedAt: AnyPublisher<Date?, Never> = fetchTrigger.map { [weak self] _ -> Date? in
+            self?.transactionUseCase.balanceUpdatedAt
         }.eraseToAnyPublisher()
 
         let refreshControlLastUpdatedTitle: AnyPublisher<String, Never> = balanceWasUpdatedAt.map {
@@ -305,7 +324,7 @@ final class PrepareTransactionViewModel: BaseViewModel<
                     return AnyPublisher<String?, Never>.just(nil)
                 }
                 return
-                    Just((gasPrice, gasLimit)).eraseToAnyPublisher()
+                    Just((gasPrice, gasLimit))
                         .compactMap { try? Payment.estimatedTotalTransactionFee(gasPrice: $0, gasLimit: $1) }
                         .map { formatter.format(amount: $0, in: .zil, formatThousands: true, showUnit: true) }
                         .map { String(localized: .PrepareTransaction.transactionFeeLabel(fee: $0)) }

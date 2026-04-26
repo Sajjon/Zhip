@@ -24,9 +24,19 @@
 
 import UIKit
 
+/// Single-character display cell used inside `InputPincodeView` — one big
+/// glyph (digit or bullet) with a coloured underline below it.
+///
+/// In secure mode the underlying digit is replaced with a "•" so the user's
+/// pincode isn't shoulder-surfable; the underline colour reflects validation
+/// state via `colorUnderlineView(with:)`.
 final class DigitView: UIView {
+    /// The visible glyph — either the typed digit or a "•" depending on
+    /// `isSecureTextEntry`.
     private lazy var label = UILabel()
 
+    /// Coloured underline beneath the digit. 3pt tall — driven by validation
+    /// state rather than typed content.
     private lazy var underline: UIView = {
         let view = UIView(frame: .zero)
         view.translatesAutoresizingMaskIntoConstraints = false
@@ -35,20 +45,30 @@ final class DigitView: UIView {
         return view
     }()
 
+    /// Vertical stack composing the label above the underline.
+    /// `internal` so the parent `InputPincodeView` can reach it for layout.
     lazy var stackView = UIStackView(arrangedSubviews: [label, underline])
 
+    /// Whether to mask the digit as a bullet. Captured at init because
+    /// changing it would require a full re-render and isn't needed.
     private let isSecureTextEntry: Bool
 
+    /// Designated initialiser.
+    /// - Parameter isSecureTextEntry: `true` masks input as "•"; `false` shows the digit.
     init(isSecureTextEntry: Bool) {
         self.isSecureTextEntry = isSecureTextEntry
         super.init(frame: .zero)
         setupSubviews()
     }
 
+    /// Storyboard init — unsupported, traps to enforce programmatic-only use.
     required init?(coder _: NSCoder) {
         interfaceBuilderSucks
     }
 
+    /// Sets the displayed glyph. In secure mode this *always* renders "•" when
+    /// a digit is present; only `nil` clears the cell. So the caller can pass
+    /// the real digit and trust this method to hide it.
     func updateWithNumberOrBullet(text: String?) {
         guard let text else {
             label.text = nil
@@ -58,10 +78,16 @@ final class DigitView: UIView {
         label.text = labelText
     }
 
+    /// Re-tints the underline. Used to communicate validation state
+    /// (`AnyValidation.Color.error` for mismatch, etc.) without ever revealing
+    /// the underlying digit.
     func colorUnderlineView(with color: UIColor) {
         underline.backgroundColor = color
     }
 
+    /// Lays out label + underline in a tight vertical stack and picks a
+    /// font: `.bigBang` for bullets (so the dot is large and readable) vs.
+    /// `.impression` for plain digits.
     private func setupSubviews() {
         translatesAutoresizingMaskIntoConstraints = false
         addSubview(stackView)

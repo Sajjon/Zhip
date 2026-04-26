@@ -24,9 +24,14 @@
 
 import Zesame
 
+/// Validates a gas price string in `Li`, producing a `GasPrice`.
+///
+/// Wraps `GasPrice(li:)` and surfaces any `Zesame.AmountError<*>` as our
+/// user-facing `AmountError<Li>` so the message renders in li units.
 struct GasPriceValidator: InputValidator {
     typealias Error = AmountError<Li>
 
+    /// Parses `li` as a `GasPrice`; surfaces any underlying parse error.
     func validate(input li: String) -> Validation<GasPrice, Error> {
         let gasPrice: GasPrice
         do {

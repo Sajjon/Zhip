@@ -25,6 +25,10 @@
 import UIKit
 
 extension Coordinating {
+    /// Recursive ascii dump of this coordinator (and its child-coordinator
+    /// tree, plus each navigation stack and any presented stacks) used by
+    /// `description` for debugging.
+    ///
     /// Please fix this ugly code for me... we want a nice ascii representation of the coordinator and its
     /// coordinator stack and navigation stack (both presented scenes and non presented scenes.),
     /// using an increasing indentation for each level of depth

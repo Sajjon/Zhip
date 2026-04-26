@@ -25,6 +25,8 @@
 import Combine
 import UIKit
 
+/// Step 2 of Send — read-only summary of the prepared payment (recipient,
+/// amount, gas, total) plus an "I have reviewed" checkbox + accept CTA.
 final class ReviewTransactionBeforeSigningView: ScrollableStackViewOwner {
     private lazy var recipientAddressesLabel = UILabel()
     private lazy var recipientLegacyAddressView = TitledValueView()

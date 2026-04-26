@@ -25,13 +25,25 @@
 import Foundation
 
 /// A type-erasing key-value store that wraps some type confirming to `KeyValueStoring`
+///
+/// Erases the concrete `KeyValueStoring` implementation (e.g. `UserDefaults`,
+/// `KeychainSwift`) behind a uniform value type, letting callers depend on
+/// `KeyValueStore<PreferencesKey>` (aka `Preferences`) or
+/// `KeyValueStore<KeychainKey>` (aka `SecurePersistence`) without leaking the
+/// backend's identity into call sites or test doubles.
 struct KeyValueStore<KeyType: KeyConvertible>: KeyValueStoring {
+    /// The strongly-typed key the wrapped store accepts.
     typealias Key = KeyType
 
+    /// Type-erased `save` thunk captured from the wrapped concrete store.
     private let _save: (Any, String) -> Void
+    /// Type-erased `loadValue` thunk captured from the wrapped concrete store.
     private let _load: (String) -> Any?
+    /// Type-erased `deleteValue` thunk captured from the wrapped concrete store.
     private let _delete: (String) -> Void
 
+    /// Wraps `concrete` behind closure-captured thunks so this struct can be
+    /// stored without any reference to the wrapped type's identity.
     init<Concrete>(_ concrete: Concrete) where Concrete: KeyValueStoring, Concrete.Key == KeyType {
         _save = { concrete.save(value: $0, for: $1) }
         _load = { concrete.loadValue(for: $0) }
@@ -42,14 +54,17 @@ struct KeyValueStore<KeyType: KeyConvertible>: KeyValueStoring {
 // MARK: - KeyValueStoring Methods
 
 extension KeyValueStore {
+    /// Forwards to the wrapped store's `save(value:for:)`.
     func save(value: Any, for key: String) {
         _save(value, key)
     }
 
+    /// Forwards to the wrapped store's `loadValue(for:)`.
     func loadValue(for key: String) -> Any? {
         _load(key)
     }
 
+    /// Forwards to the wrapped store's `deleteValue(for:)`.
     func deleteValue(for key: String) {
         _delete(key)
     }

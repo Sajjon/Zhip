@@ -25,6 +25,9 @@
 import UIKit
 
 extension UITabBarItem {
+    /// Convenience for text-only tab bar items — no images are involved.
+    /// Wraps the verbose `init(title:image:selectedImage:)` so call sites read
+    /// `UITabBarItem("Settings")` instead.
     convenience init(_ title: String) {
         self.init(title: title, image: nil, selectedImage: nil)
     }

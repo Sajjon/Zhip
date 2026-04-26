@@ -33,10 +33,16 @@ import Zesame
 /// substitute the service using `Container.shared.zilliqaService.register { ... }`.
 final class DefaultCreateWalletUseCase: CreateWalletUseCase {
 
+    /// The reactive Zesame façade used to derive the keystore. Resolved lazily via
+    /// Factory so test doubles can be registered before the use case is invoked.
     @Injected(\.zilliqaService) private var zilliqaService: ZilliqaServiceReactive
 
+    /// No-op designated initializer — all dependencies are resolved through `@Injected`.
     init() {}
 
+    /// Generates a fresh wallet via Zesame using the project-wide default KDF, tags
+    /// the result with `.generatedByThisApp` (so the password mode resolves correctly
+    /// later), and lifts Zesame's typed error to the protocol's `Swift.Error`.
     func createNewWallet(encryptionPassword: String) -> AnyPublisher<Wallet, Swift.Error> {
         zilliqaService.createNewWallet(encryptionPassword: encryptionPassword, kdf: .default)
             .map { Wallet(wallet: $0, origin: .generatedByThisApp) }

@@ -25,11 +25,16 @@
 import Combine
 import UIKit
 
+/// Pincode chooser screen — N-digit pincode input + disclaimer + done CTA.
 final class ChoosePincodeView: ScrollableStackViewOwner {
+    /// Custom N-digit pincode input view (digit boxes that auto-advance).
     private lazy var inputPincodeView = InputPincodeView()
+    /// Disclaimer that the pincode only locks the app, not the wallet keystore.
     private lazy var pinOnlyLocksAppTextView = UITextView()
+    /// Bottom done CTA — disabled until a complete pincode is entered.
     private lazy var doneButton = UIButton()
 
+    /// Vertical layout: pincode input, disclaimer, done CTA, spacer.
     lazy var stackViewStyle: UIStackView.Style = [
         inputPincodeView,
         pinOnlyLocksAppTextView,
@@ -37,6 +42,7 @@ final class ChoosePincodeView: ScrollableStackViewOwner {
         .spacer,
     ]
 
+    /// Override-hook from `ScrollableStackViewOwner` — wires styling.
     override func setup() {
         setupSubviews()
     }
@@ -45,6 +51,7 @@ final class ChoosePincodeView: ScrollableStackViewOwner {
 extension ChoosePincodeView: ViewModelled {
     typealias ViewModel = ChoosePincodeViewModel
 
+    /// Surfaces the pincode publisher (`nil` while incomplete) and the done-tap.
     var inputFromView: InputFromView {
         InputFromView(
             pincode: inputPincodeView.pincodePublisher,
@@ -52,6 +59,8 @@ extension ChoosePincodeView: ViewModelled {
         )
     }
 
+    /// Binds focus + button-enabled state — view-model auto-focuses on
+    /// `viewWillAppear` so the keyboard is up by the time the user sees the screen.
     func populate(with viewModel: ChoosePincodeViewModel.Output) -> [AnyCancellable] {
         [
             viewModel.inputBecomeFirstResponder --> inputPincodeView.becomeFirstResponderBinder,
@@ -61,6 +70,8 @@ extension ChoosePincodeView: ViewModelled {
 }
 
 private extension ChoosePincodeView {
+    /// Styling pass — disclaimer text view (non-scrollable, silver-grey),
+    /// primary done button initially disabled.
     func setupSubviews() {
         pinOnlyLocksAppTextView.withStyle(.nonSelectable) {
             $0.text(String(localized: .ChoosePincode.pincodeOnlyLocksApp))

@@ -24,4 +24,7 @@
 
 import UIKit
 
+/// Concrete cell type for the Settings hub. The generic `TableViewCell<Model>`
+/// base does the actual rendering; this typealias-style class exists so the
+/// table view can refer to it by type.
 final class SettingsTableViewCell: TableViewCell<SettingsItem> {}

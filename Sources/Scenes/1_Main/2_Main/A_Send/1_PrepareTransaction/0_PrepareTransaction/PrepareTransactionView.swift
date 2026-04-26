@@ -27,6 +27,9 @@ import Factory
 import UIKit
 import Zesame
 
+/// Step 1 of Send — recipient/amount/gas entry with QR-scan + max-amount conveniences,
+/// plus pull-to-refresh on balance. The view-model handles validation, max-amount
+/// calculation (balance - gas), and QR-scan pre-fill routing.
 final class PrepareTransactionView: ScrollableStackViewOwner, PullToRefreshCapable {
     private lazy var balanceTitleLabel = UILabel()
     private lazy var balanceValueLabel = UILabel()

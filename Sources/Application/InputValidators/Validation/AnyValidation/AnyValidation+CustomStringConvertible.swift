@@ -27,6 +27,7 @@ import Foundation
 // MARK: - CustomStringConvertible
 
 extension AnyValidation: CustomStringConvertible {
+    /// Debug-friendly description used in test failures and `po self` output.
     var description: String {
         switch self {
         case .empty: "empty"

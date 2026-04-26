@@ -24,6 +24,18 @@
 
 import Foundation
 
+/// Recursively peels associated values off `parent` (assumed to be an enum case)
+/// until it finds a value of type `Nested`, or runs out of `recursiveTriesLeft`.
+///
+/// Used to extract a typed payload from a deeply-nested coordinator step
+/// without forcing every intermediate enum to expose a typed accessor.
+///
+/// - Parameters:
+///   - wantedType: Type witness for `Nested` — needed at the call site so the
+///     compiler can infer the generic; not actually used at runtime.
+///   - parent: The enum case being mirrored.
+///   - recursiveTriesLeft: Recursion budget. Decremented on every step that
+///     fails to match `Nested`. Returns `nil` when exhausted.
 func findNestedEnumOfType<Nested>(_ wantedType: Nested.Type, in parent: Any, recursiveTriesLeft: Int) -> Nested? {
     guard recursiveTriesLeft >= 0 else { return nil }
 

@@ -24,8 +24,12 @@
 
 import UIKit
 
+/// `SceneController` glue for the welcome screen — purely declarative, all
+/// behaviour lives in `WelcomeView` + `WelcomeViewModel`.
 final class Welcome: Scene<WelcomeView> {}
 
+/// Welcome is full-bleed (the spaceship motion-effect background runs to the
+/// edges) so we hide the navigation bar while it's on screen.
 extension Welcome: NavigationBarLayoutOwner {
     var navigationBarLayout: NavigationBarLayout {
         .hidden

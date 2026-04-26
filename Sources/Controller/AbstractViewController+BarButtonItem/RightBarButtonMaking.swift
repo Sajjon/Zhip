@@ -24,24 +24,38 @@
 
 import UIKit
 
+/// Low-level opt-in for a screen that wants a custom right bar button — supply
+/// any `BarButtonContent`. For predefined buttons use `RightBarButtonMaking`.
 protocol RightBarButtonContentMaking {
+    /// The content to install as the right bar button on `viewDidLoad`.
     static var makeRightContent: BarButtonContent { get }
 }
 
+/// High-level opt-in for a screen that wants a right bar button chosen from the
+/// app's predefined `BarButton` library. Refines `RightBarButtonContentMaking`
+/// and provides `makeRightContent` automatically from `makeRight.content`.
 protocol RightBarButtonMaking: RightBarButtonContentMaking {
+    /// The predefined `BarButton` case to install as the right button.
     static var makeRight: BarButton { get }
 }
 
 extension RightBarButtonMaking {
+    /// Default bridge — derive the content from the chosen predefined `BarButton`.
     static var makeRightContent: BarButtonContent {
         makeRight.content
     }
 }
 
 extension RightBarButtonContentMaking {
+    /// Convenience used by `SceneController.viewDidLoad()` to install the right
+    /// bar button on the supplied controller.
     func setRightBarButton(for viewController: AbstractController) {
         viewController.setRightBarButtonUsing(content: Self.makeRightContent)
     }
 }
 
+/// Marker protocol — when a `SceneController` conforms, the system back chevron
+/// is hidden AND the swipe-back gesture is disabled. Use on flow-terminating
+/// screens (e.g. "wallet created" confirmation) where backing up would re-enter
+/// an inconsistent state.
 protocol BackButtonHiding {}

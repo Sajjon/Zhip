@@ -24,12 +24,15 @@
 
 import UIKit
 
+/// `SceneController` glue for the receive screen.
 final class Receive: Scene<ReceiveView> {}
 
+/// Hide the back arrow; "Done" is the only exit.
 extension Receive: BackButtonHiding {
     static let title = String(localized: .Receive.title)
 }
 
+/// Right "Done" bar-button — closes the modal.
 extension Receive: RightBarButtonMaking {
     static let makeRight: BarButton = .done
 }

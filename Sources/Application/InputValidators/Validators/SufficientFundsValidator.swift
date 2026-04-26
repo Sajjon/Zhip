@@ -24,14 +24,25 @@
 
 import Zesame
 
+/// Cross-field validator for the Send screen: confirms the user has enough
+/// balance to cover `amount + gasLimit*gasPrice` before allowing the
+/// transaction to be submitted.
+///
+/// All four inputs are optional because each is validated by its own
+/// per-field validator first; until they all resolve to non-nil values, this
+/// validator returns `.invalid(.empty)` (neutral grey state).
 struct SufficientFundsValidator: InputValidator {
+    /// Possible failures.
     enum Error: Swift.Error {
+        /// Balance is less than `amount + estimated fee`.
         case insufficientFunds
+        /// Underlying arithmetic threw a typed amount error (e.g. overflow).
         case amountError(AmountError<Amount>)
     }
 
-    // swiftlint:disable:next large_tuple
-    func validate(input: (amount: Amount?, gasLimit: GasLimit?, gasPrice: GasPrice?, balance: Amount?))
+    /// Computes the estimated total cost (amount + gas*price) and compares against the balance.
+    /// Returns `.valid(amount)` when the user can afford the transaction, `.invalid` otherwise.
+    func validate(input: (amount: Amount?, gasLimit: GasLimit?, gasPrice: GasPrice?, balance: Amount?)) // swiftlint:disable:this large_tuple
         -> Validation<Amount, Error>
     {
         guard let amount = input.amount, let gasLimit = input.gasLimit, let gasPrice = input.gasPrice,
@@ -52,6 +63,8 @@ struct SufficientFundsValidator: InputValidator {
         } catch let error as AmountError<Amount> {
             return self.error(Error.amountError(error))
         } catch let otherError {
+            // Catch-all path — wrap arbitrary errors in our typed AmountError
+            // via the reflective initializer rather than dropping them silently.
             let zilAmountError: AmountError<Amount> = .init(error: otherError)
             return self.error(Error.amountError(zilAmountError))
         }
@@ -61,6 +74,8 @@ struct SufficientFundsValidator: InputValidator {
 }
 
 extension SufficientFundsValidator.Error: InputError {
+    /// Localized error string — `.insufficientFunds` uses our balance-specific
+    /// copy, `.amountError` defers to the wrapped error's own message.
     var errorMessage: String {
         switch self {
         case .insufficientFunds: String(localized: .Errors.amountExceedingBalance)

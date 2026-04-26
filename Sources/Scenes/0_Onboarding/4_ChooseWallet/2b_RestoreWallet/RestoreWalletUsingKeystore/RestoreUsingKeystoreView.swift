@@ -27,14 +27,21 @@ import UIKit
 
 // MARK: - RestoreWithKeystoreView
 
+/// Sub-view of the RestoreWallet screen for the "I have a keystore JSON +
+/// password" restore method. Owns its own view-model.
 final class RestoreUsingKeystoreView: ScrollableStackViewOwner {
     typealias ViewModel = RestoreWalletUsingKeystoreViewModel
 
+    /// Subscription bag for the view-model bindings.
     private var cancellables = Set<AnyCancellable>()
 
+    /// Text view for pasted keystore JSON.
     private lazy var keystoreTextView = UITextView()
+    /// Encryption password field (the password the keystore was encrypted with).
     private lazy var encryptionPasswordField = FloatingLabelTextField()
 
+    /// Owned view-model — wires keystore + password publishers into validation
+    /// streams and a `KeyRestoration` payload the parent surfaces upstream.
     private lazy var viewModel = ViewModel(
         inputFromView: ViewModel.InputFromView(
             keystoreDidBeginEditing: keystoreTextView.didBeginEditingPublisher,
@@ -45,30 +52,40 @@ final class RestoreUsingKeystoreView: ScrollableStackViewOwner {
         )
     )
 
+    /// Re-exported view-model output — the parent `RestoreWalletView` reads
+    /// `keyRestoration` from here to build its own `inputFromView`.
     lazy var viewModelOutput = viewModel.output
 
+    /// Vertical layout: keystore textview, password field.
     lazy var stackViewStyle: UIStackView.Style = [
         keystoreTextView,
         encryptionPasswordField,
     ]
 
+    /// Override-hook from `ScrollableStackViewOwner` — wires styling + bindings.
     override func setup() {
         setupSubviews()
         setupViewModelBinding()
     }
 
+    /// Used by the parent's composite "wrong password" binder to flip the
+    /// password field's validation state externally.
     func restorationErrorValidation(_ validation: AnyValidation) {
         encryptionPasswordField.validate(validation)
     }
 }
 
 private extension RestoreUsingKeystoreView {
+    /// Styling pass — secure password field, editable keystore textview with
+    /// neutral-grey border (re-bordered by the validation binder).
     func setupSubviews() {
         encryptionPasswordField.withStyle(.password)
         keystoreTextView.withStyle(.editable)
         keystoreTextView.addBorderBy(validation: .empty)
     }
 
+    /// Binds the four view-model outputs (keystore validation border, password
+    /// validation, dynamic placeholders) into their respective fields.
     func setupViewModelBinding() {
         [
             viewModelOutput.keyRestorationValidation --> keystoreTextView.validationBorderBinder,
@@ -80,6 +97,8 @@ private extension RestoreUsingKeystoreView {
 }
 
 extension UITextView {
+    /// Binder that paints the textview's border according to an `AnyValidation`
+    /// (teal/red/grey) — the textview equivalent of `FloatingLabelTextField.validationBinder`.
     var validationBorderBinder: Binder<AnyValidation> {
         Binder(self) {
             $0.addBorderBy(validation: $1)
@@ -88,6 +107,8 @@ extension UITextView {
 }
 
 extension UITextView {
+    /// Maps an `AnyValidation` to a `UIView.Border` and applies it. Color
+    /// derives from `AnyValidation.Color` (teal/red/grey).
     func addBorderBy(validation: AnyValidation) {
         addBorder(UIView.Border.fromValidation(validation))
     }

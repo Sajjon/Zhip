@@ -26,15 +26,36 @@ import Foundation
 
 /// Insensitive values to be stored into e.g. `UserDefaults`, such as `hasAcceptedTermsOfService`
 enum PreferencesKey: String, KeyConvertible {
+    /// Set to `true` after the first successful launch. Doubles as the
+    /// reinstall sentinel that drives Keychain wipe — see
+    /// `KeyValueStore<KeychainKey>.wallet`.
     case hasRunAppBefore
+    /// User accepted the Terms of Service screen during onboarding.
     case hasAcceptedTermsOfService
+    /// User accepted the "we use a custom ECC implementation" warning.
     case hasAcceptedCustomECCWarning
+    /// User answered the crash-reporting opt-in prompt (`true`/`false` is in `hasAcceptedCrashReporting`).
     case hasAnsweredCrashReportingQuestion
+    /// User opted in to crash reporting.
     case hasAcceptedCrashReporting
+    /// User explicitly chose "skip pincode setup" — suppresses the prompt on subsequent launches.
     case skipPincodeSetup
+    /// User confirmed they have backed up the wallet they generated through
+    /// the create-new-wallet flow. Set to `false` immediately after creation
+    /// (the wallet is persisted right away to survive an app kill) and
+    /// flipped to `true` after `BackupWalletCoordinator` finishes. Currently
+    /// purely informational — future work can gate Send behind this flag and
+    /// surface a "back up your wallet" banner until it is true.
+    case hasConfirmedNewWalletBackup
+    /// Last-known wallet balance, cached to render UI before the network call resolves.
     case cachedBalance
+    /// Timestamp accompanying `cachedBalance`; used to render "updated N minutes ago" labels.
     case balanceWasUpdatedAt
 }
 
 /// Abstraction of UserDefaults
+///
+/// Production code injects a `Preferences` (i.e. `KeyValueStore<PreferencesKey>`)
+/// resolved by `Container.shared.preferences`, which wraps `UserDefaults.standard`.
+/// Tests register an in-memory replacement in `Tests/Helpers/TestStoreFactory.swift`.
 typealias Preferences = KeyValueStore<PreferencesKey>

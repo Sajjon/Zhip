@@ -24,12 +24,16 @@
 
 import Foundation
 
+/// `SceneController` glue for the pincode-removal confirmation modal.
+/// Auto-removes the pincode as soon as the user enters the matching one.
 final class RemovePincode: Scene<RemovePincodeView> {}
 
+/// Localized navigation title.
 extension RemovePincode {
     static let title = String(localized: .RemovePincode.title)
 }
 
+/// Left "Cancel" bar-button — closes without removing.
 extension RemovePincode: LeftBarButtonMaking {
     static let makeLeft: BarButton = .cancel
 }

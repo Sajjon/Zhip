@@ -25,6 +25,12 @@
 import Foundation
 
 public extension Dictionary {
+    /// Returns a new dictionary containing the keys of this dictionary with the
+    /// non-nil results of `transform` applied to its values.
+    ///
+    /// Mirrors `Sequence.compactMap` for dictionary values. (Foundation now
+    /// ships `Dictionary.compactMapValues(_:)` natively, so this overload is
+    /// effectively a back-compat shim that may eventually be removed.)
     func compactMapValues<T>(_ transform: (Value) throws -> T?) rethrows -> [Key: T] {
         try reduce(into: [Key: T]()) { result, tuple in
             if let value = try transform(tuple.value) {

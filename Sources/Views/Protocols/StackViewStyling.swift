@@ -24,11 +24,23 @@
 
 import UIKit
 
+/// Refines `ContentViewProvider` so a view can declare its layout as a
+/// `UIStackView.Style` and get the boilerplate `makeContentView()` for free.
+///
+/// Conformers only need `stackViewStyle` — the default extension below builds
+/// the actual stack view. This is the entry point used by every scene view
+/// (`CreateNewWalletView`, `SettingsView`, …) that lays out vertically/horizontally.
 protocol StackViewStyling: ContentViewProvider {
+    /// Layout description (subviews + axis/alignment/spacing/margins).
+    /// See `UIStackView+Styling.swift` for the structure.
     var stackViewStyle: UIStackView.Style { get }
 }
 
 extension ContentViewProvider where Self: StackViewStyling {
+    /// Default — builds the stack view from the conformer's `stackViewStyle`.
+    /// Note: `withStyle(_:)` here mirrors the call shape on the existing
+    /// stack view rather than the constructor used in the Extensions-side
+    /// extension; both produce equivalent output.
     func makeContentView() -> UIView {
         UIStackView(frame: .zero).withStyle(stackViewStyle)
     }

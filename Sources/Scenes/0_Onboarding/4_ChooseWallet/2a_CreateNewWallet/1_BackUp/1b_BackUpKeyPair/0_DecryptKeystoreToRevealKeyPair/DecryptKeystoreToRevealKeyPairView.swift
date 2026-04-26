@@ -25,11 +25,17 @@
 import Combine
 import UIKit
 
+/// Password-entry screen that decrypts the keystore to reveal the underlying
+/// `KeyPair` (private key + address). One field, one CTA.
 final class DecryptKeystoreToRevealKeyPairView: ScrollableStackViewOwner {
+    /// "Enter your password to reveal" body label.
     private lazy var decryptToRevealLabel = UILabel()
+    /// Password field — secure entry, validated against the wallet's keystore.
     private lazy var encryptionPasswordField = FloatingLabelTextField()
+    /// "Reveal" CTA — shows a spinner while the (CPU-intensive) decryption runs.
     private lazy var revealButton = ButtonWithSpinner()
 
+    /// Vertical layout: label, field, spacer, CTA.
     lazy var stackViewStyle = UIStackView.Style([
         decryptToRevealLabel,
         encryptionPasswordField,
@@ -37,6 +43,7 @@ final class DecryptKeystoreToRevealKeyPairView: ScrollableStackViewOwner {
         revealButton,
     ], spacing: 20)
 
+    /// Override-hook from `ScrollableStackViewOwner` — wires styling.
     override func setup() {
         setupSubviews()
     }
@@ -45,6 +52,8 @@ final class DecryptKeystoreToRevealKeyPairView: ScrollableStackViewOwner {
 extension DecryptKeystoreToRevealKeyPairView: ViewModelled {
     typealias ViewModel = DecryptKeystoreToRevealKeyPairViewModel
 
+    /// Binds validation feedback (color + remark), button loading spinner,
+    /// and button enabled state to the password field + reveal button.
     func populate(with viewModel: ViewModel.Output) -> [AnyCancellable] {
         [
             viewModel.encryptionPasswordValidation --> encryptionPasswordField.validationBinder,
@@ -53,6 +62,7 @@ extension DecryptKeystoreToRevealKeyPairView: ViewModelled {
         ]
     }
 
+    /// Surfaces the password text, the editing-state, and the reveal-button tap.
     var inputFromView: InputFromView {
         InputFromView(
             encryptionPassword: encryptionPasswordField.textPublisher.orEmpty,
@@ -63,6 +73,7 @@ extension DecryptKeystoreToRevealKeyPairView: ViewModelled {
 }
 
 private extension DecryptKeystoreToRevealKeyPairView {
+    /// Styling pass — body label, secure password field, primary reveal button.
     func setupSubviews() {
         decryptToRevealLabel.withStyle(.body) {
             $0.text(String(localized: .DecryptKeystore.decryptToReveal))

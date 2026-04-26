@@ -25,27 +25,43 @@
 import Combine
 import UIKit
 
+/// Backup hub screen with two reveal options (private key / keystore) plus
+/// a confirmation checkbox + done button (only shown in `.cancellable` mode).
 final class BackupWalletView: ScrollableStackViewOwner {
+    /// "Back up your keys" header.
     private lazy var backUpLabel = UILabel()
+    /// Body copy urging the user to record the keys safely.
     private lazy var urgeBackupLabel = UILabel()
 
+    /// Private-key section label.
     private lazy var privateKeyLabel = UILabel()
+    /// "Reveal" button — opens the password-gated reveal flow.
     private lazy var revealPrivateKeyButton = UIButton()
+    /// Horizontal container around `revealPrivateKeyButton` so it doesn't fill width.
     private lazy var privateKeyButtonContainer = UIStackView(arrangedSubviews: [revealPrivateKeyButton, .spacer])
+    /// Vertical group: label + button row.
     private lazy var privateKeyViews = UIStackView(arrangedSubviews: [privateKeyLabel, privateKeyButtonContainer])
 
+    /// Keystore section label.
     private lazy var keystoreLabel = UILabel()
+    /// Copies the keystore JSON to the pasteboard (and surfaces a toast).
     private lazy var copyKeystoreButton = UIButton()
+    /// Opens the keystore-reveal modal.
     private lazy var revealKeystoreButton = UIButton()
+    /// Horizontal pair of keystore buttons.
     private lazy var keystoreButtons = UIStackView(arrangedSubviews: [
         revealKeystoreButton,
         copyKeystoreButton,
         .spacer,
     ])
+    /// Vertical group: label + button row.
     private lazy var keystoreViews = UIStackView(arrangedSubviews: [keystoreLabel, keystoreButtons])
 
+    /// "I have securely backed up" — must be checked to enable Done.
     private lazy var haveSecurelyBackedUpCheckbox = CheckboxWithLabel()
+    /// "Done" CTA — only visible in `.cancellable` mode (post-create context).
     private lazy var doneButton = UIButton()
+    /// Vertical group hidden in `.dismissable` (Settings) mode.
     private lazy var haveSecurelyBackedUpViews = UIStackView(arrangedSubviews: [
         haveSecurelyBackedUpCheckbox,
         doneButton,
@@ -53,6 +69,7 @@ final class BackupWalletView: ScrollableStackViewOwner {
 
     // MARK: - StackViewStyling
 
+    /// Vertical layout: header, body, key reveal sections, spacer, confirm group.
     lazy var stackViewStyle: UIStackView.Style = [
         backUpLabel,
         urgeBackupLabel,
@@ -62,6 +79,7 @@ final class BackupWalletView: ScrollableStackViewOwner {
         haveSecurelyBackedUpViews,
     ]
 
+    /// Override-hook from `ScrollableStackViewOwner` — wires styling.
     override func setup() {
         setupSubviews()
     }
@@ -70,6 +88,8 @@ final class BackupWalletView: ScrollableStackViewOwner {
 extension BackupWalletView: ViewModelled {
     typealias ViewModel = BackupWalletViewModel
 
+    /// Binds visibility (Settings mode hides the confirm group) and the
+    /// done-button enabled state (gated on the checkbox).
     func populate(with viewModel: ViewModel.Output) -> [AnyCancellable] {
         [
             viewModel.isHaveSecurelyBackedUpViewsVisible --> haveSecurelyBackedUpViews.isVisibleBinder,
@@ -77,6 +97,8 @@ extension BackupWalletView: ViewModelled {
         ]
     }
 
+    /// Surfaces all five user actions: copy keystore, reveal keystore,
+    /// reveal private key, checkbox toggles, and done tap.
     var inputFromView: InputFromView {
         InputFromView(
             copyKeystoreToPasteboardTrigger: copyKeystoreButton.tapPublisher,
@@ -89,6 +111,8 @@ extension BackupWalletView: ViewModelled {
 }
 
 private extension BackupWalletView {
+    /// Styling pass — sets all labels, buttons, and stack-view orientations.
+    /// All three button widths are pinned to 136pt so they line up across rows.
     func setupSubviews() {
         backUpLabel.withStyle(.header) {
             $0.text(String(localized: .BackupWallet.backUpKeys))

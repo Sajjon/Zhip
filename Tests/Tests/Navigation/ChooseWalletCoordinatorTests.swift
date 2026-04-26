@@ -104,7 +104,16 @@ final class ChooseWalletCoordinatorTests: XCTestCase {
         try XCTUnwrap(sut.childCoordinators.first { $0 is T } as? T)
     }
 
-    func test_createNewWalletCreate_savesWalletAndEmitsFinishStep() throws {
+    func test_createNewWalletCreate_emitsFinishStep() throws {
+        // Note: this test no longer asserts on the wallet being saved by
+        // ChooseWalletCoordinator. The create flow now persists the wallet
+        // immediately on derivation (inside `CreateNewWalletCoordinator`)
+        // so an app kill before backup confirmation doesn't lose the
+        // random private key. By the time the child emits `.create(...)`
+        // here, save has already happened in its own flow — `ChooseWallet`
+        // is no longer the persistence boundary for the create branch.
+        // See `CreateNewWalletCoordinatorTests` for the persist-on-create
+        // assertion.
         sut.start()
         let choose = top(as: ChooseWallet.self)!
         choose.viewModel.navigator.next(.createNewWallet)
@@ -117,7 +126,6 @@ final class ChooseWalletCoordinatorTests: XCTestCase {
         create.navigator.next(.create(wallet: wallet))
         drainRunLoop()
 
-        XCTAssertNotNil(mockWallet.storedWallet)
         if case .finishChoosingWallet = received { } else {
             XCTFail("expected .finishChoosingWallet, got \(String(describing: received))")
         }

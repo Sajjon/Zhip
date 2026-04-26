@@ -24,21 +24,33 @@
 
 import UIKit
 
+/// Custom pull-to-refresh control that replaces UIKit's bundled spinner with
+/// the project's themed `SpinnerView` plus a centred title label, so the
+/// pull-to-refresh styling matches the rest of the app's chrome.
 final class RefreshControl: UIRefreshControl {
+    /// Themed spinner shown above the label. Always spinning while visible.
     private lazy var spinner = SpinnerView()
+    /// Label below the spinner — content driven via `setTitle(_:)`.
     private lazy var label = UILabel()
+    /// Vertical stack composing spinner + label.
     private lazy var stackView = UIStackView(arrangedSubviews: [spinner, label])
 
+    /// Programmatic initialiser. Spins up the layout via `setup()`.
     override init() {
         super.init(frame: .zero)
         setup()
     }
 
+    /// Storyboard init — unsupported, traps to enforce programmatic-only use.
     required init?(coder _: NSCoder) {
         interfaceBuilderSucks
     }
 
-    /// Ugly hack to remove default spinner: https://stackoverflow.com/a/33472020/1311272
+    /// Workaround that hides UIKit's built-in default spinner. Setting
+    /// `isHidden = true` doesn't work on the private subview, but zeroing
+    /// `alpha` does. Without this hack the system spinner shows through
+    /// alongside our custom `SpinnerView`, which looks broken.
+    /// Original technique: https://stackoverflow.com/a/33472020/1311272
     override func didMoveToSuperview() {
         super.didMoveToSuperview()
         guard superview != nil else { return }
@@ -48,12 +60,16 @@ final class RefreshControl: UIRefreshControl {
 }
 
 extension RefreshControl {
+    /// Updates the visible label text under the spinner. Called reactively from
+    /// scenes that want to swap the prompt mid-refresh (e.g. "pulling…" → "refreshing…").
     func setTitle(_ title: String) {
         label.text = title
     }
 }
 
 private extension RefreshControl {
+    /// Lays out the spinner+label stack, applies project styling, and starts
+    /// the spinner immediately so it is animating the moment the user pulls.
     func setup() {
         backgroundColor = .clear
         contentMode = .scaleToFill

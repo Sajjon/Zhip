@@ -25,6 +25,11 @@
 import Foundation
 
 /// Check if active Config is `Debug`
+///
+/// Cheaper than `#if DEBUG` because it can be referenced from non-conditionally
+/// compiled code paths and read at runtime. The trick: `assert` is only
+/// evaluated in `-Onone` (Debug) builds, so the side-effect inside it never
+/// fires under Release optimization — meaning `isDebug` stays `false`.
 /// https://stackoverflow.com/a/47443568/1311272
 let isDebug: Bool = {
     var isDebug = false

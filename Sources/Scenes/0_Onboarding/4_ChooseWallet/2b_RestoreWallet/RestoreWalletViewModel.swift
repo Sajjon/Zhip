@@ -28,25 +28,39 @@ import Zesame
 
 /// Navigation from RestoreWallet
 enum RestoreWalletNavigation {
+    /// User entered valid restore material + password and the use case
+    /// successfully decrypted/derived the `Wallet`.
     case restoreWallet(Wallet)
 }
 
 // MARK: - RestoreWalletViewModel
 
+/// View model for the wallet-restore screen. Switches between two restore
+/// sub-modes (keystore JSON vs raw private key) based on the segmented control,
+/// dispatches the resulting `KeyRestoration` payload to `RestoreWalletUseCase`,
+/// and surfaces validation errors back to the UI via the `keystoreRestorationError`
+/// publisher.
 final class RestoreWalletViewModel: BaseViewModel<
     RestoreWalletNavigation,
     RestoreWalletViewModel.InputFromView,
     RestoreWalletViewModel.Output
 > {
+    /// Use case that decrypts the keystore or derives a wallet from a private key.
     @Injected(\.restoreWalletUseCase) private var restoreWalletUseCase: RestoreWalletUseCase
 
+    /// Wires segment-driven payload selection, restore-button gating, and
+    /// the (cancellable) restore use-case call. Detail in inline comments.
     override func transform(input: Input) -> Output {
         func userIntends(to intention: NavigationStep) {
             navigator.next(intention)
         }
 
+        // Spinner shared between the in-flight use-case call and the CTA.
         let activityIndicator = ActivityIndicator()
 
+        // Picks the active sub-view's payload stream based on the current segment.
+        // flatMapLatest cancels the previous subscription on segment-change so
+        // we don't keep listening to the hidden sub-view.
         let keyRestoration: AnyPublisher<KeyRestoration?, Never> = input.fromView.selectedSegment.flatMapLatest {
             switch $0 {
             case .keystore: input.fromView.keyRestorationUsingKeystore
@@ -55,6 +69,7 @@ final class RestoreWalletViewModel: BaseViewModel<
         }
         .eraseToAnyPublisher()
 
+        // Localized header text follows the selected segment.
         let headerLabel: AnyPublisher<String, Never> = input.fromView.selectedSegment.map {
             switch $0 {
             case .keystore: String(localized: .RestoreWallet.restoreWithKeystore)
@@ -62,25 +77,34 @@ final class RestoreWalletViewModel: BaseViewModel<
             }
         }.eraseToAnyPublisher()
 
+        // Captures errors from the use-case so the view can render them as
+        // a typed `AnyValidation` (wrong-password / bad-format) on the keystore field.
         let errorTracker = ErrorTracker()
 
         [
             input.fromView.restoreTrigger.withLatestFrom(keyRestoration.filterNil()) { $1 }
-                .flatMapLatest { [unowned self] in
-                    self.restoreWalletUseCase.restoreWallet(from: $0)
+                // flatMapLatest cancels any in-flight restore when the user taps again —
+                // useful if scrypt is mid-decryption with the wrong password.
+                .flatMapLatest { [weak self] restoration -> AnyPublisher<Wallet, Never> in
+                    guard let self else { return Empty().eraseToAnyPublisher() }
+                    return self.restoreWalletUseCase.restoreWallet(from: restoration)
                         .trackActivity(activityIndicator)
                         .trackError(errorTracker)
                         .replaceErrorWithEmpty()
+                        .eraseToAnyPublisher()
                 }
                 .sink { userIntends(to: .restoreWallet($0)) },
         ].forEach { $0.store(in: &cancellables) }
 
+        // Funnel any tracked use-case error through the keystore-error mapper
+        // so the view can flip the keystore field red and force-redirect the segment.
         let keystoreRestorationError: AnyPublisher<AnyValidation, Never> = errorTracker.asInputValidationErrors {
             KeystoreValidator.Error(error: $0)
         }
 
         return Output(
             headerLabel: headerLabel,
+            // Restore CTA enabled iff the active sub-view has produced a non-nil payload.
             isRestoreButtonEnabled: keyRestoration.map { $0 != nil }.eraseToAnyPublisher(),
             isRestoring: activityIndicator.asPublisher(),
             keystoreRestorationError: keystoreRestorationError
@@ -89,21 +113,35 @@ final class RestoreWalletViewModel: BaseViewModel<
 }
 
 extension RestoreWalletViewModel {
+    /// User-event publishers the view-model consumes.
     struct InputFromView {
+        /// Which restore method is selected.
         enum Segment: Int {
-            case privateKey, keystore
+            /// Private-key restore (default).
+            case privateKey
+            /// Keystore JSON + password restore.
+            case keystore
         }
 
+        /// Which segment is currently active.
         let selectedSegment: AnyPublisher<Segment, Never>
+        /// Payload stream from the private-key sub-view (`nil` while invalid).
         let keyRestorationUsingPrivateKey: AnyPublisher<KeyRestoration?, Never>
+        /// Payload stream from the keystore sub-view (`nil` while invalid).
         let keyRestorationUsingKeystore: AnyPublisher<KeyRestoration?, Never>
+        /// Fires when the user taps the restore CTA.
         let restoreTrigger: AnyPublisher<Void, Never>
     }
 
+    /// Reactive bindings the view installs.
     struct Output {
+        /// Drives `headerLabel.textBinder` based on the selected segment.
         let headerLabel: AnyPublisher<String, Never>
+        /// Drives `restoreWalletButton.isEnabledBinder`.
         let isRestoreButtonEnabled: AnyPublisher<Bool, Never>
+        /// Drives `restoreWalletButton.isLoadingBinder` during decryption.
         let isRestoring: AnyPublisher<Bool, Never>
+        /// Drives the composite keystore-error binder (red field + segment redirect).
         let keystoreRestorationError: AnyPublisher<AnyValidation, Never>
     }
 }

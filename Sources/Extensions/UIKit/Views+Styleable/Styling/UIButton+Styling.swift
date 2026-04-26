@@ -24,7 +24,14 @@
 
 import UIKit
 
+// Same Style/Apply/Customizing/Presets/Mergeable shape as `UILabel+Styling.swift`
+// — see that file for the canonical doc walkthrough. Only the per-attribute
+// fields and the presets differ here.
+
 extension UIButton {
+    /// Optional-keypath assignment helper: writes `attribute` to `keyPath` only
+    /// when `attribute` is non-nil. Lets style application skip attributes the
+    /// caller didn't want to override.
     func setOptional<Attribute>(
         _ keyPath: ReferenceWritableKeyPath<UIButton, Attribute?>,
         ifNotNil attribute: Attribute?
@@ -33,6 +40,7 @@ extension UIButton {
         self[keyPath: keyPath] = attribute
     }
 
+    /// Non-optional-keypath variant — same semantics: write only if `attribute` is non-nil.
     func set<Attribute>(_ keyPath: ReferenceWritableKeyPath<UIButton, Attribute>, ifNotNil attribute: Attribute?) {
         guard let attribute else { return }
         self[keyPath: keyPath] = attribute
@@ -40,9 +48,15 @@ extension UIButton {
 }
 
 extension UIView {
+    /// Corner rounding policy for a view. Currently only `.static(CGFloat)` is
+    /// implemented — the enum exists so a future percentage/dynamic policy can
+    /// be added without churning every call site.
     enum Rounding {
+        /// Fixed corner radius in points.
         case `static`(CGFloat)
 
+        /// Applies this rounding to `view`, also setting `masksToBounds` so the
+        /// rounded corners actually clip the contents.
         func apply(to view: UIView, maskToBounds: Bool = true) {
             switch self {
             case let .static(radius):
@@ -56,6 +70,9 @@ extension UIView {
 }
 
 public extension UIButton {
+    /// Description of a button's appearance — text/image content, per-state
+    /// foreground/background colours, font, optional border/rounding/height.
+    /// Same nil-means-default convention as `UILabel.Style`.
     struct Style {
         fileprivate var titleNormal: String?
         fileprivate var imageNormal: UIImage?
@@ -71,6 +88,8 @@ public extension UIButton {
         let borderNormal: Border?
         let cornerRounding: UIView.Rounding?
 
+        /// Memberwise initialiser — every parameter optional so call sites
+        /// only specify what they care to override.
         init(
             titleNormal: String? = nil,
             imageNormal: UIImage? = nil,
@@ -103,9 +122,13 @@ public extension UIButton {
     }
 }
 
+/// Default tap target height (64pt) — chosen for thumb-friendly hit area on
+/// primary buttons. Made `private` so call sites must go through the presets.
 private let defaultHeight: CGFloat = 64
 
 extension UIButton {
+    /// Writes `style` to this button, substituting project-wide defaults for
+    /// any nil attribute. Includes the per-state colour set (normal/disabled/selected).
     func apply(style: Style) {
         translatesAutoresizingMaskIntoConstraints = false
         if let height = style.height {
@@ -123,6 +146,8 @@ extension UIButton {
         titleLabel?.font = style.font ?? UIFont.button
         let colorNormal = style.colorNormal ?? .teal
         let colorDisabled = style.colorDisabled ?? .asphaltGrey
+        // .selected falls back to .normal — most buttons don't distinguish a
+        // selected state, so re-using .normal looks correct.
         let colorSelected = style.colorSelected ?? colorNormal
         setBackgroundColor(colorNormal, for: .normal)
         setBackgroundColor(colorDisabled, for: .disabled)
@@ -137,6 +162,10 @@ extension UIButton {
         }
     }
 
+    /// Apply `style` and return `self`. Generic over `B: UIButton` so concrete
+    /// subclasses (e.g. `ButtonWithSpinner`) keep their type at the call site
+    /// without an explicit cast. Crashes loudly if the runtime cast fails —
+    /// a programming error, not a recoverable condition.
     @discardableResult
     func withStyle<B: UIButton>(_ style: UIButton.Style, customize: ((UIButton.Style) -> UIButton.Style)? = nil) -> B {
         translatesAutoresizingMaskIntoConstraints = false
@@ -149,7 +178,11 @@ extension UIButton {
 
 // MARK: - Style + Customizing
 
+// Chainable mutators — each returns a copy with one field replaced.
+// See UILabel+Styling.swift for the canonical pattern walkthrough.
+
 extension UIButton.Style {
+    /// Returns a copy of this style with `isEnabled = false`.
     @discardableResult
     func disabled() -> UIButton.Style {
         var style = self
@@ -157,6 +190,7 @@ extension UIButton.Style {
         return style
     }
 
+    /// Returns a copy of this style with the normal-state title replaced.
     @discardableResult
     func title(_ titleNormal: String) -> UIButton.Style {
         var style = self
@@ -164,6 +198,9 @@ extension UIButton.Style {
         return style
     }
 
+    /// Returns a copy of this style with `height` replaced.
+    /// Pass `nil` to drop the explicit height constraint and let the button
+    /// size to its content.
     @discardableResult
     func height(_ height: CGFloat?) -> UIButton.Style {
         var style = self
@@ -175,6 +212,8 @@ extension UIButton.Style {
 // MARK: - Style Presets
 
 extension UIButton.Style {
+    /// Solid-fill primary button — teal background, white text, 8pt corners.
+    /// The default call-to-action style across the app.
     static var primary: UIButton.Style {
         UIButton.Style(
             textColorNormal: .white,
@@ -185,6 +224,8 @@ extension UIButton.Style {
         )
     }
 
+    /// Text-only secondary button (no fill, teal text). Use for low-emphasis
+    /// destructive or alternative actions.
     static var secondary: UIButton.Style {
         UIButton.Style(
             textColorNormal: .teal,
@@ -192,6 +233,8 @@ extension UIButton.Style {
         )
     }
 
+    /// Outlined ("hollow") button — 1pt teal border, transparent fill,
+    /// 44pt tap target. Mid-emphasis between `.primary` and `.secondary`.
     static var hollow: UIButton.Style {
         UIButton.Style(
             height: 44,
@@ -202,6 +245,7 @@ extension UIButton.Style {
         )
     }
 
+    /// Icon-only button preset — image and no fill, sized to its content.
     static func image(_ image: UIImage) -> UIButton.Style {
         UIButton.Style(
             imageNormal: image,
@@ -213,6 +257,7 @@ extension UIButton.Style {
         )
     }
 
+    /// Text-only inline button preset — content-sized, teal text on transparent.
     static func title(_ title: String) -> UIButton.Style {
         UIButton.Style(
             titleNormal: title,

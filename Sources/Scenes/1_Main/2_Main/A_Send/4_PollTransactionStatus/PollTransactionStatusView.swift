@@ -26,10 +26,16 @@ import Combine
 import Factory
 import UIKit
 
+/// Step 4 of Send — celebratory "transaction broadcast" screen with a stars
+/// gradient background, copy/view-details buttons, and a skip CTA. Plays a
+/// success sound + haptic when the receipt resolves.
 final class PollTransactionStatusView: ScrollableStackViewOwner {
+    /// Plays the success chime once the receipt resolves.
     @Injected(\.soundPlayer) private var soundPlayer: SoundPlayer
+    /// Fires a celebratory haptic alongside the chime.
     @Injected(\.hapticFeedback) private var hapticFeedback: HapticFeedback
 
+    /// Stars-gradient background.
     private lazy var motionEffectStarsImageViewWithGradient = GradientView()
     private lazy var checkmarkLogoImageView = UIImageView()
     private lazy var transactionBroadcastedLabel = UILabel()

@@ -24,10 +24,13 @@
 
 import UIKit
 
+/// `SceneController` glue for the receipt-polling screen (step 4 of Send).
 final class PollTransactionStatus: Scene<PollTransactionStatusView> {}
 
+/// No back arrow — the user can either skip, view in browser, or wait for the receipt.
 extension PollTransactionStatus: BackButtonHiding {}
 
+/// Translucent bar — the screen has a celebratory hero illustration that bleeds under the bar.
 extension PollTransactionStatus: NavigationBarLayoutOwner {
     var navigationBarLayout: NavigationBarLayout {
         .translucent

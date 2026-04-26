@@ -27,9 +27,17 @@ import Foundation
 /// Key to sensitive values being store in Keychain, e.g. the cryptographically sensitive keystore file, containing an
 /// encryption of your wallets private key.
 enum KeychainKey: String, KeyConvertible {
+    /// JSON-encoded `Wallet` (which contains the encrypted-keystore JSON for the user's private key).
     case keystore
+    /// JSON-encoded `Pincode`. The verbose name is intentional — it documents at the
+    /// callsite that this PIN is *only* for app-level lock; it has nothing to do with the
+    /// cryptographic key material in `keystore`.
     case pincodeProtectingAppThatHasNothingToDoWithCryptography
 }
 
 /// Abstraction of Keychain
+///
+/// Production code injects a `SecurePersistence` (i.e. a `KeyValueStore<KeychainKey>`)
+/// resolved by `Container.shared.securePersistence`, which wraps `KeychainSwift`.
+/// Tests register an in-memory replacement in `Tests/Helpers/TestStoreFactory.swift`.
 typealias SecurePersistence = KeyValueStore<KeychainKey>

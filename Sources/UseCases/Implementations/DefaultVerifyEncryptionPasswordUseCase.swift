@@ -30,10 +30,14 @@ import Zesame
 /// Default implementation of `VerifyEncryptionPasswordUseCase`.
 final class DefaultVerifyEncryptionPasswordUseCase: VerifyEncryptionPasswordUseCase {
 
+    /// Reactive Zesame façade — performs the actual decrypt-verification.
     @Injected(\.zilliqaService) private var zilliqaService: ZilliqaServiceReactive
 
+    /// No-op designated initializer — all dependencies are resolved through `@Injected`.
     init() {}
 
+    /// Returns `true` (via the publisher) iff `password` successfully decrypts
+    /// `keystore`. Errors come from Zesame and are lifted to `Swift.Error`.
     func verify(password: String, forKeystore keystore: Keystore) -> AnyPublisher<Bool, Swift.Error> {
         zilliqaService.verifyThat(encryptionPassword: password, canDecryptKeystore: keystore)
             .mapError { $0 as Swift.Error }

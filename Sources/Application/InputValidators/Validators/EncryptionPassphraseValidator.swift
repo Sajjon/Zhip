@@ -24,16 +24,26 @@
 
 import Zesame
 
+/// Validates a password + confirmation pair, producing a typed
+/// `WalletEncryptionPassword` value the keystore-derivation use case can consume.
+///
+/// `mode` controls the minimum length rule (stricter for new wallets,
+/// looser for the unlock screen of an already-saved wallet).
 struct EncryptionPasswordValidator: InputValidator {
     typealias Input = (password: String, confirmingPassword: String)
     typealias Output = WalletEncryptionPassword
     typealias Error = WalletEncryptionPassword.Error
 
+    /// The password-policy mode (new wallet vs unlock).
     private let mode: WalletEncryptionPassword.Mode
+
+    /// Captures the policy mode for later validation calls.
     init(mode: WalletEncryptionPassword.Mode) {
         self.mode = mode
     }
 
+    /// Tries to construct a `WalletEncryptionPassword`; on failure, surfaces
+    /// the typed `WalletEncryptionPassword.Error` for floating-label rendering.
     func validate(input: Input) -> Validation<Output, Error> {
         let password = input.password
         let confirmingPassword = input.confirmingPassword
@@ -47,7 +57,13 @@ struct EncryptionPasswordValidator: InputValidator {
     }
 }
 
+/// `Zesame` error → `InputError` adapter so the password rule errors render as
+/// localized strings in the floating-label field.
 extension WalletEncryptionPassword.Error: InputError, Equatable {
+    /// Localized message rendered for each validation failure.
+    /// `incorrectPassword` has two variants because the copy differs between
+    /// "you just created the wallet, here's the password you typed" (backup
+    /// confirmation) and "unlock your existing wallet" (regular login).
     var errorMessage: String {
         switch self {
         case let .passwordIsTooShort(minLength): String(localized: .Errors.passwordTooShort(minLength: minLength))
@@ -61,6 +77,8 @@ extension WalletEncryptionPassword.Error: InputError, Equatable {
         }
     }
 
+    /// Equality on the case only — associated values (e.g. minLength) don't
+    /// affect whether two errors are "the same" for `Validation` equality.
     static func == (lhs: WalletEncryptionPassword.Error, rhs: WalletEncryptionPassword.Error) -> Bool {
         switch (lhs, rhs) {
         case (.passwordIsTooShort, passwordIsTooShort): true

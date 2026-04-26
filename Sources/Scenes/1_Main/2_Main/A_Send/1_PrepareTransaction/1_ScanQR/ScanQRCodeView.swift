@@ -27,9 +27,14 @@ import Combine
 import QRCodeReader
 import UIKit
 
+/// QR-code scanner view backed by the third-party `QRCodeReader` library.
+/// Captures from the back camera and emits scanned strings through the view-model.
 final class ScanQRCodeView: UIView {
+    /// Bridges the third-party reader's `didFindCode` callback into a Combine publisher.
     private let scannedQrCodeSubject = PassthroughSubject<String?, Never>()
+    /// Library-provided viewfinder view.
     private lazy var readerView = QRCodeReaderView()
+    /// Underlying QR-code reader (back camera, QR metadata only).
     private lazy var reader = QRCodeReader(metadataObjectTypes: [.qr], captureDevicePosition: .back)
 
     init() {
@@ -57,12 +62,12 @@ private extension ScanQRCodeView {
             $0.reader = reader
         })
 
-        reader.didFindCode = { [unowned self] in
-            self.scannedQrCodeSubject.send($0.value)
+        reader.didFindCode = { [weak self] in
+            self?.scannedQrCodeSubject.send($0.value)
         }
 
-        reader.didFailDecoding = { [unowned self] in
-            self.scannedQrCodeSubject.send(nil)
+        reader.didFailDecoding = { [weak self] in
+            self?.scannedQrCodeSubject.send(nil)
         }
 
         readerView.switchCameraButton?.addTarget(

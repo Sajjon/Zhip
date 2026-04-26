@@ -27,21 +27,30 @@ import Foundation
 
 // MARK: - RemovePincodeUserAction
 
+/// Outcomes of the pincode-removal modal.
 enum RemovePincodeUserAction {
+    /// User tapped Cancel — close without removing.
     case cancelPincodeRemoval
+    /// Entered pincode matched — pincode deleted, modal closes.
     case removePincode
 }
 
 // MARK: - RemovePincodeViewModel
 
+/// View model for the pincode-removal modal. Mirrors the unlock-screen pattern:
+/// auto-fires removal as soon as the entered pincode matches the saved one.
 final class RemovePincodeViewModel: BaseViewModel<
     RemovePincodeUserAction,
     RemovePincodeViewModel.InputFromView,
     RemovePincodeViewModel.Output
 > {
+    /// Used to read the current pincode for comparison + delete on success.
     private let useCase: PincodeUseCase
+    /// The persisted pincode the user must match.
     private let pincode: Pincode
 
+    /// Captures the use case and stashes the current pincode for comparison.
+    /// Crashes if missing — would mean the modal was shown without a pincode set.
     init(useCase: PincodeUseCase) {
         self.useCase = useCase
         guard let pincode = useCase.pincode else {
@@ -50,6 +59,8 @@ final class RemovePincodeViewModel: BaseViewModel<
         self.pincode = pincode
     }
 
+    /// Wires real-time pincode comparison; on first match, deletes the pincode
+    /// and emits `.removePincode`. Cancel bar-button emits `.cancelPincodeRemoval`.
     override func transform(input: Input) -> RemovePincodeViewModel.Output {
         func userDid(_ userAction: NavigationStep) {
             navigator.next(userAction)
@@ -65,10 +76,11 @@ final class RemovePincodeViewModel: BaseViewModel<
             input.fromController.leftBarButtonTrigger
                 .sink { userDid(.cancelPincodeRemoval) },
 
+            // First valid match wires straight to delete-then-emit.
             pincodeValidationValue.filter(\.isValid)
                 .mapToVoid()
-                .sink { [unowned useCase] in
-                    useCase.deletePincode()
+                .sink { [weak useCase] in
+                    useCase?.deletePincode()
                     userDid(.removePincode)
                 },
         ].forEach { $0.store(in: &cancellables) }
@@ -81,23 +93,32 @@ final class RemovePincodeViewModel: BaseViewModel<
 }
 
 extension RemovePincodeViewModel {
+    /// User-event publishers the view-model consumes.
     struct InputFromView {
+        /// Latest pincode value (`nil` while incomplete).
         let pincode: AnyPublisher<Pincode?, Never>
     }
 
+    /// Reactive bindings the view installs.
     struct Output {
+        /// Pulses on viewDidAppear to put the input in focus.
         let inputBecomeFirstResponder: AnyPublisher<Void, Never>
+        /// Drives the input's validation styling.
         let pincodeValidation: AnyPublisher<AnyValidation, Never>
     }
 
+    /// Adapts `PincodeValidator(settingNew: false)` to the modal — captures the
+    /// saved pincode and delegates each validation to the shared validator.
     struct InputValidator {
         private let existingPincode: Pincode
         private let pincodeValidator = PincodeValidator(settingNew: false)
 
+        /// Captures the saved pincode the user must match.
         init(existingPincode: Pincode) {
             self.existingPincode = existingPincode
         }
 
+        /// Compares `unconfirmedPincode` against the saved one.
         func validate(unconfirmedPincode: Pincode?) -> PincodeValidator.ValidationResult {
             pincodeValidator.validate(input: (unconfirmedPincode, existingPincode))
         }

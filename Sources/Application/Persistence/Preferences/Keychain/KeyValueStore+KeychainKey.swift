@@ -27,48 +27,54 @@ import Zesame
 
 // MARK: - Wallet
 
+/// Typed conveniences for reading/writing the user's `Wallet` blob from `SecurePersistence`.
 extension KeyValueStore where KeyType == KeychainKey {
+    /// The persisted `Wallet`, or `nil` if none.
+    ///
+    /// Pure read — no side effects. The reinstall-wipe behaviour (iOS keeps
+    /// the Keychain across uninstalls but clears UserDefaults; without a
+    /// wipe a reinstalling user would inherit a wallet they no longer hold
+    /// the encryption password for) lives in
+    /// `wipeStaleKeychainOnReinstallIfNeeded(...)` in `Bootstrap.swift` and
+    /// runs once at launch via `AppDelegate.application(_:didFinishLaunching…)`.
     var wallet: Wallet? {
-        // Delete wallet upon reinstall if needed. This makes sure that after a reinstall of the app, the flag
-        // `hasRunAppBefore`, which recides in UserDefaults - which gets reset after uninstalls, will be false
-        // thus we should not have any wallet configured. Delete previous one if needed and always return nil
-        guard Preferences.default.isTrue(.hasRunAppBefore) else {
-            Preferences.default.save(value: true, for: .hasRunAppBefore)
-            deleteWallet()
-            deletePincode()
-            Preferences.default.deleteValue(for: .cachedBalance)
-            Preferences.default.deleteValue(for: .balanceWasUpdatedAt)
-            return nil
-        }
-        return loadCodable(Wallet.self, for: .keystore)
+        loadCodable(Wallet.self, for: .keystore)
     }
 
+    /// `true` iff `wallet` resolves to a non-`nil` value.
     var hasConfiguredWallet: Bool {
         wallet != nil
     }
 
+    /// Persists `wallet` (as JSON) under `KeychainKey.keystore`.
     func save(wallet: Wallet) {
         saveCodable(wallet, for: .keystore)
     }
 
+    /// Removes the persisted wallet from the Keychain.
     func deleteWallet() {
         deleteValue(for: .keystore)
     }
 }
 
+/// Typed conveniences for reading/writing the app-lock `Pincode` from `SecurePersistence`.
 extension KeyValueStore where KeyType == KeychainKey {
+    /// The persisted app-lock pincode, or `nil` if the user hasn't set one.
     var pincode: Pincode? {
         loadCodable(Pincode.self, for: .pincodeProtectingAppThatHasNothingToDoWithCryptography)
     }
 
+    /// `true` iff `pincode` resolves to a non-`nil` value.
     var hasConfiguredPincode: Bool {
         pincode != nil
     }
 
+    /// Persists `pincode` (as JSON) under the pincode key.
     func save(pincode: Pincode) {
         saveCodable(pincode, for: .pincodeProtectingAppThatHasNothingToDoWithCryptography)
     }
 
+    /// Removes the persisted pincode from the Keychain.
     func deletePincode() {
         deleteValue(for: .pincodeProtectingAppThatHasNothingToDoWithCryptography)
     }

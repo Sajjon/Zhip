@@ -27,23 +27,38 @@ import Factory
 import UIKit
 import Zesame
 
+/// Outcome the main coordinator surfaces to its parent (`AppCoordinator`).
 enum MainCoordinatorNavigationStep {
+    /// User confirmed wallet removal in Settings — `AppCoordinator` should
+    /// transition back to onboarding.
     case removeWallet
 }
 
+/// Coordinator owning the post-onboarding "main" experience: the wallet hub
+/// (`Main`) plus three modal sub-flows (Send, Receive, Settings).
+///
+/// Also handles the universal-link `send` deep link by presenting the Send
+/// flow with a pre-filled transaction.
 final class MainCoordinator: BaseCoordinator<MainCoordinatorNavigationStep> {
+    /// Stream of incoming deep-linked transactions (replays the latest if a deep
+    /// link arrived before a coordinator was ready).
     private let deeplinkedTransaction: AnyPublisher<TransactionIntent, Never>
+    /// Triggered after a successful Send flow so the Main scene refetches balance.
     private let updateBalanceSubject = PassthroughSubject<Void, Never>()
 
+    /// Captures the navigation controller + deep-link source. Subscribes to the
+    /// deep-link stream so an inbound `send/...` URL automatically opens the
+    /// Send flow (when no other modal is up).
     init(
         navigationController: UINavigationController,
         deeplinkedTransaction: AnyPublisher<TransactionIntent, Never>
     ) {
         self.deeplinkedTransaction = deeplinkedTransaction
         super.init(navigationController: navigationController)
-        deeplinkedTransaction.mapToVoid().sink { [unowned self] in self.toSendPrefilTransaction() }.store(in: &cancellables)
+        deeplinkedTransaction.mapToVoid().sink { [weak self] in self?.toSendPrefilTransaction() }.store(in: &cancellables)
     }
 
+    /// Begins by pushing the Main hub.
     override func start(didStart: Completion? = nil) {
         toMain(didStart: didStart)
     }
@@ -51,6 +66,8 @@ final class MainCoordinator: BaseCoordinator<MainCoordinatorNavigationStep> {
 
 //// MARK: - Deep Link Navigation
 private extension MainCoordinator {
+    /// Opens the Send flow if no modal sub-flow is currently active.
+    /// Avoids stacking modals when the user has e.g. Settings open.
     func toSendPrefilTransaction() {
         guard childCoordinators.isEmpty else {
             // Prevented navigation to PrepareTransaction via deeplink since a coordinator is already presented
@@ -63,6 +80,8 @@ private extension MainCoordinator {
 // MARK: - Navigation
 
 private extension MainCoordinator {
+    /// Pushes the Main hub. Wires the three CTAs (send/receive/settings) to
+    /// their respective modal sub-flows.
     func toMain(didStart: Completion? = nil) {
         let viewModel = MainViewModel(
             updateBalanceTrigger: updateBalanceSubject.replaceErrorWithEmpty().eraseToAnyPublisher()
@@ -72,7 +91,8 @@ private extension MainCoordinator {
             scene: Main.self,
             viewModel: viewModel,
             navigationPresentationCompletion: didStart
-        ) { [unowned self] userIntendsTo in
+        ) { [weak self] userIntendsTo in
+            guard let self else { return }
             switch userIntendsTo {
             case .send: self.toSend()
             case .receive: self.toReceive()
@@ -81,6 +101,8 @@ private extension MainCoordinator {
         }
     }
 
+    /// Presents the Send sub-coordinator modally. On finish (with the
+    /// "balance changed" flag set) trigger a refetch on the Main hub.
     func toSend() {
         presentModalCoordinator(
             makeCoordinator: { SendCoordinator(
@@ -88,11 +110,11 @@ private extension MainCoordinator {
                 deeplinkedTransaction: deeplinkedTransaction
             )
             },
-            navigationHandler: { [unowned self] userDid, dismissModalFlow in
+            navigationHandler: { [weak self] userDid, dismissModalFlow in
                 switch userDid {
                 case let .finish(triggerBalanceFetching):
                     if triggerBalanceFetching {
-                        self.triggerFetchingOfBalance()
+                        self?.triggerFetchingOfBalance()
                     }
                     dismissModalFlow(true)
                 }
@@ -100,6 +122,7 @@ private extension MainCoordinator {
         )
     }
 
+    /// Presents the Receive (QR-code) sub-coordinator modally.
     func toReceive() {
         presentModalCoordinator(
             makeCoordinator: { ReceiveCoordinator(navigationController: $0) },
@@ -111,12 +134,14 @@ private extension MainCoordinator {
         )
     }
 
+    /// Presents the Settings sub-coordinator modally. `.removeWallet` bubbles
+    /// up to the parent so it can transition back to onboarding.
     func toSettings() {
         presentModalCoordinator(
             makeCoordinator: { SettingsCoordinator(navigationController: $0) },
-            navigationHandler: { [unowned self] userIntendsTo, dismissModalFlow in
+            navigationHandler: { [weak self] userIntendsTo, dismissModalFlow in
                 switch userIntendsTo {
-                case .removeWallet: self.navigator.next(.removeWallet)
+                case .removeWallet: self?.navigator.next(.removeWallet)
                 case .closeSettings: dismissModalFlow(true)
                 }
             }
@@ -127,6 +152,7 @@ private extension MainCoordinator {
 // MARK: - Private
 
 private extension MainCoordinator {
+    /// Pushes a void pulse onto `updateBalanceSubject` so the Main hub refetches.
     func triggerFetchingOfBalance() {
         updateBalanceSubject.send(())
     }

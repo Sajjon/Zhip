@@ -24,6 +24,16 @@
 
 import UIKit
 
+/// Opt-in protocol for views that produce their own content view (typically a
+/// composed `UIStackView`). Used by container views like
+/// `ScrollableStackViewOwner` to ask the conforming subclass: "what goes inside?"
+///
+/// - Note: A duplicate of this declaration also lives at
+///   `Extensions/UIKit/Views+Styleable/ContentViewProvider.swift` along with its
+///   `StackViewStyling` default implementation. The two files coexist for
+///   historical reasons; consolidating them is on the cleanup list.
 protocol ContentViewProvider {
+    /// Construct and return the content view to seat inside the container.
+    /// Called once during composition; the returned view is owned by the caller.
     func makeContentView() -> UIView
 }

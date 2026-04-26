@@ -26,32 +26,49 @@ import Combine
 import UIKit
 import Zesame
 
+/// Local typealias to avoid the long `RestoreWalletViewModel.InputFromView.Segment` mouthful.
 private typealias Segment = RestoreWalletViewModel.InputFromView.Segment
 
 // MARK: - RestoreWalletView
 
+/// Wallet-restore screen with a segmented control between two restore methods.
+/// Both sub-views (`RestoreUsingPrivateKeyView`, `RestoreUsingKeystoreView`)
+/// are added to the same container — visibility flips based on the segment.
 final class RestoreWalletView: ScrollableStackViewOwner {
+    /// Holds the segment-change subscription that drives sub-view visibility.
     private var cancellables = Set<AnyCancellable>()
 
     // MARK: - Subviews
 
+    /// Segmented control: keystore vs private key.
     private lazy var restorationMethodSegmentedControl = UISegmentedControl()
+    /// Header label whose text follows the selected segment.
     private lazy var headerLabel = UILabel()
+    /// Embedded sub-view for private-key restore.
     private lazy var restoreUsingPrivateKeyView = RestoreUsingPrivateKeyView()
+    /// Embedded sub-view for keystore restore. `fileprivate` so the
+    /// `keystoreRestorationValidatino` binder can flip its error state.
     fileprivate lazy var restoreUsingKeyStoreView = RestoreUsingKeystoreView()
+    /// Container hosting both sub-views; visibility toggles between them.
     private lazy var containerView = UIView()
+    /// Bottom restore CTA — shows a spinner during decryption. `fileprivate` so
+    /// the validation binder can disable it on keystore-error.
     fileprivate lazy var restoreWalletButton = ButtonWithSpinner()
 
+    /// Vertical layout: header, container with sub-views, restore CTA.
     lazy var stackViewStyle = UIStackView.Style([
         headerLabel,
         containerView,
         restoreWalletButton,
     ], spacing: 8)
 
+    /// Override-hook from `ScrollableStackViewOwner` — wires styling.
     override func setup() {
         setupSubviews()
     }
 
+    /// Custom scroll-view constraints that leave room above the scroll for
+    /// the segmented control (which sits *outside* the scrollable stack).
     override func setupScrollViewConstraints() {
         scrollView.bottomToSuperview()
         scrollView.leadingToSuperview()
@@ -64,6 +81,9 @@ final class RestoreWalletView: ScrollableStackViewOwner {
 extension RestoreWalletView: ViewModelled {
     typealias ViewModel = RestoreWalletViewModel
 
+    /// Surfaces the selected segment, both sub-view restore-payload streams,
+    /// and the restore-button tap. The segment publisher is `prepend(...)`-ed
+    /// with the current value so subscribers see the initial state, not just changes.
     var inputFromView: InputFromView {
         let segmentValue = restorationMethodSegmentedControl.publisher(for: .valueChanged)
             .map { [weak restorationMethodSegmentedControl] _ in
@@ -79,6 +99,8 @@ extension RestoreWalletView: ViewModelled {
         )
     }
 
+    /// Binds header text, button loading/enabled states, and the keystore-error
+    /// "soft-redirect" binder (see `keystoreRestorationValidatino` below).
     func populate(with viewModel: ViewModel.Output) -> [AnyCancellable] {
         [
             viewModel.headerLabel --> headerLabel.textBinder,
@@ -88,6 +110,10 @@ extension RestoreWalletView: ViewModelled {
         ]
     }
 
+    /// Composite binder that handles the "keystore restore failed with wrong password"
+    /// case: routes the error to the keystore sub-view, force-switches the
+    /// segmented control to the keystore tab, and disables the restore button
+    /// (the user must edit the password to re-enable it).
     var keystoreRestorationValidatino: Binder<AnyValidation> {
         Binder<AnyValidation>(self) {
             $0.restoreUsingKeyStoreView.restorationErrorValidation($1)
@@ -100,10 +126,13 @@ extension RestoreWalletView: ViewModelled {
 // MARK: - Private
 
 private extension RestoreWalletView {
+    /// Styling pass — header style, container holding both sub-views overlaid,
+    /// primary restore button (initially disabled), and segmented-control setup.
     func setupSubviews() {
         headerLabel.withStyle(.header)
         containerView.translatesAutoresizingMaskIntoConstraints = false
 
+        // Overlay both sub-views in the same container; visibility flips below.
         for item in [restoreUsingPrivateKeyView, restoreUsingKeyStoreView] {
             item.translatesAutoresizingMaskIntoConstraints = false
             containerView.addSubview(item)
@@ -118,6 +147,9 @@ private extension RestoreWalletView {
         setupSegmentedControl()
     }
 
+    /// Builds the segmented control (positioned *above* the scroll view, not
+    /// inside the scrollable stack), styles its segments teal-on-white, and
+    /// wires the value-change publisher to flip sub-view visibility.
     func setupSegmentedControl() {
         restorationMethodSegmentedControl.translatesAutoresizingMaskIntoConstraints = false
         addSubview(restorationMethodSegmentedControl)
@@ -153,11 +185,12 @@ private extension RestoreWalletView {
             .map { [weak restorationMethodSegmentedControl] _ in restorationMethodSegmentedControl?.selectedSegmentIndex ?? 0 }
             .map { Segment(rawValue: $0) }
             .filterNil()
-            .sink { [unowned self] in self.switchToViewFor(selectedSegment: $0) }.store(in: &cancellables)
+            .sink { [weak self] in self?.switchToViewFor(selectedSegment: $0) }.store(in: &cancellables)
 
         selectSegment(.privateKey)
     }
 
+    /// Toggles `isHidden` on the two overlaid sub-views based on the segment.
     func switchToViewFor(selectedSegment: Segment) {
         switch selectedSegment {
         case .privateKey:
@@ -169,6 +202,9 @@ private extension RestoreWalletView {
         }
     }
 
+    /// Programmatically picks a segment (and fires `.valueChanged` so the
+    /// sub-view-switch publisher reacts). Used by the keystore-error binder
+    /// to force-redirect to the keystore tab when a wrong-password error fires.
     func selectSegment(_ segment: Segment) {
         restorationMethodSegmentedControl.selectedSegmentIndex = segment.rawValue
         restorationMethodSegmentedControl.sendActions(for: .valueChanged)

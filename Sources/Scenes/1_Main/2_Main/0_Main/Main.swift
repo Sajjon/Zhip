@@ -25,12 +25,15 @@
 import Foundation
 import UIKit
 
+/// `SceneController` glue for the wallet hub screen.
 final class Main: Scene<MainView> {}
 
+/// Right-bar settings cog icon — taps fire `goToSettings` on the view-model.
 extension Main: RightBarButtonContentMaking {
     static let makeRightContent = BarButtonContent(image: UIImage(resource: .settings))
 }
 
+/// Translucent navigation bar so the parallax aurora background bleeds under it.
 extension Main: NavigationBarLayoutOwner {
     var navigationBarLayout: NavigationBarLayout {
         .translucent

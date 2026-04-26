@@ -26,29 +26,48 @@ import Factory
 import UIKit
 import Zesame
 
+/// Outcome the onboarding coordinator surfaces to its parent (`AppCoordinator`)
+/// when onboarding is complete.
 enum OnboardingCoordinatorNavigationStep {
+    /// All required onboarding steps have been satisfied; `AppCoordinator`
+    /// should transition to the `MainCoordinator`.
     case finishOnboarding
 }
 
+/// Drives the linear pre-wallet onboarding flow:
+/// Welcome → Terms → Crash-reporting → ECC warning → Choose wallet → Pincode.
+///
+/// `toNextStep()` is the central decision tree — each onboarding fact is
+/// stored in `Preferences` via `OnboardingUseCase`, so a partially-completed
+/// onboarding resumes at the first unsatisfied step on next launch.
 final class OnboardingCoordinator: BaseCoordinator<OnboardingCoordinatorNavigationStep> {
+    /// Reads/writes the per-step "has accepted/answered" flags from `Preferences`.
     @Injected(\.onboardingUseCase) private var onboardingUseCase: OnboardingUseCase
+    /// Used to skip the wallet-choose step when a wallet is already persisted.
     @Injected(\.walletStorageUseCase) private var walletStorageUseCase: WalletStorageUseCase
+    /// Forwarded to the pincode sub-coordinator.
     @Injected(\.pincodeUseCase) private var pincodeUseCase: PincodeUseCase
 
+    /// Always begins at the Welcome screen — even on subsequent launches that
+    /// re-enter onboarding because a step is still missing.
     override func start(didStart _: Completion? = nil) {
         toWelcome()
     }
 }
 
 private extension OnboardingCoordinator {
+    /// Pushes the welcome scene; user tap of "start" advances to `toNextStep`.
     func toWelcome() {
-        push(scene: Welcome.self, viewModel: WelcomeViewModel()) { [unowned self] userIntendsTo in
+        push(scene: Welcome.self, viewModel: WelcomeViewModel()) { [weak self] userIntendsTo in
             switch userIntendsTo {
-            case .start: self.toNextStep()
+            case .start: self?.toNextStep()
             }
         }
     }
 
+    /// Linear gate over the persisted onboarding facts — pushes the first
+    /// scene whose precondition is unmet, or finishes if everything is done.
+    /// Each `guard` represents one user-visible step.
     func toNextStep() {
         guard onboardingUseCase.hasAcceptedTermsOfService else {
             return toTermsOfService()
@@ -73,63 +92,75 @@ private extension OnboardingCoordinator {
         finish()
     }
 
+    /// Pushes the Terms of Service screen. Both `.acceptTermsOfService`
+    /// (positive ack) and `.dismiss` (also recorded as accepted) advance to
+    /// the next step — there is no "no" option in this onboarding.
     func toTermsOfService() {
         let viewModel = TermsOfServiceViewModel(useCase: onboardingUseCase, isDismissible: false)
-        push(scene: TermsOfService.self, viewModel: viewModel) { [unowned self] userDid in
+        push(scene: TermsOfService.self, viewModel: viewModel) { [weak self] userDid in
             switch userDid {
-            case .acceptTermsOfService, .dismiss: self.toAnalyticsPermission()
+            case .acceptTermsOfService, .dismiss: self?.toAnalyticsPermission()
             }
         }
     }
 
+    /// Pushes the crash-reporting permission prompt. Either acceptance state
+    /// (yes/no/dismiss) records the answer and advances to the next step.
     func toAnalyticsPermission() {
         let viewModel = AskForCrashReportingPermissionsViewModel(useCase: onboardingUseCase, isDismissible: false)
 
-        push(scene: AskForCrashReportingPermissions.self, viewModel: viewModel) { [unowned self] userDid in
+        push(scene: AskForCrashReportingPermissions.self, viewModel: viewModel) { [weak self] userDid in
             switch userDid {
-            case .answerQuestionAboutCrashReporting, .dismiss: self.toCustomECCWarning()
+            case .answerQuestionAboutCrashReporting, .dismiss: self?.toCustomECCWarning()
             }
         }
     }
 
+    /// Pushes the "this app uses a custom ECC implementation, here be dragons"
+    /// warning. Acceptance is required to proceed to wallet creation.
     func toCustomECCWarning() {
         let viewModel = WarningCustomECCViewModel(
             useCase: onboardingUseCase,
             isDismissible: false
         )
 
-        push(scene: WarningCustomECC.self, viewModel: viewModel) { [unowned self] userDid in
+        push(scene: WarningCustomECC.self, viewModel: viewModel) { [weak self] userDid in
             switch userDid {
-            case .acceptRisks, .dismiss: self.toChooseWallet()
+            case .acceptRisks, .dismiss: self?.toChooseWallet()
             }
         }
     }
 
+    /// Hands off to `ChooseWalletCoordinator` (create new vs restore existing).
+    /// On completion, advances to pincode setup.
     func toChooseWallet() {
         let coordinator = ChooseWalletCoordinator(
             navigationController: navigationController
         )
 
-        start(coordinator: coordinator) { [unowned self] in
+        start(coordinator: coordinator) { [weak self] in
             switch $0 {
-            case .finishChoosingWallet: self.toChoosePincode()
+            case .finishChoosingWallet: self?.toChoosePincode()
             }
         }
     }
 
+    /// Hands off to `SetPincodeCoordinator`. The pincode sub-flow can also
+    /// be skipped (recorded in `Preferences`); either outcome finishes onboarding.
     func toChoosePincode() {
         start(
             coordinator: SetPincodeCoordinator(
                 navigationController: navigationController,
                 useCase: pincodeUseCase
             )
-        ) { [unowned self] (userDid: SetPincodeCoordinatorNavigationStep) in
+        ) { [weak self] (userDid: SetPincodeCoordinatorNavigationStep) in
             switch userDid {
-            case .setPincode: self.finish()
+            case .setPincode: self?.finish()
             }
         }
     }
 
+    /// Emits `.finishOnboarding` to the parent so it can swap to the main flow.
     func finish() {
         navigator.next(.finishOnboarding)
     }

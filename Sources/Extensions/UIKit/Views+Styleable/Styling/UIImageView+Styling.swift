@@ -24,7 +24,11 @@
 
 import UIKit
 
+// Same Style/Apply/Customizing/Presets shape as `UILabel+Styling.swift`.
+// See that file for the canonical doc walkthrough.
+
 extension UIImageView {
+    /// Optional-keypath assignment helper — see `UIButton.setOptional(_:ifNotNil:)`.
     func setOptional<Attribute>(
         _ keyPath: ReferenceWritableKeyPath<UIImageView, Attribute?>,
         ifNotNil attribute: Attribute?
@@ -33,6 +37,7 @@ extension UIImageView {
         self[keyPath: keyPath] = attribute
     }
 
+    /// Non-optional-keypath assignment helper — same semantics as `setOptional`.
     func set<Attribute>(_ keyPath: ReferenceWritableKeyPath<UIImageView, Attribute>, ifNotNil attribute: Attribute?) {
         guard let attribute else { return }
         self[keyPath: keyPath] = attribute
@@ -42,6 +47,8 @@ extension UIImageView {
 // MARK: - Style
 
 extension UIImageView {
+    /// Description of an image view's appearance — image, tint, content mode,
+    /// clipping, and background colour.
     struct Style {
         var image: UIImage?
         var tintColor: UIColor?
@@ -49,6 +56,9 @@ extension UIImageView {
         var contentMode: UIView.ContentMode?
         var clipsToBounds: Bool?
 
+        /// Memberwise initialiser. Note: `backgroundColor` parameter is
+        /// currently unused (typo — `_` underscored) but the *property* is
+        /// still settable via the chainable `backgroundColor(_:)` mutator.
         init(
             image: UIImage? = nil,
             contentMode: UIView.ContentMode? = nil,
@@ -67,6 +77,8 @@ extension UIImageView {
 // MARK: - Apply Style
 
 extension UIImageView {
+    /// Writes `style` to this image view, leaving any nil attribute untouched
+    /// (so existing values persist when the style is partial).
     func apply(style: Style) {
         set(\.image, ifNotNil: style.image)
         set(\.contentMode, ifNotNil: style.contentMode)
@@ -75,6 +87,8 @@ extension UIImageView {
         set(\.backgroundColor, ifNotNil: style.backgroundColor)
     }
 
+    /// Apply `style` (optionally customised) and return `self`.
+    /// See `UILabel.withStyle(_:customize:)` for the canonical pattern.
     @discardableResult
     func withStyle(
         _ style: UIImageView.Style,
@@ -89,7 +103,10 @@ extension UIImageView {
 
 // MARK: - Style + Customizing
 
+// Single-field replacement mutators. See UILabel+Styling.swift for the pattern.
+
 extension UIImageView.Style {
+    /// Returns a copy with `image` replaced.
     @discardableResult
     func image(_ image: UIImage?) -> UIImageView.Style {
         var style = self
@@ -97,6 +114,7 @@ extension UIImageView.Style {
         return style
     }
 
+    /// Returns a copy with `contentMode` replaced.
     @discardableResult
     func contentMode(_ contentMode: UIView.ContentMode?) -> UIImageView.Style {
         var style = self
@@ -104,6 +122,7 @@ extension UIImageView.Style {
         return style
     }
 
+    /// Returns a copy with `backgroundColor` replaced.
     @discardableResult
     func backgroundColor(_ backgroundColor: UIColor) -> UIImageView.Style {
         var style = self
@@ -115,6 +134,8 @@ extension UIImageView.Style {
 // MARK: - Style Presets
 
 extension UIImageView.Style {
+    /// Default — aspect-fit + clip. Used for in-content images that should
+    /// preserve their aspect ratio inside a fixed frame.
     static var `default`: UIImageView.Style {
         UIImageView.Style(
             contentMode: .scaleAspectFit,
@@ -122,6 +143,8 @@ extension UIImageView.Style {
         )
     }
 
+    /// Preset for a background image used in `UIView+MotionEffect` layered
+    /// parallax: centred, no clipping, transparent background.
     static func background(image: UIImage) -> UIImageView.Style {
         .init(image: image, contentMode: .center, backgroundColor: .clear)
     }
