@@ -81,7 +81,7 @@ class SingleCellTypeTableView<Header, Cell: ListCell>: UITableView, UITableViewD
         sectionModels[section].items.count
     }
 
-    /// Dequeues a `Cell` (by its auto-derived `Identifiable.identifier`) and
+    /// Dequeues a `Cell` (by its auto-derived `ReuseIdentifiable.identifier`) and
     /// hands it the matching model via `configure(model:)`.
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: Cell.identifier, for: indexPath)

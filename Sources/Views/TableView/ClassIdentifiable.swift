@@ -31,17 +31,20 @@ protocol ClassIdentifiable: NSObjectProtocol {
     static var className: String { get }
 }
 
-/// Protocol exposing a stable string identifier — used as the cell-reuse
-/// identifier in `SingleCellTypeTableView`.
+/// Protocol exposing a stable string reuse identifier — used as the
+/// cell-reuse identifier in `SingleCellTypeTableView`.
 ///
-/// Note: deliberately not named `Swift.Identifiable` because we don't want to
-/// conform to the system protocol (which has different semantics).
-protocol Identifiable {
-    /// Stable string identifier.
+/// Deliberately named `ReuseIdentifiable` (rather than the more obvious
+/// `Identifiable`) to avoid shadowing Swift's stdlib `Identifiable` protocol.
+/// They are unrelated — `Swift.Identifiable` requires an `id` of any
+/// `Hashable` type for SwiftUI/diffing, whereas this requires a `String`
+/// for UIKit cell registration.
+protocol ReuseIdentifiable {
+    /// Stable string identifier used as the UIKit cell-reuse identifier.
     static var identifier: String { get }
 }
 
-extension Identifiable where Self: ClassIdentifiable {
+extension ReuseIdentifiable where Self: ClassIdentifiable {
     /// Default — derive `identifier` from the class name. Lets every cell
     /// type get a unique reuse identifier without per-cell boilerplate.
     static var identifier: String {
@@ -49,9 +52,9 @@ extension Identifiable where Self: ClassIdentifiable {
     }
 }
 
-/// Auto-conform every `UITableViewCell` to `Identifiable` so cells can be
+/// Auto-conform every `UITableViewCell` to `ReuseIdentifiable` so cells can be
 /// registered/dequeued by class without manual identifier strings.
-extension UITableViewCell: Identifiable {}
+extension UITableViewCell: ReuseIdentifiable {}
 
 extension NSObject: ClassIdentifiable {
     /// Strips the module prefix from `NSStringFromClass` to return the bare
