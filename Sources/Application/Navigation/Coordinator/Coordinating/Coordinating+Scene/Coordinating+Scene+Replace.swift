@@ -84,10 +84,10 @@ extension Coordinating {
         }
 
         viewModel.navigator.navigation
-            .sinkOnMain { [unowned scene] step in
+            .sinkOnMain { [weak scene] step in
                 navigationHandler(step) { animated, navigationCompletion in
                     print("⛱ replaceAllScenes dismissCompletion of navigationHandler")
-                    scene.dismiss(animated: animated, completion: navigationCompletion)
+                    scene?.dismiss(animated: animated, completion: navigationCompletion)
                 }
             }
             .store(in: &cancellables)

@@ -53,8 +53,8 @@ extension Coordinating {
     ) {
         // Start the child coordinator (which is responsible for setting up its root UIViewController and presenting it)
         // and pass along the `didStart` closure, which the child should invoke or delegate to invoke.
-        let startChild = { [unowned child] in
-            child.start(didStart: didStart)
+        let startChild = { [weak child] in
+            child?.start(didStart: didStart)
         }
 
         // Add the child coordinator to the childCoordinator array

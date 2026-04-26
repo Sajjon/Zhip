@@ -82,7 +82,7 @@ extension DeepLinkHandler {
     /// is *also* never advanced while locked (see `navigate(to:)` below) —
     /// the filter is belt-and-suspenders.
     var navigation: AnyPublisher<DeepLink, Never> {
-        navigator.navigation.filter { [unowned self] _ in !self.appIsLockedSoBufferLink }
+        navigator.navigation.filter { [weak self] _ in !(self?.appIsLockedSoBufferLink ?? true) }
             .eraseToAnyPublisher()
     }
 }

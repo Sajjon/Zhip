@@ -47,9 +47,9 @@ extension Coordinating {
         // Bridge the view-model's navigation pulses to the caller's handler,
         // handing the handler a closure it can call to dismiss this modal.
         viewModel.navigator.navigation
-            .sinkOnMain { [unowned scene] step in
+            .sinkOnMain { [weak scene] step in
                 navigationHandler(step) { animated, navigationCompletion in
-                    scene.dismiss(animated: animated, completion: navigationCompletion)
+                    scene?.dismiss(animated: animated, completion: navigationCompletion)
                 }
             }
             .store(in: &cancellables)
