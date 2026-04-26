@@ -25,8 +25,14 @@
 import EFQRCode
 import UIKit
 
+/// Capability protocol for the Receive/Scan screens. Injected via Factory so
+/// tests can swap a stub that returns canned images / decoded intents.
 protocol QRCoding: AnyObject {
+    /// Renders `transaction` as a JSON-encoded QR code at the given pixel size.
+    /// Returns `nil` if encoding the JSON or generating the image fails.
     func encode(transaction: TransactionIntent, size: CGFloat) -> UIImage?
+    /// Recognizes a QR code in `cgImage` and decodes it back into a `TransactionIntent`.
+    /// Returns `nil` if no QR code is found or the payload isn't a valid `TransactionIntent` JSON.
     func decode(cgImage: CGImage) -> TransactionIntent?
 }
 
@@ -34,6 +40,9 @@ protocol QRCoding: AnyObject {
 final class QRCoder {}
 
 extension QRCoder: QRCoding {
+    /// Encodes `transaction` to JSON, then runs it through `EFQRCode.generate`
+    /// at the requested size. The on-the-wire payload is human-readable JSON so
+    /// other Zilliqa clients can interoperate.
     func encode(transaction: TransactionIntent, size: CGFloat) -> UIImage? {
         guard
             let transactionData = try? JSONEncoder().encode(transaction),
@@ -43,6 +52,8 @@ extension QRCoder: QRCoding {
         return generateImage(content: content, size: size)
     }
 
+    /// Inverse of `encode`. Pulls the first recognized QR string out of the
+    /// `cgImage`, treats it as UTF-8 JSON, and decodes a `TransactionIntent`.
     func decode(cgImage: CGImage) -> TransactionIntent? {
         let scannedContentStrings = EFQRCode.recognize(cgImage)
         guard
@@ -57,6 +68,9 @@ extension QRCoder: QRCoding {
 // MARK: - Private
 
 private extension QRCoding {
+    /// Underlying image generator — always uses our brand teal/deep-blue color
+    /// pair so QR codes look at home in the Receive screen. The watermark
+    /// parameter is reserved for future use (we may stamp a Zilliqa logo).
     func generateImage(
         content: String,
         size cgFloatSize: CGFloat,

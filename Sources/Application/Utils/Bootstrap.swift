@@ -33,6 +33,14 @@ import Zesame
 /// The global logger used throughout the app.
 let log = SwiftyBeaver.self
 
+/// One-time app initialization run from the `AppDelegate`.
+///
+/// Order matters:
+/// 1. `registerFonts` so `UINavigationBar.appearance()` can reference our font.
+/// 2. `setupAppearance` so every view created later inherits the right styling.
+/// 3. `setupKeyboardHiding` (IQKeyboardManager).
+/// 4. `setupCrashReportingIfAllowed` — gated on the user's `hasAcceptedCrashReporting` preference.
+/// 5. `setupLogging` — debug-only console destination.
 func bootstrap() {
     registerFonts()
     AppAppearance.setupDefault()
@@ -41,6 +49,10 @@ func bootstrap() {
     setupLogging()
 }
 
+/// Registers every `Barlow-*.ttf` font shipped in the bundle with CoreText so
+/// they're available to `UIFont(name:size:)`. Falls into `incorrectImplementation`
+/// (a `Never`-returning fatal) if a file is missing — we'd rather crash at
+/// launch than render blank text in production.
 private func registerFonts() {
     let fontFileNames = [
         "Barlow-Black", "Barlow-BlackItalic",
@@ -62,6 +74,12 @@ private func registerFonts() {
     }
 }
 
+/// Toggles Firebase Analytics + crash reporting based on the user's
+/// `hasAcceptedCrashReporting` preference.
+///
+/// Called both at launch and after the user toggles the preference in Settings,
+/// so the function is idempotent — it tears down `FirebaseApp` when disabled
+/// and refuses to re-initialize when already configured.
 func setupCrashReportingIfAllowed() {
     guard Preferences.default.isTrue(.hasAcceptedCrashReporting) else {
         Analytics.setAnalyticsCollectionEnabled(false)
@@ -80,10 +98,14 @@ func setupCrashReportingIfAllowed() {
     Analytics.setAnalyticsCollectionEnabled(true)
 }
 
+/// Enables `IQKeyboardManager` so taps outside text fields dismiss the keyboard
+/// without per-screen `endEditing(_:)` plumbing.
 private func setupKeyboardHiding() {
     IQKeyboardManager.shared.enable = true
 }
 
+/// Adds a verbose console destination to SwiftyBeaver — Debug builds only.
+/// Release builds ship without any log output.
 private func setupLogging() {
     // only allow logging for Debug builds
     guard isDebug else { return }
