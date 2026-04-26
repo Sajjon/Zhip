@@ -26,17 +26,27 @@ import Combine
 import TinyConstraints
 import UIKit
 
+/// Crash-reporting opt-in screen: hero image, disclaimer text, "I have read"
+/// checkbox, and a horizontally-paired Decline/Accept button row.
 final class AskForCrashReportingPermissionsView: ScrollableStackViewOwner {
+    /// Hero analytics illustration at the top.
     private lazy var imageView = UIImageView()
+    /// Header label.
     private lazy var headerLabel = UILabel()
+    /// Long-form disclaimer rendered in a non-editable text view.
     private lazy var disclaimerTextView = UITextView()
+    /// "I have read the disclaimer" checkbox — must be checked to enable buttons.
     private lazy var hasReadDisclaimerCheckbox = CheckboxWithLabel()
+    /// "No thanks" button.
     private lazy var declineButton = UIButton()
+    /// "Send anonymous reports" button.
     private lazy var acceptButton = UIButton()
+    /// Horizontal stack pairing decline + accept side by side.
     private lazy var buttonsStackView = UIStackView(arrangedSubviews: [declineButton, acceptButton])
 
     // MARK: - StackViewStyling
 
+    /// Vertical layout: hero, header, disclaimer, checkbox, buttons.
     lazy var stackViewStyle: UIStackView.Style = [
         imageView,
         headerLabel,
@@ -45,6 +55,7 @@ final class AskForCrashReportingPermissionsView: ScrollableStackViewOwner {
         buttonsStackView,
     ]
 
+    /// Override-hook from `ScrollableStackViewOwner` — wires styling.
     override func setup() {
         setupSubviews()
     }
@@ -55,6 +66,7 @@ final class AskForCrashReportingPermissionsView: ScrollableStackViewOwner {
 extension AskForCrashReportingPermissionsView: ViewModelled {
     typealias ViewModel = AskForCrashReportingPermissionsViewModel
 
+    /// Routes the view model's `areButtonsEnabled` to *both* buttons — they share the same gate.
     func populate(with viewModel: ViewModel.Output) -> [AnyCancellable] {
         [
             viewModel.areButtonsEnabled --> declineButton.isEnabledBinder,
@@ -62,6 +74,7 @@ extension AskForCrashReportingPermissionsView: ViewModelled {
         ]
     }
 
+    /// Surfaces the checkbox state and both button taps to the view-model.
     var inputFromView: InputFromView {
         InputFromView(
             isHaveReadDisclaimerCheckboxChecked: hasReadDisclaimerCheckbox.isCheckedPublisher,
@@ -72,6 +85,9 @@ extension AskForCrashReportingPermissionsView: ViewModelled {
 }
 
 private extension AskForCrashReportingPermissionsView {
+    /// Styling pass — sets the hero, header, disclaimer text, the "I have read"
+    /// checkbox copy, and the two buttons (initially disabled until the
+    /// checkbox flips them via the view-model's `areButtonsEnabled` output).
     func setupSubviews() {
         imageView.withStyle(.default) {
             $0.image(UIImage(resource: .analyticsLarge))

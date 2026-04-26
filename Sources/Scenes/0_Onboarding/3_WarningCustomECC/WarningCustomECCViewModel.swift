@@ -27,30 +27,45 @@ import Foundation
 
 // MARK: - WarningCustomECCUserAction
 
+/// Outcomes the ECC warning screen surfaces to its parent coordinator.
 enum WarningCustomECCUserAction {
-    case acceptRisks, dismiss
+    /// User scrolled to the bottom and accepted.
+    case acceptRisks
+    /// User tapped "Done" — only available in the Settings-modal context.
+    case dismiss
 }
 
 // MARK: - WarningCustomECCViewModel
 
+/// View model for the custom-ECC warning screen. Same dual-presentation pattern
+/// as `TermsOfServiceViewModel`.
 final class WarningCustomECCViewModel: BaseViewModel<
     WarningCustomECCUserAction,
     WarningCustomECCViewModel.InputFromView,
     WarningCustomECCViewModel.Output
 > {
+    /// Records the acceptance flag in `Preferences`.
     private let useCase: OnboardingUseCase
+    /// `true` for the Settings-modal presentation, `false` for onboarding.
     private let isDismissible: Bool
 
+    /// Captures the use case + presentation context.
     init(useCase: OnboardingUseCase, isDismissible: Bool) {
         self.useCase = useCase
         self.isDismissible = isDismissible
     }
 
+    /// Wires:
+    /// - "scrolled to bottom" → enable accept button (latches `true`).
+    /// - "did accept" → record acceptance + emit `.acceptRisks`.
+    /// - For the dismissible variant: install a "Done" right bar-button that
+    ///   emits `.dismiss`.
     override func transform(input: Input) -> Output {
         func userDid(_ userAction: NavigationStep) {
             navigator.next(userAction)
         }
 
+        // Once the user reaches the bottom, the button stays enabled.
         let isAcceptButtonEnabled: AnyPublisher<Bool, Never> = input.fromView.didScrollToBottom.map { true }.eraseToAnyPublisher()
 
         if isDismissible {
@@ -61,12 +76,14 @@ final class WarningCustomECCViewModel: BaseViewModel<
 
         [
             input.fromView.didAcceptTerms.sink { [unowned self] in
+                // Persist *first* so re-entering onboarding from a kill picks up the new state.
                 self.useCase.didAcceptCustomECCWarning()
                 userDid(.acceptRisks)
             },
         ].forEach { $0.store(in: &cancellables) }
 
         return Output(
+            // Hide the accept button in the dismissible variant.
             isAcceptButtonVisible: Just(!isDismissible).eraseToAnyPublisher(),
             isAcceptButtonEnabled: isAcceptButtonEnabled
         )
@@ -74,13 +91,19 @@ final class WarningCustomECCViewModel: BaseViewModel<
 }
 
 extension WarningCustomECCViewModel {
+    /// User-event publishers the view-model consumes.
     struct InputFromView {
+        /// Fires once the user scrolls the textView near the bottom.
         let didScrollToBottom: AnyPublisher<Void, Never>
+        /// Fires when the user taps the accept button.
         let didAcceptTerms: AnyPublisher<Void, Never>
     }
 
+    /// Reactive bindings the view installs.
     struct Output {
+        /// Drives `acceptTermsButton.isVisibleBinder`.
         let isAcceptButtonVisible: AnyPublisher<Bool, Never>
+        /// Drives `acceptTermsButton.isEnabledBinder`.
         let isAcceptButtonEnabled: AnyPublisher<Bool, Never>
     }
 }
