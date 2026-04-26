@@ -140,7 +140,10 @@ private extension SendCoordinator {
         }
     }
 
-    /// Step 3 — re-enter password, sign, broadcast. On success, advance to status polling.
+    /// Step 3 — re-enter password, sign, broadcast. On success, advance to
+    /// status polling. If the wallet has been removed under us
+    /// (`.walletUnavailable`), bail out of the whole Send flow rather than
+    /// crashing inside the signing screen.
     func toSignPayment(_ payment: Payment) {
         let viewModel = SignTransactionViewModel(paymentToSign: payment)
 
@@ -148,6 +151,8 @@ private extension SendCoordinator {
             switch userDid {
             case let .sign(transactionResponse):
                 self.toWaitForReceiptForTransactionWith(id: transactionResponse.transactionIdentifier)
+            case .walletUnavailable:
+                self.finish()
             }
         }
     }

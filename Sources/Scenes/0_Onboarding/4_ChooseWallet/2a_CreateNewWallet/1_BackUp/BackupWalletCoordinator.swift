@@ -61,16 +61,17 @@ final class BackupWalletCoordinator: BaseCoordinator<BackupWalletCoordinatorNavi
     private let mode: BackupWalletViewModel.Mode
 
     /// Resolved wallet stream — either the override or a fallback that pulls
-    /// from secure storage. Lazy so the storage lookup isn't kicked off during init.
-    /// Crashes (`incorrectImplementation`) if neither is available — that would
-    /// indicate the create flow forgot to persist + re-enter via Settings.
+    /// from secure storage. Lazy so the storage lookup isn't kicked off during
+    /// init. If neither is available (e.g. wallet was removed under us while
+    /// Settings → Backup was open), the publisher simply doesn't emit — and
+    /// the next `viewWillAppear` from `BackupWalletViewModel` cancels gracefully
+    /// rather than crashing. The previous `incorrectImplementation` trap was
+    /// reachable on race conditions.
     private lazy var wallet: AnyPublisher<Wallet, Never> = walletOverride
-        ?? walletStorageUseCase.wallet.map {
-            guard let wallet = $0 else {
-                incorrectImplementation("Should have saved wallet earlier")
-            }
-            return wallet
-        }.replaceErrorWithEmpty().eraseToAnyPublisher()
+        ?? walletStorageUseCase.wallet
+            .compactMap { $0 }
+            .replaceErrorWithEmpty()
+            .eraseToAnyPublisher()
 
     /// Captures the wallet source + mode. Defaulting `wallet = nil` and
     /// `mode = .cancellable` lets the create-flow pass `wallet:` and Settings

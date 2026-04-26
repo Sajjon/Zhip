@@ -51,16 +51,18 @@ final class DecryptKeystoreCoordinator: BaseCoordinator<DecryptKeystoreCoordinat
     /// Optional wallet publisher — overrides the storage lookup when supplied.
     private let walletOverride: AnyPublisher<Wallet, Never>?
 
-    /// Resolved wallet stream (override or storage fallback). Crashes
-    /// (`incorrectImplementation`) if neither is available — that means the
-    /// caller forgot to either supply a wallet or persist one to secure storage.
+    /// Resolved wallet stream (override or storage fallback). If neither is
+    /// available — e.g. a race where the wallet was removed under us while
+    /// this coordinator was being presented — the publisher simply doesn't
+    /// emit; downstream `.flatMap`s wait for a wallet that never arrives, and
+    /// the user can dismiss out of the modal cleanly. The previous
+    /// `incorrectImplementation` trap was reachable on race conditions and
+    /// crashed the app on a sensitive (private-key reveal) screen.
     private lazy var wallet: AnyPublisher<Wallet, Never> = walletOverride
-        ?? walletStorageUseCase.wallet.map {
-            guard let wallet = $0 else {
-                incorrectImplementation("Should have saved wallet earlier")
-            }
-            return wallet
-        }.replaceErrorWithEmpty().eraseToAnyPublisher()
+        ?? walletStorageUseCase.wallet
+            .compactMap { $0 }
+            .replaceErrorWithEmpty()
+            .eraseToAnyPublisher()
 
     /// Captures the wallet source.
     init(navigationController: UINavigationController, wallet: AnyPublisher<Wallet, Never>? = nil) {

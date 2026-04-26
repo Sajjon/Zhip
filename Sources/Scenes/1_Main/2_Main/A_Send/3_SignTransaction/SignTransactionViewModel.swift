@@ -31,6 +31,10 @@ import Zesame
 enum SignTransactionUserAction {
     /// Transaction successfully signed + broadcast — carries the network response.
     case sign(TransactionResponse)
+    /// Wallet was unavailable when the screen tried to load it (e.g. user
+    /// removed wallet in Settings while Send was open). The coordinator
+    /// pops out of the Send flow gracefully rather than crash.
+    case walletUnavailable
 }
 
 /// View model for step 3 of Send. Validates the password against the saved
@@ -56,12 +60,31 @@ final class SignTransactionViewModel: BaseViewModel<
 
     /// Wires real-time password validation, the sign-tap (cancellable
     /// flatMapLatest), and the loading-spinner / error-tracker plumbing.
+    ///
+    /// If the wallet has been removed under us (Settings → Remove Wallet
+    /// while a Send modal was open, OS-level Keychain wipe, etc.) we emit
+    /// `.walletUnavailable` and return an inert output so the coordinator can
+    /// pop the user out of Send instead of trapping. Defense in depth — Send
+    /// should not normally be reachable without a wallet.
     override func transform(input: Input) -> Output {
         func userDid(_ userAction: NavigationStep) {
             navigator.next(userAction)
         }
 
-        guard let _wallet = walletStorageUseCase.loadWallet() else { incorrectImplementation("Should have wallet") }
+        guard let _wallet = walletStorageUseCase.loadWallet() else {
+            // Schedule the navigation pulse on the next runloop tick so the
+            // coordinator's subscription is in place before we emit.
+            input.fromController.viewDidLoad
+                .first()
+                .sink { _ in userDid(.walletUnavailable) }
+                .store(in: &cancellables)
+            return Output(
+                isSignButtonEnabled: Just(false).eraseToAnyPublisher(),
+                isSignButtonLoading: Just(false).eraseToAnyPublisher(),
+                encryptionPasswordValidation: Just(.empty).eraseToAnyPublisher(),
+                inputBecomeFirstResponder: Empty().eraseToAnyPublisher()
+            )
+        }
         let _payment = payment
 
         let errorTracker = ErrorTracker()
