@@ -25,14 +25,19 @@
 import Combine
 import UIKit
 
+/// Pincode-removal confirmation — single pincode input that auto-fires removal
+/// when the entered digits match the saved one.
 final class RemovePincodeView: ScrollableStackViewOwner {
     private lazy var inputPincodeView = InputPincodeView()
 
+    /// Vertical layout: input + spacer.
     lazy var stackViewStyle: UIStackView.Style = [
         inputPincodeView,
         .spacer,
     ]
 
+    /// Override-hook from `ScrollableStackViewOwner`. Eagerly grabs first-responder
+    /// status so the keyboard appears as soon as the modal does.
     override func setup() {
         inputPincodeView.becomeFirstResponder()
     }
@@ -41,6 +46,7 @@ final class RemovePincodeView: ScrollableStackViewOwner {
 extension RemovePincodeView: ViewModelled {
     typealias ViewModel = RemovePincodeViewModel
 
+    /// Binds focus on appear + validation styling on the pincode input.
     func populate(with viewModel: ViewModel.Output) -> [AnyCancellable] {
         [
             viewModel.inputBecomeFirstResponder --> inputPincodeView.becomeFirstResponderBinder,
@@ -48,6 +54,7 @@ extension RemovePincodeView: ViewModelled {
         ]
     }
 
+    /// Surfaces only the pincode publisher.
     var inputFromView: InputFromView {
         InputFromView(
             pincode: inputPincodeView.pincodePublisher

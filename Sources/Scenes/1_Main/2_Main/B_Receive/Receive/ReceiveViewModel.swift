@@ -29,22 +29,33 @@ import Zesame
 
 // MARK: - ReceiveUserAction
 
+/// Outcomes of the Receive screen.
 enum ReceiveUserAction {
+    /// User tapped the right "Done" bar-button.
     case finish
+    /// User tapped "Request payment" — coordinator opens the share sheet.
     case requestTransaction(TransactionIntent)
 }
 
 // MARK: - ReceiveViewModel
 
+/// View model for the Receive screen. Renders the wallet's bech32 address as a
+/// QR code, handles the optional "request amount" field, and produces the
+/// `TransactionIntent` consumed by the coordinator's share-sheet helper.
 final class ReceiveViewModel: BaseViewModel<
     ReceiveUserAction,
     ReceiveViewModel.InputFromView,
     ReceiveViewModel.Output
 > {
+    /// Source of the wallet whose address is shown.
     @Injected(\.walletStorageUseCase) private var walletStorageUseCase: WalletStorageUseCase
+    /// Pasteboard wrapper for the copy-address button.
     @Injected(\.pasteboard) private var pasteboard: Pasteboard
+    /// QR-encoder for the address image.
     @Injected(\.qrCoder) private var qrCoder: QRCoding
 
+    /// Wires the address QR generation, amount validation, copy-to-pasteboard
+    /// behavior, and the request-payment hand-off to the coordinator.
     override func transform(input: Input) -> Output {
         func userDid(_ userAction: NavigationStep) {
             navigator.next(userAction)

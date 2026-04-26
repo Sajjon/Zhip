@@ -24,20 +24,33 @@
 
 import UIKit
 
+/// Minimal contract every Settings cell model implements so
+/// `SettingsTableViewCell.populate(with:)` can render any of them.
 protocol CellModel {
+    /// Configures the cell's text label.
     var labelStyle: UILabel.Style { get }
+    /// Configures the cell's leading icon image view.
     var imageViewStyle: UIImageView.Style { get }
+    /// Trailing accessory (chevron, checkmark, none).
     var accessoryType: UITableViewCell.AccessoryType { get }
 }
 
+/// Cell model that, when tapped, navigates to a typed `Destination` value.
+/// Used in Settings to wrap each row's `SettingsNavigation` step.
 struct NavigatingCellModel<Destination> {
+    /// The navigation step the row emits when tapped.
     let destination: Destination
+    /// Trailing accessory — defaults to `.disclosureIndicator`.
     let accessoryType: UITableViewCell.AccessoryType
 
+    /// Title text shown in the cell.
     private let title: String
+    /// Optional leading icon.
     private let icon: UIImage?
+    /// Visual style — `.normal` (teal icon) vs `.destructive` (red icon).
     private let style: Style
 
+    /// Private — call sites use the `whenSelectedNavigate(to:...)` factory below.
     fileprivate init(
         title: String,
         icon: UIImage?,
@@ -54,12 +67,14 @@ struct NavigatingCellModel<Destination> {
 }
 
 extension NavigatingCellModel: CellModel {
+    /// Composes the body label style with the cell's title text.
     var labelStyle: UILabel.Style {
         var labelStyle = style.labelStyle
         labelStyle.text = title
         return labelStyle
     }
 
+    /// Composes the default image view style with the icon + style-derived tint.
     var imageViewStyle: UIImageView.Style {
         var imageViewStyle: UIImageView.Style = .default
         imageViewStyle.image = icon
@@ -69,18 +84,24 @@ extension NavigatingCellModel: CellModel {
 }
 
 extension NavigatingCellModel {
+    /// Visual variants used by Settings to mark destructive rows in red.
     enum Style {
-        case normal, destructive
+        /// Default styling — teal icon.
+        case normal
+        /// Destructive styling — blood-red icon (e.g. "Remove wallet", "Remove pincode").
+        case destructive
     }
 }
 
 extension NavigatingCellModel.Style {
+    /// Label style — both variants use body text; only the icon tint differs.
     var labelStyle: UILabel.Style {
         switch self {
         case .normal, .destructive: .body
         }
     }
 
+    /// Icon tint — teal vs blood-red.
     var iconTintColor: UIColor {
         switch self {
         case .normal: .teal
@@ -90,6 +111,8 @@ extension NavigatingCellModel.Style {
 }
 
 extension NavigatingCellModel {
+    /// Builder factory used by the Settings hub. Reads better at call sites
+    /// than calling the (private) memberwise init directly.
     static func whenSelectedNavigate(
         to destination: Destination,
         titled title: String,

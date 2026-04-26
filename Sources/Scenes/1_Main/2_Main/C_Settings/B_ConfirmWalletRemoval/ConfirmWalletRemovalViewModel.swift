@@ -27,18 +27,28 @@ import Foundation
 
 // MARK: - User action and navigation steps
 
+/// Outcomes of the wallet-removal confirmation modal.
 enum ConfirmWalletRemovalUserAction {
-    case /* user did */ cancel, confirm
+    /// User tapped Cancel — close without removing.
+    case cancel
+    /// User checked the box and tapped Confirm — coordinator will wipe + finish.
+    case confirm
 }
 
 // MARK: - ConfirmWalletRemovalViewModel
 
+/// View model for the wallet-removal confirmation. Trivial wiring: cancel-tap
+/// emits `.cancel`, confirm-tap emits `.confirm`, button gated on the checkbox.
+/// The destructive wipe lives in `SettingsCoordinator.toChooseWallet()` so the
+/// dismiss animation can finish before the data is gone.
 final class ConfirmWalletRemovalViewModel: BaseViewModel<
     ConfirmWalletRemovalUserAction,
     ConfirmWalletRemovalViewModel.InputFromView,
     ConfirmWalletRemovalViewModel.Output
 > {
 
+    /// Wires cancel + confirm taps to navigation steps; gates the confirm
+    /// button on the "I have backed up" checkbox.
     override func transform(input: Input) -> Output {
         func userDid(_ userAction: NavigationStep) {
             navigator.next(userAction)
@@ -63,12 +73,17 @@ final class ConfirmWalletRemovalViewModel: BaseViewModel<
 }
 
 extension ConfirmWalletRemovalViewModel {
+    /// User-event publishers the view-model consumes.
     struct InputFromView {
+        /// Fires when the user taps Confirm.
         let confirmTrigger: AnyPublisher<Void, Never>
+        /// Latest state of the "I have backed up" checkbox.
         let isWalletBackedUpCheckboxChecked: AnyPublisher<Bool, Never>
     }
 
+    /// Reactive bindings the view installs.
     struct Output {
+        /// Drives `confirmButton.isEnabledBinder`.
         let isConfirmButtonEnabled: AnyPublisher<Bool, Never>
     }
 }

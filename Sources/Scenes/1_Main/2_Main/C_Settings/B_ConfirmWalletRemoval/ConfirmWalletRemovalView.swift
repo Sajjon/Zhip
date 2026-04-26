@@ -25,13 +25,17 @@
 import Combine
 import UIKit
 
+/// Wallet-removal confirmation — "are you sure" header + "I have backed up"
+/// checkbox + confirm CTA gated on the checkbox.
 final class ConfirmWalletRemovalView: ScrollableStackViewOwner {
+    /// "Are you sure?" header label.
     private lazy var areYouSureLabel = UILabel()
-
+    /// "I have backed up the wallet" checkbox — must be checked to enable confirm.
     private lazy var haveBackedUpWalletCheckbox = CheckboxWithLabel()
-
+    /// Confirm CTA — destructive action, gated on the checkbox.
     private lazy var confirmButton = UIButton()
 
+    /// Vertical layout: header, spacer, checkbox, CTA.
     lazy var stackViewStyle: UIStackView.Style = [
         areYouSureLabel,
         .spacer,
@@ -39,6 +43,7 @@ final class ConfirmWalletRemovalView: ScrollableStackViewOwner {
         confirmButton,
     ]
 
+    /// Override-hook from `ScrollableStackViewOwner` — wires styling.
     override func setup() {
         setupSubviews()
     }
@@ -47,12 +52,14 @@ final class ConfirmWalletRemovalView: ScrollableStackViewOwner {
 extension ConfirmWalletRemovalView: ViewModelled {
     typealias ViewModel = ConfirmWalletRemovalViewModel
 
+    /// Binds the confirm-button enabled state to the view-model.
     func populate(with viewModel: ViewModel.Output) -> [AnyCancellable] {
         [
             viewModel.isConfirmButtonEnabled --> confirmButton.isEnabledBinder,
         ]
     }
 
+    /// Surfaces the confirm-tap and the checkbox state.
     var inputFromView: InputFromView {
         InputFromView(
             confirmTrigger: confirmButton.tapPublisher,
@@ -62,6 +69,7 @@ extension ConfirmWalletRemovalView: ViewModelled {
 }
 
 private extension ConfirmWalletRemovalView {
+    /// Styling pass — header label, default-styled checkbox, primary destructive button.
     func setupSubviews() {
         areYouSureLabel.withStyle(.header) {
             $0.text(String(localized: .ConfirmWalletRemoval.areYouSure))

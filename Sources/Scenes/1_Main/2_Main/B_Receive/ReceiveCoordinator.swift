@@ -26,14 +26,22 @@ import Factory
 import UIKit
 import Zesame
 
+/// Outcome of the Receive sub-flow.
 enum ReceiveCoordinatorNavigationStep {
+    /// User dismissed — `MainCoordinator` closes the modal.
     case finish
 }
 
+/// Coordinator owning the single-screen Receive (QR code) sub-flow.
+/// Hosts a single `Receive` scene that shows the wallet's address as a QR code,
+/// and adds a "share as link" action that builds a `zhip.app/send?...` deep link
+/// via `DeepLinkGenerator` and presents the system share sheet.
 final class ReceiveCoordinator: BaseCoordinator<ReceiveCoordinatorNavigationStep> {
 
+    /// Builds outbound `zhip.app` URLs the share sheet uses.
     @Injected(\.deepLinkGenerator) private var deepLinkGenerator: DeepLinkGenerator
 
+    /// Begins at the receive screen.
     override func start(didStart _: Completion? = nil) {
         toFirst()
     }
@@ -42,10 +50,13 @@ final class ReceiveCoordinator: BaseCoordinator<ReceiveCoordinatorNavigationStep
 // MARK: - Navigate
 
 private extension ReceiveCoordinator {
+    /// Convenience wrapper for the entry point.
     func toFirst() {
         toReceive()
     }
 
+    /// Pushes the receive screen. `.requestTransaction` opens the share sheet,
+    /// `.finish` closes the modal.
     func toReceive() {
         let viewModel = ReceiveViewModel()
 
@@ -57,6 +68,7 @@ private extension ReceiveCoordinator {
         }
     }
 
+    /// Bubble `.finish` to the parent.
     func finish() {
         navigator.next(.finish)
     }
@@ -65,6 +77,9 @@ private extension ReceiveCoordinator {
 // MARK: - Share
 
 private extension ReceiveCoordinator {
+    /// Builds a `zhip.app/send?...` URL for the requested transaction and
+    /// presents the system share sheet anchored on the right-bar item (so the
+    /// popover arrow points the right way on iPad).
     func share(transaction: TransactionIntent) {
         let shareUrl = deepLinkGenerator.linkTo(transaction: transaction)
         let activityVC = UIActivityViewController(activityItems: [shareUrl], applicationActivities: nil)

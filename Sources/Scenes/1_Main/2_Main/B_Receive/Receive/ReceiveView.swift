@@ -28,6 +28,8 @@ import Zesame
 
 // MARK: - ReceiveView
 
+/// Receive screen — QR code + address + optional amount-to-request field +
+/// "Request payment" CTA that opens a system share sheet via the coordinator.
 final class ReceiveView: ScrollableStackViewOwner {
     private lazy var qrImageView = UIImageView()
     private lazy var addressTitleLabel = UILabel()

@@ -27,45 +27,57 @@ import Foundation
 import UIKit
 import Zesame
 
+/// Cell model used for every Settings row — wraps a navigation destination
+/// with the row's title + icon + style.
 typealias SettingsItem = NavigatingCellModel<SettingsViewModel.NavigationStep>
 
 // MARK: SettingsNavigation
 
+/// Every navigation step the Settings hub can emit. Grouped by the section
+/// they live in for readability.
 enum SettingsNavigation {
-    /// Navigation Bar
+    /// Navigation Bar — right "Done" tap.
     case closeSettings
 
-    /// Section 0
+    /// Section 0 — Pincode management.
     case removePincode, setPincode
 
-    // Section 1
+    // Section 1 — Community / acknowledgments.
     case starUsOnGithub
     case reportIssueOnGithub
     case acknowledgments
 
-    // Section 2
+    // Section 2 — Re-read onboarding scenes.
     case readTermsOfService
     case readCustomECCWarning
     case changeAnalyticsPermissions
 
-    // Section 3
+    // Section 3 — Wallet management (destructive at the bottom).
     case backupWallet
     case removeWallet
 }
 
 // MARK: SettingsViewModel
 
+/// View model for the Settings hub. Builds the row matrix from per-section
+/// `SettingsItem` arrays and routes selections to the matching `NavigationStep`.
+/// Re-emits the matrix on every `viewWillAppear` so the pincode row reflects
+/// the current "has pincode" state when the user returns from a sub-flow.
 final class SettingsViewModel: BaseViewModel<
     SettingsNavigation,
     SettingsViewModel.InputFromView,
     SettingsViewModel.Output
 > {
+    /// Used to gate the pincode row (set vs remove) on the current pincode state.
     private let useCase: PincodeUseCase
 
+    /// Captures the pincode use case.
     init(useCase: PincodeUseCase) {
         self.useCase = useCase
     }
 
+    /// Wires the section emission, row-tap → navigation step, and the
+    /// done bar-button → close.
     override func transform(input: Input) -> Output {
         func userWantsToNavigate(to intention: NavigationStep) {
             navigator.next(intention)
@@ -97,17 +109,25 @@ final class SettingsViewModel: BaseViewModel<
 }
 
 extension SettingsViewModel {
+    /// User-event publishers the view-model consumes.
     struct InputFromView {
+        /// Fires when the user taps a row.
         let selectedIndexPath: AnyPublisher<IndexPath, Never>
     }
 
+    /// Reactive bindings the view installs.
     struct Output {
+        /// Drives the diffable data source.
         let sections: AnyPublisher<[SectionModel<Void, SettingsItem>], Never>
+        /// "AppName vX.Y.Z (build) — network: …" footer text.
         let footerText: AnyPublisher<String, Never>
     }
 }
 
 private extension SettingsViewModel {
+    /// Builds the `[[SettingsItem]]` matrix in a single pass. The pincode
+    /// section's first row swaps between "Set pincode" and "Remove pincode"
+    /// based on `useCase.hasConfiguredPincode`.
     func makeItemMatrix() -> [[SettingsItem]] {
         var sections = [[SettingsItem]]()
         let hasPin = useCase.hasConfiguredPincode
@@ -174,10 +194,15 @@ private extension SettingsViewModel {
         return sections
     }
 
+    /// Wraps each row array in a `SectionModel` with a void section header
+    /// (the table-view backing produces grouped section dividers without explicit headers).
     func makeSections() -> [SectionModel<Void, SettingsItem>] {
         makeItemMatrix().map { array in SectionModel(model: (), items: array) }
     }
 
+    /// "AppName vVersion (Build) — network: …" footer text.
+    /// Crashes (`incorrectImplementation`) if Info.plist is missing one of the
+    /// three required keys — that would indicate a build-config mistake.
     var appVersionString: String {
         let bundle = Bundle.main
         guard
@@ -192,6 +217,7 @@ private extension SettingsViewModel {
 }
 
 private extension Network {
+    /// Lowercase string for the Settings footer ("mainnet" / "testnet").
     var displayName: String {
         switch self {
         case .mainnet: "mainnet"
