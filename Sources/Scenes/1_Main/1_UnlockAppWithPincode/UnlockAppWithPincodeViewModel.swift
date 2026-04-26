@@ -28,20 +28,31 @@ import Foundation
 
 // MARK: - UnlockAppWithPincodeUserAction
 
+/// Outcome of the unlock screen — the only thing the user can do here is unlock.
 enum UnlockAppWithPincodeUserAction {
+    /// Either pincode-match or successful biometrics unlocked the app.
     case unlockApp
 }
 
 // MARK: - UnlockAppWithPincodeViewModel
 
+/// View model for the pincode-unlock screen.
+///
+/// Two unlock paths share the `.unlockApp` outcome:
+/// 1. Pincode entry that matches the saved pincode.
+/// 2. Successful Face/Touch ID prompt fired automatically on `viewDidAppear`.
 final class UnlockAppWithPincodeViewModel: BaseViewModel<
     UnlockAppWithPincodeUserAction,
     UnlockAppWithPincodeViewModel.InputFromView,
     UnlockAppWithPincodeViewModel.Output
 > {
+    /// Read-only pincode access for comparison.
     @Injected(\.pincodeUseCase) private var pincodeUseCase: PincodeUseCase
+    /// Optional biometric prompt — `authenticate()` returns `Bool` success.
     @Injected(\.biometricsAuthenticator) private var biometricsAuthenticator: BiometricsAuthenticator
 
+    /// The persisted pincode the user must match. Crashes if missing — that
+    /// would mean the unlock screen was shown without a configured pincode.
     private lazy var pincode: Pincode = {
         guard let pincode = pincodeUseCase.pincode else {
             incorrectImplementation("Should have pincode set")
@@ -49,6 +60,8 @@ final class UnlockAppWithPincodeViewModel: BaseViewModel<
         return pincode
     }()
 
+    /// Wires real-time pincode comparison + biometric prompt; either path
+    /// succeeding fires `.unlockApp`.
     override func transform(input: Input) -> Output {
         func userDid(_ userAction: NavigationStep) {
             navigator.next(userAction)
@@ -61,6 +74,7 @@ final class UnlockAppWithPincodeViewModel: BaseViewModel<
         }
 
         let biometricsAuthenticator = biometricsAuthenticator
+        // Capture locally so we don't pull `self` into the merge below.
         let unlockUsingBiometrics = {
             biometricsAuthenticator.authenticate()
                 .filter { $0 }
@@ -71,12 +85,16 @@ final class UnlockAppWithPincodeViewModel: BaseViewModel<
         let unlockUsingBiometricsTrigger = input.fromController.viewDidAppear
 
         [
+            // Either path emits a void pulse to `.unlockApp`. The biometric
+            // prompt fires on viewDidAppear (not willAppear) so the system
+            // alert isn't competing with our presentation animation.
             pincodeValidationValue.filter(\.isValid).mapToVoid()
                 .merge(with: unlockUsingBiometricsTrigger.flatMapLatest { unlockUsingBiometrics() })
                 .sinkOnMain { userDid(.unlockApp) },
         ].forEach { $0.store(in: &cancellables) }
 
         return Output(
+            // Focus on viewWillAppear so the keyboard is up before the screen is fully visible.
             inputBecomeFirstResponder: input.fromController.viewWillAppear,
             pincodeValidation: pincodeValidationValue.map(\.validation).eraseToAnyPublisher()
         )
@@ -84,23 +102,32 @@ final class UnlockAppWithPincodeViewModel: BaseViewModel<
 }
 
 extension UnlockAppWithPincodeViewModel {
+    /// User-event publishers the view-model consumes.
     struct InputFromView {
+        /// Latest pincode value from the input view.
         let pincode: AnyPublisher<Pincode?, Never>
     }
 
+    /// Reactive bindings the view installs.
     struct Output {
+        /// Pulses on viewWillAppear to put the input in focus.
         let inputBecomeFirstResponder: AnyPublisher<Void, Never>
+        /// Drives the input's validation styling.
         let pincodeValidation: AnyPublisher<AnyValidation, Never>
     }
 
+    /// Adapts `PincodeValidator(settingNew: false)` to the screen — captures
+    /// the saved pincode and delegates each validation to the shared validator.
     struct InputValidator {
         private let existingPincode: Pincode
         private let pincodeValidator = PincodeValidator(settingNew: false)
 
+        /// Captures the saved pincode the user must match.
         init(existingPincode: Pincode) {
             self.existingPincode = existingPincode
         }
 
+        /// Compares `unconfirmedPincode` against the saved one.
         func validate(unconfirmedPincode: Pincode?) -> PincodeValidator.ValidationResult {
             pincodeValidator.validate(input: (unconfirmedPincode, existingPincode))
         }

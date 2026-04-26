@@ -24,8 +24,10 @@
 
 import Foundation
 
+/// `SceneController` glue for the pincode-unlock screen.
 final class UnlockAppWithPincode: Scene<UnlockAppWithPincodeView> {}
 
+/// Localized navigation title.
 extension UnlockAppWithPincode {
     static let title = String(localized: .UnlockApp.title)
 }

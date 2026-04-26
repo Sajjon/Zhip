@@ -24,9 +24,21 @@
 
 import UIKit
 
+/// Privacy-cover screen shown over the live Main UI when the app goes to the
+/// background. Renders the app name on a parallax aurora background.
+///
+/// Used by `AppCoordinator` to mask the wallet contents from the iOS app
+/// switcher snapshot — the snapshot would otherwise expose the user's balance
+/// and address in the multitasking carousel.
+///
+/// Doesn't subclass `Scene<View>` because it has no view-model — purely static.
 final class LockAppScene: AbstractController {
+    /// Container hosting the three-layer parallax aurora illustration.
     private lazy var motionEffectAuroraImageView = UIView()
+    /// Centered app-name label drawn over the aurora.
     private lazy var titleLabel = UILabel()
+    /// Builds the static layout — black background, parallax aurora behind a
+    /// centered app-name label drawn in the "bigBang" hero font.
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .black
