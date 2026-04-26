@@ -26,15 +26,29 @@ import Foundation
 
 /// Insensitive values to be stored into e.g. `UserDefaults`, such as `hasAcceptedTermsOfService`
 enum PreferencesKey: String, KeyConvertible {
+    /// Set to `true` after the first successful launch. Doubles as the
+    /// reinstall sentinel that drives Keychain wipe — see
+    /// `KeyValueStore<KeychainKey>.wallet`.
     case hasRunAppBefore
+    /// User accepted the Terms of Service screen during onboarding.
     case hasAcceptedTermsOfService
+    /// User accepted the "we use a custom ECC implementation" warning.
     case hasAcceptedCustomECCWarning
+    /// User answered the crash-reporting opt-in prompt (`true`/`false` is in `hasAcceptedCrashReporting`).
     case hasAnsweredCrashReportingQuestion
+    /// User opted in to crash reporting.
     case hasAcceptedCrashReporting
+    /// User explicitly chose "skip pincode setup" — suppresses the prompt on subsequent launches.
     case skipPincodeSetup
+    /// Last-known wallet balance, cached to render UI before the network call resolves.
     case cachedBalance
+    /// Timestamp accompanying `cachedBalance`; used to render "updated N minutes ago" labels.
     case balanceWasUpdatedAt
 }
 
 /// Abstraction of UserDefaults
+///
+/// Production code injects a `Preferences` (i.e. `KeyValueStore<PreferencesKey>`)
+/// resolved by `Container.shared.preferences`, which wraps `UserDefaults.standard`.
+/// Tests register an in-memory replacement in `Tests/Helpers/TestStoreFactory.swift`.
 typealias Preferences = KeyValueStore<PreferencesKey>

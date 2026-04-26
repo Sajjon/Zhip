@@ -25,8 +25,22 @@
 import Foundation
 
 /// A simple non thread safe, non async, key value store without associatedtypes
+///
+/// This is the *type-erased base* of the persistence layer. The strongly-typed
+/// `KeyValueStoring` protocol below it adds an `associatedtype Key: KeyConvertible`
+/// (so callers can pass enum cases instead of raw strings), but at the very bottom
+/// every concrete backend (UserDefaults, KeychainSwift) speaks `String`-keyed
+/// `Any?` values — exactly what this protocol exposes.
 protocol AnyKeyValueStoring {
+    /// Persists `value` under `key`. The receiver chooses the storage strategy
+    /// (UserDefaults plist serialization, Keychain item, in-memory dict, etc.).
     func save(value: Any, for key: String)
+
+    /// Retrieves whatever was previously stored under `key`, or `nil` if the
+    /// key has no value. Returns `Any?` because the bottom layer is untyped;
+    /// `KeyValueStoring.loadValue<Value>` casts to the desired type for callers.
     func loadValue(for key: String) -> Any?
+
+    /// Removes the value at `key`. No-op if the key is absent.
     func deleteValue(for key: String)
 }

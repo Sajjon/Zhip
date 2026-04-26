@@ -25,13 +25,20 @@
 import Foundation
 
 /// Type used as a key to some value, e.g. a wrapper around `UserDefaults`
+///
+/// Both `PreferencesKey` (for `UserDefaults`) and `KeychainKey` (for the
+/// Keychain) are `String`-backed enums conforming to this protocol. The default
+/// extension below makes the `key` property "free" for any such enum.
 protocol KeyConvertible {
+    /// The underlying string used by the storage backend as the lookup key.
     var key: String { get }
 }
 
 // MARK: - Default Implementation for `enum SomeKey: String`
 
 extension KeyConvertible where Self: RawRepresentable, Self.RawValue == String {
+    /// Default impl that simply forwards to the enum's raw value, so
+    /// `.hasRunAppBefore` becomes `"hasRunAppBefore"` automatically.
     var key: String {
         rawValue
     }

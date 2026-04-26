@@ -26,17 +26,28 @@ import Foundation
 
 // MARK: - KeyValueStoring
 
+/// Adapts Foundation's `UserDefaults` to our `KeyValueStoring` protocol.
+///
+/// `Container.shared.preferences` wraps `UserDefaults.standard` in a
+/// `KeyValueStore<PreferencesKey>` so insensitive flags (terms accepted,
+/// cached balance, etc.) can be read/written through the same protocol used
+/// for the Keychain.
 extension UserDefaults: KeyValueStoring {
+    /// Removes the value at `key` via `removeObject(forKey:)`.
     func deleteValue(for key: String) {
         removeObject(forKey: key)
     }
 
+    /// We only ever use this conformance with `PreferencesKey`.
     typealias Key = PreferencesKey
 
+    /// Persists `value` via `setValue(_:forKey:)` — `UserDefaults` accepts any
+    /// plist-compatible value (`Bool`, `Int`, `String`, `Data`, `Date`, etc.).
     func save(value: Any, for key: String) {
         setValue(value, forKey: key)
     }
 
+    /// Retrieves the raw `Any?` previously written under `key`, or `nil` if absent.
     func loadValue(for key: String) -> Any? {
         value(forKey: key)
     }

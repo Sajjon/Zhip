@@ -25,9 +25,17 @@
 import Foundation
 import KeychainSwift
 
+/// Adapts the third-party `KeychainSwift` library to our `KeyValueStoring`
+/// protocol so the rest of the app can ignore the Keychain SDK entirely.
 extension KeychainSwift: KeyValueStoring {
+    /// We only ever use this conformance with `KeychainKey`; surfaces here for
+    /// the strongly-typed default extension methods on `KeyValueStoring`.
     typealias Key = KeychainKey
 
+    /// Tries each `KeychainSwift` accessor in turn — `Data`, `Bool`, `String` —
+    /// since the underlying Keychain item could be any of them.
+    /// Order matters: `getData` is tried first because our `Codable` blobs are
+    /// always `Data`, and we don't want to mistake them for strings.
     func loadValue(for key: String) -> Any? {
         if let data = getData(key) {
             data
@@ -46,6 +54,9 @@ extension KeychainSwift: KeyValueStoring {
     /// https://developer.apple.com/documentation/security/ksecattraccessiblewhenpasscodesetthisdeviceonly
     func save(value: Any, for key: String) {
         let access: KeychainSwiftAccessOptions = .accessibleWhenPasscodeSetThisDeviceOnly
+        // Mirrors the type-discrimination in `loadValue(for:)`. Anything that
+        // isn't `Data`/`Bool`/`String` is silently dropped — wallet JSON arrives
+        // here as `Data`, pincode booleans as `Bool`.
         if let data = value as? Data {
             set(data, forKey: key, withAccess: access)
         } else if let bool = value as? Bool {
@@ -55,6 +66,7 @@ extension KeychainSwift: KeyValueStoring {
         }
     }
 
+    /// Removes the Keychain item at `key`. No-op if absent.
     func deleteValue(for key: String) {
         delete(key)
     }
