@@ -30,17 +30,25 @@ import Foundation
 /// leaking clipboard data across test runs or onto the host device.
 final class MockPasteboard: Pasteboard {
 
-    /// The most recent string passed to `copy(_:)`, or `nil` if no copy has
-    /// occurred since this mock was created or reset.
+    /// The most recent string passed to `copy(_:expiringAfter:)`, or `nil` if
+    /// no copy has occurred since this mock was created or reset.
     private(set) var copiedString: String?
 
-    /// Every string passed to `copy(_:)`, in call order.
-    private(set) var copyInvocations: [String] = []
+    /// The most recent expiration interval passed to `copy(_:expiringAfter:)`,
+    /// or `nil` if the last copy did not specify one. Tests assert on this to
+    /// confirm sensitive copies (private key, keystore) get the expected
+    /// auto-clear policy.
+    private(set) var copiedExpiringAfter: TimeInterval?
+
+    /// Every (string, expiringAfter) pair passed to `copy(_:expiringAfter:)`,
+    /// in call order.
+    private(set) var copyInvocations: [(string: String, expiringAfter: TimeInterval?)] = []
 
     init() {}
 
-    func copy(_ string: String) {
+    func copy(_ string: String, expiringAfter: TimeInterval?) {
         copiedString = string
-        copyInvocations.append(string)
+        copiedExpiringAfter = expiringAfter
+        copyInvocations.append((string: string, expiringAfter: expiringAfter))
     }
 }

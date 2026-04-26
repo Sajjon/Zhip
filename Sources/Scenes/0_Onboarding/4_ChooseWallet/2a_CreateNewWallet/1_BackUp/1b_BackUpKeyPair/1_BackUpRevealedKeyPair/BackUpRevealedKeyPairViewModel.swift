@@ -68,16 +68,24 @@ final class BackUpRevealedKeyPairViewModel: BaseViewModel<
             input.fromController.rightBarButtonTrigger
                 .sink { userDid(.finish) },
 
+            // Private key is the most sensitive material in the app — write
+            // it to the pasteboard with a 60s expiration so it does NOT sit
+            // around for clipboard managers, Universal Clipboard sync to a
+            // Mac, or other apps to harvest. The user can paste it into a
+            // password manager within that window.
             input.fromView.copyPrivateKeyTrigger.withLatestFrom(privateKey) { $1 }
                 .sink { [pasteboard] in
-                    pasteboard.copy($0)
+                    pasteboard.copy($0, expiringAfter: SensitivePasteboard.expirationSeconds)
                     input.fromController.toastSubject
                         .send(Toast(String(localized: .BackUpRevealedKeyPair.copiedPrivateKey)))
                 },
 
+            // Public key isn't sensitive but pair the same expiration for
+            // consistency on this screen — anything copied here is in the
+            // "I'm-actively-handling-keys" mental mode.
             input.fromView.copyPublicKeyTrigger.withLatestFrom(publicKeyUncompressed) { $1 }
                 .sink { [pasteboard] in
-                    pasteboard.copy($0)
+                    pasteboard.copy($0, expiringAfter: SensitivePasteboard.expirationSeconds)
                     input.fromController.toastSubject
                         .send(Toast(String(localized: .BackUpRevealedKeyPair.copiedPublicKey)))
                 },

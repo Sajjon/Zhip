@@ -102,9 +102,12 @@ final class BackupWalletViewModel: BaseViewModel<
         [
             // Copy-keystore: pull the *current* wallet's JSON via withLatestFrom
             // so the value is fresh at click-time (not at subscribe-time).
+            // The keystore is encrypted with the user's password but we still
+            // cap its pasteboard residency at 60s so it doesn't sit
+            // indefinitely (Universal Clipboard sync, clipboard managers, …).
             input.fromView.copyKeystoreToPasteboardTrigger.withLatestFrom(wallet.map(\.keystoreAsJSON)) { $1 }
                 .sink { [pasteboard] (keystoreText: String) in
-                    pasteboard.copy(keystoreText)
+                    pasteboard.copy(keystoreText, expiringAfter: SensitivePasteboard.expirationSeconds)
                     input.fromController.toastSubject.send(Toast(String(localized: .BackupWallet.copiedKeystore)))
                 },
 

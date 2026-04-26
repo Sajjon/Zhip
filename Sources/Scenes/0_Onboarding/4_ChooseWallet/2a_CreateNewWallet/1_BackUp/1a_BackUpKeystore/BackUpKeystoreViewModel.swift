@@ -66,10 +66,12 @@ final class BackUpKeystoreViewModel: BaseViewModel<
                 .sink { userDid(.finished) },
 
             // Pull the *current* keystore string at click-time via withLatestFrom
-            // so we don't capture a stale value during init.
+            // so we don't capture a stale value during init. Sensitive copy →
+            // 60s pasteboard expiration (encrypted but still worth limiting
+            // residency).
             input.fromView.copyTrigger.withLatestFrom(keystore)
                 .sink { [pasteboard] in
-                    pasteboard.copy($0)
+                    pasteboard.copy($0, expiringAfter: SensitivePasteboard.expirationSeconds)
                     let toast = Toast(String(localized: .BackUpKeystore.copiedKeystore))
                     input.fromController.toastSubject.send(toast)
                 },
