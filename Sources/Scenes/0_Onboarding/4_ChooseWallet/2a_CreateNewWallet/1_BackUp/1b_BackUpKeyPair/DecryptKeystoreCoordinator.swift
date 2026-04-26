@@ -28,15 +28,32 @@ import Foundation
 import UIKit
 import Zesame
 
+/// Outcomes the decrypt-keystore sub-flow surfaces to its parent.
 enum DecryptKeystoreCoordinatorNavigationStep {
-    case /* "user finished" */ backingUpKeyPair, dismiss
+    /// User entered the password and finished viewing the revealed key pair.
+    case backingUpKeyPair
+    /// User dismissed without revealing.
+    case dismiss
 }
 
+/// Coordinator owning the password-gated reveal of a wallet's private key + address.
+///
+/// Two-step flow:
+/// 1. `DecryptKeystoreToRevealKeyPair` — re-enter password, derive `KeyPair`.
+/// 2. `BackUpRevealedKeyPair` — display the revealed key pair (with copy/QR options).
+///
+/// Like `BackupWalletCoordinator`, the wallet source is either an injected
+/// override (post-create) or a fallback to `WalletStorageUseCase` (Settings).
 final class DecryptKeystoreCoordinator: BaseCoordinator<DecryptKeystoreCoordinatorNavigationStep> {
+    /// Used as a fallback when `walletOverride` is nil (Settings entry point).
     @Injected(\.walletStorageUseCase) private var walletStorageUseCase: WalletStorageUseCase
 
+    /// Optional wallet publisher — overrides the storage lookup when supplied.
     private let walletOverride: AnyPublisher<Wallet, Never>?
 
+    /// Resolved wallet stream (override or storage fallback). Crashes
+    /// (`incorrectImplementation`) if neither is available — that means the
+    /// caller forgot to either supply a wallet or persist one to secure storage.
     private lazy var wallet: AnyPublisher<Wallet, Never> = walletOverride
         ?? walletStorageUseCase.wallet.map {
             guard let wallet = $0 else {
@@ -45,11 +62,13 @@ final class DecryptKeystoreCoordinator: BaseCoordinator<DecryptKeystoreCoordinat
             return wallet
         }.replaceErrorWithEmpty().eraseToAnyPublisher()
 
+    /// Captures the wallet source.
     init(navigationController: UINavigationController, wallet: AnyPublisher<Wallet, Never>? = nil) {
         self.walletOverride = wallet
         super.init(navigationController: navigationController)
     }
 
+    /// Begins at the password entry / decrypt screen.
     override func start(didStart _: Completion? = nil) {
         toDecryptKeystore()
     }
@@ -58,6 +77,8 @@ final class DecryptKeystoreCoordinator: BaseCoordinator<DecryptKeystoreCoordinat
 // MARK: Private
 
 private extension DecryptKeystoreCoordinator {
+    /// Step 1 — password entry. On success, hands the derived `KeyPair` to
+    /// the reveal screen.
     func toDecryptKeystore() {
         let viewModel = DecryptKeystoreToRevealKeyPairViewModel(wallet: wallet)
 
@@ -69,6 +90,7 @@ private extension DecryptKeystoreCoordinator {
         }
     }
 
+    /// Step 2 — display the revealed key pair. `.finish` advances to the parent.
     func toBackUpRevealed(keyPair: KeyPair) {
         let viewModel = BackUpRevealedKeyPairViewModel(keyPair: keyPair)
 
@@ -79,10 +101,12 @@ private extension DecryptKeystoreCoordinator {
         }
     }
 
+    /// Bubble `.dismiss` to the parent so it can dismiss the modal.
     func dismiss() {
         navigator.next(.dismiss)
     }
 
+    /// Bubble `.backingUpKeyPair` — user has finished the reveal flow.
     func finish() {
         let userFinished: NavigationStep = .backingUpKeyPair
         navigator.next(userFinished)

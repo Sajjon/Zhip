@@ -24,6 +24,7 @@
 
 import Foundation
 
+/// `SceneController` glue for the revealed-keypair display screen.
 final class BackUpRevealedKeyPair: Scene<BackUpRevealedKeyPairView> {}
 
 extension BackUpRevealedKeyPair {
@@ -31,6 +32,8 @@ extension BackUpRevealedKeyPair {
     static let title = String(localized: .DecryptKeystore.title)
 }
 
+/// Done button on the right + suppress the back arrow so the user can't
+/// re-enter the password screen and accidentally cause a redundant decrypt.
 extension BackUpRevealedKeyPair: RightBarButtonMaking, BackButtonHiding {
     static let makeRight: BarButton = .done
 }

@@ -25,15 +25,21 @@
 import Combine
 import UIKit
 
+/// Keystore-reveal screen — pretty-printed JSON in a non-editable text view
+/// plus a "Copy keystore" button.
 final class BackUpKeystoreView: ScrollableStackViewOwner {
+    /// Read-only display of the pretty-printed keystore JSON.
     private lazy var keystoreTextView = UITextView()
+    /// Copies the keystore JSON to the system pasteboard.
     private lazy var copyButton = UIButton()
 
+    /// Vertical layout: text view on top, copy button below.
     lazy var stackViewStyle: UIStackView.Style = [
         keystoreTextView,
         copyButton,
     ]
 
+    /// Override-hook from `ScrollableStackViewOwner` — wires styling.
     override func setup() {
         setupSubviews()
     }
@@ -42,12 +48,14 @@ final class BackUpKeystoreView: ScrollableStackViewOwner {
 extension BackUpKeystoreView: ViewModelled {
     typealias ViewModel = BackUpKeystoreViewModel
 
+    /// Routes the JSON-encoded keystore string into the text view.
     func populate(with viewModel: BackUpKeystoreViewModel.Output) -> [AnyCancellable] {
         [
             viewModel.keystore --> keystoreTextView.textBinder,
         ]
     }
 
+    /// Surfaces only the copy-button tap.
     var inputFromView: InputFromView {
         InputFromView(
             copyTrigger: copyButton.tapPublisher
@@ -56,6 +64,7 @@ extension BackUpKeystoreView: ViewModelled {
 }
 
 private extension BackUpKeystoreView {
+    /// Styling pass — non-editable text view, primary copy button.
     func setupSubviews() {
         keystoreTextView.withStyle(.nonEditable) {
             $0.textAlignment(.left)

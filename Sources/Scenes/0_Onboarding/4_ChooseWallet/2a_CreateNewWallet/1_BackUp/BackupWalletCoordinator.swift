@@ -28,17 +28,42 @@ import Foundation
 import UIKit
 import Zesame
 
+/// Outcomes the backup sub-flow surfaces to its parent.
 enum BackupWalletCoordinatorNavigationStep {
+    /// User confirmed they have backed up their wallet.
     case backUp
+    /// User cancelled out of the backup flow (only available in `.cancellable` mode).
     case cancel
 }
 
+/// Coordinator owning the keystore/private-key backup sub-flow.
+///
+/// Reused in two contexts:
+/// 1. Right after wallet creation — `walletOverride` carries the freshly-created
+///    wallet, `mode = .cancellable` (user can back out before persistence).
+/// 2. From Settings → "Back up wallet" — `walletOverride == nil` so the wallet
+///    is pulled from `WalletStorageUseCase`, `mode = .mustBackup` (no cancel
+///    button because the wallet is already saved).
+///
+/// The flow root scene (`BackupWallet`) offers two reveal options
+/// (keystore / private-key + address). Each is a separate sub-flow:
+/// keystore is a single modal; private-key requires re-entering the password
+/// (handled by `DecryptKeystoreCoordinator`).
 final class BackupWalletCoordinator: BaseCoordinator<BackupWalletCoordinatorNavigationStep> {
+    /// Used as a fallback when `walletOverride` is nil (Settings entry point).
     @Injected(\.walletStorageUseCase) private var walletStorageUseCase: WalletStorageUseCase
 
+    /// Optional wallet publisher injected by the create-flow — overrides the
+    /// `walletStorageUseCase` lookup so the freshly-created wallet doesn't need
+    /// a round-trip through persistence.
     private let walletOverride: AnyPublisher<Wallet, Never>?
+    /// `.cancellable` (post-create) vs `.mustBackup` (Settings entry).
     private let mode: BackupWalletViewModel.Mode
 
+    /// Resolved wallet stream — either the override or a fallback that pulls
+    /// from secure storage. Lazy so the storage lookup isn't kicked off during init.
+    /// Crashes (`incorrectImplementation`) if neither is available — that would
+    /// indicate the create flow forgot to persist + re-enter via Settings.
     private lazy var wallet: AnyPublisher<Wallet, Never> = walletOverride
         ?? walletStorageUseCase.wallet.map {
             guard let wallet = $0 else {
@@ -47,6 +72,9 @@ final class BackupWalletCoordinator: BaseCoordinator<BackupWalletCoordinatorNavi
             return wallet
         }.replaceErrorWithEmpty().eraseToAnyPublisher()
 
+    /// Captures the wallet source + mode. Defaulting `wallet = nil` and
+    /// `mode = .cancellable` lets the create-flow pass `wallet:` and Settings
+    /// pass nothing.
     init(
         navigationController: UINavigationController,
         wallet: AnyPublisher<Wallet, Never>? = nil,
@@ -57,6 +85,7 @@ final class BackupWalletCoordinator: BaseCoordinator<BackupWalletCoordinatorNavi
         super.init(navigationController: navigationController)
     }
 
+    /// Begins at the backup hub scene that fans out to the two reveal flows.
     override func start(didStart _: Completion? = nil) {
         toBackUpWallet()
     }
@@ -65,6 +94,8 @@ final class BackupWalletCoordinator: BaseCoordinator<BackupWalletCoordinatorNavi
 // MARK: Private
 
 private extension BackupWalletCoordinator {
+    /// Hub scene with two CTAs (reveal keystore / reveal private key) plus
+    /// confirm + cancel. Each user action dispatches to a sub-flow or finishes.
     func toBackUpWallet() {
         let viewModel = BackupWalletViewModel(wallet: wallet, mode: mode)
 
@@ -78,6 +109,10 @@ private extension BackupWalletCoordinator {
         }
     }
 
+    /// Sub-flow for revealing the private key — gated behind a password
+    /// re-prompt, owned by `DecryptKeystoreCoordinator`. Both terminal cases
+    /// dismiss the modal; only the parent `BackupWallet` scene records the
+    /// "I have backed up" toggle.
     func toDecryptKeystoreToRevealKeyPair() {
         presentModalCoordinator(makeCoordinator: {
             DecryptKeystoreCoordinator(navigationController: $0, wallet: wallet)
@@ -89,6 +124,8 @@ private extension BackupWalletCoordinator {
         })
     }
 
+    /// Sub-flow for revealing the keystore JSON — single modal, no password gate
+    /// (the keystore is already encrypted with the user's password).
     func toRevealKeystore() {
         let viewModel = BackUpKeystoreViewModel(wallet: wallet)
 
@@ -99,10 +136,12 @@ private extension BackupWalletCoordinator {
         }
     }
 
+    /// Bubble `.cancel` to the parent (only reachable in `.cancellable` mode).
     func cancel() {
         navigator.next(.cancel)
     }
 
+    /// Bubble `.backUp` to the parent — they confirmed they've recorded the backup.
     func finish() {
         let userFinished: NavigationStep = .backUp
         navigator.next(userFinished)

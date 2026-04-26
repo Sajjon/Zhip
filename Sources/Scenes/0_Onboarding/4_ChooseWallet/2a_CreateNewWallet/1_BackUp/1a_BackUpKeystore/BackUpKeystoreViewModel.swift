@@ -27,23 +27,33 @@ import Factory
 import UIKit
 import Zesame
 
+/// Outcome of the keystore-reveal modal.
 enum BackUpKeystoreUserAction {
+    /// User tapped the right "Done" bar-button.
     case finished
 }
 
+/// View model for the keystore-reveal modal. Surfaces the pretty-printed
+/// keystore as a string and handles the copy-to-pasteboard side effect.
 final class BackUpKeystoreViewModel: BaseViewModel<
     BackUpKeystoreUserAction,
     BackUpKeystoreViewModel.InputFromView,
     BackUpKeystoreViewModel.Output
 > {
+    /// System pasteboard wrapper — injected so tests can record copies.
     @Injected(\.pasteboard) private var pasteboard: Pasteboard
 
+    /// Reactive keystore stream supplied by the coordinator.
     private let keystore: AnyPublisher<Keystore, Never>
 
+    /// Captures the keystore source. Called by the convenience init below.
     init(keystore: AnyPublisher<Keystore, Never>) {
         self.keystore = keystore
     }
 
+    /// Wires:
+    /// - Right bar-button → `.finished` navigation step.
+    /// - Copy tap → `pasteboard.copy(...)` + toast confirmation.
     override func transform(input: Input) -> Output {
         func userDid(_ step: NavigationStep) {
             navigator.next(step)
@@ -55,6 +65,8 @@ final class BackUpKeystoreViewModel: BaseViewModel<
             input.fromController.rightBarButtonTrigger
                 .sink { userDid(.finished) },
 
+            // Pull the *current* keystore string at click-time via withLatestFrom
+            // so we don't capture a stale value during init.
             input.fromView.copyTrigger.withLatestFrom(keystore)
                 .sink { [pasteboard] in
                     pasteboard.copy($0)
@@ -70,17 +82,22 @@ final class BackUpKeystoreViewModel: BaseViewModel<
 }
 
 extension BackUpKeystoreViewModel {
+    /// Convenience init that pulls the keystore directly from a `Wallet` stream.
     convenience init(wallet: AnyPublisher<Wallet, Never>) {
         self.init(keystore: wallet.map(\.keystore).eraseToAnyPublisher())
     }
 }
 
 extension BackUpKeystoreViewModel {
+    /// User-event publishers the view-model consumes.
     struct InputFromView {
+        /// Fires when the user taps the copy-keystore button.
         let copyTrigger: AnyPublisher<Void, Never>
     }
 
+    /// Reactive bindings the view installs.
     struct Output {
+        /// Drives `keystoreTextView.textBinder` with the pretty-printed JSON.
         let keystore: AnyPublisher<String, Never>
     }
 }
