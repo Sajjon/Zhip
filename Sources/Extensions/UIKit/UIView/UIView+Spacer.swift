@@ -26,6 +26,15 @@ import TinyConstraints
 import UIKit
 
 extension UIView {
+    /// Returns a transparent, flexible spacer view suitable for `UIStackView`s.
+    ///
+    /// All four content-priority properties default to `.medium` (~500), which
+    /// is the sweet spot:
+    ///   * High enough to push back against neighbours and grab leftover space.
+    ///   * Low enough that explicit `.required` constraints (or true content
+    ///     views with their own intrinsic size) win over the spacer.
+    /// Override the vertical priorities when the spacer must specifically
+    /// compress or stretch differently from neighbours.
     static func spacer(
         verticalCompressionResistancePriority: UILayoutPriority = .medium,
         verticalContentHuggingPriority: UILayoutPriority = .medium
@@ -42,10 +51,14 @@ extension UIView {
         return spacer
     }
 
+    /// Property-style accessor for the default flexible spacer — lets call
+    /// sites use `.spacer` (no parens) inside `stackViewStyle` lists for clarity.
     static var spacer: UIView {
         spacer()
     }
 
+    /// Fixed-height spacer — useful for forcing a known gap inside a vertical
+    /// stack view rather than relying on inter-spacing.
     static func spacer(height: CGFloat) -> UIView {
         let spacer: UIView = .spacer
         spacer.height(height)

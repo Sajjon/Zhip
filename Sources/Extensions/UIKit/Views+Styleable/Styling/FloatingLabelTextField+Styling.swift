@@ -25,9 +25,21 @@
 import TinyConstraints
 import UIKit
 
+// Same Style/Apply/Customizing/Presets shape as `UILabel+Styling.swift` —
+// see that file for the canonical doc walkthrough.
+//
+// Unique here is `typeOfInput` — a non-optional input policy (text, password,
+// hexadecimal, etc.) that drives both keyboard and validation, since a
+// floating-label field always belongs to one specific input role.
+
 extension FloatingLabelTextField {
+    /// Description of a `FloatingLabelTextField`'s appearance + input policy.
+    /// Unlike the other Style structs, `typeOfInput` is required (non-optional)
+    /// because every field has *some* input role.
     struct Style {
+        /// Input role — drives keyboard, allowed character set, validation hooks.
         var typeOfInput: TypeOfInput
+        /// Placeholder copy (also displayed in the floating label area).
         var placeholder: String?
         let textColor: UIColor?
         let font: UIFont?
@@ -36,6 +48,8 @@ extension FloatingLabelTextField {
         let keyboardType: UIKeyboardType?
         let backgroundColor: UIColor?
 
+        /// Memberwise initialiser — only `typeOfInput` is required, the rest
+        /// fall back to project-wide defaults in `apply(style:)`.
         init(
             typeOfInput: TypeOfInput,
             placeholder: String? = nil,
@@ -61,6 +75,9 @@ extension FloatingLabelTextField {
 // MARK: - Apply Syyle
 
 extension FloatingLabelTextField {
+    /// Writes `style` to this field, substituting project-wide defaults for any
+    /// nil attribute and routing `typeOfInput` through `updateTypeOfInput`
+    /// (which configures keyboard/auto-correct/text-content-type in one step).
     func apply(style: Style) {
         updateTypeOfInput(style.typeOfInput)
         textColor = style.textColor ?? .defaultText
@@ -78,6 +95,8 @@ extension FloatingLabelTextField {
 // MARK: - Style + Customizing
 
 extension FloatingLabelTextField.Style {
+    /// Returns a copy with `placeholder` replaced — the most common per-field
+    /// override applied via the `withStyle(_:customize:)` `customize` closure.
     @discardableResult
     func placeholder(_ placeholder: String?) -> FloatingLabelTextField.Style {
         var style = self
@@ -89,18 +108,23 @@ extension FloatingLabelTextField.Style {
 // MARK: - Style Presets
 
 extension FloatingLabelTextField.Style {
+    /// Plain free-text input — no special validation, default keyboard.
     static var text: FloatingLabelTextField.Style {
         FloatingLabelTextField.Style(
             typeOfInput: .text
         )
     }
 
+    /// Wallet address input — accepts either Bech32 (`zil1…`) or hex addresses.
+    /// The character-set restriction is enforced by `typeOfInput`.
     static var addressBech32OrHex: FloatingLabelTextField.Style {
         FloatingLabelTextField.Style(
             typeOfInput: .bech32OrHex
         )
     }
 
+    /// Encryption-password input — secure entry on by default so the OS
+    /// shouldn't suggest auto-fill or expose the contents.
     static var password: FloatingLabelTextField.Style {
         FloatingLabelTextField.Style(
             typeOfInput: .password,
@@ -108,6 +132,8 @@ extension FloatingLabelTextField.Style {
         )
     }
 
+    /// Private key input — secure entry plus hex-only character restriction.
+    /// Highest sensitivity input in the app.
     static var privateKey: FloatingLabelTextField.Style {
         FloatingLabelTextField.Style(
             typeOfInput: .hexadecimal,
@@ -115,6 +141,7 @@ extension FloatingLabelTextField.Style {
         )
     }
 
+    /// Whole-number input with the system numeric keyboard.
     static var number: FloatingLabelTextField.Style {
         FloatingLabelTextField.Style(
             typeOfInput: .number,
@@ -122,6 +149,8 @@ extension FloatingLabelTextField.Style {
         )
     }
 
+    /// Decimal-amount input with locale-aware separator handling and the
+    /// system decimal keypad.
     static var decimal: FloatingLabelTextField.Style {
         FloatingLabelTextField.Style(
             typeOfInput: .decimalWithSeparator,

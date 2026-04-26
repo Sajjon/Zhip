@@ -24,9 +24,14 @@
 
 import UIKit
 
+// Same Style/Apply/Customizing/Presets/Mergeable shape as
+// `UILabel+Styling.swift` — see that file for the canonical doc walkthrough.
+
 // MARK: - Style
 
 extension UITextView {
+    /// Description of a `UITextView`'s appearance and behavior — text, fonts,
+    /// colours, and editability/selectability flags.
     struct Style {
         var text: String?
         var textAlignment: NSTextAlignment?
@@ -38,6 +43,9 @@ extension UITextView {
         var contentInset: UIEdgeInsets?
         var isScrollEnabled: Bool?
 
+        /// Memberwise initialiser. `height` is intentionally underscored — it
+        /// was an unused historical parameter, kept in the signature for source
+        /// compatibility but no longer assigned to any property.
         init(
             text: String? = nil,
             textAlignment: NSTextAlignment? = nil,
@@ -66,6 +74,9 @@ extension UITextView {
 // MARK: Apply Style
 
 extension UITextView {
+    /// Writes `style` to this text view, substituting project-wide defaults
+    /// for any nil attribute (left-aligned body font, white text, transparent
+    /// background, fully editable/selectable/scrollable by default).
     func apply(style: UITextView.Style) {
         text = style.text
         textAlignment = style.textAlignment ?? .left
@@ -78,6 +89,7 @@ extension UITextView {
         contentInset = style.contentInset ?? UIEdgeInsets.zero
     }
 
+    /// Apply `style` (optionally customised) and return `self`.
     @discardableResult
     func withStyle(
         _ style: UITextView.Style,
@@ -92,7 +104,10 @@ extension UITextView {
 
 // MARK: - Style + Customizing
 
+// Single-field replacement mutators. See UILabel+Styling.swift for the pattern.
+
 extension UITextView.Style {
+    /// Returns a copy with `text` replaced.
     @discardableResult
     func text(_ text: String?) -> UITextView.Style {
         var style = self
@@ -100,6 +115,7 @@ extension UITextView.Style {
         return style
     }
 
+    /// Returns a copy with `font` replaced.
     @discardableResult
     func font(_ font: UIFont) -> UITextView.Style {
         var style = self
@@ -107,6 +123,7 @@ extension UITextView.Style {
         return style
     }
 
+    /// Returns a copy with `textAlignment` replaced.
     @discardableResult
     func textAlignment(_ textAlignment: NSTextAlignment) -> UITextView.Style {
         var style = self
@@ -114,6 +131,7 @@ extension UITextView.Style {
         return style
     }
 
+    /// Returns a copy with `textColor` replaced.
     @discardableResult
     func textColor(_ textColor: UIColor) -> UITextView.Style {
         var style = self
@@ -121,6 +139,7 @@ extension UITextView.Style {
         return style
     }
 
+    /// Returns a copy with `isSelectable` replaced.
     @discardableResult
     func isSelectable(_ isSelectable: Bool) -> UITextView.Style {
         var style = self
@@ -128,6 +147,7 @@ extension UITextView.Style {
         return style
     }
 
+    /// Returns a copy with `isScrollEnabled` replaced.
     @discardableResult
     func isScrollEnabled(_ isScrollEnabled: Bool) -> UITextView.Style {
         var style = self
@@ -139,12 +159,16 @@ extension UITextView.Style {
 // MARK: - Style Presets
 
 extension UITextView.Style {
+    /// Read-only display — text is selectable (so users can copy) but not
+    /// editable. Used for legal/long-form copy.
     static var nonEditable: UITextView.Style {
         UITextView.Style(
             isEditable: false
         )
     }
 
+    /// Pure display — neither editable nor selectable, centre-aligned. Used
+    /// for short status labels rendered as text views (e.g. for inline links).
     static var nonSelectable: UITextView.Style {
         UITextView.Style(
             textAlignment: .center,
@@ -153,12 +177,14 @@ extension UITextView.Style {
         )
     }
 
+    /// Free-form input — fully editable.
     static var editable: UITextView.Style {
         UITextView.Style(
             isEditable: true
         )
     }
 
+    /// Centred header text in the header font, read-only.
     static var header: UITextView.Style {
         UITextView.Style(
             textAlignment: .center,
@@ -167,6 +193,8 @@ extension UITextView.Style {
         )
     }
 
+    // Historical preset retained as commented-out reference. Keep in case the
+    // welcome scene's text view ever needs an impression-scale variant again.
 //    static var impression: UITextView.Style {
 //        return UITextView.Style(
 //            font: UIFont.impression,
@@ -178,6 +206,8 @@ extension UITextView.Style {
 // MARK: - Style + Merging
 
 extension UITextView.Style: Mergeable {
+    /// Combines two text-view styles attribute-by-attribute. Same shape as the
+    /// `UILabel.Style` merge — see `UILabel+Styling.swift` for the pattern.
     func merged(other: UITextView.Style, mode: MergeMode) -> UITextView.Style {
         func merge<T>(_ attributePath: KeyPath<UITextView.Style, T?>) -> T? {
             mergeAttribute(other: other, path: attributePath, mode: mode)

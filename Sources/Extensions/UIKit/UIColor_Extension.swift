@@ -25,20 +25,31 @@
 import UIKit
 
 public extension UIColor {
+    /// Default foreground colour for body text — white, to fit the dark theme.
     static var defaultText: UIColor {
         .white
     }
 }
 
 extension UIColor {
+    /// The closed set of brand colours used by the app, encoded as raw RGB hex
+    /// integers. Centralised here so palette changes happen in one place and
+    /// the rest of the app references named cases (`.teal`, `.deepBlue`, …).
     enum Hex: Int {
+        /// Brand primary — teal accent for buttons, links, focus rings.
         case teal = 0x00A88D
 
+        /// Pressed/disabled variant of `.teal`.
         case darkTeal = 0x0F675B
+        /// Warning highlight (e.g. validation hints, special callouts).
         case mellowYellow = 0xFFD14C
+        /// App-wide background colour.
         case deepBlue = 0x1F292F
+        /// Error / destructive accent.
         case bloodRed = 0xFF4C4F
+        /// Secondary surface (cards, sections).
         case asphaltGrey = 0x40484D
+        /// Disabled / placeholder text colour.
         case silverGrey = 0x6F7579
 
         /// Dark color used for navigation bar
@@ -47,6 +58,9 @@ extension UIColor {
 }
 
 extension UIColor {
+    /// Returns this colour's RGB components rendered as a `#rrggbb` hex string.
+    /// Alpha is intentionally not encoded — the use sites here are colour
+    /// previews and debug logs where the alpha rarely matters.
     var hexString: String {
         var red: CGFloat = 0
         var green: CGFloat = 0
@@ -62,19 +76,31 @@ extension UIColor {
 }
 
 extension UIColor {
+    /// Brand teal — primary accent.
     static let teal = UIColor(hex: .teal)
+    /// Brand teal pressed/disabled state.
     static let darkTeal = UIColor(hex: .darkTeal)
+    /// App-wide background.
     static let deepBlue = UIColor(hex: .deepBlue)
+    /// Mellow yellow — warning accent.
     static let mellowYellow = UIColor(hex: .mellowYellow)
+    /// Blood red — error/destructive accent.
     static let bloodRed = UIColor(hex: .bloodRed)
+    /// Asphalt grey — secondary surface.
     static let asphaltGrey = UIColor(hex: .asphaltGrey)
+    /// Silver grey — disabled / placeholder text.
     static let silverGrey = UIColor(hex: .silverGrey)
+    /// Dusk — navigation bar.
     static let dusk = UIColor(hex: .dusk)
 }
 
 // MARK: - Private
 
 private extension UIColor {
+    /// Decodes a brand `Hex` value into a `UIColor`. Splits the 24-bit integer
+    /// into 8-bit channels via right-shift + mask, then normalises each channel
+    /// to `0…1`. Made private so the rest of the codebase only sees the named
+    /// `static let` colours above.
     convenience init(hex: Hex, alpha: CGFloat = 1.0) {
         let hexInt: Int = hex.rawValue
         let components = (

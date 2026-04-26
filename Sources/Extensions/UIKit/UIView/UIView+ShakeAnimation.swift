@@ -25,7 +25,19 @@
 import UIKit
 
 public extension UIView {
-    /// https://stackoverflow.com/a/50080005/1311272
+    /// Animates a horizontal shake on this view — used to signal validation
+    /// failure or "incorrect input" without modal interruption.
+    ///
+    /// Implementation note: a single damped property animator with two stages —
+    /// translate by `translation`, then translate back to zero — gives an
+    /// elastic settle that reads as a "no" gesture. `dampingRatio: 0.2` is
+    /// deliberately soft so the rebound is visible.
+    ///
+    /// Original technique: https://stackoverflow.com/a/50080005/1311272
+    /// - Parameters:
+    ///   - duration: Total animation length (default ≈ 0.42s).
+    ///   - translation: How many points to displace horizontally on the first stage.
+    ///   - done: Optional completion fired when the animation finishes.
     func shake(duration: TimeInterval = 0.42, withTranslation translation: CGFloat = 10, done: (() -> Void)? = nil) {
         let propertyAnimator = UIViewPropertyAnimator(duration: duration, dampingRatio: 0.2) { [weak self] in
             self?.transform = CGAffineTransform(translationX: translation, y: 0)

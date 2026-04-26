@@ -26,11 +26,18 @@ import UIKit
 import WebKit
 
 extension WKWebView {
+    /// Programmatic-Auto-Layout-friendly initialiser: zero frame and
+    /// `translatesAutoresizingMaskIntoConstraints` already disabled so the
+    /// caller can immediately install constraints.
     convenience init(configuration: WKWebViewConfiguration = WKWebViewConfiguration()) {
         self.init(frame: .zero, configuration: configuration)
         translatesAutoresizingMaskIntoConstraints = false
     }
 
+    /// Loads a bundled `.html` resource into this web view.
+    /// Crashes via `incorrectImplementation` if the resource is missing or
+    /// unreadable — these are static, in-bundle assets, so any failure is a
+    /// programmer/asset-manifest bug rather than a runtime condition.
     func loadHtml(file: String, in bundle: Bundle = Bundle.main) {
         let htmlFile = bundle.path(forResource: file, ofType: "html")!
         guard let html = try? String(contentsOfFile: htmlFile, encoding: .utf8) else {

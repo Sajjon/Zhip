@@ -25,8 +25,13 @@
 import UIKit
 
 extension UIMotionEffect {
+    /// Creates a 2-axis parallax motion effect that shifts the view's centre
+    /// by ±`strength` points as the device tilts horizontally and vertically.
+    /// Used to give layered hero artwork (welcome screen) a sense of depth.
     class func twoAxesShift(strength: CGFloat) -> UIMotionEffect {
         // internal method that creates motion effect
+        // Builds one axis's interpolating effect — keypath choice tells UIKit
+        // which centre coordinate to interpolate.
         func motion(type: UIInterpolatingMotionEffect.EffectType) -> UIInterpolatingMotionEffect {
             let keyPath = type == .tiltAlongHorizontalAxis ? "center.x" : "center.y"
             let motion = UIInterpolatingMotionEffect(keyPath: keyPath, type: type)
@@ -46,14 +51,26 @@ extension UIMotionEffect {
 }
 
 extension UIView {
+    /// Convenience: install a 2-axis tilt motion effect with the given strength.
     func addMotionEffect(strength: CGFloat) {
         addMotionEffect(.twoAxesShift(strength: strength))
     }
 
+    /// Composes a three-layer parallax illusion: `back`, `middle`, `front`
+    /// images stacked behind each other with progressively stronger motion.
+    /// Returns the constructed image views in the same `(front, middle, back)`
+    /// order so the caller can hold onto them if needed.
     func addMotionEffect(front: UIImage, middle: UIImage, back: UIImage) {
         addMotionEffectFromImages(front: front, middle: middle, back: back)
     }
 
+    /// The actual workhorse — adds three image views (back-to-front), pins them
+    /// edge-to-edge with a slight overscan so motion-driven offsets don't expose
+    /// the layer's edges, and applies different motion strengths so the layers
+    /// move at different rates (the "parallax" effect).
+    ///
+    /// Defaults: front=6, middle=20, back=48 — gives a comfortable depth feel
+    /// without inducing motion sickness.
     @discardableResult
     func addMotionEffectFromImages(
         front: UIImage, motionEffectStrength frontStrength: CGFloat = 6,
@@ -63,6 +80,7 @@ extension UIView {
         horizontalInsetForImageViews: CGFloat = -80
         // swiftlint:disable:next large_tuple
     ) -> (frontImageView: UIImageView, middleImageView: UIImageView, backImageView: UIImageView) {
+        // Iterate back→front so addSubview Z-order matches what we want visually.
         let imageViews = [back, middle, front].map { image -> UIImageView in
             let imageView = UIImageView()
             imageView.withStyle(.background(image: image))
@@ -82,12 +100,16 @@ extension UIView {
             views: (imageViews[0], imageViews[1], imageViews[2]),
             strengths: (frontStrength, middleStrength, backStrength)
         )
+        // Reverse so the returned tuple's order matches the (front, middle, back) labels.
         return (imageViews[2], imageViews[1], imageViews[0])
     }
 
-    // [4, 15, 40]
-    // (8, 30, 50)
     // swiftlint:disable large_tuple
+    /// Tuple-positional convenience that zips three views with three strengths
+    /// and forwards to `addMotionEffectTo(viewsAndEffectStrength:)`.
+    /// Alternative strength presets retained for tuning experiments:
+    ///   `[4, 15, 40]`
+    ///   `(8, 30, 50)`
     func addMotionEffectTo(
         views: (back: UIView, middle: UIView, front: UIView),
         strengths: (back: CGFloat, middle: CGFloat, front: CGFloat)
@@ -99,6 +121,8 @@ extension UIView {
         addMotionEffectTo(viewsAndEffectStrength: viewsAndEffectStrength)
     }
 
+    /// Loop-based application of a 2-axis tilt to each (view, strength) pair —
+    /// the bottom-most worker that everything else here funnels into.
     func addMotionEffectTo(viewsAndEffectStrength: [(UIView, CGFloat)]) {
         for item in viewsAndEffectStrength {
             let (view, strength) = item

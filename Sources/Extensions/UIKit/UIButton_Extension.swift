@@ -25,6 +25,11 @@
 import UIKit
 
 extension UIButton {
+    /// Sets a solid `color` as the background for the given `state`.
+    ///
+    /// `UIButton` only exposes per-state *images*, not colours, so we paint a
+    /// 1×1 image of the desired colour and use it as the background image for
+    /// that state. The image is auto-stretched by UIKit to fill the button.
     func setBackgroundColor(_ color: UIColor, for state: UIControl.State) {
         UIGraphicsBeginImageContext(CGSize(width: 1, height: 1))
         UIGraphicsGetCurrentContext()!.setFillColor(color.cgColor)
@@ -34,6 +39,9 @@ extension UIButton {
         setBackgroundImage(colorImage, for: state)
     }
 
+    /// Returns the rendered width of the button's title for `state` using its
+    /// own `titleLabel?.font`. Returns `nil` when either the font or title is
+    /// missing — there's no sensible width to report in that case.
     func widthOfTitle(for state: UIControl.State = .normal) -> CGFloat? {
         guard let font = titleLabel?.font, let title = title(for: state) else {
             return nil

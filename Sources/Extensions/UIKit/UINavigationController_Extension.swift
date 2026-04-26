@@ -25,6 +25,9 @@
 import UIKit
 
 extension UINavigationController {
+    /// Convenience initialiser for nav controllers that will live inside a tab bar:
+    /// constructs the controller programmatically (no nib) and pre-populates the
+    /// `tabBarItem` with `tabBarTitle`. Saves two lines at every tab assembly site.
     convenience init(tabBarTitle: String) {
         self.init(nibName: nil, bundle: nil)
         tabBarItem = UITabBarItem(tabBarTitle)

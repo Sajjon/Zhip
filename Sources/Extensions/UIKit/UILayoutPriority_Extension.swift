@@ -24,12 +24,18 @@
 
 import UIKit
 
+/// Float-literal conformance — lets call sites write `.priority(750.5)` instead
+/// of `UILayoutPriority(rawValue: 750.5)`. Marked `@retroactive` because UIKit
+/// owns `UILayoutPriority` but doesn't ship the conformance.
 extension UILayoutPriority: @retroactive ExpressibleByFloatLiteral {
     public init(floatLiteral rawValue: Float) {
         self.init(rawValue: rawValue)
     }
 }
 
+/// Integer-literal conformance — lets call sites write `.priority(750)` and
+/// have it bridge through `Float(intValue)` automatically. Same `@retroactive`
+/// reasoning as the float variant above.
 extension UILayoutPriority: @retroactive ExpressibleByIntegerLiteral {
     public init(integerLiteral intValue: Int) {
         self.init(rawValue: Float(intValue))
@@ -37,6 +43,9 @@ extension UILayoutPriority: @retroactive ExpressibleByIntegerLiteral {
 }
 
 public extension UILayoutPriority {
+    /// A "medium" priority halfway between `.defaultLow` (250) and `.defaultHigh`
+    /// (750), i.e. ≈500. Useful when you want a constraint that beats most
+    /// fitting-size constraints but loses to anything explicitly required.
     static var medium: UILayoutPriority {
         let delta = UILayoutPriority.defaultHigh.rawValue - UILayoutPriority.defaultLow.rawValue
         let valueBetweenLowAndHeight = UILayoutPriority.defaultLow.rawValue + delta / 2
