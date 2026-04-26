@@ -25,6 +25,12 @@
 import Foundation
 
 public extension Encodable {
+    /// Round-trips this value through JSON to produce a `[String: Any]` dictionary
+    /// suitable for query-parameter / form-encoding-style serialisation.
+    ///
+    /// Returns an empty dictionary on any encoding/parsing failure — callers
+    /// that need to distinguish "empty" from "failed" should not use this helper.
+    /// Note the cost: a full JSON encode + JSON parse, so don't use in hot paths.
     var dictionaryRepresentation: [String: Any] {
         let jsonEncoder = JSONEncoder()
         do {

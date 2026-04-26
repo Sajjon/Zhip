@@ -24,6 +24,23 @@
 
 import UIKit
 
+/// Loads an HTML file bundled with the app and returns it as a styled
+/// `NSAttributedString`, suitable for hand-off to a `UITextView` or `UILabel`.
+///
+/// Used for the legal/ToS/ECC-warning copy that's authored as HTML so non-engineers
+/// can edit links, lists, and headings without touching attributed-string code.
+///
+/// - Parameters:
+///   - htmlFileName: Resource name of the `.html` file (without extension).
+///   - textColor: Foreground colour applied to all text. Defaults to white to fit
+///     the dark-themed app chrome.
+///   - font: Base font applied to all text — see `setFontFace(font:color:)` for the
+///     family/trait merging logic.
+/// - Returns: An attributed string whose styling has been merged into the parsed HTML.
+/// - Note: Bundling problems and parse failures crash via `incorrectImplementation`
+///   because the input HTML files are static, in-bundle resources — any failure
+///   indicates a programming/asset bug, not a runtime condition we should silently
+///   recover from.
 func htmlAsAttributedString(
     htmlFileName: String,
     textColor: UIColor = .white,
@@ -45,6 +62,13 @@ func htmlAsAttributedString(
     }
 }
 
+/// Lower-level converter that wraps a raw HTML body string into a styled
+/// `NSAttributedString`.
+///
+/// - Important: We encode using `String.Encoding.unicode` (UTF-16 in this context)
+///   because `NSAttributedString.DocumentType.html` expects native-endian Unicode
+///   and gets confused by some UTF-8 byte sequences (especially BOMs). This is a
+///   well-known UIKit quirk.
 func generateHTMLWithCSS(
     htmlBodyString: String,
     textColor: UIColor,
@@ -60,6 +84,8 @@ func generateHTMLWithCSS(
             options: [NSAttributedString.DocumentReadingOptionKey.documentType: NSAttributedString.DocumentType.html],
             documentAttributes: nil
         )
+        // Re-skin every run with our app font and (optionally) colour while
+        // preserving the symbolic traits (bold/italic) the HTML applied.
         attributexText.setFontFace(font: font, color: textColor)
         return attributexText
     } catch {
@@ -68,12 +94,20 @@ func generateHTMLWithCSS(
 }
 
 extension NSMutableAttributedString {
+    /// Walks every `.font` run in the string and re-applies `font.familyName`
+    /// while keeping the original run's symbolic traits (bold/italic/etc.).
+    /// Optionally also applies `color` to the entire string.
+    ///
+    /// `beginEditing()`/`endEditing()` is a Foundation perf optimisation —
+    /// it batches the mutation notifications so we don't pay per-attribute cost.
     func setFontFace(font: UIFont, color: UIColor? = nil) {
         beginEditing(); defer { endEditing() }
 
         let range = NSRange(location: 0, length: length)
 
         enumerateAttribute(.font, in: range) { value, range, _ in
+            // Skip runs without a font, and skip the rare case where the
+            // descriptor refuses the new family (e.g. font has no italic glyph).
             guard
                 let f = value as? UIFont,
                 let newFontDescriptor = f.fontDescriptor.withFamily(font.familyName)

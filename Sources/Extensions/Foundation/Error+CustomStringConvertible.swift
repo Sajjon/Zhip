@@ -25,6 +25,13 @@
 import Foundation
 
 extension Swift.Error where Self: CustomStringConvertible {
+    /// Auto-derived error description that returns the case name for enum errors.
+    ///
+    /// Saves boilerplate for error enums that exist only to identify a failure
+    /// (no associated values worth printing). For struct/class errors, or enum
+    /// errors that need richer formatting, the conformer must implement
+    /// `description` themselves — falling through to the trap here makes the
+    /// missing implementation visible immediately.
     var description: String {
         if isEnum(type: self) {
             guard let nameOfEnumCase = nameOf(enumCase: self)
