@@ -24,21 +24,37 @@
 
 import UIKit
 
+/// `UIButton` subclass that arranges an image **above** a label, instead of
+/// `UIButton`'s built-in side-by-side layout. Used on the wallet-choice screen
+/// (large icon over a label).
+///
+/// We can't use `UIButton`'s built-in `imageView`/`titleLabel` because their
+/// auto-layout behaviour doesn't support vertical stacking. Instead we host
+/// our own `UIImageView` + `UILabel` inside a stack view and `assert` that
+/// the inherited slots are unused — see `layoutSubviews()`.
 final class ImageAboveLabelButton: UIButton {
+    /// Custom label that replaces the inherited `titleLabel`.
     private lazy var customLabel = UILabel()
+    /// Custom image view that replaces the inherited `imageView`.
     private lazy var customImageView = UIImageView()
+    /// Vertical stack composing image + label.
     private lazy var stackView = UIStackView(arrangedSubviews: [customImageView, customLabel])
 
+    /// Programmatic init.
     init() {
         super.init(frame: .zero)
         setup()
     }
 
+    /// Storyboard init — unsupported, traps to enforce programmatic-only use.
     required init?(coder _: NSCoder) {
         interfaceBuilderSucks
     }
 
     /// Make sure that we are not using the inbuilt label and imageview
+    /// Asserts that the inherited UIButton title/image slots stay empty (they'd
+    /// fight our stack view's layout) and that `setTitle(_:image:)` was called
+    /// to populate the custom views.
     override func layoutSubviews() {
         super.layoutSubviews()
         assert(titleLabel?.text == nil, "You should not use the default `titleLabel`, but rather `customLabel` view")
@@ -51,6 +67,9 @@ final class ImageAboveLabelButton: UIButton {
 // MARK: - Internal
 
 extension ImageAboveLabelButton {
+    /// Single entry point for content. Setting title and image together makes
+    /// the "both must be set" invariant easier to satisfy than two separate
+    /// methods would.
     func setTitle(_ title: String, image: UIImage) {
         customLabel.withStyle(
             .init(
@@ -71,17 +90,25 @@ extension ImageAboveLabelButton {
 
 // MARK: - Accessibility
 
+// Forward all VoiceOver attributes to `customLabel` since the inherited
+// `titleLabel` is intentionally unused. Without these overrides, VoiceOver
+// would announce nothing because the system reads from the (empty) inherited
+// label rather than our custom one.
+
 extension ImageAboveLabelButton {
+    /// Forward to `customLabel` — see header comment.
     override var accessibilityLabel: String? {
         get { customLabel.accessibilityLabel }
         set { customLabel.accessibilityLabel = newValue }
     }
 
+    /// Forward to `customLabel` — see header comment.
     override var accessibilityHint: String? {
         get { customLabel.accessibilityHint }
         set { customLabel.accessibilityHint = newValue }
     }
 
+    /// Forward to `customLabel` — see header comment.
     override var accessibilityValue: String? {
         get { customLabel.accessibilityValue }
         set { customLabel.accessibilityValue = newValue }
@@ -91,6 +118,9 @@ extension ImageAboveLabelButton {
 // MARK: - Private Setup
 
 private extension ImageAboveLabelButton {
+    /// Applies the primary button styling (without a fixed height — content
+    /// drives sizing here), seats the stack view, and disables interaction
+    /// on the inner views so taps route through the button itself.
     func setup() {
         translatesAutoresizingMaskIntoConstraints = false
         withStyle(.primary) {

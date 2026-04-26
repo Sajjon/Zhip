@@ -26,12 +26,31 @@ import Foundation
 import Zesame
 
 extension FloatingLabelTextField {
+    /// Input role for a `FloatingLabelTextField`. Drives the keyboard, the
+    /// allowed character set (`limitingCharacterSet`), and the validation
+    /// surface used by the parent scene.
     enum TypeOfInput {
-        case number, hexadecimal, text, password, bech32, bech32OrHex, decimalWithSeparator
+        /// Whole-number numeric pad input.
+        case number
+        /// Hex digits + the literal `0x` prefix characters.
+        case hexadecimal
+        /// Free-text input — alphanumerics only (no symbols).
+        case text
+        /// Password entry — no character restriction (every printable char allowed).
+        case password
+        /// Bech32 wallet address (with the network's prefix character).
+        case bech32
+        /// Either Bech32 or hex-style wallet address — used in flexible fields.
+        case bech32OrHex
+        /// Decimal number with locale-aware separator. Use for amount inputs.
+        case decimalWithSeparator
     }
 }
 
 extension FloatingLabelTextField.TypeOfInput {
+    /// Maps this input role to the `CharacterSet` used by `TextFieldDelegate`
+    /// to gate keystrokes. `nil` means "no restriction" — used only for
+    /// passwords, where every printable character must be allowed.
     var limitingCharacterSet: CharacterSet? {
         switch self {
         case .number: .decimalDigits

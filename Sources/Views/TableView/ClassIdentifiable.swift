@@ -24,23 +24,40 @@
 
 import UIKit
 
+/// Protocol exposing the runtime class name as a `String`. Restricted to
+/// `NSObjectProtocol` so we can reach `NSStringFromClass`.
 protocol ClassIdentifiable: NSObjectProtocol {
+    /// The class name (without the module prefix).
     static var className: String { get }
 }
 
+/// Protocol exposing a stable string identifier — used as the cell-reuse
+/// identifier in `SingleCellTypeTableView`.
+///
+/// Note: deliberately not named `Swift.Identifiable` because we don't want to
+/// conform to the system protocol (which has different semantics).
 protocol Identifiable {
+    /// Stable string identifier.
     static var identifier: String { get }
 }
 
 extension Identifiable where Self: ClassIdentifiable {
+    /// Default — derive `identifier` from the class name. Lets every cell
+    /// type get a unique reuse identifier without per-cell boilerplate.
     static var identifier: String {
         className
     }
 }
 
+/// Auto-conform every `UITableViewCell` to `Identifiable` so cells can be
+/// registered/dequeued by class without manual identifier strings.
 extension UITableViewCell: Identifiable {}
 
 extension NSObject: ClassIdentifiable {
+    /// Strips the module prefix from `NSStringFromClass` to return the bare
+    /// type name (e.g. `"Zhip.SettingsTableViewCell"` → `"SettingsTableViewCell"`).
+    /// Force-unwraps the last component because every `NSStringFromClass`
+    /// result is non-empty by definition.
     static var className: String {
         NSStringFromClass(self).components(separatedBy: ".").last!
     }

@@ -25,16 +25,33 @@
 import SkyFloatingLabelTextField
 import UIKit
 
+/// Diameter (in points) of the small validation status circle on the leading edge.
 private let circeViewSize: CGFloat = 16
+/// Total leading-padding width = circle + 12pt gap to the text.
 private let leftPaddingViewWidth: CGFloat = circeViewSize + 12
+/// Distance from the circle's bottom edge to the field's bottom — aligns the
+/// circle with the bottom-line indicator that `SkyFloatingLabelTextField` draws.
 private let distanceBetweenCircleAndBottom: CGFloat = 10
 
+/// Project's standard input field. Subclass of `SkyFloatingLabelTextField`
+/// (a third-party "floating label" text field) augmented with:
+///   - a coloured validation status circle on the leading edge,
+///   - a `TextFieldDelegate` that limits keystrokes by `TypeOfInput`,
+///   - the `withStyle(_:customize:)` API matching the rest of the app's styling.
 final class FloatingLabelTextField: SkyFloatingLabelTextField {
+    /// Standard width of the right accessory view (clear button, eye toggle, …).
     static let rightViewWidth: CGFloat = 45
+    /// Standard height of the field. Drives several layout calculations
+    /// (text/title halves, accessory positioning).
     static let textFieldHeight: CGFloat = 64
 
+    /// Container that holds the validation circle on the leading edge.
     private lazy var leftPaddingView = UIView()
+    /// Coloured status circle. `internal` so the validation extension can
+    /// re-tint it.
     lazy var validationCircleView = UIView()
+    /// Per-field delegate that limits keystrokes by `TypeOfInput`. Wiring is
+    /// done in `withStyle(_:customize:)`.
     private lazy var textFieldDelegate = TextFieldDelegate()
 
     // MARK: - Overridden methods
@@ -45,22 +62,31 @@ final class FloatingLabelTextField: SkyFloatingLabelTextField {
         return superRect.insetBy(dx: leftPaddingView.frame.width, dy: 0)
     }
 
+    /// Half the field's overall height — yields a text area sized so the
+    /// floating-label title fits in the upper half and the input in the lower.
     override func textHeight() -> CGFloat {
         FloatingLabelTextField.textFieldHeight / 2
     }
 
+    /// Half the field's overall height — see `textHeight()`.
     override func titleHeight() -> CGFloat {
         FloatingLabelTextField.textFieldHeight / 2
     }
 
+    /// Re-apply font-resizing whenever the error message changes — see
+    /// `updateFontResizing()` for the resizing logic.
     override var errorMessage: String? {
         didSet { updateFontResizing() }
     }
 
+    /// Pin the leading view to the precomputed left-padding rect so the
+    /// status circle sits in the gutter rather than overlapping the text.
     override func leftViewRect(forBounds _: CGRect) -> CGRect {
         leftPaddingView.frame
     }
 
+    /// Force the right accessory view to fill the full field height (so a
+    /// clear button is centred vertically, not aligned to the text baseline).
     override func rightViewRect(forBounds bounds: CGRect) -> CGRect {
         var rightViewRect = super.rightViewRect(forBounds: bounds)
         rightViewRect.origin.y = 0
@@ -81,6 +107,9 @@ final class FloatingLabelTextField: SkyFloatingLabelTextField {
 // MARK: TextField + Styling
 
 extension FloatingLabelTextField {
+    /// Apply `style` (optionally customised) and install the `TextFieldDelegate`.
+    /// Same call shape as the other `withStyle(_:customize:)` overloads in the
+    /// styling system. Returns `self` for chaining.
     @discardableResult
     func withStyle(
         _ style: FloatingLabelTextField.Style,
@@ -92,12 +121,16 @@ extension FloatingLabelTextField {
         return self
     }
 
+    /// Switches the input policy at runtime. Used when a single field changes
+    /// roles (e.g. amount field switching between integer and decimal).
     func updateTypeOfInput(_ typeOfInput: TypeOfInput) {
         textFieldDelegate.setTypeOfInput(typeOfInput)
     }
 }
 
 extension FloatingLabelTextField {
+    /// Reactive sink — bind a publisher of `AnyValidation` to drive the
+    /// field's validation appearance (line colour, error message, status circle).
     var validationBinder: Binder<AnyValidation> {
         Binder<AnyValidation>(self) {
             $0.validate($1)
@@ -108,6 +141,10 @@ extension FloatingLabelTextField {
 // MARK: - Private
 
 private extension FloatingLabelTextField {
+    /// One-time configuration of the field's structural visuals: colours,
+    /// title-label sizing, and the leading status circle.
+    /// `setupValidationCircleView()` is `defer`red so it runs after the rest
+    /// of the configuration — its position depends on the final field size.
     func setup() {
         defer {
             // calculations of the position of the circle view might be dependent on other settings, thus do it last
@@ -125,6 +162,9 @@ private extension FloatingLabelTextField {
         titleFormatter = { $0 }
     }
 
+    /// Builds the validation circle, rounds it to a perfect circle, and seats
+    /// it inside the leading padding view. `leftView`/`leftViewMode` install
+    /// the padding view as the field's leading accessory.
     func setupValidationCircleView() {
         validationCircleView.translatesAutoresizingMaskIntoConstraints = false
         leftPaddingView.addSubview(validationCircleView)

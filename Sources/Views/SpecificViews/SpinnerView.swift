@@ -24,20 +24,38 @@
 
 import UIKit
 
+/// Themed indeterminate-progress spinner. Replaces `UIActivityIndicatorView`
+/// across the app so the visual style matches the rest of the chrome (3pt
+/// rounded-cap white stroke that grows-then-shrinks while rotating).
+///
+/// The animation is a single `CAAnimationGroup` driving four properties on
+/// a `CAShapeLayer` arc; see `addAnimation()` for the four-stage breakdown.
 class SpinnerView: UIView {
+    /// Backing arc layer. `internal` so tests can verify configuration without
+    /// reaching into private state.
     let circleLayer = CAShapeLayer()
+    /// `true` while a spinner animation is currently attached. Read-only
+    /// externally; set via `start`/`stopSpinning`.
     private(set) var isAnimating = false
+    /// One full sweep duration in seconds. Default 2s reads as a slow, calm
+    /// progress indicator — fast enough to feel alive, slow enough to feel
+    /// patient. Settable so tests can tighten the loop.
     var animationDuration: TimeInterval = 2
 
+    /// Programmatic init. Always builds with a white stroke (the only colour
+    /// used by the project; refactor the signature if that changes).
     init() {
         super.init(frame: .zero)
         setup(strokeColor: .white)
     }
 
+    /// Storyboard init — unsupported, traps to enforce programmatic-only use.
     required init?(coder _: NSCoder) {
         interfaceBuilderSucks
     }
 
+    /// Recompute the arc path on every layout pass *only* if the bounds
+    /// changed — `path` rebuilds are expensive enough to be worth gating.
     override func layoutSubviews() {
         super.layoutSubviews()
         if circleLayer.frame != bounds {
@@ -47,6 +65,7 @@ class SpinnerView: UIView {
 }
 
 extension SpinnerView {
+    /// Show the spinner and (re)attach the animation. No-op if already animating.
     func startSpinning() {
         isHidden = false
         guard !isAnimating else { return }
@@ -54,12 +73,15 @@ extension SpinnerView {
         addAnimation()
     }
 
+    /// Hide the spinner and remove the animation. Hiding (rather than alpha
+    /// fade) saves layout cost when the spinner sits in a stack view.
     func stopSpinning() {
         isHidden = true
         isAnimating = false
         circleLayer.removeAnimation(forKey: .spinner)
     }
 
+    /// Bool→start/stop bridge used by `isLoadingBinder`.
     func changeTo(isLoading: Bool) {
         if isLoading {
             startSpinning()
@@ -70,6 +92,7 @@ extension SpinnerView {
 }
 
 extension SpinnerView {
+    /// Reactive sink: bind a `Bool` publisher to drive the spinner.
     var isLoadingBinder: Binder<Bool> {
         Binder(self) {
             $0.changeTo(isLoading: $1)
@@ -78,6 +101,9 @@ extension SpinnerView {
 }
 
 private extension SpinnerView {
+    /// One-time layer config. The arc is drawn fully empty
+    /// (`strokeStart == strokeEnd == 0`) so an inactive spinner has no visible
+    /// fill — `addAnimation()` then animates the strokes outward.
     func setup(strokeColor: UIColor) {
         translatesAutoresizingMaskIntoConstraints = false
         layer.addSublayer(circleLayer)
@@ -94,6 +120,9 @@ private extension SpinnerView {
         stopSpinning()
     }
 
+    /// Builds the circular `UIBezierPath` and seats it on the shape layer.
+    /// The radius is reduced by half the line width so the stroke doesn't
+    /// clip at the bounds edges.
     func updateCircleLayer() {
         let height = bounds.height
         let center = CGPoint(x: bounds.size.width / 2, y: height / 2)
@@ -114,6 +143,15 @@ private extension SpinnerView {
         circleLayer.frame = bounds
     }
 
+    /// Composes the indeterminate animation: a continuous rotation plus a
+    /// two-phase stroke "grow then chase" cycle.
+    ///
+    /// Phase 1 (first half): start at 0, grow head→0.25, tail→1 (the visible
+    /// arc lengthens from a dot into a 3/4-circle).
+    /// Phase 2 (second half): head chases tail from 0.25→1 (the arc shortens
+    /// back to nothing while keeping its tail pinned).
+    /// `repeatCount: .infinity` and `isRemovedOnCompletion = false` keep it
+    /// going until `stopSpinning()` removes the animation key.
     func addAnimation() {
         let rotateAnimation = CAKeyframeAnimation(keyPath: .transformRotation)
 
@@ -159,9 +197,15 @@ private extension SpinnerView {
     }
 }
 
+/// Animation/keypath identifiers — kept private to this file because they're
+/// implementation details of the spinner.
 private extension String {
+    /// Animation key under which the group lives on `circleLayer`.
     static let spinner = SpinnerView.description()
+    /// `CAShapeLayer.strokeStart` keypath, as a typed constant.
     static let strokeStart = "strokeStart"
+    /// `CAShapeLayer.strokeEnd` keypath, as a typed constant.
     static let strokeEnd = "strokeEnd"
+    /// `CALayer.transform.rotation` keypath, as a typed constant.
     static let transformRotation = "transform.rotation"
 }

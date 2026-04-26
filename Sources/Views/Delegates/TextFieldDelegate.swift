@@ -24,9 +24,25 @@
 
 import UIKit
 
+/// `UITextFieldDelegate` that gates input by character set and max length.
+///
+/// Used by `FloatingLabelTextField` to enforce per-input-type rules without
+/// scenes having to install their own delegates — pick a `TypeOfInput`
+/// (text/hex/decimal/...) and the matching character set is derived for you.
+///
+/// The class is deliberately stateless beyond config (no per-call mutation)
+/// so a single instance can serve any number of fields.
 final class TextFieldDelegate: NSObject {
+    /// Maximum allowed text length, or `nil` for unlimited.
     private let maxLength: Int?
+    /// Character set the user is allowed to type. `nil` ⇒ no restriction.
+    /// Mutable via `setTypeOfInput(_:)` so a field can switch input modes
+    /// at runtime (e.g. when the user changes a "type" segmented control).
     private var limitingCharacterSet: CharacterSet?
+
+    /// Designated initialiser — pass a precomputed `CharacterSet`. Use the
+    /// `init(type:maxLength:)` convenience overload below for the common
+    /// "I have a TypeOfInput value" case.
     init(limitingCharacterSet: CharacterSet?, maxLength: Int? = nil) {
         self.limitingCharacterSet = limitingCharacterSet
         self.maxLength = maxLength
@@ -34,16 +50,35 @@ final class TextFieldDelegate: NSObject {
 }
 
 extension TextFieldDelegate {
+    /// Convenience init that derives the character set from a `TypeOfInput`.
+    /// Most call sites use this — it keeps the input-type ↔ allowed-chars
+    /// mapping in `TypeOfInput` rather than scattered across delegate setups.
     convenience init(type: FloatingLabelTextField.TypeOfInput = .text, maxLength: Int? = nil) {
         self.init(limitingCharacterSet: type.limitingCharacterSet, maxLength: maxLength)
     }
 
+    /// Live-swap the input policy. Used when a single field changes role
+    /// (e.g. amount field switching between integer and decimal mode).
     func setTypeOfInput(_ typeOfInput: FloatingLabelTextField.TypeOfInput) {
         limitingCharacterSet = typeOfInput.limitingCharacterSet
     }
 }
 
 extension TextFieldDelegate: UITextFieldDelegate {
+    /// `UITextFieldDelegate` hook called for every character insertion or paste.
+    /// Returns `false` to reject the change; `true` to accept it.
+    ///
+    /// Three checks in order:
+    ///   1. Backspace always passes (so the user can always recover from a
+    ///      previously-pasted bad value).
+    ///   2. If the new characters fall outside `limitingCharacterSet`, reject
+    ///      — covers both per-keystroke typing and pasted strings.
+    ///   3. If accepting would exceed `maxLength`, reject.
+    ///
+    /// The trailing `defer` block normalises the locale-specific decimal
+    /// separator: when the locale uses ',' but the user types '.' (or vice
+    /// versa), we substitute the right one in-place. Done in `defer` so it
+    /// runs after UIKit has applied the (accepted) edit.
     func textField(
         _ textField: UITextField,
         shouldChangeCharactersIn range: NSRange,

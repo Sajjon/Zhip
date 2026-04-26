@@ -24,21 +24,36 @@
 
 import UIKit
 
+/// `UITextView` subclass that reports its `contentSize.height` as its
+/// `intrinsicContentSize.height` so the surrounding stack view can size it
+/// correctly without a hard-coded height.
+///
+/// The default `UITextView` always reports `noIntrinsicMetric` for height,
+/// which forces parents to either give it an explicit constraint or leave it
+/// scrolled. This subclass invalidates intrinsic size whenever the content
+/// changes, letting Auto Layout grow the field naturally — useful for
+/// long-form static copy (legal text, ECC warnings).
 final class ScrollableContentSizedTextView: UITextView {
+    /// Programmatic init.
     init() {
         super.init(frame: .zero, textContainer: nil)
     }
 
+    /// Storyboard init — unsupported, traps to enforce programmatic-only use.
     required init?(coder _: NSCoder) {
         interfaceBuilderSucks
     }
 
+    /// Invalidate intrinsic size whenever the text engine reports a new
+    /// content size — triggers Auto Layout to ask for our new
+    /// `intrinsicContentSize` and re-lay out the parent.
     override var contentSize: CGSize {
         didSet {
             invalidateIntrinsicContentSize()
         }
     }
 
+    /// Width is left to Auto Layout; height tracks `contentSize.height`.
     override var intrinsicContentSize: CGSize {
         CGSize(width: UIView.noIntrinsicMetric, height: contentSize.height)
     }

@@ -25,13 +25,22 @@
 import UIKit
 
 extension FloatingLabelTextField {
+    /// File-local alias for `AnyValidation.Color` to keep the body readable.
     typealias Color = AnyValidation.Color
 
+    /// Public entry point — apply a validation result to the whole field
+    /// (line/placeholder/title colours, error message text, status circle).
     func validate(_ validation: AnyValidation) {
         updateColorsWithValidation(validation)
         updateErrorMessageWithValidation(validation)
     }
 
+    /// Drives the field's error-message label.
+    /// - `.errorMessage`: show the message in red.
+    /// - `.valid(remark)`: show the remark (if any) in the "valid + remark"
+    ///   colour — re-using the error-message slot lets us surface helpful hints
+    ///   ("strong password!") without inventing a separate label.
+    /// - `.valid(nil)` / `.empty`: clear the message.
     func updateErrorMessageWithValidation(_ validation: AnyValidation) {
         lineErrorColor = Color.error
         errorColor = Color.error
@@ -49,6 +58,10 @@ extension FloatingLabelTextField {
         }
     }
 
+    /// Updates every colour-bearing element (underline, placeholder, title,
+    /// status circle) to match `validation`. The underline error colour is
+    /// driven by the superclass via `lineErrorColor`; we only override the
+    /// success/empty colours here.
     func updateColorsWithValidation(_ validation: AnyValidation) {
         updateLineColorWithValidation(validation)
         updatePlaceholderColorWithValidation(validation)
@@ -58,6 +71,9 @@ extension FloatingLabelTextField {
         validationCircleView.backgroundColor = color
     }
 
+    /// Sets the field's selected-state underline colour. Errors fall through
+    /// to the default `Color.empty`; the superclass handles error-state
+    /// colouring via its own `lineErrorColor` property.
     func updateLineColorWithValidation(_ validation: AnyValidation) {
         let color: UIColor = switch validation {
         case let .valid(remark): (remark == nil) ? Color.validWithoutRemark : Color.validWithRemark
@@ -68,6 +84,8 @@ extension FloatingLabelTextField {
         selectedLineColor = color
     }
 
+    /// Sets the placeholder colour. Same logic as the line colour above —
+    /// errors go through the superclass.
     func updatePlaceholderColorWithValidation(_ validation: AnyValidation) {
         let color: UIColor = switch validation {
         case let .valid(remark): (remark == nil) ? Color.validWithoutRemark : Color.validWithRemark
@@ -78,6 +96,7 @@ extension FloatingLabelTextField {
         placeholderColor = color
     }
 
+    /// Sets the selected-state title colour. Same logic as the line colour above.
     func updateSelectedTitleColorWithValidation(_ validation: AnyValidation) {
         let color: UIColor = switch validation {
         case let .valid(remark): (remark == nil) ? Color.validWithoutRemark : Color.validWithRemark
@@ -88,6 +107,8 @@ extension FloatingLabelTextField {
         selectedTitleColor = color
     }
 
+    /// Plain validation → colour mapping. Used for the status circle, where
+    /// every state needs an explicit colour (no superclass fallback).
     func colorFromValidation(_ validation: AnyValidation) -> UIColor {
         switch validation {
         case .empty: Color.empty

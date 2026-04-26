@@ -25,10 +25,21 @@
 import UIKit
 
 extension FloatingLabelTextField {
+    /// Which accessory slot a view is being installed into.
     enum Position {
-        case right, left
+        /// Trailing accessory (`rightView`).
+        case right
+        /// Leading accessory (`leftView`).
+        case left
     }
 
+    /// Installs an image button as a bottom-aligned accessory. Returns the
+    /// constructed button so the caller can wire up tap handling.
+    /// - Parameters:
+    ///   - image: Glyph to render inside the button.
+    ///   - position: `.right` (default) or `.left`.
+    ///   - yOffset: Additional pixels to push the button up from the bottom edge.
+    ///   - mode: When the accessory is visible — defaults to `.always`.
     func addBottomAlignedButton(
         image: UIImage,
         position: Position = .right,
@@ -38,6 +49,7 @@ extension FloatingLabelTextField {
         addBottomAlignedButton(imageOrText: .image(image), position: position, yOffset: yOffset, mode: mode)
     }
 
+    /// Same as the image variant but for a text-only button (e.g. "Paste").
     func addBottomAlignedButton(
         titled: String,
         position: Position = .right,
@@ -47,6 +59,11 @@ extension FloatingLabelTextField {
         addBottomAlignedButton(imageOrText: .text(titled), position: position, yOffset: yOffset, mode: mode)
     }
 
+    /// Internal worker shared by the image/text overloads. Builds a button,
+    /// styles it appropriately for its content type, and forwards layout to
+    /// `addBottomAligned(view:…)`. iOS 15+ uses `UIButton.Configuration`
+    /// (the modern way to set content insets); older OSes fall back to the
+    /// deprecated `contentEdgeInsets`.
     private func addBottomAlignedButton(
         imageOrText: ImageOrText,
         position: Position = .right,
@@ -79,6 +96,11 @@ extension FloatingLabelTextField {
         return button
     }
 
+    /// Lower-level positioning primitive — installs an arbitrary `view` as
+    /// either the leading or trailing accessory, bottom-aligned (so it lines
+    /// up with the input baseline rather than the floating-label area above it).
+    /// A wrapper container view is used so the supplied `view` can be sized
+    /// independently from the text field's accessory rect.
     func addBottomAligned(
         view: UIView,
         position: Position = .right,

@@ -3,11 +3,24 @@
 import Combine
 import UIKit
 
+/// Constraint typealias for cells usable with `SingleCellTypeTableView` —
+/// must be both an `AbstractTableViewCell` (for the layout chassis) and
+/// `CellConfigurable` (so `configure(model:)` is callable).
 typealias ListCell = AbstractTableViewCell & CellConfigurable
 
+/// Project's strongly-typed table view: one cell type, one model type per
+/// row, optional `Header` per section. Also serves as its own `dataSource`
+/// and `delegate`, and exposes selection as a Combine publisher
+/// (via `SelectionPublishing`).
+///
+/// Why "single cell type"? Most of the app's tables (Settings, etc.) use a
+/// uniform cell — being explicit about that lets the type system carry the
+/// cell/model pairing end-to-end and avoids the usual cast-and-pray pattern.
 class SingleCellTypeTableView<Header, Cell: ListCell>: UITableView, UITableViewDelegate, UITableViewDataSource, SelectionPublishing {
     // MARK: - Data
 
+    /// The data backing the table. Setting it triggers a full `reloadData()`
+    /// — fine here because tables are small (settings/wallet rows).
     private var sectionModels: [SectionModel<Header, Cell.Model>] = [] {
         didSet { reloadData() }
     }
@@ -19,24 +32,37 @@ class SingleCellTypeTableView<Header, Cell: ListCell>: UITableView, UITableViewD
 
     // MARK: - Selection
 
+    /// Internal subject the delegate pushes index paths into.
     private let selectionSubject = PassthroughSubject<IndexPath, Never>()
+    /// `SelectionPublishing` conformance — the public publisher of selected rows.
     var selectionPublisher: AnyPublisher<IndexPath, Never> { selectionSubject.eraseToAnyPublisher() }
 
+    /// Alias preferred by some scenes that read more naturally as
+    /// `tableView.didSelectItem`.
     var didSelectItem: AnyPublisher<IndexPath, Never> { selectionPublisher }
 
+    /// Whether to auto-deselect rows on tap. Defaults to immediate animated
+    /// deselection (matches iOS HIG for non-stateful selection); scenes can
+    /// switch to `.noImmediateDeselection` if they want to keep the selection
+    /// highlight visible (e.g. master-detail).
     var cellDeselectionMode: CellDeselectionMode = .deselectCellsDirectly(animate: true)
 
     // MARK: - Initialization
 
+    /// Designated initialiser — pass through to `UITableView`'s
+    /// `(frame:style:)` and run our setup chain.
     init(style: UITableView.Style) {
         super.init(frame: .zero, style: style)
         setup()
     }
 
+    /// Storyboard init — unsupported, traps to enforce programmatic-only use.
     required init?(coder _: NSCoder) { interfaceBuilderSucks }
 
     // MARK: - UITableViewDelegate
 
+    /// Selection delegate hook — applies the configured deselection policy,
+    /// then forwards the index path through `selectionSubject`.
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         switch cellDeselectionMode {
         case let .deselectCellsDirectly(animated): tableView.deselectRow(at: indexPath, animated: animated)
@@ -47,12 +73,16 @@ class SingleCellTypeTableView<Header, Cell: ListCell>: UITableView, UITableViewD
 
     // MARK: - UITableViewDataSource
 
+    /// Number of sections — derived from `sectionModels.count`.
     func numberOfSections(in _: UITableView) -> Int { sectionModels.count }
 
+    /// Number of rows in `section` — derived from the section's `items.count`.
     func tableView(_: UITableView, numberOfRowsInSection section: Int) -> Int {
         sectionModels[section].items.count
     }
 
+    /// Dequeues a `Cell` (by its auto-derived `Identifiable.identifier`) and
+    /// hands it the matching model via `configure(model:)`.
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: Cell.identifier, for: indexPath)
         if let typedCell = cell as? Cell {
@@ -65,8 +95,12 @@ class SingleCellTypeTableView<Header, Cell: ListCell>: UITableView, UITableViewD
 // MARK: - CellDeselectionMode
 
 extension SingleCellTypeTableView {
+    /// Policy for what happens to a row's selection highlight after a tap.
     enum CellDeselectionMode {
+        /// Deselect the row immediately on tap, optionally animated.
         case deselectCellsDirectly(animate: Bool)
+        /// Leave the selection highlight visible — the scene is expected to
+        /// manage deselection itself (e.g. on segue completion).
         case noImmediateDeselection
     }
 }
@@ -74,6 +108,8 @@ extension SingleCellTypeTableView {
 // MARK: - Private
 
 private extension SingleCellTypeTableView {
+    /// Auto Layout setup, cell registration, and self-as-delegate/dataSource.
+    /// Clear background + no separators matches the project's chrome.
     func setup() {
         translatesAutoresizingMaskIntoConstraints = false
         register(Cell.self, forCellReuseIdentifier: Cell.identifier)
@@ -87,7 +123,12 @@ private extension SingleCellTypeTableView {
 // MARK: - SectionModel
 
 /// Minimal section model replacing RxDataSources.SectionModel.
+///
+/// Kept in this file because it's specific to the diffable-data-source-style
+/// usage of `SingleCellTypeTableView` and not used elsewhere.
 struct SectionModel<Section, Item> {
+    /// Section payload — `Header` in the table-view generic; can be `Void`.
     let model: Section
+    /// Rows in this section.
     let items: [Item]
 }
