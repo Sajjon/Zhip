@@ -49,6 +49,11 @@ final class SignTransactionViewModel: BaseViewModel<
     @Injected(\.sendTransactionUseCase) private var sendTransactionUseCase: SendTransactionUseCase
     /// Wallet source for the keystore.
     @Injected(\.walletStorageUseCase) private var walletStorageUseCase: WalletStorageUseCase
+    /// Local-only password verification — used to gate the Sign button on
+    /// "this password actually decrypts the keystore" instead of just
+    /// "meets the structural minimum length". Saves the user a network
+    /// round-trip + confusing error on a wrong password.
+    @Injected(\.verifyEncryptionPasswordUseCase) private var verifyEncryptionPasswordUseCase: VerifyEncryptionPasswordUseCase
 
     /// The payment to sign.
     private let payment: Payment
@@ -99,6 +104,27 @@ final class SignTransactionViewModel: BaseViewModel<
 
         let encryptionPassword = encryptionPasswordValidationValue.map { $0.value?.validPassword }.filterNil()
 
+        // Live keystore-decrypt check, debounced so we don't kick off a fresh
+        // KDF on every keystroke. `flatMapLatest` cancels any in-flight check
+        // when a newer password lands. Failure → false (treat as "not yet
+        // verified"); successful decrypt → true.
+        //
+        // The Sign button gates on this AND structural validity AND the
+        // current password being non-empty so the button stays disabled
+        // unless the user can actually sign.
+        let verifyUseCase = verifyEncryptionPasswordUseCase
+        let isPasswordVerified: AnyPublisher<Bool, Never> = encryptionPassword
+            .debounce(for: .milliseconds(250), scheduler: RunLoop.main)
+            .removeDuplicates()
+            .flatMapLatest { (password: String) -> AnyPublisher<Bool, Never> in
+                verifyUseCase
+                    .verify(password: password, forWallet: _wallet)
+                    .replaceError(with: false)
+                    .eraseToAnyPublisher()
+            }
+            .prepend(false)
+            .eraseToAnyPublisher()
+
         [
             input.fromView.signAndSendTrigger
                 .withLatestFrom(encryptionPassword)
@@ -120,7 +146,14 @@ final class SignTransactionViewModel: BaseViewModel<
             WalletEncryptionPassword.Error.incorrectPasswordErrorFrom(error: $0)
         }
 
-        let isSignButtonEnabled: AnyPublisher<Bool, Never> = encryptionPasswordValidation.map(\.isValid).eraseToAnyPublisher()
+        // Sign button needs BOTH structural validity AND a successful
+        // local keystore decrypt. The combineLatest emits whenever either
+        // input changes — RemoveDuplicates avoids redundant button repaints.
+        let isSignButtonEnabled: AnyPublisher<Bool, Never> = encryptionPasswordValidation
+            .map(\.isValid)
+            .combineLatest(isPasswordVerified) { $0 && $1 }
+            .removeDuplicates()
+            .eraseToAnyPublisher()
 
         return Output(
             isSignButtonEnabled: isSignButtonEnabled,
