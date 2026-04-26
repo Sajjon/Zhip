@@ -26,13 +26,34 @@ import Factory
 import UIKit
 import Zesame
 
+/// Outbound navigation steps emitted by `ChooseWalletCoordinator` to its parent.
+///
+/// The "choose wallet" flow has only one terminal outcome — once a wallet has been
+/// chosen (either freshly created or restored) and persisted, the parent coordinator
+/// is told the flow is done.
 enum ChooseWalletCoordinatorNavigationStep {
+    /// User has either created a new wallet or restored an existing one, the wallet
+    /// has been saved to secure storage, and control should return to the onboarding
+    /// flow's parent coordinator so it can advance to the next phase.
     case finishChoosingWallet
 }
 
+/// Coordinator owning the "choose wallet" sub-flow of onboarding.
+///
+/// Flow:
+/// 1. Push `ChooseWallet` scene asking the user to either create or restore a wallet.
+/// 2. On the user's choice, present a modal child coordinator (`CreateNewWalletCoordinator`
+///    or `RestoreWalletCoordinator`) that owns its own navigation stack.
+/// 3. When the child coordinator finishes with a `Wallet`, persist it via
+///    `WalletStorageUseCase` and emit `.finishChoosingWallet` upstream.
+/// 4. If the child cancels, dismiss it and remain on step 1.
 final class ChooseWalletCoordinator: BaseCoordinator<ChooseWalletCoordinatorNavigationStep> {
+    /// Persistence facet used to save the chosen wallet to the secure store.
+    /// Resolved via Factory so tests can substitute an in-memory implementation.
     @Injected(\.walletStorageUseCase) private var walletStorageUseCase: WalletStorageUseCase
 
+    /// Entry point invoked by the parent coordinator. Kicks off the flow at step 1.
+    /// - Parameter didStart: Optional completion (unused here; satisfies the base-class API).
     override func start(didStart _: Completion? = nil) {
         toChooseWallet()
     }
@@ -41,10 +62,15 @@ final class ChooseWalletCoordinator: BaseCoordinator<ChooseWalletCoordinatorNavi
 // MARK: Private
 
 private extension ChooseWalletCoordinator {
+    /// Step 1 — push the "create or restore?" scene and dispatch on the user's choice.
+    ///
+    /// Uses `[unowned self]` because the coordinator outlives the pushed scene
+    /// (it owns the navigation stack), so a strong reference would not leak but
+    /// would be needlessly retain-heavy.
     func toChooseWallet() {
         let viewModel = ChooseWalletViewModel()
 
-        push(scene: ChooseWallet.self, viewModel: viewModel) { [unowned self] userIntendsTo in
+		push(scene: ChooseWallet.self, viewModel: viewModel) { [unowned self] userIntendsTo in
             switch userIntendsTo {
             case .createNewWallet: self.toCreateNewWallet()
             case .restoreWallet: self.toRestoreWallet()
@@ -52,6 +78,11 @@ private extension ChooseWalletCoordinator {
         }
     }
 
+    /// Step 2a — present the create-wallet sub-flow modally.
+    ///
+    /// `dismissFlow(true)` is invoked unconditionally via `defer` so the modal is torn
+    /// down whether the user finished or cancelled. Only on the `.create` branch do we
+    /// then push the `Wallet` through `userFinishedChoosing(wallet:)`.
     func toCreateNewWallet() {
         presentModalCoordinator(
             makeCoordinator: { CreateNewWalletCoordinator(navigationController: $0) },
@@ -65,6 +96,10 @@ private extension ChooseWalletCoordinator {
         )
     }
 
+    /// Step 2b — present the restore-wallet sub-flow modally.
+    ///
+    /// Mirrors `toCreateNewWallet()`: the modal is dismissed unconditionally via `defer`,
+    /// and only a successful `.finishedRestoring` branch advances the parent flow.
     func toRestoreWallet() {
         presentModalCoordinator(
             makeCoordinator: { RestoreWalletCoordinator(navigationController: $0) },
@@ -78,6 +113,12 @@ private extension ChooseWalletCoordinator {
         )
     }
 
+    /// Step 3 — terminal action shared by both create and restore branches.
+    ///
+    /// Persists the wallet to the secure store *first*, then signals completion upstream.
+    /// Order matters: emitting `.finishChoosingWallet` before persistence would let the
+    /// next coordinator observe a state where the wallet "exists" in flow but not on disk.
+    /// - Parameter wallet: The wallet the user produced (created or restored).
     func userFinishedChoosing(wallet: Wallet) {
         walletStorageUseCase.save(wallet: wallet)
         navigator.next(.finishChoosingWallet)
