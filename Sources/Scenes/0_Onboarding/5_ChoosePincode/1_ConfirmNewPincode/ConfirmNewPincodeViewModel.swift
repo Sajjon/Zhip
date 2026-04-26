@@ -74,7 +74,7 @@ final class ConfirmNewPincodeViewModel: BaseViewModel<
             }.eraseToAnyPublisher()
 
         [
-            input.fromView.confirmedTrigger.withLatestFrom(pincodeValidationValue.map(\.value).eraseToAnyPublisher().filterNil())
+            input.fromView.confirmedTrigger.withLatestFrom(pincodeValidationValue.map(\.value).filterNil())
                 .sink { [weak self] in
                     self?.useCase.userChoose(pincode: $0)
                     userDid(.confirmPincode)

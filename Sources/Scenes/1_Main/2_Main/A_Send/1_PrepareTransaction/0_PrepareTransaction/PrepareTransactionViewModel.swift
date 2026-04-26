@@ -253,7 +253,6 @@ final class PrepareTransactionViewModel: BaseViewModel< // swiftlint:disable:thi
 
         let amountFormatted: AnyPublisher<String?, Never> = amountBoundByBalance.filterNil()
             .map { formatter.format(amount: $0, in: .zil, formatThousands: false) as String? }
-            .eraseToAnyPublisher()
             .ifEmpty(switchTo: amountWithoutSufficientFundsCheckValidationValue.map {
                 guard let value = $0.value else { return nil }
                 switch value {
@@ -266,11 +265,11 @@ final class PrepareTransactionViewModel: BaseViewModel< // swiftlint:disable:thi
 
         let isReviewButtonEnabled: AnyPublisher<Bool, Never> = payment.map { $0 != nil }.eraseToAnyPublisher()
 
-        let gasLimitPlaceholder: AnyPublisher<String, Never> = Just(GasLimit.minimum).eraseToAnyPublisher().map {
+        let gasLimitPlaceholder: AnyPublisher<String, Never> = Just(GasLimit.minimum).map {
             String(localized: .PrepareTransaction.gasLimitField(minimum: $0.description))
         }.eraseToAnyPublisher()
 
-        let gasPricePlaceholder: AnyPublisher<String, Never> = Just(GasPrice.min).eraseToAnyPublisher().map {
+        let gasPricePlaceholder: AnyPublisher<String, Never> = Just(GasPrice.min).map {
             String(localized: .PrepareTransaction.gasPriceField(
                 minQa: formatter.format(amount: $0, in: .li, formatThousands: true, showUnit: false),
                 minZil: formatter.format(amount: $0, in: .zil, formatThousands: true, showUnit: true)
@@ -325,7 +324,7 @@ final class PrepareTransactionViewModel: BaseViewModel< // swiftlint:disable:thi
                     return AnyPublisher<String?, Never>.just(nil)
                 }
                 return
-                    Just((gasPrice, gasLimit)).eraseToAnyPublisher()
+                    Just((gasPrice, gasLimit))
                         .compactMap { try? Payment.estimatedTotalTransactionFee(gasPrice: $0, gasLimit: $1) }
                         .map { formatter.format(amount: $0, in: .zil, formatThousands: true, showUnit: true) }
                         .map { String(localized: .PrepareTransaction.transactionFeeLabel(fee: $0)) }

@@ -138,7 +138,7 @@ final class SignTransactionViewModel: BaseViewModel<
         ].forEach { $0.store(in: &cancellables) }
 
         let encryptionPasswordValidation = // map `editingChanged` to `editingDidBegin`
-            input.fromView.encryptionPassword.mapToVoid().map { true }.merge(with: input.fromView.isEditingEncryptionPassword).eraseToAnyPublisher().withLatestFrom(encryptionPasswordValidationValue) {
+            input.fromView.encryptionPassword.mapToVoid().map { true }.merge(with: input.fromView.isEditingEncryptionPassword).withLatestFrom(encryptionPasswordValidationValue) {
             EditingValidation(isEditing: $0, validation: $1.validation)
         }.eagerValidLazyErrorTurnedToEmptyOnEdit(
             directlyDisplayErrorsTrackedBy: errorTracker

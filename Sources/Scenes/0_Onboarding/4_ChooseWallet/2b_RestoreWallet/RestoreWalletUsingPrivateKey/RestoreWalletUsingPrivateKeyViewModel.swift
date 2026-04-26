@@ -49,7 +49,7 @@ final class RestoreWalletUsingPrivateKeyViewModel {
         let confirmingPassword = inputFromView.confirmEncryptionPassword
 
         let confirmEncryptionPasswordValidationValue: AnyPublisher<EncryptionPasswordValidator.ValidationResult, Never> =
-            unconfirmedPassword.combineLatest(confirmingPassword).eraseToAnyPublisher()
+            unconfirmedPassword.combineLatest(confirmingPassword)
             .map {
                 validator.validateConfirmedEncryptionPassword($0.0, confirmedBy: $0.1)
             }.eraseToAnyPublisher()
