@@ -37,8 +37,12 @@ protocol DeepLinkGenerator: AnyObject {
 /// Default URL-components–based builder used in production.
 final class DefaultDeepLinkGenerator: DeepLinkGenerator {
 
+    /// Trivial init — no dependencies.
     init() {}
 
+    /// Builds `https://zhip.app/send?…` from `transaction.queryItems`.
+    /// Crashes (`incorrectImplementation`) if URL composition fails — at this
+    /// point we have a known scheme/host/path, so a `nil` indicates a logic bug.
     func linkTo(transaction: TransactionIntent) -> URL {
         var urlComponents = URLComponents()
         urlComponents.scheme = "https"

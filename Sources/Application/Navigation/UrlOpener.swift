@@ -28,12 +28,16 @@ import UIKit
 /// implementation. In the iOS simulator the real call can dispatch a
 /// workspace round-trip that never completes within a unit-test timeout.
 protocol UrlOpener: AnyObject {
+    /// Hands `url` off to the system to open in the registered handler app.
     func open(_ url: URL)
 }
 
+/// Production implementation that forwards to `UIApplication.shared.open`.
 final class DefaultUrlOpener: UrlOpener {
+    /// Trivial init — no dependencies.
     init() {}
 
+    /// Opens `url` via the system app-launch flow. No options, no callback.
     func open(_ url: URL) {
         UIApplication.shared.open(url, options: [:], completionHandler: nil)
     }

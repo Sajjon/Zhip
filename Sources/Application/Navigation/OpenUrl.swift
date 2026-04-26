@@ -25,6 +25,15 @@
 import Factory
 import UIKit
 
+/// Resolves `baseUrlString` (optionally appending `path`), and asks the
+/// injected `UrlOpener` to open the resulting URL.
+///
+/// Goes through `Container.shared.urlOpener` rather than calling
+/// `UIApplication.shared.open` directly so that tests can register a no-op
+/// opener — the real call dispatches a workspace round-trip that never
+/// completes within unit-test timeouts.
+///
+/// Logs and silently returns if URL construction fails.
 func openUrl(string baseUrlString: String, relative path: String? = nil) {
     func createUrl() -> URL? {
         guard let baseUrl = URL(string: baseUrlString) else { return nil }
