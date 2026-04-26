@@ -58,6 +58,18 @@ protocol WalletStorageUseCase: AnyObject {
 
     /// `true` if there is a wallet currently persisted in secure storage.
     var hasConfiguredWallet: Bool { get }
+
+    /// Reactive view of the persisted wallet — emits the current value
+    /// immediately on subscribe and re-emits whenever `save(wallet:)` or
+    /// `deleteWallet()` is called.
+    ///
+    /// **Implementations should override the default extension** (which does
+    /// `Just(loadWallet())`) with a long-lived `CurrentValueSubject` driven by
+    /// writes. The default is correct but does Keychain I/O + JSON-decode on
+    /// *every* subscription, and many ViewModel `transform(_:)` methods
+    /// subscribe several times per scene. Only a no-state mock can safely
+    /// keep the default.
+    var wallet: AnyPublisher<Wallet?, Never> { get }
 }
 
 /// Verifies whether a user-provided password successfully decrypts a keystore.
