@@ -23,6 +23,7 @@
 //
 
 import Foundation
+import SingleLineControllerController
 
 /// Low-level opt-in for a screen that wants a custom left bar button.
 ///

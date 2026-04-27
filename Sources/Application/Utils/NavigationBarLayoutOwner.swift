@@ -23,6 +23,7 @@
 //
 
 import UIKit
+import SingleLineControllerController
 
 /// Conformance signals that a `UIViewController` (typically a `SceneController`)
 /// wants its hosting navigation bar styled according to a particular `NavigationBarLayout`.

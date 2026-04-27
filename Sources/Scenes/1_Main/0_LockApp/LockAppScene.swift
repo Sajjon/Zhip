@@ -23,6 +23,7 @@
 //
 
 import UIKit
+import SingleLineControllerController
 
 /// Privacy-cover screen shown over the live Main UI when the app goes to the
 /// background. Renders the app name on a parallax aurora background.

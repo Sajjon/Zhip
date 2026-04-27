@@ -23,6 +23,7 @@
 //
 
 import UIKit
+import SingleLineControllerController
 
 /// Low-level opt-in for a screen that wants a custom right bar button — supply
 /// any `BarButtonContent`. For predefined buttons use `RightBarButtonMaking`.

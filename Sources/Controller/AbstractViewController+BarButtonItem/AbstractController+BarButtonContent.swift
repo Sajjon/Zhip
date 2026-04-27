@@ -24,6 +24,7 @@
 
 import SingleLineControllerCore
 import UIKit
+import SingleLineControllerController
 
 extension AbstractController {
     /// Installs `barButtonContent` as the navigation item's *right* bar button,

@@ -114,6 +114,7 @@
 		5A0E000000000000005C0101 /* SingleLineControllerCore in Frameworks */ = {isa = PBXBuildFile; productRef = 5A0E000000000000005C0100 /* SingleLineControllerCore */; };
 		5A0E000000000000005C0301 /* Validation in Frameworks */ = {isa = PBXBuildFile; productRef = 5A0E000000000000005C0300 /* Validation */; };
 		5A0E000000000000005C0401 /* SingleLineControllerNavigation in Frameworks */ = {isa = PBXBuildFile; productRef = 5A0E000000000000005C0400 /* SingleLineControllerNavigation */; };
+		5A0E000000000000005C0501 /* SingleLineControllerController in Frameworks */ = {isa = PBXBuildFile; productRef = 5A0E000000000000005C0500 /* SingleLineControllerController */; };
 		5A0E000000000000005C0201 /* SingleLineControllerCombine in Frameworks */ = {isa = PBXBuildFile; productRef = 5A0E000000000000005C0200 /* SingleLineControllerCombine */; };
 		489D40CC26636E65000D35F2 /* EFQRCode in Frameworks */ = {isa = PBXBuildFile; productRef = 489D40CB26636E65000D35F2 /* EFQRCode */; };
 		489D40CF26636E87000D35F2 /* SkyFloatingLabelTextField in Frameworks */ = {isa = PBXBuildFile; productRef = 489D40CE26636E87000D35F2 /* SkyFloatingLabelTextField */; };
@@ -164,7 +165,6 @@
 		48ECF5C321A18F140078D659 /* BarButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 48ECF56D21A18F140078D659 /* BarButton.swift */; };
 		48ECF5C421A18F140078D659 /* RightBarButtonMaking.swift in Sources */ = {isa = PBXBuildFile; fileRef = 48ECF56E21A18F140078D659 /* RightBarButtonMaking.swift */; };
 		48ECF5C521A18F140078D659 /* BarButtonContent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 48ECF56F21A18F140078D659 /* BarButtonContent.swift */; };
-		48ECF5C621A18F140078D659 /* AbstractController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 48ECF57021A18F140078D659 /* AbstractController.swift */; };
 		48ECF5C721A18F140078D659 /* SceneController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 48ECF57121A18F140078D659 /* SceneController.swift */; };
 		48ECF5E121A18F140078D659 /* OnboardingCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 48ECF59921A18F140078D659 /* OnboardingCoordinator.swift */; };
 		48ECF60121A1A8160078D659 /* AbstractController+BarButtonContent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 48ECF60021A1A8160078D659 /* AbstractController+BarButtonContent.swift */; };
@@ -637,7 +637,6 @@
 		48ECF56D21A18F140078D659 /* BarButton.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BarButton.swift; sourceTree = "<group>"; };
 		48ECF56E21A18F140078D659 /* RightBarButtonMaking.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RightBarButtonMaking.swift; sourceTree = "<group>"; };
 		48ECF56F21A18F140078D659 /* BarButtonContent.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BarButtonContent.swift; sourceTree = "<group>"; };
-		48ECF57021A18F140078D659 /* AbstractController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AbstractController.swift; sourceTree = "<group>"; };
 		48ECF57121A18F140078D659 /* SceneController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SceneController.swift; sourceTree = "<group>"; };
 		48ECF57721A18F140078D659 /* PrepareTransaction.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PrepareTransaction.swift; sourceTree = "<group>"; };
 		48ECF57821A18F140078D659 /* PrepareTransactionViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PrepareTransactionViewModel.swift; sourceTree = "<group>"; };
@@ -925,6 +924,7 @@
 				5A0E000000000000005C0201 /* SingleLineControllerCombine in Frameworks */,
 				5A0E000000000000005C0301 /* Validation in Frameworks */,
 				5A0E000000000000005C0401 /* SingleLineControllerNavigation in Frameworks */,
+				5A0E000000000000005C0501 /* SingleLineControllerController in Frameworks */,
 			);
 		};
 		484B064720BA0C2F00C4E50A /* Frameworks */ = {
@@ -1643,7 +1643,6 @@
 				48ECF56921A18F140078D659 /* Scene.swift */,
 				48ECF56A21A18F140078D659 /* TitledScene.swift */,
 				48ECF56B21A18F140078D659 /* AbstractViewController+BarButtonItem */,
-				48ECF57021A18F140078D659 /* AbstractController.swift */,
 				48ECF57121A18F140078D659 /* SceneController.swift */,
 				48053F2521EBBA69008FCE13 /* NavigationBarLayoutingNavigationController.swift */,
 			);
@@ -2334,6 +2333,7 @@
 				5A0E000000000000005C0200 /* SingleLineControllerCombine */,
 				5A0E000000000000005C0300 /* Validation */,
 				5A0E000000000000005C0400 /* SingleLineControllerNavigation */,
+				5A0E000000000000005C0500 /* SingleLineControllerController */,
 			);
 			productName = ZilliqaSDKiOSZhip;
 			productReference = 484B063620BA0C2D00C4E50A /* Zhip.app */;
@@ -2740,7 +2740,6 @@
 				48C469F521445417008D0DD7 /* UILabel+Styling.swift in Sources */,
 				48F832E92184E8C000EDAD40 /* UINavigationController_Extension.swift in Sources */,
 				E635A4D5225D301B00124823 /* ConfirmNewPincodeView.swift in Sources */,
-				48ECF5C621A18F140078D659 /* AbstractController.swift in Sources */,
 				484D1AF821D7A0B000589E38 /* PrivateKeyValidator.swift in Sources */,
 				E6414451225E76F3008C146D /* ConfirmWalletRemovalView.swift in Sources */,
 				E635A4AF225D301B00124823 /* ChooseWalletViewModel.swift in Sources */,
@@ -3260,6 +3259,10 @@
 		5A0E000000000000005C0400 /* SingleLineControllerNavigation */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = SingleLineControllerNavigation;
+		};
+		5A0E000000000000005C0500 /* SingleLineControllerController */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = SingleLineControllerController;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

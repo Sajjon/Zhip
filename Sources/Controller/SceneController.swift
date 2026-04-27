@@ -3,6 +3,7 @@
 import Combine
 import SingleLineControllerCore
 import UIKit
+import SingleLineControllerController
 
 /// The "Single-Line Controller" base class.
 ///
