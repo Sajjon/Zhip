@@ -1,26 +1,4 @@
-//
-// MIT License
-//
-// Copyright (c) 2018-2026 Open Zesame (https://github.com/OpenZesame)
-//
-// Permission is hereby granted, free of charge, to any person obtaining a copy
-// of this software and associated documentation files (the "Software"), to deal
-// in the Software without restriction, including without limitation the rights
-// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-// copies of the Software, and to permit persons to whom the Software is
-// furnished to do so, subject to the following conditions:
-//
-// The above copyright notice and this permission notice shall be included in all
-// copies or substantial portions of the Software.
-//
-// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-// SOFTWARE.
-//
+// MIT License — Copyright (c) 2018-2026 Open Zesame
 
 import SingleLineControllerCore
 
@@ -30,7 +8,7 @@ import SingleLineControllerCore
 /// `EncryptionPasswordValidator`, `GasLimitValidator`, …) and are composed in
 /// `Sources/Scenes/.../*ViewModel.swift` via `InputValidator()` to derive the
 /// reactive validation pulses bound to `FloatingLabelTextField.validationBinder`.
-protocol InputValidator {
+public protocol InputValidator {
     /// Raw input shape — typically `String`, sometimes a tuple (e.g. password + confirmation).
     associatedtype Input
     /// Typed value returned on success (e.g. `Address`, `Amount`).
@@ -44,7 +22,7 @@ protocol InputValidator {
     func validate(input: Input) -> Validation<Output, Error>
 }
 
-extension InputValidator {
+public extension InputValidator {
     /// Sugar for `Validation<Output, Error>` so call sites read `validator.ValidationResult`.
     typealias ValidationResult = Validation<Output, Error>
 
@@ -61,7 +39,7 @@ extension InputValidator {
     }
 }
 
-extension InputValidator where Self: ValidationRulesOwner, Self.RuleInput == Input, Output == Input {
+public extension InputValidator where Self: ValidationRulesOwner, Self.RuleInput == Input, Output == Input {
     /// Default `validate` impl for validators that simply hand off to a
     /// `ValidationRuleSet` — runs the rules, returns `.valid(input)` if all
     /// pass, otherwise wraps the first failure in an `Error`.
@@ -79,7 +57,7 @@ extension InputValidator where Self: ValidationRulesOwner, Self.RuleInput == Inp
 
 // MARK: - String to Double
 
-extension InputValidator where Input == Double, Output == Double {
+public extension InputValidator where Input == Double, Output == Double {
     /// Convenience for validators that take `Double` but receive `String?`
     /// from a `UITextField`. Empty / non-numeric strings map to `.invalid(.empty)`.
     func validate(string: String?) -> ValidationResult {

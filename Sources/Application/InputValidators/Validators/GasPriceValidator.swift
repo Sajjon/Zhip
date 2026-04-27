@@ -23,6 +23,7 @@
 //
 
 import Zesame
+import Validation
 
 /// Validates a gas price string in `Li`, producing a `GasPrice`.
 ///

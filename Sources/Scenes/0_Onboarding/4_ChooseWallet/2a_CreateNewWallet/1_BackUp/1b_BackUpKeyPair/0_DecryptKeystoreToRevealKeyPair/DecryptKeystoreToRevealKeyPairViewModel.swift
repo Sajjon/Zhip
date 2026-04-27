@@ -27,6 +27,7 @@ import Factory
 import SingleLineControllerCombine
 import SingleLineControllerCore
 import Zesame
+import Validation
 
 /// Outcomes of the decrypt-to-reveal screen.
 enum DecryptKeystoreToRevealKeyPairUserAction {

@@ -26,6 +26,7 @@ import Combine
 import SingleLineControllerCombine
 import SingleLineControllerCore
 import UIKit
+import Validation
 
 /// Pincode entry field — an invisible `UITextField` (zero-coloured text and
 /// caret) overlaid by a row of `DigitView` "presentation" cells.
@@ -76,8 +77,10 @@ final class PincodeTextField: UITextField {
 
     /// Forwards a validation result to the presentation so the underline
     /// colours reflect the current state.
-    func validate(_ validation: AnyValidation) {
-        presentation.validate(validation)
+    /// Named `applyValidation` to avoid clashing with
+    /// `UIResponder.validate(_ command: UICommand)`.
+    func applyValidation(_ validation: AnyValidation) {
+        presentation.applyValidation(validation)
     }
 
     /// The visible row of digit cells.
@@ -216,7 +219,7 @@ private extension PincodeTextField.Presentation {
     /// Maps `AnyValidation` cases to the corresponding underline colour.
     /// `.valid` and `.empty` both render as the resting "valid" colour;
     /// `.errorMessage` switches every cell to red.
-    func validate(_ validation: AnyValidation) {
+    func applyValidation(_ validation: AnyValidation) {
         switch validation {
         case .empty, .valid:
             colorUnderlineViews(with: AnyValidation.Color.validWithoutRemark)

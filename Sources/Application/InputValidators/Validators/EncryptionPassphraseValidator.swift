@@ -24,6 +24,7 @@
 
 import SingleLineControllerCore
 import Zesame
+import Validation
 
 /// Validates a password + confirmation pair, producing a typed
 /// `WalletEncryptionPassword` value the keystore-derivation use case can consume.

@@ -149,19 +149,19 @@ final class PincodeTextFieldTests: XCTestCase {
     func test_validate_errorMessage_doesNotCrash() {
         let sut = PincodeTextField()
 
-        sut.validate(.errorMessage("oops"))
+        sut.applyValidation(.errorMessage("oops"))
     }
 
     func test_validate_valid_doesNotCrash() {
         let sut = PincodeTextField()
 
-        sut.validate(.valid(withRemark: nil))
+        sut.applyValidation(.valid(withRemark: nil))
     }
 
     func test_validate_empty_doesNotCrash() {
         let sut = PincodeTextField()
 
-        sut.validate(.empty)
+        sut.applyValidation(.empty)
     }
 
     func test_pincodePublisher_emitsNilWhenSettingShorterInput() {

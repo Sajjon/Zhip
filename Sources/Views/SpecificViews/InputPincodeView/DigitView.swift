@@ -24,6 +24,7 @@
 
 import SingleLineControllerCore
 import UIKit
+import Validation
 
 /// Single-character display cell used inside `InputPincodeView` — one big
 /// glyph (digit or bullet) with a coloured underline below it.

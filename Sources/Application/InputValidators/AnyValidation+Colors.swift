@@ -22,19 +22,22 @@
 // SOFTWARE.
 //
 
-import Foundation
+import UIKit
+import Validation
 
-// MARK: - Equatable
+// MARK: - Coloring
 
-extension AnyValidation: Equatable {
-    /// Field-by-field equality. `.valid` matches on the remark string;
-    /// `.errorMessage` matches on the message; `.empty` matches itself only.
-    static func == (lhs: AnyValidation, rhs: AnyValidation) -> Bool {
-        switch (lhs, rhs) {
-        case let (.valid(lhsRemark), .valid(rhsRemark)): lhsRemark == rhsRemark
-        case (.empty, .empty): true
-        case let (.errorMessage(lhsError), .errorMessage(rhsError)): lhsError == rhsError
-        default: false
-        }
+extension AnyValidation {
+    /// Color tokens used by `FloatingLabelTextField.validationBinder` to tint
+    /// the floating-label text + underline based on the validation state.
+    enum Color {
+        /// Plain "valid" — calm brand teal.
+        static let validWithoutRemark: UIColor = .teal
+        /// Valid but worth flagging (e.g. weak-but-acceptable password) — mellow yellow.
+        static let validWithRemark: UIColor = .mellowYellow
+        /// Error — alert red.
+        static let error: UIColor = .bloodRed
+        /// Empty / untouched — neutral grey.
+        static let empty: UIColor = .silverGrey
     }
 }

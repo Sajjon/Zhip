@@ -23,6 +23,7 @@
 //
 
 import UIKit
+import Validation
 
 extension FloatingLabelTextField {
     /// File-local alias for `AnyValidation.Color` to keep the body readable.
@@ -30,7 +31,10 @@ extension FloatingLabelTextField {
 
     /// Public entry point — apply a validation result to the whole field
     /// (line/placeholder/title colours, error message text, status circle).
-    func validate(_ validation: AnyValidation) {
+    /// Named `applyValidation` (not `validate`) to avoid colliding with
+    /// `UIResponder.validate(_ command: UICommand)` which the compiler now
+    /// picks up since `AnyValidation` lives in a separate module.
+    func applyValidation(_ validation: AnyValidation) {
         updateColorsWithValidation(validation)
         updateErrorMessageWithValidation(validation)
     }

@@ -25,6 +25,7 @@
 import Foundation
 import SingleLineControllerCore
 import Zesame
+import Validation
 
 /// Validates a hex-encoded Zilliqa private-key string, producing a `PrivateKey`.
 ///

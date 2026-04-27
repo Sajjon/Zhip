@@ -9,14 +9,22 @@ import SingleLineControllerCore
 /// The view layer combines `UITextField.isEditingPublisher` with the validator's
 /// output, then runs the result through `eagerValidLazyErrorTurnedToEmptyOnEdit`
 /// to suppress noisy red-state error flashes mid-typing.
-struct EditingValidation {
+public struct EditingValidation {
     /// `true` while the field is the first responder.
-    let isEditing: Bool
+    public let isEditing: Bool
     /// The validator's verdict for the current text.
-    let validation: AnyValidation
+    public let validation: AnyValidation
+
+    /// Capture editing state + validation verdict. The view layer does the
+    /// editing-state lookup and validator invocation; this carrier just
+    /// bundles the pair so downstream operators can decide visibility.
+    public init(isEditing: Bool, validation: AnyValidation) {
+        self.isEditing = isEditing
+        self.validation = validation
+    }
 }
 
-extension Publisher where Output == EditingValidation, Failure == Never {
+public extension Publisher where Output == EditingValidation, Failure == Never {
     /// "Eager-valid, lazy-error" — show "valid" the moment the input becomes
     /// valid, but suppress error feedback while the user is still typing.
     /// Once the user commits (resigns first responder), surface the error.
@@ -70,7 +78,7 @@ extension Publisher where Output == EditingValidation, Failure == Never {
     }
 }
 
-extension Publisher where Failure == Never, Output: ValidationConvertible {
+public extension Publisher where Failure == Never, Output: ValidationConvertible {
     /// Filters the upstream to only emit the `.errorMessage(...)` cases.
     /// Used by views that want to drive a separate error-only label.
     func onlyErrors() -> AnyPublisher<AnyValidation, Never> {

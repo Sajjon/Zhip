@@ -26,6 +26,7 @@ import Combine
 import Foundation
 import SingleLineControllerCombine
 import SingleLineControllerCore
+import Validation
 
 // MARK: - RemovePincodeUserAction
 

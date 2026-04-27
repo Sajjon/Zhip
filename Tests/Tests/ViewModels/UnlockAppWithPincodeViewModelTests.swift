@@ -25,6 +25,7 @@
 import Combine
 import Factory
 import XCTest
+import Validation
 @testable import Zhip
 
 /// Tests for `UnlockAppWithPincodeViewModel`.

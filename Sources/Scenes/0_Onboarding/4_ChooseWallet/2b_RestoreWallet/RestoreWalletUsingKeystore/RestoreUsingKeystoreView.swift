@@ -25,6 +25,7 @@
 import Combine
 import SingleLineControllerCombine
 import UIKit
+import Validation
 
 // MARK: - RestoreWithKeystoreView
 
@@ -72,7 +73,7 @@ final class RestoreUsingKeystoreView: ScrollableStackViewOwner {
     /// Used by the parent's composite "wrong password" binder to flip the
     /// password field's validation state externally.
     func restorationErrorValidation(_ validation: AnyValidation) {
-        encryptionPasswordField.validate(validation)
+        encryptionPasswordField.applyValidation(validation)
     }
 }
 

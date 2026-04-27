@@ -7,6 +7,7 @@
 //
 
 import Zesame
+import Validation
 
 /// Validates a Zilliqa transaction gas limit string, producing a `GasLimit`.
 ///

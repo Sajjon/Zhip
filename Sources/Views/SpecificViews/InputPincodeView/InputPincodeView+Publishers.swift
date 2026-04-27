@@ -17,6 +17,7 @@
 import Combine
 import SingleLineControllerCombine
 import UIKit
+import Validation
 
 extension InputPincodeView {
     /// Re-exports the field's `becomeFirstResponderBinder` so scenes can
@@ -34,8 +35,8 @@ extension InputPincodeView {
     /// Reactive sink that drives `validate(_:)` from a publisher of validation
     /// results — the standard hook used by `populate(with:)` in pincode scenes.
     var validationBinder: Binder<AnyValidation> {
-        Binder<AnyValidation>(self) {
-            $0.validate($1)
+        Binder<AnyValidation>(self) { (view: InputPincodeView, validation: AnyValidation) in
+            view.applyValidation(validation)
         }
     }
 }

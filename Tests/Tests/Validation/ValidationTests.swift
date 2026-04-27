@@ -1,4 +1,5 @@
 import XCTest
+import Validation
 @testable import Zhip
 
 final class ValidationTests: XCTestCase {

@@ -23,6 +23,7 @@
 //
 
 import Zesame
+import Validation
 
 /// Cross-field validator for the Send screen: confirms the user has enough
 /// balance to cover `amount + gasLimit*gasPrice` before allowing the

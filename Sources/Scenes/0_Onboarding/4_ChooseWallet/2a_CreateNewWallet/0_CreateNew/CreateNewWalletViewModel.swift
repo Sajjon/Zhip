@@ -28,6 +28,7 @@ import Foundation
 import SingleLineControllerCombine
 import SingleLineControllerCore
 import Zesame
+import Validation
 
 /// The encryption-password policy used for *all* password inputs on this screen.
 ///

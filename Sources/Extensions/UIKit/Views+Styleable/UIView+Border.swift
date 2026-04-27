@@ -23,6 +23,7 @@
 //
 
 import UIKit
+import Validation
 
 extension UIView {
     /// Lightweight value type describing a border's appearance.

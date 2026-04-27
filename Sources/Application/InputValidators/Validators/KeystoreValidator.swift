@@ -25,6 +25,7 @@
 import Foundation
 import SingleLineControllerCore
 import Zesame
+import Validation
 
 /// Validates a pasted keystore JSON string, producing a typed `Keystore`.
 ///

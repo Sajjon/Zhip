@@ -26,6 +26,7 @@ import Combine
 import Factory
 import XCTest
 import Zesame
+import Validation
 @testable import Zhip
 
 // swiftlint:disable type_body_length

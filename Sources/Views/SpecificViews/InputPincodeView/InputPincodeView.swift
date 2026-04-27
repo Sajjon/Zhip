@@ -26,6 +26,7 @@ import Factory
 import SingleLineControllerCore
 import TinyConstraints
 import UIKit
+import Validation
 
 /// Compound view that hosts a `PincodeTextField` (the visible digit boxes
 /// + invisible underlying text field) plus an error label below.
@@ -70,8 +71,8 @@ final class InputPincodeView: UIView {
     ///   - `.errorMessage`: error haptic, surface the message, shake the field
     ///     and clear input *after* the shake completes (clearing mid-shake
     ///     would feel jarring).
-    func validate(_ validation: AnyValidation) {
-        pinField.validate(validation)
+    func applyValidation(_ validation: AnyValidation) {
+        pinField.applyValidation(validation)
 
         switch validation {
         case .valid:

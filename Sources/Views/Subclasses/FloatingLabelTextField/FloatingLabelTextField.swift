@@ -25,6 +25,7 @@
 import SingleLineControllerCombine
 import SkyFloatingLabelTextField
 import UIKit
+import Validation
 
 /// Diameter (in points) of the small validation status circle on the leading edge.
 private let circeViewSize: CGFloat = 16
@@ -133,8 +134,8 @@ extension FloatingLabelTextField {
     /// Reactive sink — bind a publisher of `AnyValidation` to drive the
     /// field's validation appearance (line colour, error message, status circle).
     var validationBinder: Binder<AnyValidation> {
-        Binder<AnyValidation>(self) {
-            $0.validate($1)
+        Binder<AnyValidation>(self) { (textField: FloatingLabelTextField, validation: AnyValidation) in
+            textField.applyValidation(validation)
         }
     }
 }

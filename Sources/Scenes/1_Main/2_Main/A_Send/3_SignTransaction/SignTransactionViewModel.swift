@@ -28,6 +28,7 @@ import Foundation
 import SingleLineControllerCombine
 import SingleLineControllerCore
 import Zesame
+import Validation
 
 /// Outcome of step 3 of Send.
 enum SignTransactionUserAction {

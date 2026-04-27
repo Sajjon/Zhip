@@ -25,6 +25,7 @@
 import Combine
 import Foundation
 import SingleLineControllerCombine
+import Validation
 
 // MARK: - ConfirmNewPincodeUserAction
 

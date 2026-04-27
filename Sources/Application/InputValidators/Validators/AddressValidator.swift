@@ -24,6 +24,7 @@
 
 import SingleLineControllerCore
 import Zesame
+import Validation
 
 /// Validates a Zilliqa address string (bech32 or hex), producing a typed `Address`.
 ///

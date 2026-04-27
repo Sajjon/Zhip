@@ -24,6 +24,7 @@
 
 import SingleLineControllerCore
 import Zesame
+import Validation
 
 /// Validates an amount string in a specific Zilliqa `Unit` (Zil/Li/Qa).
 ///

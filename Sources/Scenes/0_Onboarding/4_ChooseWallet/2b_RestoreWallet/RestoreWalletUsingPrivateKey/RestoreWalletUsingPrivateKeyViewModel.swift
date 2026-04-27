@@ -25,6 +25,7 @@
 import Combine
 import SingleLineControllerCombine
 import Zesame
+import Validation
 
 /// Strict password mode — restoring from a raw private key means we're picking
 /// a *new* keystore password, so we enforce the new-wallet minimum length.
