@@ -6,6 +6,13 @@ Zhip is an iOS Zilliqa wallet app built with UIKit + Combine using a custom MVVM
 
 The reactive layer is Apple's `Combine` framework throughout. There are no RxSwift/RxCocoa/RxDataSources dependencies — all streams are `AnyPublisher`, all subjects are `PassthroughSubject`/`CurrentValueSubject`, and subscription lifetime is managed by `Set<AnyCancellable>`.
 
+The reactive-MVVM scaffolding (`ViewModelType`, `Binder<T>`, `-->`, `Coordinating`/`BaseCoordinator`/`Navigator`, the DI primitives, the validation framework) lives in two local SPM packages under `Packages/`:
+
+- [`Packages/SingleLineController/`](Packages/SingleLineController/README.md) — the SLC architecture itself, split across `SingleLineControllerCore`/`Combine`/`Navigation`/`Controller`/`SceneViews`/`DIPrimitives` library products.
+- [`Packages/Validation/`](Packages/Validation/README.md) — sibling reactive-validation framework consumed by the SLC layer.
+
+The Zhip target imports the relevant package products. Domain code (Zesame wallet logic, KeychainSwift persistence, scene-specific ViewModels/Views) lives in `Sources/`.
+
 ---
 
 ## Architecture: Reactive MVVM with `SceneController<View>`
