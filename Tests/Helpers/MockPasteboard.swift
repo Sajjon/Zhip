@@ -23,6 +23,7 @@
 //
 
 import Foundation
+import SingleLineControllerDIPrimitives
 @testable import Zhip
 
 /// In-test `Pasteboard` that NEVER mutates the real `UIPasteboard.general`.

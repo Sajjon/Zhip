@@ -23,6 +23,7 @@
 //
 
 import UIKit
+import SingleLineControllerDIPrimitives
 @testable import Zhip
 
 /// In-test `HapticFeedback` that NEVER forwards to

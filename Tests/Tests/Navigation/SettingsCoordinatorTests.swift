@@ -26,6 +26,7 @@ import Combine
 import Factory
 import UIKit
 import XCTest
+import SingleLineControllerDIPrimitives
 @testable import Zhip
 
 /// Drives each `SettingsCoordinator` navigation branch so every case in

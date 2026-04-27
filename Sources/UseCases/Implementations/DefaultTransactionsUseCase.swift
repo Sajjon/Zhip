@@ -5,6 +5,7 @@ import Factory
 import Foundation
 import SingleLineControllerCombine
 import Zesame
+import SingleLineControllerDIPrimitives
 
 /// Default implementation of the composite `TransactionsUseCase` and all five
 /// narrow protocols it composes.

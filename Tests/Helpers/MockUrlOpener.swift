@@ -23,6 +23,7 @@
 //
 
 import Foundation
+import SingleLineControllerDIPrimitives
 @testable import Zhip
 
 /// In-test `UrlOpener` that NEVER forwards to `UIApplication.shared.open(_:)`.

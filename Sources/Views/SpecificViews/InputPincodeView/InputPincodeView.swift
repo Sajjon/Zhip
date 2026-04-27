@@ -27,6 +27,7 @@ import SingleLineControllerCore
 import TinyConstraints
 import UIKit
 import Validation
+import SingleLineControllerDIPrimitives
 
 /// Compound view that hosts a `PincodeTextField` (the visible digit boxes
 /// + invisible underlying text field) plus an error label below.

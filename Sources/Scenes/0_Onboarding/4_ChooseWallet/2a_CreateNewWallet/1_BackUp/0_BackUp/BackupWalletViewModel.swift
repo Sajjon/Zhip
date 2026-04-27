@@ -28,6 +28,7 @@ import SingleLineControllerCombine
 import SingleLineControllerCore
 import UIKit
 import Zesame
+import SingleLineControllerDIPrimitives
 
 // MARK: - BackupWalletUserAction
 

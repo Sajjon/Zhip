@@ -26,6 +26,7 @@ import Factory
 import Foundation
 import KeychainSwift
 import Zesame
+import SingleLineControllerDIPrimitives
 
 /// The Zilliqa network this build targets. Currently wired to `.mainnet`. When we
 /// add staging/testnet builds this will move into a build-configuration driven

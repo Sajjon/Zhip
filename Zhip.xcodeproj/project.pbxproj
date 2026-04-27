@@ -115,6 +115,7 @@
 		5A0E000000000000005C0301 /* Validation in Frameworks */ = {isa = PBXBuildFile; productRef = 5A0E000000000000005C0300 /* Validation */; };
 		5A0E000000000000005C0401 /* SingleLineControllerNavigation in Frameworks */ = {isa = PBXBuildFile; productRef = 5A0E000000000000005C0400 /* SingleLineControllerNavigation */; };
 		5A0E000000000000005C0501 /* SingleLineControllerController in Frameworks */ = {isa = PBXBuildFile; productRef = 5A0E000000000000005C0500 /* SingleLineControllerController */; };
+		5A0E000000000000005C0601 /* SingleLineControllerDIPrimitives in Frameworks */ = {isa = PBXBuildFile; productRef = 5A0E000000000000005C0600 /* SingleLineControllerDIPrimitives */; };
 		5A0E000000000000005C0201 /* SingleLineControllerCombine in Frameworks */ = {isa = PBXBuildFile; productRef = 5A0E000000000000005C0200 /* SingleLineControllerCombine */; };
 		489D40CC26636E65000D35F2 /* EFQRCode in Frameworks */ = {isa = PBXBuildFile; productRef = 489D40CB26636E65000D35F2 /* EFQRCode */; };
 		489D40CF26636E87000D35F2 /* SkyFloatingLabelTextField in Frameworks */ = {isa = PBXBuildFile; productRef = 489D40CE26636E87000D35F2 /* SkyFloatingLabelTextField */; };
@@ -306,18 +307,13 @@
 		B1000000000000000000047D /* LAContextBiometricsAuthenticatorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1000000000000000000047E /* LAContextBiometricsAuthenticatorTests.swift */; };
 		B10000000000000000000480 /* ConfigurationDetectionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000000000000000000481 /* ConfigurationDetectionTests.swift */; };
 		B10000000000000000000482 /* AbstractTargetTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000000000000000000483 /* AbstractTargetTests.swift */; };
-		B10000000000000000000484 /* UrlOpener.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000000000000000000485 /* UrlOpener.swift */; };
 		B10000000000000000000486 /* MockUrlOpener.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000000000000000000487 /* MockUrlOpener.swift */; };
 		B10000000000000000000488 /* XCTestCase+DrainRunLoop.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000000000000000000489 /* XCTestCase+DrainRunLoop.swift */; };
-		B10000000000000000000490 /* Clock.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000000000000000000491 /* Clock.swift */; };
 		B10000000000000000000492 /* ImmediateClock.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000000000000000000493 /* ImmediateClock.swift */; };
 		B10000000000000000000494 /* HtmlLoader.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000000000000000000495 /* HtmlLoader.swift */; };
 		B10000000000000000000496 /* MockHtmlLoader.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000000000000000000497 /* MockHtmlLoader.swift */; };
-		B10000000000000000000498 /* HapticFeedback.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000000000000000000499 /* HapticFeedback.swift */; };
 		B1000000000000000000049A /* MockHapticFeedback.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1000000000000000000049B /* MockHapticFeedback.swift */; };
-		B1000000000000000000049C /* DateProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1000000000000000000049D /* DateProvider.swift */; };
 		B1000000000000000000049E /* FixedDateProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1000000000000000000049F /* FixedDateProvider.swift */; };
-		B100000000000000000004A0 /* MainScheduler.swift in Sources */ = {isa = PBXBuildFile; fileRef = B100000000000000000004A1 /* MainScheduler.swift */; };
 		B7B961E4E0584B6694455665 /* CreateNewWallet.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = 058EC2B351BF4BE7B8C8D010 /* CreateNewWallet.xcstrings */; };
 		C10000000000000000000101 /* AnyValidationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C10000000000000000000001 /* AnyValidationTests.swift */; };
 		C10000000000000000000102 /* ValidationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C10000000000000000000002 /* ValidationTests.swift */; };
@@ -850,18 +846,13 @@
 		B1000000000000000000047E /* LAContextBiometricsAuthenticatorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LAContextBiometricsAuthenticatorTests.swift; sourceTree = "<group>"; };
 		B10000000000000000000481 /* ConfigurationDetectionTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfigurationDetectionTests.swift; sourceTree = "<group>"; };
 		B10000000000000000000483 /* AbstractTargetTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AbstractTargetTests.swift; sourceTree = "<group>"; };
-		B10000000000000000000485 /* UrlOpener.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UrlOpener.swift; sourceTree = "<group>"; };
 		B10000000000000000000487 /* MockUrlOpener.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockUrlOpener.swift; sourceTree = "<group>"; };
 		B10000000000000000000489 /* XCTestCase+DrainRunLoop.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "XCTestCase+DrainRunLoop.swift"; sourceTree = "<group>"; };
-		B10000000000000000000491 /* Clock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Clock.swift; sourceTree = "<group>"; };
 		B10000000000000000000493 /* ImmediateClock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImmediateClock.swift; sourceTree = "<group>"; };
 		B10000000000000000000495 /* HtmlLoader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HtmlLoader.swift; sourceTree = "<group>"; };
 		B10000000000000000000497 /* MockHtmlLoader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockHtmlLoader.swift; sourceTree = "<group>"; };
-		B10000000000000000000499 /* HapticFeedback.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HapticFeedback.swift; sourceTree = "<group>"; };
 		B1000000000000000000049B /* MockHapticFeedback.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockHapticFeedback.swift; sourceTree = "<group>"; };
-		B1000000000000000000049D /* DateProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DateProvider.swift; sourceTree = "<group>"; };
 		B1000000000000000000049F /* FixedDateProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FixedDateProvider.swift; sourceTree = "<group>"; };
-		B100000000000000000004A1 /* MainScheduler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainScheduler.swift; sourceTree = "<group>"; };
 		C10000000000000000000001 /* AnyValidationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnyValidationTests.swift; sourceTree = "<group>"; };
 		C10000000000000000000002 /* ValidationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ValidationTests.swift; sourceTree = "<group>"; };
 		C10000000000000000000003 /* ValidationRuleTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ValidationRuleTests.swift; sourceTree = "<group>"; };
@@ -925,6 +916,7 @@
 				5A0E000000000000005C0301 /* Validation in Frameworks */,
 				5A0E000000000000005C0401 /* SingleLineControllerNavigation in Frameworks */,
 				5A0E000000000000005C0501 /* SingleLineControllerController in Frameworks */,
+				5A0E000000000000005C0601 /* SingleLineControllerDIPrimitives in Frameworks */,
 			);
 		};
 		484B064720BA0C2F00C4E50A /* Frameworks */ = {
@@ -1181,7 +1173,6 @@
 				483CE9A12194E9E300BED31C /* DeepLinking */,
 				483CE9A52194E9E300BED31C /* Presentation */,
 				48ECF62921A356DA0078D659 /* OpenUrl.swift */,
-				B10000000000000000000485 /* UrlOpener.swift */,
 			);
 			path = Navigation;
 			sourceTree = "<group>";
@@ -2032,12 +2023,8 @@
 		B10000000000000000000010 /* DI */ = {
 			isa = PBXGroup;
 			children = (
-				B10000000000000000000491 /* Clock.swift */,
 				B10000000000000000000001 /* Container.swift */,
-				B1000000000000000000049D /* DateProvider.swift */,
-				B10000000000000000000499 /* HapticFeedback.swift */,
 				B10000000000000000000495 /* HtmlLoader.swift */,
-				B100000000000000000004A1 /* MainScheduler.swift */,
 			);
 			path = DI;
 			sourceTree = "<group>";
@@ -2334,6 +2321,7 @@
 				5A0E000000000000005C0300 /* Validation */,
 				5A0E000000000000005C0400 /* SingleLineControllerNavigation */,
 				5A0E000000000000005C0500 /* SingleLineControllerController */,
+				5A0E000000000000005C0600 /* SingleLineControllerDIPrimitives */,
 			);
 			productName = ZilliqaSDKiOSZhip;
 			productReference = 484B063620BA0C2D00C4E50A /* Zhip.app */;
@@ -2636,12 +2624,7 @@
 				E635A4D1225D301B00124823 /* ChoosePincode.swift in Sources */,
 				48053F2921EBDB0C008FCE13 /* ScrollViewOwner.swift in Sources */,
 				48ECF62A21A356DA0078D659 /* OpenUrl.swift in Sources */,
-				B10000000000000000000484 /* UrlOpener.swift in Sources */,
-				B10000000000000000000490 /* Clock.swift in Sources */,
 				B10000000000000000000494 /* HtmlLoader.swift in Sources */,
-				B10000000000000000000498 /* HapticFeedback.swift in Sources */,
-				B1000000000000000000049C /* DateProvider.swift in Sources */,
-				B100000000000000000004A0 /* MainScheduler.swift in Sources */,
 				E6019A5C225E754D0079DDE8 /* PrepareTransactionViewModel.swift in Sources */,
 				E635A4B6225D301B00124823 /* CreateNewWallet.swift in Sources */,
 				483CE9DD2194E9E300BED31C /* Enum+Reflection.swift in Sources */,
@@ -3263,6 +3246,10 @@
 		5A0E000000000000005C0500 /* SingleLineControllerController */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = SingleLineControllerController;
+		};
+		5A0E000000000000005C0600 /* SingleLineControllerDIPrimitives */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = SingleLineControllerDIPrimitives;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

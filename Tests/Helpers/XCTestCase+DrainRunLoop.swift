@@ -24,6 +24,7 @@
 
 import Foundation
 import XCTest
+import SingleLineControllerDIPrimitives
 
 extension XCTestCase {
     /// Drains the main runloop until pending Combine

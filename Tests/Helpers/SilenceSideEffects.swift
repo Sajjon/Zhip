@@ -26,6 +26,7 @@ import Factory
 import Foundation
 import UIKit
 import XCTest
+import SingleLineControllerDIPrimitives
 @testable import Zhip
 
 /// Test-bundle principal class — instantiated automatically by XCTest at bundle

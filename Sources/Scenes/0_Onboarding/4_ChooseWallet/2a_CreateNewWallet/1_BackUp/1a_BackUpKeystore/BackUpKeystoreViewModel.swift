@@ -27,6 +27,7 @@ import Factory
 import SingleLineControllerCombine
 import UIKit
 import Zesame
+import SingleLineControllerDIPrimitives
 
 /// Outcome of the keystore-reveal modal.
 enum BackUpKeystoreUserAction {

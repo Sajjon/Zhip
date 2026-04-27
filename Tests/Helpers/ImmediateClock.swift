@@ -23,6 +23,7 @@
 //
 
 import Foundation
+import SingleLineControllerDIPrimitives
 @testable import Zhip
 
 /// Test `Clock`: ignores the requested delay and fires on the next main-queue

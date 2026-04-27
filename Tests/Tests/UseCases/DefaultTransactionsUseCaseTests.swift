@@ -26,6 +26,7 @@ import Combine
 import Factory
 import XCTest
 import Zesame
+import SingleLineControllerDIPrimitives
 @testable import Zhip
 
 /// Tests for `DefaultTransactionsUseCase`, which uses constructor DI (not

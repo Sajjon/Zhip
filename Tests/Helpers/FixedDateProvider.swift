@@ -23,6 +23,7 @@
 //
 
 import Foundation
+import SingleLineControllerDIPrimitives
 @testable import Zhip
 
 /// In-test `DateProvider` that returns a caller-controlled `Date` instead of

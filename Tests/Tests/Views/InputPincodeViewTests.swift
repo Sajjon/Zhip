@@ -3,6 +3,7 @@ import Factory
 import SingleLineControllerCombine
 import UIKit
 import XCTest
+import SingleLineControllerDIPrimitives
 @testable import Zhip
 
 final class InputPincodeViewTests: XCTestCase {
