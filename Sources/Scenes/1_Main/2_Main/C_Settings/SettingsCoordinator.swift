@@ -25,6 +25,7 @@
 import Factory
 import UIKit
 import Zesame
+import SingleLineControllerNavigation
 
 /// Source URL the "Star us on GitHub" + "Report issue" actions open.
 let githubUrlString = "https://github.com/OpenZesame/Zhip"

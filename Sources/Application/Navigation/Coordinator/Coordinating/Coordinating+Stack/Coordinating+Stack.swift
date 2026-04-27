@@ -24,6 +24,7 @@
 
 import SingleLineControllerCore
 import UIKit
+import SingleLineControllerNavigation
 
 extension Coordinating {
     /// Identity-based lookup of `child` in `childCoordinators`. Identity (rather

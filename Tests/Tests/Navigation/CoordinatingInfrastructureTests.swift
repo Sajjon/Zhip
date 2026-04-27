@@ -27,6 +27,7 @@ import Factory
 import SingleLineControllerCore
 import UIKit
 import XCTest
+import SingleLineControllerNavigation
 @testable import Zhip
 
 /// Covers shared Coordinating extensions: stack management, navigation-stack

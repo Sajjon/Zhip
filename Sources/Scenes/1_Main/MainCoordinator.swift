@@ -27,6 +27,7 @@ import Factory
 import SingleLineControllerCombine
 import UIKit
 import Zesame
+import SingleLineControllerNavigation
 
 /// Outcome the main coordinator surfaces to its parent (`AppCoordinator`).
 enum MainCoordinatorNavigationStep {

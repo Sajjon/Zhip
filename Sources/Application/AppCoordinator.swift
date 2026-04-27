@@ -27,6 +27,7 @@ import Factory
 import SingleLineControllerCombine
 import UIKit
 import Zesame
+import SingleLineControllerNavigation
 
 /// Navigation steps the app-level coordinator itself can emit. Empty because
 /// `AppCoordinator` is the root — it has nowhere "above" to report back to.

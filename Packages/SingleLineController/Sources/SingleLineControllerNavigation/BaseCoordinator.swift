@@ -12,25 +12,25 @@ import UIKit
 /// `NavigationStep`s consumed by the parent coordinator.
 ///
 /// Subclasses must override `start(didStart:)`.
-class BaseCoordinator<NavigationStep>: Coordinating, Navigating {
+open class BaseCoordinator<NavigationStep>: Coordinating, Navigating {
     /// Active sub-flows. Children are appended on `start(coordinator:...)` and
     /// removed in `remove(childCoordinator:)` to keep ARC happy.
-    var childCoordinators = [Coordinating]()
+    public var childCoordinators = [Coordinating]()
     /// Stepper that emits typed navigation steps for the parent coordinator.
-    let navigator = Navigator<NavigationStep>()
+    public let navigator = Navigator<NavigationStep>()
     /// Subscription bag holding our navigation pipelines for the lifetime of the coordinator.
-    var cancellables = Set<AnyCancellable>()
+    public var cancellables = Set<AnyCancellable>()
     /// The `UINavigationController` this coordinator pushes/presents on.
-    let navigationController: UINavigationController
+    public let navigationController: UINavigationController
 
     /// Wires the navigation controller this coordinator should drive.
-    init(navigationController: UINavigationController) {
+    public init(navigationController: UINavigationController) {
         self.navigationController = navigationController
     }
 
     /// Subclass hook — must build the root scene and present it. Crashes if
     /// not overridden because `BaseCoordinator` itself has no concrete flow.
-    func start(didStart _: Completion? = nil) {
+    open func start(didStart _: Completion? = nil) {
         abstract
     }
 }

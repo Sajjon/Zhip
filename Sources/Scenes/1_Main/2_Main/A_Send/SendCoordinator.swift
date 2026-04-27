@@ -27,6 +27,7 @@ import Factory
 import SingleLineControllerCombine
 import UIKit
 import Zesame
+import SingleLineControllerNavigation
 
 /// Outcome the Send sub-flow surfaces to its parent (`MainCoordinator`).
 enum SendCoordinatorNavigationStep {

@@ -25,6 +25,7 @@
 import Factory
 import UIKit
 import Zesame
+import SingleLineControllerNavigation
 
 /// Outcome the onboarding coordinator surfaces to its parent (`AppCoordinator`)
 /// when onboarding is complete.

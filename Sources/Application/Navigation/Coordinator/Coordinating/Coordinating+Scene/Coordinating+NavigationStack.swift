@@ -23,6 +23,7 @@
 //
 
 import UIKit
+import SingleLineControllerNavigation
 
 extension Coordinating {
     /// Returns `true` iff the navigation stack's topmost view controller is an

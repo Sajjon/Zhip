@@ -24,6 +24,7 @@
 
 import Factory
 import UIKit
+import SingleLineControllerNavigation
 
 /// A lightweight text message the UI surfaces as an auto-dismissing alert,
 /// named after the Android equivalent.

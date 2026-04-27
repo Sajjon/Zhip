@@ -25,6 +25,7 @@
 import Combine
 import SingleLineControllerCombine
 import UIKit
+import SingleLineControllerNavigation
 
 extension Coordinating {
     /// Starts a child coordinator which might be part of a flow of multiple coordinators.

@@ -23,6 +23,7 @@
 //
 
 import UIKit
+import SingleLineControllerNavigation
 
 extension Coordinating {
     /// Recursive ascii dump of this coordinator (and its child-coordinator

@@ -25,6 +25,7 @@
 import Factory
 import UIKit
 import Zesame
+import SingleLineControllerNavigation
 
 /// Outbound navigation steps emitted by `ChooseWalletCoordinator` to its parent.
 ///

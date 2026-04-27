@@ -44,9 +44,6 @@
 		483C0BE0219ECF89006947C7 /* Subject+BarButtonContent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 483C0BDF219ECF89006947C7 /* Subject+BarButtonContent.swift */; };
 		483CE9CE2194E9E300BED31C /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 483CE9982194E9E300BED31C /* Assets.xcassets */; };
 		483CE9CF2194E9E300BED31C /* AppCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 483CE99B2194E9E300BED31C /* AppCoordinator.swift */; };
-		483CE9D02194E9E300BED31C /* BaseCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 483CE99C2194E9E300BED31C /* BaseCoordinator.swift */; };
-		483CE9D22194E9E300BED31C /* Navigating.swift in Sources */ = {isa = PBXBuildFile; fileRef = 483CE99F2194E9E300BED31C /* Navigating.swift */; };
-		483CE9D32194E9E300BED31C /* Navigator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 483CE9A02194E9E300BED31C /* Navigator.swift */; };
 		483CE9D42194E9E300BED31C /* DeepLink.swift in Sources */ = {isa = PBXBuildFile; fileRef = 483CE9A22194E9E300BED31C /* DeepLink.swift */; };
 		483CE9D52194E9E300BED31C /* DeepLinkHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 483CE9A32194E9E300BED31C /* DeepLinkHandler.swift */; };
 		483CE9D62194E9E300BED31C /* DeepLinkGenerator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 483CE9A42194E9E300BED31C /* DeepLinkGenerator.swift */; };
@@ -116,6 +113,7 @@
 		489D40C326636D5E000D35F2 /* Zesame in Frameworks */ = {isa = PBXBuildFile; productRef = 489D40C226636D5E000D35F2 /* Zesame */; };
 		5A0E000000000000005C0101 /* SingleLineControllerCore in Frameworks */ = {isa = PBXBuildFile; productRef = 5A0E000000000000005C0100 /* SingleLineControllerCore */; };
 		5A0E000000000000005C0301 /* Validation in Frameworks */ = {isa = PBXBuildFile; productRef = 5A0E000000000000005C0300 /* Validation */; };
+		5A0E000000000000005C0401 /* SingleLineControllerNavigation in Frameworks */ = {isa = PBXBuildFile; productRef = 5A0E000000000000005C0400 /* SingleLineControllerNavigation */; };
 		5A0E000000000000005C0201 /* SingleLineControllerCombine in Frameworks */ = {isa = PBXBuildFile; productRef = 5A0E000000000000005C0200 /* SingleLineControllerCombine */; };
 		489D40CC26636E65000D35F2 /* EFQRCode in Frameworks */ = {isa = PBXBuildFile; productRef = 489D40CB26636E65000D35F2 /* EFQRCode */; };
 		489D40CF26636E87000D35F2 /* SkyFloatingLabelTextField in Frameworks */ = {isa = PBXBuildFile; productRef = 489D40CE26636E87000D35F2 /* SkyFloatingLabelTextField */; };
@@ -172,9 +170,7 @@
 		48ECF60121A1A8160078D659 /* AbstractController+BarButtonContent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 48ECF60021A1A8160078D659 /* AbstractController+BarButtonContent.swift */; };
 		48ECF60321A1A83D0078D659 /* LeftBarButtonMaking.swift in Sources */ = {isa = PBXBuildFile; fileRef = 48ECF60221A1A83D0078D659 /* LeftBarButtonMaking.swift */; };
 		48ECF60521A1CA050078D659 /* ButtonWithSpinner.swift in Sources */ = {isa = PBXBuildFile; fileRef = 48ECF60421A1CA050078D659 /* ButtonWithSpinner.swift */; };
-		48ECF60821A1CFCD0078D659 /* Coordinating.swift in Sources */ = {isa = PBXBuildFile; fileRef = 48ECF60721A1CFCD0078D659 /* Coordinating.swift */; };
 		48ECF60A21A1CFF30078D659 /* Coordinating+Stack.swift in Sources */ = {isa = PBXBuildFile; fileRef = 48ECF60921A1CFF30078D659 /* Coordinating+Stack.swift */; };
-		48ECF60C21A1D0170078D659 /* CoordinatorTransition.swift in Sources */ = {isa = PBXBuildFile; fileRef = 48ECF60B21A1D0170078D659 /* CoordinatorTransition.swift */; };
 		48ECF60E21A1D0AC0078D659 /* Coordinating+Scene+Push.swift in Sources */ = {isa = PBXBuildFile; fileRef = 48ECF60D21A1D0AC0078D659 /* Coordinating+Scene+Push.swift */; };
 		48ECF61A21A29FE10078D659 /* CellConfigurable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 48ECF61921A29FE10078D659 /* CellConfigurable.swift */; };
 		48ECF61C21A29FF20078D659 /* ClassIdentifiable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 48ECF61B21A29FF20078D659 /* ClassIdentifiable.swift */; };
@@ -523,9 +519,6 @@
 		483CE98C2194E9E300BED31C /* Zhip.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = Zhip.xcconfig; sourceTree = "<group>"; };
 		483CE9982194E9E300BED31C /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		483CE99B2194E9E300BED31C /* AppCoordinator.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppCoordinator.swift; sourceTree = "<group>"; };
-		483CE99C2194E9E300BED31C /* BaseCoordinator.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BaseCoordinator.swift; sourceTree = "<group>"; };
-		483CE99F2194E9E300BED31C /* Navigating.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Navigating.swift; sourceTree = "<group>"; };
-		483CE9A02194E9E300BED31C /* Navigator.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Navigator.swift; sourceTree = "<group>"; };
 		483CE9A22194E9E300BED31C /* DeepLink.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DeepLink.swift; sourceTree = "<group>"; };
 		483CE9A32194E9E300BED31C /* DeepLinkHandler.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DeepLinkHandler.swift; sourceTree = "<group>"; };
 		483CE9A42194E9E300BED31C /* DeepLinkGenerator.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DeepLinkGenerator.swift; sourceTree = "<group>"; };
@@ -700,9 +693,7 @@
 		48ECF60021A1A8160078D659 /* AbstractController+BarButtonContent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AbstractController+BarButtonContent.swift"; sourceTree = "<group>"; };
 		48ECF60221A1A83D0078D659 /* LeftBarButtonMaking.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LeftBarButtonMaking.swift; sourceTree = "<group>"; };
 		48ECF60421A1CA050078D659 /* ButtonWithSpinner.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ButtonWithSpinner.swift; sourceTree = "<group>"; };
-		48ECF60721A1CFCD0078D659 /* Coordinating.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Coordinating.swift; sourceTree = "<group>"; };
 		48ECF60921A1CFF30078D659 /* Coordinating+Stack.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Coordinating+Stack.swift"; sourceTree = "<group>"; };
-		48ECF60B21A1D0170078D659 /* CoordinatorTransition.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoordinatorTransition.swift; sourceTree = "<group>"; };
 		48ECF60D21A1D0AC0078D659 /* Coordinating+Scene+Push.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Coordinating+Scene+Push.swift"; sourceTree = "<group>"; };
 		48ECF61621A29F9E0078D659 /* SettingsTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsTableViewCell.swift; sourceTree = "<group>"; };
 		48ECF61921A29FE10078D659 /* CellConfigurable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CellConfigurable.swift; sourceTree = "<group>"; };
@@ -933,6 +924,7 @@
 				5A0E000000000000005C0101 /* SingleLineControllerCore in Frameworks */,
 				5A0E000000000000005C0201 /* SingleLineControllerCombine in Frameworks */,
 				5A0E000000000000005C0301 /* Validation in Frameworks */,
+				5A0E000000000000005C0401 /* SingleLineControllerNavigation in Frameworks */,
 			);
 		};
 		484B064720BA0C2F00C4E50A /* Frameworks */ = {
@@ -1095,7 +1087,6 @@
 		48241B4A21B1575A0054ED8E /* Coordinating */ = {
 			isa = PBXGroup;
 			children = (
-				48ECF60721A1CFCD0078D659 /* Coordinating.swift */,
 				48241B5421B2BCB50054ED8E /* Coordinating+DebugPrinting.swift */,
 				48241B4D21B158220054ED8E /* Coordinating+Stack */,
 				48241B4C21B157D80054ED8E /* Coordinating+Coordinator */,
@@ -1118,7 +1109,6 @@
 		48241B4C21B157D80054ED8E /* Coordinating+Coordinator */ = {
 			isa = PBXGroup;
 			children = (
-				48ECF60B21A1D0170078D659 /* CoordinatorTransition.swift */,
 				48241B5021B15C740054ED8E /* Coordinating+Child+Start.swift */,
 				48241B5221B15CA10054ED8E /* Coordinating+Child+ModalPresent.swift */,
 			);
@@ -1188,7 +1178,6 @@
 			isa = PBXGroup;
 			children = (
 				483CE99A2194E9E300BED31C /* Coordinator */,
-				483CE99E2194E9E300BED31C /* Navigating */,
 				483CE9A12194E9E300BED31C /* DeepLinking */,
 				483CE9A52194E9E300BED31C /* Presentation */,
 				48ECF62921A356DA0078D659 /* OpenUrl.swift */,
@@ -1200,19 +1189,9 @@
 		483CE99A2194E9E300BED31C /* Coordinator */ = {
 			isa = PBXGroup;
 			children = (
-				483CE99C2194E9E300BED31C /* BaseCoordinator.swift */,
 				48241B4A21B1575A0054ED8E /* Coordinating */,
 			);
 			path = Coordinator;
-			sourceTree = "<group>";
-		};
-		483CE99E2194E9E300BED31C /* Navigating */ = {
-			isa = PBXGroup;
-			children = (
-				483CE99F2194E9E300BED31C /* Navigating.swift */,
-				483CE9A02194E9E300BED31C /* Navigator.swift */,
-			);
-			path = Navigating;
 			sourceTree = "<group>";
 		};
 		483CE9A12194E9E300BED31C /* DeepLinking */ = {
@@ -2354,6 +2333,7 @@
 				5A0E000000000000005C0100 /* SingleLineControllerCore */,
 				5A0E000000000000005C0200 /* SingleLineControllerCombine */,
 				5A0E000000000000005C0300 /* Validation */,
+				5A0E000000000000005C0400 /* SingleLineControllerNavigation */,
 			);
 			productName = ZilliqaSDKiOSZhip;
 			productReference = 484B063620BA0C2D00C4E50A /* Zhip.app */;
@@ -2555,7 +2535,6 @@
 				E6019A47225E74920079DDE8 /* MainCoordinator.swift in Sources */,
 				486D2C7B21D23A4C006F3DFA /* Digit.swift in Sources */,
 				4898FB4A21542400009501DC /* ContentViewProvider.swift in Sources */,
-				48ECF60821A1CFCD0078D659 /* Coordinating.swift in Sources */,
 				48ECF5C321A18F140078D659 /* BarButton.swift in Sources */,
 				485AAC9E21AAC6FA005C56CC /* AddressValidator.swift in Sources */,
 				E635A4C4225D301B00124823 /* BackUpRevealedKeyPairViewModel.swift in Sources */,
@@ -2586,7 +2565,6 @@
 				E635A4B7225D301B00124823 /* CreateNewWalletViewModel.swift in Sources */,
 				48053F3D21EBEF17008FCE13 /* FloatingLabelTextField+RightLeftView.swift in Sources */,
 				48ECF61C21A29FF20078D659 /* ClassIdentifiable.swift in Sources */,
-				483CE9D32194E9E300BED31C /* Navigator.swift in Sources */,
 				E682358B22BB86620028F1EC /* ReviewTransactionBeforeSigningViewModel.swift in Sources */,
 				E6019A4D225E75020079DDE8 /* Main.swift in Sources */,
 				E6414439225E76A4008C146D /* ReceiveCoordinator.swift in Sources */,
@@ -2614,7 +2592,6 @@
 				483DDEAB219B6456009D3F4C /* DefaultPincodeUseCase.swift in Sources */,
 				4819BDBF21C4AB2700443F2A /* GasPriceValidator.swift in Sources */,
 				489EB13621CA7A6100664AA7 /* WelcomeViewModel.swift in Sources */,
-				483CE9D22194E9E300BED31C /* Navigating.swift in Sources */,
 				E6019A61225E754D0079DDE8 /* SignTransactionView.swift in Sources */,
 				483CE9DF2194E9E300BED31C /* ReflectionNameOfCaseInNestedEnum.swift in Sources */,
 				E635A4CA225D301B00124823 /* RestoreUsingPrivateKeyView.swift in Sources */,
@@ -2762,8 +2739,6 @@
 				483CE9CF2194E9E300BED31C /* AppCoordinator.swift in Sources */,
 				48C469F521445417008D0DD7 /* UILabel+Styling.swift in Sources */,
 				48F832E92184E8C000EDAD40 /* UINavigationController_Extension.swift in Sources */,
-				48ECF60C21A1D0170078D659 /* CoordinatorTransition.swift in Sources */,
-				483CE9D02194E9E300BED31C /* BaseCoordinator.swift in Sources */,
 				E635A4D5225D301B00124823 /* ConfirmNewPincodeView.swift in Sources */,
 				48ECF5C621A18F140078D659 /* AbstractController.swift in Sources */,
 				484D1AF821D7A0B000589E38 /* PrivateKeyValidator.swift in Sources */,
@@ -3281,6 +3256,10 @@
 		5A0E000000000000005C0300 /* Validation */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = Validation;
+		};
+		5A0E000000000000005C0400 /* SingleLineControllerNavigation */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = SingleLineControllerNavigation;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

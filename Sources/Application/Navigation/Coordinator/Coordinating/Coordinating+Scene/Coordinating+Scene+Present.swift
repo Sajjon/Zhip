@@ -2,14 +2,8 @@
 
 import Combine
 import SingleLineControllerCombine
+import SingleLineControllerNavigation
 import UIKit
-
-/// Standard "no-arg, no-return" completion closure used throughout navigation.
-typealias Completion = () -> Void
-/// Closure handed to navigation handlers so they can dismiss the scene they
-/// were just told to navigate from. The `Bool` is the animation flag, the
-/// optional inner `Completion` fires after the dismiss animation finishes.
-typealias DismissScene = (_ animatedDismiss: Bool, _ presentationCompletion: Completion?) -> Void
 
 extension Coordinating {
     /// Convenience overload: builds the `Scene` from its type + view model and forwards.

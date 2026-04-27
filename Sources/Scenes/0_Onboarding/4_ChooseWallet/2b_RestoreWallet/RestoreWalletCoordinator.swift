@@ -24,6 +24,7 @@
 
 import UIKit
 import Zesame
+import SingleLineControllerNavigation
 
 /// Outcomes the restore-wallet sub-flow surfaces to its parent
 /// (`ChooseWalletCoordinator`).

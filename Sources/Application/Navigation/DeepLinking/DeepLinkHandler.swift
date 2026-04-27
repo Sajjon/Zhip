@@ -24,6 +24,7 @@
 
 import Combine
 import UIKit
+import SingleLineControllerNavigation
 
 /// App-level dispatcher that turns inbound universal-link URLs into typed
 /// `DeepLink` events on `navigation`.

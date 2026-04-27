@@ -26,6 +26,7 @@ import Combine
 import Factory
 import UIKit
 import Zesame
+import SingleLineControllerNavigation
 
 /// Outcomes the create-new-wallet sub-flow surfaces to its parent
 /// (`ChooseWalletCoordinator`).

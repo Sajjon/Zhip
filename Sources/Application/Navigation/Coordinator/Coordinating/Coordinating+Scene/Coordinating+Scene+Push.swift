@@ -3,6 +3,7 @@
 import Combine
 import SingleLineControllerCombine
 import UIKit
+import SingleLineControllerNavigation
 
 extension Coordinating {
     /// Convenience overload: builds the `Scene` from its type + view model and forwards.

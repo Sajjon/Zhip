@@ -25,6 +25,7 @@
 import Factory
 import UIKit
 import Zesame
+import SingleLineControllerNavigation
 
 /// Outcome of the Receive sub-flow.
 enum ReceiveCoordinatorNavigationStep {
