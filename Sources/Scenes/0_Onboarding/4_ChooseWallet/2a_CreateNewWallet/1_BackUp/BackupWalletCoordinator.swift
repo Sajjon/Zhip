@@ -27,6 +27,7 @@ import Factory
 import Foundation
 import UIKit
 import Zesame
+import SingleLineControllerCore
 
 /// Outcomes the backup sub-flow surfaces to its parent.
 enum BackupWalletCoordinatorNavigationStep {
@@ -149,3 +150,4 @@ private extension BackupWalletCoordinator {
         navigator.next(userFinished)
     }
 }
+

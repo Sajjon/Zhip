@@ -25,6 +25,7 @@
 import Combine
 import Factory
 import Zesame
+import SingleLineControllerCore
 
 /// Navigation from RestoreWallet
 enum RestoreWalletNavigation {
@@ -97,10 +98,14 @@ final class RestoreWalletViewModel: BaseViewModel<
         ].forEach { $0.store(in: &cancellables) }
 
         // Funnel any tracked use-case error through the keystore-error mapper
-        // so the view can flip the keystore field red and force-redirect the segment.
-        let keystoreRestorationError: AnyPublisher<AnyValidation, Never> = errorTracker.asInputValidationErrors {
-            KeystoreValidator.Error(error: $0)
-        }
+        // so the view can flip the keystore field red and force-redirect the
+        // segment. Sources the projection from `ErrorTracker.compactMap`
+        // (the public hook in the SingleLineControllerCore package); the
+        // legacy `asInputValidationErrors` shim was retired in the same move.
+        let keystoreRestorationError: AnyPublisher<AnyValidation, Never> = errorTracker
+            .compactMap { KeystoreValidator.Error(error: $0) }
+            .map { AnyValidation.errorMessage($0.errorMessage) }
+            .eraseToAnyPublisher()
 
         return Output(
             headerLabel: headerLabel,
@@ -145,3 +150,4 @@ extension RestoreWalletViewModel {
         let keystoreRestorationError: AnyPublisher<AnyValidation, Never>
     }
 }
+

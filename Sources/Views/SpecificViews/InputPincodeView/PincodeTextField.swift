@@ -24,6 +24,7 @@
 
 import Combine
 import UIKit
+import SingleLineControllerCore
 
 /// Pincode entry field — an invisible `UITextField` (zero-coloured text and
 /// caret) overlaid by a row of `DigitView` "presentation" cells.
@@ -235,3 +236,4 @@ extension String {
         return strcmp(char, "\\b") == -92
     }
 }
+

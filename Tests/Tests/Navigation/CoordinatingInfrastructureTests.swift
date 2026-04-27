@@ -26,6 +26,7 @@ import Combine
 import Factory
 import UIKit
 import XCTest
+import SingleLineControllerCore
 @testable import Zhip
 
 /// Covers shared Coordinating extensions: stack management, navigation-stack
@@ -211,3 +212,4 @@ final class CoordinatingInfrastructureTests: XCTestCase {
         wait(for: [expectation], timeout: 2)
     }
 }
+

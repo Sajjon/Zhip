@@ -26,6 +26,7 @@ import Combine
 import Factory
 import Foundation
 import Zesame
+import SingleLineControllerCore
 
 /// The encryption-password policy used for *all* password inputs on this screen.
 ///
@@ -251,3 +252,4 @@ extension CreateNewWalletViewModel {
         }
     }
 }
+

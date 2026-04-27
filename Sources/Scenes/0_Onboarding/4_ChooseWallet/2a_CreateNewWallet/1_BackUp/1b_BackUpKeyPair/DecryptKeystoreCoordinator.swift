@@ -27,6 +27,7 @@ import Factory
 import Foundation
 import UIKit
 import Zesame
+import SingleLineControllerCore
 
 /// Outcomes the decrypt-keystore sub-flow surfaces to its parent.
 enum DecryptKeystoreCoordinatorNavigationStep {
@@ -114,3 +115,4 @@ private extension DecryptKeystoreCoordinator {
         navigator.next(userFinished)
     }
 }
+

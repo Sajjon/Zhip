@@ -23,6 +23,7 @@
 //
 
 import UIKit
+import SingleLineControllerCore
 
 /// Outcome of the set-pincode sub-flow. Both the "user picked + confirmed a
 /// pincode" path and the "user explicitly skipped" path collapse to this single
@@ -104,3 +105,4 @@ private extension SetPincodeCoordinator {
         navigator.next(.setPincode)
     }
 }
+

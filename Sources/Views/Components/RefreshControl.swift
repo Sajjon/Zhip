@@ -23,6 +23,7 @@
 //
 
 import UIKit
+import SingleLineControllerCore
 
 /// Custom pull-to-refresh control that replaces UIKit's bundled spinner with
 /// the project's themed `SpinnerView` plus a centred title label, so the
@@ -86,3 +87,4 @@ private extension RefreshControl {
         setTitle(String(localized: .Views.pullToRefreshTitle))
     }
 }
+

@@ -1,6 +1,7 @@
 // MIT License — Copyright (c) 2018-2026 Open Zesame
 
 import Combine
+import SingleLineControllerCore
 
 /// The contract every scene's root `UIView` implements to participate in the
 /// reactive MVVM pipeline.
@@ -47,3 +48,4 @@ extension ViewModelled where ViewModel.Input.FromController == NoControllerInput
         ViewModel.Input(fromView: inputFromView, fromController: NoControllerInput())
     }
 }
+

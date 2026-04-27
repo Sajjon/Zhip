@@ -26,6 +26,7 @@ import Combine
 import Factory
 import Foundation
 import Zesame
+import SingleLineControllerCore
 
 // MARK: - MainUserAction
 
@@ -157,3 +158,4 @@ extension MainViewModel {
         let refreshControlLastUpdatedTitle: AnyPublisher<String, Never>
     }
 }
+

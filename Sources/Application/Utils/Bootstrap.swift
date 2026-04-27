@@ -30,6 +30,7 @@ import Foundation
 import IQKeyboardManagerSwift
 import SwiftyBeaver
 import Zesame
+import SingleLineControllerCore
 
 /// The global logger used throughout the app.
 let log = SwiftyBeaver.self
@@ -147,3 +148,4 @@ private func setupLogging() {
     console.minLevel = .verbose
     log.addDestination(console)
 }
+

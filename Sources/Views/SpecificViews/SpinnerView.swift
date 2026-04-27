@@ -23,6 +23,7 @@
 //
 
 import UIKit
+import SingleLineControllerCore
 
 /// Themed indeterminate-progress spinner. Replaces `UIActivityIndicatorView`
 /// across the app so the visual style matches the rest of the chrome (3pt
@@ -209,3 +210,4 @@ private extension String {
     /// `CALayer.transform.rotation` keypath, as a typed constant.
     static let transformRotation = "transform.rotation"
 }
+

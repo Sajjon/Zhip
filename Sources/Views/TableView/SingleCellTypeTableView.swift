@@ -2,6 +2,7 @@
 
 import Combine
 import UIKit
+import SingleLineControllerCore
 
 /// Constraint typealias for cells usable with `SingleCellTypeTableView` —
 /// must be both an `AbstractTableViewCell` (for the layout chassis) and
@@ -132,3 +133,4 @@ struct SectionModel<Section, Item> {
     /// Rows in this section.
     let items: [Item]
 }
+

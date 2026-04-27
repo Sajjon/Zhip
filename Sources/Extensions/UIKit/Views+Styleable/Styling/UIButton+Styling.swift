@@ -23,6 +23,7 @@
 //
 
 import UIKit
+import SingleLineControllerCore
 
 // Same Style/Apply/Customizing/Presets/Mergeable shape as `UILabel+Styling.swift`
 // — see that file for the canonical doc walkthrough. Only the per-attribute
@@ -269,3 +270,4 @@ extension UIButton.Style {
         )
     }
 }
+

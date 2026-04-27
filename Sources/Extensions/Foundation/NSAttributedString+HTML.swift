@@ -23,6 +23,7 @@
 //
 
 import UIKit
+import SingleLineControllerCore
 
 /// Loads an HTML file bundled with the app and returns it as a styled
 /// `NSAttributedString`, suitable for hand-off to a `UITextView` or `UILabel`.
@@ -126,3 +127,4 @@ extension NSMutableAttributedString {
         }
     }
 }
+

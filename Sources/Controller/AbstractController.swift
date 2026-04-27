@@ -2,6 +2,7 @@
 
 import Combine
 import UIKit
+import SingleLineControllerCore
 
 /// Common ancestor of every screen-level `UIViewController` in the app.
 ///
@@ -39,3 +40,4 @@ extension AbstractController {
     /// the concrete `SceneController<…>` specialisation without an inheritance dance.
     override var description: String { "\(type(of: self))" }
 }
+

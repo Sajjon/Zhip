@@ -24,6 +24,7 @@
 
 import Combine
 import Foundation
+import SingleLineControllerCore
 @testable import Zhip
 
 extension ViewModelType where Input: InputType, Self.Input.FromController == InputFromController {
@@ -48,3 +49,4 @@ private extension InputFromController {
         )
     }
 }
+

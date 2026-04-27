@@ -27,6 +27,7 @@
 // code that imported Validator compiles unchanged after removing the dependency.
 
 import Foundation
+import SingleLineControllerCore
 
 // MARK: - ValidationError
 
@@ -122,3 +123,4 @@ public extension Validatable {
 // MARK: - String conformance (used by address/hex validators)
 
 extension String: Validatable {}
+

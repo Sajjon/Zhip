@@ -23,6 +23,7 @@
 //
 
 import Zesame
+import SingleLineControllerCore
 
 /// Validates an amount string in a specific Zilliqa `Unit` (Zil/Li/Qa).
 ///
@@ -124,3 +125,4 @@ enum AmountError<ConvertTo: ExpressibleByAmount>: Swift.Error, InputError {
         }
     }
 }
+

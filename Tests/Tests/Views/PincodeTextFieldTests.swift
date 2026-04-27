@@ -25,6 +25,7 @@
 import Combine
 import UIKit
 import XCTest
+import SingleLineControllerCore
 @testable import Zhip
 
 final class PincodeTextFieldTests: XCTestCase {
@@ -195,3 +196,4 @@ final class StringIsBackspaceTests: XCTestCase {
         XCTAssertFalse("abc".isBackspace)
     }
 }
+

@@ -23,6 +23,7 @@
 //
 
 import UIKit
+import SingleLineControllerCore
 
 /// `UIButton` subclass that arranges an image **above** a label, instead of
 /// `UIButton`'s built-in side-by-side layout. Used on the wallet-choice screen
@@ -135,3 +136,4 @@ private extension ImageAboveLabelButton {
         [stackView, customLabel, customImageView].forEach { $0.isUserInteractionEnabled = false }
     }
 }
+

@@ -26,6 +26,7 @@ import Combine
 import Factory
 import Foundation
 import Zesame
+import SingleLineControllerCore
 
 // MARK: - PrepareTransactionUserAction
 
@@ -324,7 +325,12 @@ final class PrepareTransactionViewModel: BaseViewModel< // swiftlint:disable:thi
                     return AnyPublisher<String?, Never>.just(nil)
                 }
                 return
-                    Just((gasPrice, gasLimit))
+                    // The `eraseToAnyPublisher()` here is load-bearing — without
+                    // it, Swift's overload resolution sees two viable
+                    // `compactMap` overloads (the tuple-arg version on `Just<(_, _)>`
+                    // and the standard Publisher one) and emits an ambiguity
+                    // error. Erasing first collapses to the Publisher overload.
+                    Just((gasPrice, gasLimit)).eraseToAnyPublisher()
                         .compactMap { try? Payment.estimatedTotalTransactionFee(gasPrice: $0, gasLimit: $1) }
                         .map { formatter.format(amount: $0, in: .zil, formatThousands: true, showUnit: true) }
                         .map { String(localized: .PrepareTransaction.transactionFeeLabel(fee: $0)) }
@@ -416,4 +422,3 @@ extension PrepareTransactionViewModel {
         }
     }
 }
-

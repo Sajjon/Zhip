@@ -23,7 +23,10 @@ import PackageDescription
 
 let package = Package(
     name: "SingleLineController",
-    platforms: [.iOS(.v16)],
+    // macOS 13 listed alongside iOS so `swift build`/`swift test` on a
+    // macOS host can exercise the Combine APIs. Zhip itself is iOS-only;
+    // the macOS minimum exists only for the package's own CLI loop.
+    platforms: [.iOS(.v16), .macOS(.v13)],
     products: [
         .library(name: "SingleLineControllerCore", targets: ["SingleLineControllerCore"]),
         .library(name: "SingleLineControllerCombine", targets: ["SingleLineControllerCombine"]),

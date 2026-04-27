@@ -25,6 +25,7 @@
 import Factory
 import TinyConstraints
 import UIKit
+import SingleLineControllerCore
 
 /// Compound view that hosts a `PincodeTextField` (the visible digit boxes
 /// + invisible underlying text field) plus an error label below.
@@ -113,3 +114,4 @@ private extension InputPincodeView {
         hapticFeedback.notify(.success)
     }
 }
+

@@ -23,6 +23,7 @@
 //
 
 import Zesame
+import SingleLineControllerCore
 
 /// Validates a Zilliqa address string (bech32 or hex), producing a typed `Address`.
 ///
@@ -97,3 +98,4 @@ extension AddressValidator.Error {
         }
     }
 }
+

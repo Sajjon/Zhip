@@ -26,6 +26,7 @@ import Combine
 import Foundation
 import UIKit
 import Zesame
+import SingleLineControllerCore
 
 /// Cell model used for every Settings row — wraps a navigation destination
 /// with the row's title + icon + style.
@@ -225,3 +226,4 @@ private extension Network {
         }
     }
 }
+

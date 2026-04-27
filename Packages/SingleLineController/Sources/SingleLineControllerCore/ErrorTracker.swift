@@ -12,7 +12,10 @@ import Foundation
 /// of `tracker.asPublisher()` then get a `Never`-failing stream of errors,
 /// suitable for binding to validation labels / toast outputs.
 public final class ErrorTracker {
-    /// Internal subject that captured errors are pushed into.
+    /// Internal subject that captured errors are pushed into. Exposed to
+    /// other modules in the same package via `_subjectCompactMap` so the
+    /// Validation sibling package can layer typed-error projections on top
+    /// without breaking encapsulation.
     private let subject = PassthroughSubject<Error, Never>()
 
     /// Creates an empty tracker.
@@ -36,25 +39,13 @@ public final class ErrorTracker {
             })
     }
 
-    /// Filters the tracked errors into typed `InputError` values via `mapError`.
-    /// Errors that don't match the supplied closure are dropped — convenient
-    /// when several use cases push different error types into the same tracker.
-    func asInputErrors<IE: InputError>(
-        mapError: @escaping (Swift.Error) -> IE?
-    ) -> AnyPublisher<IE, Never> {
+    /// Internal hook used by sibling packages (e.g. `Validation`) to project
+    /// captured errors through a typed `compactMap` without exposing the raw
+    /// subject. The closure receives every tracked error and returns the
+    /// projected value — `nil` results are dropped.
+    public func compactMap<T>(_ transform: @escaping (Swift.Error) -> T?) -> AnyPublisher<T, Never> {
         subject
-            .compactMap { mapError($0) }
-            .eraseToAnyPublisher()
-    }
-
-    /// Convenience that wraps `asInputErrors` and projects the result into the
-    /// project's `AnyValidation.errorMessage(_:)` shape — the standard sink
-    /// for input fields.
-    func asInputValidationErrors(
-        mapError: @escaping (Swift.Error) -> (some InputError)?
-    ) -> AnyPublisher<AnyValidation, Never> {
-        asInputErrors(mapError: mapError)
-            .map { .errorMessage($0.errorMessage) }
+            .compactMap(transform)
             .eraseToAnyPublisher()
     }
 }

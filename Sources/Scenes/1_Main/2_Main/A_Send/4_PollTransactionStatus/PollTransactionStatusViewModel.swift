@@ -27,6 +27,7 @@ import Factory
 import Foundation
 import UIKit
 import Zesame
+import SingleLineControllerCore
 
 // MARK: - User action and navigation steps
 
@@ -134,3 +135,4 @@ extension PollTransactionStatusViewModel {
         let isSeeTxDetailsButtonLoading: AnyPublisher<Bool, Never>
     }
 }
+

@@ -61,3 +61,4 @@ public extension Publisher {
         indicator.track(self)
     }
 }
+

@@ -24,6 +24,7 @@
 
 import UIKit
 import WebKit
+import SingleLineControllerCore
 
 extension WKWebView {
     /// Programmatic-Auto-Layout-friendly initialiser: zero frame and
@@ -46,3 +47,4 @@ extension WKWebView {
         loadHTMLString(html, baseURL: nil)
     }
 }
+

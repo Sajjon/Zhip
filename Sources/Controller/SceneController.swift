@@ -2,6 +2,7 @@
 
 import Combine
 import UIKit
+import SingleLineControllerCore
 
 /// The "Single-Line Controller" base class.
 ///
@@ -219,3 +220,4 @@ private extension SceneController {
         }
     }
 }
+

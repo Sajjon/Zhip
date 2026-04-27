@@ -23,6 +23,7 @@
 //
 
 import UIKit
+import SingleLineControllerCore
 
 /// First-run welcome screen: a parallax spaceship illustration with a
 /// "Get Started" CTA. The view owns the layout, the view model just bridges
@@ -116,3 +117,4 @@ private extension WelcomeView {
         )
     }
 }
+

@@ -2,6 +2,7 @@
 
 import Combine
 import UIKit
+import SingleLineControllerCore
 
 /// Base class for our coordinators.
 ///
@@ -33,3 +34,4 @@ class BaseCoordinator<NavigationStep>: Coordinating, Navigating {
         abstract
     }
 }
+

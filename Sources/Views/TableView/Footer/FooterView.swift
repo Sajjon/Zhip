@@ -23,6 +23,7 @@
 //
 
 import UIKit
+import SingleLineControllerCore
 
 /// Two-line centred-text footer used by `UITableView.setFooterLabel(text:height:)`
 /// to attach a small grey caption below the table content (e.g. version info,
@@ -59,3 +60,4 @@ private extension FooterView {
         label.edgesToSuperview()
     }
 }
+

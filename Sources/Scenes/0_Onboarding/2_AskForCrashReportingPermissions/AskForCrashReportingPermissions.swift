@@ -23,6 +23,7 @@
 //
 
 import Foundation
+import SingleLineControllerCore
 
 /// `SceneController` glue for the crash-reporting opt-in screen.
 ///
@@ -50,3 +51,4 @@ final class AskForCrashReportingPermissions: Scene<AskForCrashReportingPermissio
         interfaceBuilderSucks
     }
 }
+

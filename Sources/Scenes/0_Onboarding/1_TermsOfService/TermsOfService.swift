@@ -23,6 +23,7 @@
 //
 
 import Foundation
+import SingleLineControllerCore
 
 /// `SceneController` glue for the Terms of Service screen.
 ///
@@ -52,3 +53,4 @@ final class TermsOfService: Scene<TermsOfServiceView>, NavigationBarLayoutOwner 
         interfaceBuilderSucks
     }
 }
+

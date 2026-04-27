@@ -24,6 +24,7 @@
 
 import Combine
 import XCTest
+import SingleLineControllerCore
 @testable import Zhip
 
 final class AbstractTargetTests: XCTestCase {
@@ -41,3 +42,4 @@ final class AbstractTargetTests: XCTestCase {
         cancellable.cancel()
     }
 }
+

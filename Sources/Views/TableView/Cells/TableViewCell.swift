@@ -23,6 +23,7 @@
 //
 
 import UIKit
+import SingleLineControllerCore
 
 /// Base class for the project's table-view cells. Composes a horizontal
 /// `UIStackView` of [icon, label] inside `contentView` so subclasses get a
@@ -90,3 +91,4 @@ extension CellConfigurable where Self: AbstractTableViewCell, Model: CellModel {
         accessoryType = model.accessoryType
     }
 }
+

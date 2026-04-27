@@ -25,6 +25,7 @@
 import Combine
 import Factory
 import Zesame
+import SingleLineControllerCore
 
 /// Outcomes of the decrypt-to-reveal screen.
 enum DecryptKeystoreToRevealKeyPairUserAction {
@@ -167,3 +168,4 @@ extension DecryptKeystoreToRevealKeyPairViewModel {
         }
     }
 }
+

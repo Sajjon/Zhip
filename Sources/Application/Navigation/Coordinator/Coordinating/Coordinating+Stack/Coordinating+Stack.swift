@@ -23,6 +23,7 @@
 //
 
 import UIKit
+import SingleLineControllerCore
 
 extension Coordinating {
     /// Identity-based lookup of `child` in `childCoordinators`. Identity (rather
@@ -73,3 +74,4 @@ extension Coordinating {
         }
     }
 }
+

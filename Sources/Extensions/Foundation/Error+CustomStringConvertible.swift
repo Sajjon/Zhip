@@ -23,6 +23,7 @@
 //
 
 import Foundation
+import SingleLineControllerCore
 
 extension Swift.Error where Self: CustomStringConvertible {
     /// Auto-derived error description that returns the case name for enum errors.
@@ -46,3 +47,4 @@ extension Swift.Error where Self: CustomStringConvertible {
         }
     }
 }
+

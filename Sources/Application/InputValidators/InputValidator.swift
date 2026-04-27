@@ -22,6 +22,8 @@
 // SOFTWARE.
 //
 
+import SingleLineControllerCore
+
 /// A pure function from a raw `Input` to a typed `Validation<Output, Error>`.
 ///
 /// Implementations exist per input domain (`AddressValidator`,
@@ -85,3 +87,4 @@ extension InputValidator where Input == Double, Output == Double {
         return validate(input: double)
     }
 }
+

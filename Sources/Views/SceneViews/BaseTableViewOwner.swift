@@ -23,6 +23,7 @@
 //
 
 import UIKit
+import SingleLineControllerCore
 
 /// Idiomatic shape for table-backed scenes — combines `BaseTableViewOwner`
 /// with the `TableViewOwner` marker so the scene's `populate(with:)` can
@@ -60,3 +61,4 @@ class BaseTableViewOwner<Header, Cell: ListCell>: AbstractSceneView {
         interfaceBuilderSucks
     }
 }
+

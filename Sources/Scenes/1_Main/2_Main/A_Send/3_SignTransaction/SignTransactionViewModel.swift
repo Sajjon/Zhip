@@ -26,6 +26,7 @@ import Combine
 import Factory
 import Foundation
 import Zesame
+import SingleLineControllerCore
 
 /// Outcome of step 3 of Send.
 enum SignTransactionUserAction {
@@ -187,3 +188,4 @@ extension SignTransactionViewModel {
         }
     }
 }
+

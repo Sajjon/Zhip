@@ -22,6 +22,7 @@
 // SOFTWARE.
 //
 import UIKit
+import SingleLineControllerCore
 
 // The app uses Barlow at a small set of fixed sizes/weights. The named tokens
 // below (e.g. `.body`, `.header`, `.callToAction`) are the *only* fonts call
@@ -164,3 +165,4 @@ extension Font {
         return customFont
     }
 }
+

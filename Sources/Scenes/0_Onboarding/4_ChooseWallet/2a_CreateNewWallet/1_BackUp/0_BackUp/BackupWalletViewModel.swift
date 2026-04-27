@@ -26,6 +26,7 @@ import Combine
 import Factory
 import UIKit
 import Zesame
+import SingleLineControllerCore
 
 // MARK: - BackupWalletUserAction
 
@@ -177,3 +178,4 @@ extension Keystore {
         return jsonString
     }
 }
+

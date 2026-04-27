@@ -24,6 +24,7 @@
 
 import Combine
 import XCTest
+import SingleLineControllerCore
 @testable import Zhip
 
 /// Tests that `ErrorTracker` republishes failures from tracked publishers and
@@ -65,3 +66,4 @@ final class ErrorTrackerTests: XCTestCase {
         XCTAssertEqual(received, [42])
     }
 }
+

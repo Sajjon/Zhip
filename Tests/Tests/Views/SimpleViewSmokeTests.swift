@@ -24,6 +24,7 @@
 
 import UIKit
 import XCTest
+import SingleLineControllerCore
 @testable import Zhip
 
 /// Smoke-tests for `UIView` subclasses that have no required dependencies.
@@ -225,3 +226,4 @@ final class SimpleViewSmokeTests: XCTestCase {
         XCTAssertNotNil(view.inputFromView)
     }
 }
+

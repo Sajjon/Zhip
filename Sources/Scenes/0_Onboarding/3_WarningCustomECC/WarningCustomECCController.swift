@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import SingleLineControllerCore
 
 /// `SceneController` glue for the "we use a custom ECC implementation" warning screen.
 ///
@@ -33,3 +34,4 @@ final class WarningCustomECC: Scene<WarningCustomECCView>, NavigationBarLayoutOw
         interfaceBuilderSucks
     }
 }
+

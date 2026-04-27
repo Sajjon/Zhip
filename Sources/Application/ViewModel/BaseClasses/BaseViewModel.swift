@@ -1,6 +1,7 @@
 // MIT License — Copyright (c) 2018-2026 Open Zesame
 
 import Foundation
+import SingleLineControllerCore
 
 /// Concrete base class used by every ViewModel in the app.
 ///
@@ -36,3 +37,4 @@ class BaseViewModel<NavigationStep, InputFromView, OutputFromViewModel>: Abstrac
 /// Retroactive `Navigating` conformance unlocks `userIntends(to:)` and other
 /// convenience helpers on every `BaseViewModel`.
 extension BaseViewModel: Navigating {}
+

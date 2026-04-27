@@ -23,6 +23,7 @@
 //
 
 import UIKit
+import SingleLineControllerCore
 
 /// Compound "label + selectable value" component used to display read-only
 /// fields like wallet addresses and transaction hashes — the title sits
@@ -123,3 +124,4 @@ extension TitledValueView {
         valueTextView.textBinder
     }
 }
+

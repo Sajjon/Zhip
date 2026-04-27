@@ -24,6 +24,7 @@
 
 import Combine
 import Foundation
+import SingleLineControllerCore
 
 // MARK: - RemovePincodeUserAction
 
@@ -124,3 +125,4 @@ extension RemovePincodeViewModel {
         }
     }
 }
+

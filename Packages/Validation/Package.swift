@@ -10,7 +10,7 @@ import PackageDescription
 
 let package = Package(
     name: "Validation",
-    platforms: [.iOS(.v16)],
+    platforms: [.iOS(.v16), .macOS(.v13)],
     products: [
         .library(name: "Validation", targets: ["Validation"]),
     ],
