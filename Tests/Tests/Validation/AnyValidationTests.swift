@@ -2,7 +2,6 @@ import XCTest
 @testable import Zhip
 
 final class AnyValidationTests: XCTestCase {
-
     // MARK: - isValid / isEmpty / isError
 
     func test_valid_isValidTrue_isEmptyFalse_isErrorFalse() {
@@ -99,5 +98,7 @@ final class AnyValidationTests: XCTestCase {
 
 private struct StubInputError: InputError, Equatable {
     let message: String
-    var errorMessage: String { message }
+    var errorMessage: String {
+        message
+    }
 }

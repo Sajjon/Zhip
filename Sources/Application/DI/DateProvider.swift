@@ -31,14 +31,12 @@ import Foundation
 /// `FixedDateProvider`, which returns a deterministic instant so relative-time
 /// formatting and "balance last updated" timestamps stay reproducible.
 protocol DateProvider: AnyObject {
-
     /// The current instant according to whichever implementation is registered.
     func now() -> Date
 }
 
 /// Production `DateProvider` backed by `Date()`.
 final class DefaultDateProvider: DateProvider {
-
     init() {}
 
     func now() -> Date {

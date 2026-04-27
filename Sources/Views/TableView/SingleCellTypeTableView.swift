@@ -1,8 +1,9 @@
 // MIT License — Copyright (c) 2018-2026 Open Zesame
 
 import Combine
-import UIKit
+import SingleLineControllerCombine
 import SingleLineControllerCore
+import UIKit
 
 /// Constraint typealias for cells usable with `SingleCellTypeTableView` —
 /// must be both an `AbstractTableViewCell` (for the layout chassis) and
@@ -17,7 +18,8 @@ typealias ListCell = AbstractTableViewCell & CellConfigurable
 /// Why "single cell type"? Most of the app's tables (Settings, etc.) use a
 /// uniform cell — being explicit about that lets the type system carry the
 /// cell/model pairing end-to-end and avoids the usual cast-and-pray pattern.
-class SingleCellTypeTableView<Header, Cell: ListCell>: UITableView, UITableViewDelegate, UITableViewDataSource, SelectionPublishing {
+class SingleCellTypeTableView<Header, Cell: ListCell>: UITableView, UITableViewDelegate, UITableViewDataSource,
+    SelectionPublishing {
     // MARK: - Data
 
     /// The data backing the table. Setting it triggers a full `reloadData()`
@@ -36,11 +38,15 @@ class SingleCellTypeTableView<Header, Cell: ListCell>: UITableView, UITableViewD
     /// Internal subject the delegate pushes index paths into.
     private let selectionSubject = PassthroughSubject<IndexPath, Never>()
     /// `SelectionPublishing` conformance — the public publisher of selected rows.
-    var selectionPublisher: AnyPublisher<IndexPath, Never> { selectionSubject.eraseToAnyPublisher() }
+    var selectionPublisher: AnyPublisher<IndexPath, Never> {
+        selectionSubject.eraseToAnyPublisher()
+    }
 
     /// Alias preferred by some scenes that read more naturally as
     /// `tableView.didSelectItem`.
-    var didSelectItem: AnyPublisher<IndexPath, Never> { selectionPublisher }
+    var didSelectItem: AnyPublisher<IndexPath, Never> {
+        selectionPublisher
+    }
 
     /// Whether to auto-deselect rows on tap. Defaults to immediate animated
     /// deselection (matches iOS HIG for non-stateful selection); scenes can
@@ -58,7 +64,9 @@ class SingleCellTypeTableView<Header, Cell: ListCell>: UITableView, UITableViewD
     }
 
     /// Storyboard init — unsupported, traps to enforce programmatic-only use.
-    required init?(coder _: NSCoder) { interfaceBuilderSucks }
+    required init?(coder _: NSCoder) {
+        interfaceBuilderSucks
+    }
 
     // MARK: - UITableViewDelegate
 
@@ -75,7 +83,9 @@ class SingleCellTypeTableView<Header, Cell: ListCell>: UITableView, UITableViewD
     // MARK: - UITableViewDataSource
 
     /// Number of sections — derived from `sectionModels.count`.
-    func numberOfSections(in _: UITableView) -> Int { sectionModels.count }
+    func numberOfSections(in _: UITableView) -> Int {
+        sectionModels.count
+    }
 
     /// Number of rows in `section` — derived from the section's `items.count`.
     func tableView(_: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -133,4 +143,3 @@ struct SectionModel<Section, Item> {
     /// Rows in this section.
     let items: [Item]
 }
-

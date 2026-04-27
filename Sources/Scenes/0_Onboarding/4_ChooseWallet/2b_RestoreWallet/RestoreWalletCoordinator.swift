@@ -44,7 +44,6 @@ enum RestoreWalletCoordinatorNavigationStep {
 /// Cancel at the privacy gate aborts; `finishedRestoring` only fires once
 /// the restore use case successfully resolves a wallet.
 final class RestoreWalletCoordinator: BaseCoordinator<RestoreWalletCoordinatorNavigationStep> {
-
     /// Begins at the privacy gate.
     override func start(didStart _: Completion? = nil) {
         toEnsureThatYouAreNotBeingWatched()

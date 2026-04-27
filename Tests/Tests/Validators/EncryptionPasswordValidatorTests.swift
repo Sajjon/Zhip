@@ -2,10 +2,11 @@ import XCTest
 @testable import Zhip
 
 final class EncryptionPasswordValidatorTests: XCTestCase {
-
     func test_newWallet_mismatch_returnsPasswordsDoesNotMatch() {
         let sut = EncryptionPasswordValidator(mode: .newOrRestorePrivateKey)
-        guard case let .invalid(.error(error)) = sut.validate(input: (password: "abcdefgh", confirmingPassword: "xxxx")) else {
+        guard case let .invalid(.error(error)) = sut
+            .validate(input: (password: "abcdefgh", confirmingPassword: "xxxx"))
+        else {
             return XCTFail("expected invalid")
         }
         XCTAssertEqual(error, .passwordsDoesNotMatch)
@@ -13,7 +14,8 @@ final class EncryptionPasswordValidatorTests: XCTestCase {
 
     func test_newWallet_tooShort_returnsPasswordIsTooShort() {
         let sut = EncryptionPasswordValidator(mode: .newOrRestorePrivateKey)
-        guard case let .invalid(.error(error)) = sut.validate(input: (password: "abc", confirmingPassword: "abc")) else {
+        guard case let .invalid(.error(error)) = sut.validate(input: (password: "abc", confirmingPassword: "abc"))
+        else {
             return XCTFail("expected invalid")
         }
         // Equatable treats all .passwordIsTooShort equal via the project's ==.
@@ -36,11 +38,13 @@ final class EncryptionPasswordValidatorTests: XCTestCase {
     }
 
     func test_errorMessage_incorrectPassword_duringBackup_hasMessage() {
-        XCTAssertFalse(WalletEncryptionPassword.Error.incorrectPassword(backingUpWalletJustCreated: true).errorMessage.isEmpty)
+        XCTAssertFalse(WalletEncryptionPassword.Error.incorrectPassword(backingUpWalletJustCreated: true).errorMessage
+            .isEmpty)
     }
 
     func test_errorMessage_incorrectPassword_regular_hasMessage() {
-        XCTAssertFalse(WalletEncryptionPassword.Error.incorrectPassword(backingUpWalletJustCreated: false).errorMessage.isEmpty)
+        XCTAssertFalse(WalletEncryptionPassword.Error.incorrectPassword(backingUpWalletJustCreated: false).errorMessage
+            .isEmpty)
     }
 
     func test_mode_minimumPasswordLength_newOrRestorePrivateKey_is8() {

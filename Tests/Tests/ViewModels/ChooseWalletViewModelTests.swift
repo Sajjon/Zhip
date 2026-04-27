@@ -3,7 +3,6 @@ import XCTest
 @testable import Zhip
 
 final class ChooseWalletViewModelTests: XCTestCase {
-
     private var cancellables: Set<AnyCancellable> = []
     private var createNewTrigger: PassthroughSubject<Void, Never>!
     private var restoreTrigger: PassthroughSubject<Void, Never>!

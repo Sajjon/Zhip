@@ -30,7 +30,6 @@ import Foundation
 /// Returns the pre-configured `result` on every call. Default is `false` so
 /// tests that merely cause `viewDidAppear` don't accidentally auto-unlock.
 final class MockBiometricsAuthenticator: BiometricsAuthenticator {
-
     var result: Bool
     private(set) var authenticateCallCount = 0
 

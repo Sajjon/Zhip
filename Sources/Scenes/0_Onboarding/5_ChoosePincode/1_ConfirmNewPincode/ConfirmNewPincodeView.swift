@@ -23,6 +23,7 @@
 //
 
 import Combine
+import SingleLineControllerCombine
 import UIKit
 
 /// Pincode confirmation screen — input + "I have backed up" checkbox + done CTA.

@@ -23,12 +23,11 @@
 //
 
 import Combine
-import XCTest
 import SingleLineControllerCore
+import XCTest
 @testable import Zhip
 
 final class AbstractTargetTests: XCTestCase {
-
     func test_pressed_forwardsEventToTriggerSubject() {
         let subject = PassthroughSubject<Void, Never>()
         let sut = AbstractTarget(triggerSubject: subject)
@@ -42,4 +41,3 @@ final class AbstractTargetTests: XCTestCase {
         cancellable.cancel()
     }
 }
-

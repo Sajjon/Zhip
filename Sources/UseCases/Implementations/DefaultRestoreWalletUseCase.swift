@@ -29,7 +29,6 @@ import Zesame
 
 /// Default implementation of `RestoreWalletUseCase`.
 final class DefaultRestoreWalletUseCase: RestoreWalletUseCase {
-
     /// Reactive Zesame façade — performs the actual wallet restoration.
     @Injected(\.zilliqaService) private var zilliqaService: ZilliqaServiceReactive
 

@@ -1,8 +1,8 @@
+import SingleLineControllerCombine
 import XCTest
 @testable import Zhip
 
 final class ArrayExtensionTests: XCTestCase {
-
     func test_mapToVoid_emptyArray_returnsEmpty() {
         let result: [Void] = [Int]().mapToVoid()
         XCTAssertEqual(result.count, 0)

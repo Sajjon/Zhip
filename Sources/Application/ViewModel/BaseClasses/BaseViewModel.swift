@@ -18,7 +18,6 @@ class BaseViewModel<NavigationStep, InputFromView, OutputFromViewModel>: Abstrac
     InputFromController,
     OutputFromViewModel
 > {
-
     /// Emits navigation steps when the ViewModel calls `navigator.next(_:)`.
     /// Owned by the coordinator, which subscribes to `navigator.navigation` to
     /// drive push/pop/present transitions.
@@ -37,4 +36,3 @@ class BaseViewModel<NavigationStep, InputFromView, OutputFromViewModel>: Abstrac
 /// Retroactive `Navigating` conformance unlocks `userIntends(to:)` and other
 /// convenience helpers on every `BaseViewModel`.
 extension BaseViewModel: Navigating {}
-

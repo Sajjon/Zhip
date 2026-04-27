@@ -24,6 +24,7 @@
 
 import Combine
 import Factory
+import SingleLineControllerCombine
 import UIKit
 
 /// Step 4 of Send — celebratory "transaction broadcast" screen with a stars

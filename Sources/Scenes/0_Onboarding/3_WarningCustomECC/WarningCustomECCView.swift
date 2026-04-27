@@ -8,6 +8,7 @@
 
 import Combine
 import Factory
+import SingleLineControllerCombine
 import UIKit
 
 /// Custom-ECC warning screen — identical layout to Terms but with a warning

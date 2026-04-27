@@ -24,6 +24,7 @@
 
 import Combine
 import Factory
+import SingleLineControllerCombine
 import UIKit
 import Zesame
 
@@ -171,10 +172,10 @@ private extension PrepareTransactionView {
             Container.shared.clock().schedule(after: 0.3) { [weak self] in
                 guard let self else { return }
                 [
-                    self.recipientAddressField,
-                    self.amountToSendField,
-                    self.gasLimitField,
-                    self.gasPriceField,
+                    recipientAddressField,
+                    amountToSendField,
+                    gasLimitField,
+                    gasPriceField,
                 ].forEach {
                     $0.sendActions(for: .editingDidEnd)
                 }

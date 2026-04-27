@@ -32,7 +32,6 @@ import UIKit
 /// returns an empty attributed string synchronously so view setup completes
 /// immediately.
 protocol HtmlLoader: AnyObject {
-
     /// Loads `<htmlFileName>.html` from the main bundle and returns the parsed
     /// attributed string with the given text color and font applied.
     func load(
@@ -43,7 +42,6 @@ protocol HtmlLoader: AnyObject {
 }
 
 extension HtmlLoader {
-
     /// Convenience overload matching the legacy `htmlAsAttributedString`
     /// defaults (white text, body font).
     func load(htmlFileName: String) -> NSAttributedString {
@@ -53,7 +51,6 @@ extension HtmlLoader {
 
 /// Production `HtmlLoader` backed by `htmlAsAttributedString`.
 final class DefaultHtmlLoader: HtmlLoader {
-
     init() {}
 
     func load(

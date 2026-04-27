@@ -38,7 +38,6 @@ import Zesame
 /// amount from balance minus fees, formatted outputs, and the
 /// `isReviewButtonEnabled` gate.
 final class PrepareTransactionViewModelTests: XCTestCase {
-
     private var cancellables: Set<AnyCancellable> = []
 
     // From-view subjects
@@ -85,8 +84,8 @@ final class PrepareTransactionViewModelTests: XCTestCase {
         mockTransactions.cachedBalance = (try? Amount(zil: 1000))
         mockWallet = MockWalletUseCase()
         mockWallet.storedWallet = TestWalletFactory.makeWallet()
-        Container.shared.transactionsUseCase.register { [unowned self] in self.mockTransactions }
-        Container.shared.walletStorageUseCase.register { [unowned self] in self.mockWallet }
+        Container.shared.transactionsUseCase.register { [unowned self] in mockTransactions }
+        Container.shared.walletStorageUseCase.register { [unowned self] in mockWallet }
     }
 
     override func tearDown() {
@@ -206,7 +205,7 @@ final class PrepareTransactionViewModelTests: XCTestCase {
 
     // MARK: - Review button
 
-    func test_isReviewButtonEnabled_falseInitially_trueAfterValidInput() throws {
+    func test_isReviewButtonEnabled_falseInitially_trueAfterValidInput() {
         let sut = makeSUT()
         let output = sut.transform(input: makeInput())
         var states: [Bool] = []
@@ -221,7 +220,7 @@ final class PrepareTransactionViewModelTests: XCTestCase {
         XCTAssertTrue(states.contains(true))
     }
 
-    func test_validToReviewTrigger_emitsReviewPaymentWithPayment() throws {
+    func test_validToReviewTrigger_emitsReviewPaymentWithPayment() {
         let sut = makeSUT()
         _ = sut.transform(input: makeInput())
         var observed: PrepareTransactionUserAction?
@@ -323,4 +322,5 @@ final class PrepareTransactionViewModelTests: XCTestCase {
         )
     }
 }
+
 // swiftlint:enable type_body_length

@@ -52,4 +52,3 @@ public struct ValidationRuleHexadecimalCharacters: ValidationRule {
         nestedRule.validate(input: input)
     }
 }
-

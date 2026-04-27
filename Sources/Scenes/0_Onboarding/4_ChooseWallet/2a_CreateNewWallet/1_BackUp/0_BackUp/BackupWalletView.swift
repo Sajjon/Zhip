@@ -23,6 +23,7 @@
 //
 
 import Combine
+import SingleLineControllerCombine
 import UIKit
 
 /// Backup hub screen with two reveal options (private key / keystore) plus

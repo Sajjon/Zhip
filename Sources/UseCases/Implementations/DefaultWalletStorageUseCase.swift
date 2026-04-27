@@ -35,7 +35,6 @@ import Zesame
 /// single source of truth for the reactive `wallet` publisher; `save` and
 /// `deleteWallet` push through it.
 final class DefaultWalletStorageUseCase: WalletStorageUseCase {
-
     /// Keychain-backed secure store. Resolved via Factory so tests can register
     /// an in-memory `SecurePersistence` to keep the suite hermetic.
     @Injected(\.securePersistence) private var securePersistence: SecurePersistence

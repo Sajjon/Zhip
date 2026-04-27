@@ -32,10 +32,8 @@ import UIKit
 /// request a display; the `SceneController` presents it on the active view
 /// controller.
 struct Toast {
-
     /// Describes how the toast should disappear after presentation.
     enum Dismissing {
-
         /// Dismiss automatically after `duration` seconds.
         case after(duration: TimeInterval)
 

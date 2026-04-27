@@ -32,7 +32,6 @@ import UIKit
 /// `UIView.setAnimationsEnabled(false)` (synchronous modal presentation) would
 /// time out `drainRunLoop()`.
 final class MockHtmlLoader: HtmlLoader {
-
     /// File names passed to `load(…)`, in call order.
     private(set) var loadInvocations: [String] = []
 

@@ -3,6 +3,7 @@
 import Combine
 import Factory
 import Foundation
+import SingleLineControllerCombine
 import Zesame
 
 /// Default implementation of the composite `TransactionsUseCase` and all five
@@ -12,7 +13,6 @@ import Zesame
 /// operations (balance fetch, transaction send, receipt poll) delegate to
 /// `zilliqaService`.
 final class DefaultTransactionsUseCase {
-
     /// Reactive Zesame façade used for all on-chain work.
     private let zilliqaService: ZilliqaServiceReactive
 
@@ -37,7 +37,6 @@ final class DefaultTransactionsUseCase {
 }
 
 extension DefaultTransactionsUseCase: TransactionsUseCase {
-
     /// The most-recent cached `Amount`, decoded from its persisted Qa string.
     /// Returns `nil` if no balance has ever been cached or if the stored value
     /// fails to parse.
@@ -48,7 +47,9 @@ extension DefaultTransactionsUseCase: TransactionsUseCase {
 
     /// The timestamp of the most recent cached balance, or `nil` if the cache is
     /// empty.
-    var balanceUpdatedAt: Date? { preferences.loadValue(for: .balanceWasUpdatedAt) }
+    var balanceUpdatedAt: Date? {
+        preferences.loadValue(for: .balanceWasUpdatedAt)
+    }
 
     /// Explicitly overrides the "last updated" timestamp — used when a fetch
     /// completes with no change in balance but we still want to refresh the UI's
@@ -90,12 +91,13 @@ extension DefaultTransactionsUseCase: TransactionsUseCase {
     /// `encryptionPassword`) and broadcasts the transaction on the current
     /// network, emitting the resulting `TransactionResponse` once on success.
     func sendTransaction(for payment: Payment, wallet: Wallet, encryptionPassword: String)
-        -> AnyPublisher<TransactionResponse, Swift.Error> {
+        -> AnyPublisher<TransactionResponse, Swift.Error>
+    {
         zilliqaService.getNetworkFromAPI()
             .mapError { $0 as Swift.Error }
             .flatMapLatest { [weak self] networkResponse -> AnyPublisher<TransactionResponse, Swift.Error> in
                 guard let self else { return Empty().eraseToAnyPublisher() }
-                return self.zilliqaService.sendTransaction(
+                return zilliqaService.sendTransaction(
                     for: payment,
                     keystore: wallet.keystore,
                     password: encryptionPassword,

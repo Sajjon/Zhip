@@ -2,7 +2,6 @@ import XCTest
 @testable import Zhip
 
 final class ValidationRuleTests: XCTestCase {
-
     // MARK: - ValidationRuleCondition
 
     func test_condition_validatesTrueWhenClosureReturnsTrue() {

@@ -35,7 +35,6 @@ import Zesame
 /// `ExtractKeyPairUseCase` and emits `.decryptKeystoreReavealing` with the
 /// derived key pair.
 final class DecryptKeystoreToRevealKeyPairViewModelTests: XCTestCase {
-
     private var cancellables: Set<AnyCancellable> = []
     private var encryptionPassword: CurrentValueSubject<String, Never>!
     private var isEditingEncryptionPassword: CurrentValueSubject<Bool, Never>!
@@ -52,7 +51,7 @@ final class DecryptKeystoreToRevealKeyPairViewModelTests: XCTestCase {
         fakeController = FakeInputFromController()
         mockWallet = MockWalletUseCase()
         wallet = TestWalletFactory.makeWallet()
-        Container.shared.extractKeyPairUseCase.register { [unowned self] in self.mockWallet }
+        Container.shared.extractKeyPairUseCase.register { [unowned self] in mockWallet }
     }
 
     override func tearDown() {

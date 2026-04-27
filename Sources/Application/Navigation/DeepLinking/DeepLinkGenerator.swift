@@ -29,7 +29,6 @@ import SingleLineControllerCore
 /// the deep-link handler. Exists behind a protocol so coordinators depend on the
 /// abstraction and tests can stub URL construction deterministically.
 protocol DeepLinkGenerator: AnyObject {
-
     /// Builds a sharable URL that, when opened, navigates the recipient to the
     /// "send" flow pre-populated with the fields of `transaction`.
     func linkTo(transaction: TransactionIntent) -> URL
@@ -37,7 +36,6 @@ protocol DeepLinkGenerator: AnyObject {
 
 /// Default URL-components–based builder used in production.
 final class DefaultDeepLinkGenerator: DeepLinkGenerator {
-
     /// Trivial init — no dependencies.
     init() {}
 
@@ -58,4 +56,3 @@ final class DefaultDeepLinkGenerator: DeepLinkGenerator {
         return shareUrl
     }
 }
-

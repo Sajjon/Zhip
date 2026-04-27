@@ -4,7 +4,6 @@ import XCTest
 
 @MainActor
 final class UILabelStylingTests: XCTestCase {
-
     // MARK: - apply
 
     func test_apply_appliesAllProvidedAttributes() {

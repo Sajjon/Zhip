@@ -24,6 +24,7 @@
 
 import Combine
 import Foundation
+import SingleLineControllerCombine
 
 /// Outcomes of the pincode chooser screen.
 enum ChoosePincodeUserAction {

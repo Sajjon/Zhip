@@ -47,4 +47,3 @@ extension Swift.Error where Self: CustomStringConvertible {
         }
     }
 }
-

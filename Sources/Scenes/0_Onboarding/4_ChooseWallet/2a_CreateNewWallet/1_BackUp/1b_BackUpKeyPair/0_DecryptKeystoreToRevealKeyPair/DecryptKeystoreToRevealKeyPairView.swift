@@ -23,6 +23,7 @@
 //
 
 import Combine
+import SingleLineControllerCombine
 import UIKit
 
 /// Password-entry screen that decrypts the keystore to reveal the underlying

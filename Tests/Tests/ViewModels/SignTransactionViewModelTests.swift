@@ -34,7 +34,6 @@ import Zesame
 /// triggers `SendTransactionUseCase` with the supplied payment, and that the
 /// resulting `TransactionResponse` is propagated as `.sign`.
 final class SignTransactionViewModelTests: XCTestCase {
-
     private var cancellables: Set<AnyCancellable> = []
     private var encryptionPassword: CurrentValueSubject<String, Never>!
     private var isEditingEncryptionPassword: CurrentValueSubject<Bool, Never>!
@@ -57,12 +56,13 @@ final class SignTransactionViewModelTests: XCTestCase {
         let address = try LegacyAddress(string: "e3090a1309DfAC40352d03dEc6cCD9cAd213e76B")
         payment = try Payment(
             to: address,
-            amount: try Amount(zil: 1),
-            gasPrice: try GasPrice(li: 1_000_000)
+            amount: Amount(zil: 1),
+            gasPrice: GasPrice(li: 1_000_000)
         )
 
-        Container.shared.sendTransactionUseCase.register { [unowned self] in self.mockTransactions }
-        Container.shared.walletStorageUseCase.register { [unowned self] in self.mockWallet }
+        Container.shared.sendTransactionUseCase.register { [unowned self] in mockTransactions }
+        Container.shared.walletStorageUseCase.register { [unowned self] in mockWallet }
+        Container.shared.verifyEncryptionPasswordUseCase.register { [unowned self] in mockWallet }
     }
 
     override func tearDown() {
@@ -86,6 +86,10 @@ final class SignTransactionViewModelTests: XCTestCase {
 
         encryptionPassword.send(TestWalletFactory.testPassword)
         isEditingEncryptionPassword.send(false)
+        // SignTransactionViewModel.isPasswordVerified debounces 250ms before
+        // hitting the verify use case — pump the runloop past the debounce
+        // so the mock fires and combineLatest emits the final true.
+        drainRunLoop(seconds: 0.4)
 
         XCTAssertEqual(states.last, true)
     }

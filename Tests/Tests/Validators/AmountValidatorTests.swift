@@ -3,7 +3,6 @@ import Zesame
 @testable import Zhip
 
 final class AmountValidatorTests: XCTestCase {
-
     func test_validate_validZilAmountString_returnsValid() {
         let sut = AmountValidator<Amount>()
         let result = sut.validate(input: (amountString: "5", unit: .zil))

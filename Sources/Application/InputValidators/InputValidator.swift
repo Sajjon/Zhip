@@ -87,4 +87,3 @@ extension InputValidator where Input == Double, Output == Double {
         return validate(input: double)
     }
 }
-

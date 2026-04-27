@@ -24,6 +24,7 @@
 
 import Combine
 import Foundation
+import SingleLineControllerCombine
 
 // MARK: TermsOfServiceNavigation
 
@@ -73,7 +74,8 @@ final class TermsOfServiceViewModel: BaseViewModel<
 
         // Once the user reaches the bottom, the button stays enabled — no
         // need to track scroll position continuously.
-        let isAcceptButtonEnabled: AnyPublisher<Bool, Never> = input.fromView.didScrollToBottom.map { true }.eraseToAnyPublisher()
+        let isAcceptButtonEnabled: AnyPublisher<Bool, Never> = input.fromView.didScrollToBottom.map { true }
+            .eraseToAnyPublisher()
 
         if isDismissible {
             // Settings-modal context: install a "Done" right-bar button so the

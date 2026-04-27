@@ -23,6 +23,7 @@
 //
 
 import Combine
+import SingleLineControllerCombine
 import UIKit
 import XCTest
 @testable import Zhip
@@ -30,7 +31,6 @@ import XCTest
 /// Tests `Binder<Value>` — the write-only, main-thread UI primitive used by
 /// `populate(with:)` to propagate ViewModel output into UIKit controls.
 final class BinderTests: XCTestCase {
-
     final class Box {
         var value: Int = 0
     }
@@ -60,9 +60,9 @@ final class BinderTests: XCTestCase {
         wait(for: [expectation], timeout: 1)
     }
 
-    func test_afterObjectDeallocated_writesAreDropped() {
+    func test_afterObjectDeallocated_writesAreDropped() throws {
         var box: Box? = Box()
-        let binder = Binder(box!) { $0.value = $1 }
+        let binder = try Binder(XCTUnwrap(box)) { $0.value = $1 }
 
         box = nil
         binder.on(99)

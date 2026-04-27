@@ -31,7 +31,6 @@ import XCTest
 /// Verifies the ViewModel forwards accept/decline to the use case with the correct
 /// boolean and emits the `.answerQuestionAboutCrashReporting` navigation step.
 final class AskForCrashReportingPermissionsViewModelTests: XCTestCase {
-
     private var cancellables: Set<AnyCancellable> = []
     private var useCase: MockOnboardingUseCase!
     private var isHaveRead: PassthroughSubject<Bool, Never>!

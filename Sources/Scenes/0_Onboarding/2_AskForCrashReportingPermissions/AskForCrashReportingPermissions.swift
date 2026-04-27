@@ -51,4 +51,3 @@ final class AskForCrashReportingPermissions: Scene<AskForCrashReportingPermissio
         interfaceBuilderSucks
     }
 }
-

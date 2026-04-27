@@ -1,4 +1,6 @@
 //
+import SingleLineControllerCore
+
 // MIT License
 //
 // Copyright (c) 2018-2026 Open Zesame (https://github.com/OpenZesame)
@@ -22,7 +24,6 @@
 // SOFTWARE.
 //
 import UIKit
-import SingleLineControllerCore
 
 // The app uses Barlow at a small set of fixed sizes/weights. The named tokens
 // below (e.g. `.body`, `.header`, `.callToAction`) are the *only* fonts call
@@ -56,9 +57,9 @@ extension UIFont {
     static let bigBang = Font(.𝟠𝟞, .semiBold).make()
 }
 
-// Semantic aliases — same underlying fonts, but with names that read at the
-// call site. `someLabel.font = .sceneTitle` is clearer than `.title` when the
-// label *is* a scene title.
+/// Semantic aliases — same underlying fonts, but with names that read at the
+/// call site. `someLabel.font = .sceneTitle` is clearer than `.title` when the
+/// label *is* a scene title.
 extension UIFont {
     /// Alias of `.title` used by navigation/scene title labels.
     static let sceneTitle: UIFont = .title
@@ -165,4 +166,3 @@ extension Font {
         return customFont
     }
 }
-

@@ -53,4 +53,3 @@ final class TermsOfService: Scene<TermsOfServiceView>, NavigationBarLayoutOwner 
         interfaceBuilderSucks
     }
 }
-

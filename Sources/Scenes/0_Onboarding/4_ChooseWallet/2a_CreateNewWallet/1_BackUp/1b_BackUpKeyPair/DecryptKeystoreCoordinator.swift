@@ -25,9 +25,10 @@
 import Combine
 import Factory
 import Foundation
+import SingleLineControllerCombine
+import SingleLineControllerCore
 import UIKit
 import Zesame
-import SingleLineControllerCore
 
 /// Outcomes the decrypt-keystore sub-flow surfaces to its parent.
 enum DecryptKeystoreCoordinatorNavigationStep {
@@ -61,13 +62,13 @@ final class DecryptKeystoreCoordinator: BaseCoordinator<DecryptKeystoreCoordinat
     /// crashed the app on a sensitive (private-key reveal) screen.
     private lazy var wallet: AnyPublisher<Wallet, Never> = walletOverride
         ?? walletStorageUseCase.wallet
-            .compactMap { $0 }
-            .replaceErrorWithEmpty()
-            .eraseToAnyPublisher()
+        .compactMap { $0 }
+        .replaceErrorWithEmpty()
+        .eraseToAnyPublisher()
 
     /// Captures the wallet source.
     init(navigationController: UINavigationController, wallet: AnyPublisher<Wallet, Never>? = nil) {
-        self.walletOverride = wallet
+        walletOverride = wallet
         super.init(navigationController: navigationController)
     }
 
@@ -115,4 +116,3 @@ private extension DecryptKeystoreCoordinator {
         navigator.next(userFinished)
     }
 }
-

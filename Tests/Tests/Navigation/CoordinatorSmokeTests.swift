@@ -32,7 +32,6 @@ import Zesame
 /// Smoke tests that coordinator `.start()` pushes an initial scene onto the
 /// supplied `UINavigationController`.
 final class CoordinatorSmokeTests: XCTestCase {
-
     private var mockTransactions: MockTransactionsUseCase!
     private var mockWallet: MockWalletUseCase!
     private var mockPincode: MockPincodeUseCase!
@@ -43,9 +42,9 @@ final class CoordinatorSmokeTests: XCTestCase {
         mockWallet = MockWalletUseCase()
         mockWallet.storedWallet = TestWalletFactory.makeWallet()
         mockPincode = MockPincodeUseCase()
-        Container.shared.transactionsUseCase.register { [unowned self] in self.mockTransactions }
-        Container.shared.walletStorageUseCase.register { [unowned self] in self.mockWallet }
-        Container.shared.pincodeUseCase.register { [unowned self] in self.mockPincode }
+        Container.shared.transactionsUseCase.register { [unowned self] in mockTransactions }
+        Container.shared.walletStorageUseCase.register { [unowned self] in mockWallet }
+        Container.shared.pincodeUseCase.register { [unowned self] in mockPincode }
     }
 
     override func tearDown() {

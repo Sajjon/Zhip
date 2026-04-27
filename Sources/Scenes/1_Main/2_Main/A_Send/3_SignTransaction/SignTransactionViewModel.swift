@@ -25,8 +25,9 @@
 import Combine
 import Factory
 import Foundation
-import Zesame
+import SingleLineControllerCombine
 import SingleLineControllerCore
+import Zesame
 
 /// Outcome of step 3 of Send.
 enum SignTransactionUserAction {
@@ -54,7 +55,9 @@ final class SignTransactionViewModel: BaseViewModel<
     /// "this password actually decrypts the keystore" instead of just
     /// "meets the structural minimum length". Saves the user a network
     /// round-trip + confusing error on a wrong password.
-    @Injected(\.verifyEncryptionPasswordUseCase) private var verifyEncryptionPasswordUseCase: VerifyEncryptionPasswordUseCase
+    @Injected(
+        \.verifyEncryptionPasswordUseCase
+    ) private var verifyEncryptionPasswordUseCase: VerifyEncryptionPasswordUseCase
 
     /// The payment to sign.
     private let payment: Payment
@@ -139,13 +142,14 @@ final class SignTransactionViewModel: BaseViewModel<
         ].forEach { $0.store(in: &cancellables) }
 
         let encryptionPasswordValidation = // map `editingChanged` to `editingDidBegin`
-            input.fromView.encryptionPassword.mapToVoid().map { true }.merge(with: input.fromView.isEditingEncryptionPassword).withLatestFrom(encryptionPasswordValidationValue) {
-            EditingValidation(isEditing: $0, validation: $1.validation)
-        }.eagerValidLazyErrorTurnedToEmptyOnEdit(
-            directlyDisplayErrorsTrackedBy: errorTracker
-        ) {
-            WalletEncryptionPassword.Error.incorrectPasswordErrorFrom(error: $0)
-        }
+            input.fromView.encryptionPassword.mapToVoid().map { true }
+            .merge(with: input.fromView.isEditingEncryptionPassword).withLatestFrom(encryptionPasswordValidationValue) {
+                EditingValidation(isEditing: $0, validation: $1.validation)
+            }.eagerValidLazyErrorTurnedToEmptyOnEdit(
+                directlyDisplayErrorsTrackedBy: errorTracker
+            ) {
+                WalletEncryptionPassword.Error.incorrectPasswordErrorFrom(error: $0)
+            }
 
         // Sign button needs BOTH structural validity AND a successful
         // local keystore decrypt. The combineLatest emits whenever either
@@ -188,4 +192,3 @@ extension SignTransactionViewModel {
         }
     }
 }
-

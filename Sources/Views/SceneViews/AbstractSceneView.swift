@@ -23,8 +23,9 @@
 //
 
 import Combine
-import UIKit
+import SingleLineControllerCombine
 import SingleLineControllerCore
+import UIKit
 
 /// Common base for every scene's root `UIView`. Owns a vertically-scrolling
 /// container (`scrollView`) and, for `PullToRefreshCapable` subclasses,
@@ -132,4 +133,3 @@ extension PullToRefreshCapable where Self: AbstractSceneView {
         refreshControl.publisher(for: .valueChanged).eraseToAnyPublisher()
     }
 }
-

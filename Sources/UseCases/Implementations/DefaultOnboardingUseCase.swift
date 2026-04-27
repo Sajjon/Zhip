@@ -32,7 +32,6 @@ import Zesame
 /// crash reporting answers) live in `preferences` (UserDefaults); sensitive
 /// pincode existence is inferred from `securePersistence` (Keychain).
 final class DefaultOnboardingUseCase {
-
     /// Non-secret key-value store (backed by `UserDefaults` in production).
     private let preferences: Preferences
 
@@ -54,7 +53,6 @@ final class DefaultOnboardingUseCase {
 }
 
 extension DefaultOnboardingUseCase: OnboardingUseCase {
-
     /// `true` once the user has accepted the Terms of Service.
     var hasAcceptedTermsOfService: Bool {
         preferences.isTrue(.hasAcceptedTermsOfService)

@@ -31,7 +31,6 @@ import Foundation
 /// Registered globally in `SilenceSideEffects`, so every test gets the fast
 /// path without per-file boilerplate.
 final class ImmediateClock: Clock {
-
     init() {}
 
     @discardableResult

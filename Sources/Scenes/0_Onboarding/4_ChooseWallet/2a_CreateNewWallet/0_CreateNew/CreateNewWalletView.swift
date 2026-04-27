@@ -23,6 +23,7 @@
 //
 
 import Combine
+import SingleLineControllerCombine
 import UIKit
 
 /// The "create new wallet" screen view — collects an encryption password (twice),

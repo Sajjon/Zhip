@@ -30,7 +30,6 @@ import Zesame
 /// Each method returns the corresponding `*Result` property once, wrapped in a
 /// publisher. Call counters are exposed for assertions.
 final class MockZilliqaServiceReactive: ZilliqaServiceReactive {
-
     var createNewWalletResult: Result<Zesame.Wallet, Zesame.Error>?
     var restoreWalletResult: Result<Zesame.Wallet, Zesame.Error>?
     var verifyEncryptionPasswordResult: Result<Bool, Zesame.Error>?
@@ -64,14 +63,14 @@ final class MockZilliqaServiceReactive: ZilliqaServiceReactive {
         return Self.publisher(for: networkResult)
     }
 
-    func getMinimumGasPrice(alsoUpdateLocallyCachedMinimum: Bool)
+    func getMinimumGasPrice(alsoUpdateLocallyCachedMinimum _: Bool)
         -> AnyPublisher<MinimumGasPriceResponse, Zesame.Error>
     {
         getMinimumGasPriceCallCount += 1
         return Self.publisher(for: minimumGasPriceResult)
     }
 
-    func verifyThat(encryptionPassword: String, canDecryptKeystore: Keystore)
+    func verifyThat(encryptionPassword: String, canDecryptKeystore _: Keystore)
         -> AnyPublisher<Bool, Zesame.Error>
     {
         verifyEncryptionPasswordCallCount += 1
@@ -96,13 +95,13 @@ final class MockZilliqaServiceReactive: ZilliqaServiceReactive {
         return Self.publisher(for: restoreWalletResult)
     }
 
-    func exportKeystore(privateKey: PrivateKey, encryptWalletBy password: String)
+    func exportKeystore(privateKey _: PrivateKey, encryptWalletBy _: String)
         -> AnyPublisher<Keystore, Zesame.Error>
     {
         Empty<Keystore, Zesame.Error>().eraseToAnyPublisher()
     }
 
-    func extractKeyPairFrom(keystore: Keystore, encryptedBy password: String)
+    func extractKeyPairFrom(keystore _: Keystore, encryptedBy _: String)
         -> AnyPublisher<KeyPair, Zesame.Error>
     {
         extractKeyPairCallCount += 1
@@ -115,7 +114,7 @@ final class MockZilliqaServiceReactive: ZilliqaServiceReactive {
         return Self.publisher(for: balanceResult)
     }
 
-    func sendTransaction(for payment: Payment, keystore: Keystore, password: String, network: Network)
+    func sendTransaction(for _: Payment, keystore _: Keystore, password: String, network _: Network)
         -> AnyPublisher<TransactionResponse, Zesame.Error>
     {
         sendTransactionCallCount += 1
@@ -123,13 +122,13 @@ final class MockZilliqaServiceReactive: ZilliqaServiceReactive {
         return Self.publisher(for: sendTransactionResult)
     }
 
-    func sendTransaction(for payment: Payment, signWith keyPair: KeyPair, network: Network)
+    func sendTransaction(for _: Payment, signWith _: KeyPair, network _: Network)
         -> AnyPublisher<TransactionResponse, Zesame.Error>
     {
         Self.publisher(for: sendTransactionResult)
     }
 
-    func hasNetworkReachedConsensusYetForTransactionWith(id: String, polling: Polling)
+    func hasNetworkReachedConsensusYetForTransactionWith(id: String, polling _: Polling)
         -> AnyPublisher<TransactionReceipt, Zesame.Error>
     {
         receiptCallCount += 1
@@ -140,9 +139,9 @@ final class MockZilliqaServiceReactive: ZilliqaServiceReactive {
     private static func publisher<T>(for result: Result<T, Zesame.Error>?) -> AnyPublisher<T, Zesame.Error> {
         guard let result else { return Empty<T, Zesame.Error>().eraseToAnyPublisher() }
         switch result {
-        case .success(let value):
+        case let .success(value):
             return Just(value).setFailureType(to: Zesame.Error.self).eraseToAnyPublisher()
-        case .failure(let error):
+        case let .failure(error):
             return Fail<T, Zesame.Error>(error: error).eraseToAnyPublisher()
         }
     }

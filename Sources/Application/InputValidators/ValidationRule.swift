@@ -123,4 +123,3 @@ public extension Validatable {
 // MARK: - String conformance (used by address/hex validators)
 
 extension String: Validatable {}
-

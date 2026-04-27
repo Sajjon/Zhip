@@ -31,7 +31,6 @@ import Foundation
 /// pincode setup" preference lives in UserDefaults because losing it on reinstall
 /// is fine.
 final class DefaultPincodeUseCase {
-
     /// Non-secret key-value store used only to remember the "skip pincode setup"
     /// preference.
     private let preferences: Preferences
@@ -47,7 +46,6 @@ final class DefaultPincodeUseCase {
 }
 
 extension DefaultPincodeUseCase: PincodeUseCase {
-
     /// Marks the onboarding pincode prompt as dismissed so we don't prompt again
     /// on subsequent launches.
     func skipSettingUpPincode() {

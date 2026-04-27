@@ -23,6 +23,7 @@
 //
 
 import Combine
+import SingleLineControllerCombine
 import UIKit
 
 /// Pincode-unlock screen — N-digit input + descriptive label. No CTA — entering

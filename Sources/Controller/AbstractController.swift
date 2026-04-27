@@ -1,8 +1,8 @@
 // MIT License — Copyright (c) 2018-2026 Open Zesame
 
 import Combine
-import UIKit
 import SingleLineControllerCore
+import UIKit
 
 /// Common ancestor of every screen-level `UIViewController` in the app.
 ///
@@ -38,6 +38,7 @@ class AbstractController: UIViewController {
 extension AbstractController {
     /// Default `description` is the runtime class name — handy in logs to identify
     /// the concrete `SceneController<…>` specialisation without an inheritance dance.
-    override var description: String { "\(type(of: self))" }
+    override var description: String {
+        "\(type(of: self))"
+    }
 }
-

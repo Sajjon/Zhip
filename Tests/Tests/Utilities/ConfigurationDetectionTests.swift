@@ -28,7 +28,6 @@ import XCTest
 /// Smoke test that forces evaluation of the `isDebug` lazy `let` closure so the
 /// `assert`-based probe and `set(debug:)` function both register as covered.
 final class ConfigurationDetectionTests: XCTestCase {
-
     func test_isDebug_evaluatesWithoutCrashing() {
         // The value depends on optimization level of the host target, which
         // we don't control here — the point of this test is to force the

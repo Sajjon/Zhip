@@ -34,7 +34,6 @@ import Zesame
 /// a non-nil key restoration, and the restore path which calls the use case and
 /// emits `.restoreWallet`.
 final class RestoreWalletViewModelTests: XCTestCase {
-
     private var cancellables: Set<AnyCancellable> = []
     private var segmentSubject: CurrentValueSubject<RestoreWalletViewModel.InputFromView.Segment, Never>!
     private var privateKeyRestorationSubject: CurrentValueSubject<KeyRestoration?, Never>!
@@ -51,7 +50,7 @@ final class RestoreWalletViewModelTests: XCTestCase {
         restoreTrigger = PassthroughSubject<Void, Never>()
         fakeController = FakeInputFromController()
         mockWallet = MockWalletUseCase()
-        Container.shared.restoreWalletUseCase.register { [unowned self] in self.mockWallet }
+        Container.shared.restoreWalletUseCase.register { [unowned self] in mockWallet }
     }
 
     override func tearDown() {

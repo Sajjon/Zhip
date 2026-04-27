@@ -23,6 +23,7 @@
 //
 
 import Combine
+import SingleLineControllerCombine
 import XCTest
 @testable import Zhip
 
@@ -30,7 +31,6 @@ import XCTest
 
 /// Covers Publisher+Helpers static constructors and combineLatest overloads.
 final class PublisherHelpersTests: XCTestCase {
-
     private var cancellables: Set<AnyCancellable> = []
 
     override func tearDown() {
@@ -203,6 +203,7 @@ final class PublisherHelpersTests: XCTestCase {
         XCTAssertEqual(last?.0, 1)
         XCTAssertEqual(last?.3, 4)
     }
+
     // swiftlint:enable large_tuple
 
     func test_combineLatest_twoPublishersWithSelector_mapsResult() {
@@ -301,6 +302,7 @@ final class PublisherHelpersTests: XCTestCase {
 
         XCTAssertEqual(last?.3, 4)
     }
+
     // swiftlint:enable large_tuple
 
     func test_anyPublisher_combineLatest_twoPublishersWithSelector_mapsResult() {
@@ -357,4 +359,5 @@ final class PublisherHelpersTests: XCTestCase {
         XCTAssertEqual(last, 15)
     }
 }
+
 // swiftlint:enable type_body_length

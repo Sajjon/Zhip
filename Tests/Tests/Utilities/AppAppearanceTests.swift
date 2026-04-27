@@ -4,7 +4,6 @@ import XCTest
 
 @MainActor
 final class AppAppearanceTests: XCTestCase {
-
     // MARK: - UINavigationBar.shadow getter
 
     func test_shadow_getterAlwaysReturnsFalse() {

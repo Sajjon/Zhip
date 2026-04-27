@@ -23,6 +23,7 @@
 //
 
 import Combine
+import SingleLineControllerCombine
 import Zesame
 
 /// Strict password mode — restoring from a raw private key means we're picking
@@ -48,34 +49,40 @@ final class RestoreWalletUsingPrivateKeyViewModel {
         let unconfirmedPassword = inputFromView.newEncryptionPassword
         let confirmingPassword = inputFromView.confirmEncryptionPassword
 
-        let confirmEncryptionPasswordValidationValue: AnyPublisher<EncryptionPasswordValidator.ValidationResult, Never> =
+        let confirmEncryptionPasswordValidationValue: AnyPublisher<
+            EncryptionPasswordValidator.ValidationResult,
+            Never
+        > =
             unconfirmedPassword.combineLatest(confirmingPassword)
-            .map {
-                validator.validateConfirmedEncryptionPassword($0.0, confirmedBy: $0.1)
-            }.eraseToAnyPublisher()
+                .map {
+                    validator.validateConfirmedEncryptionPassword($0.0, confirmedBy: $0.1)
+                }.eraseToAnyPublisher()
 
         let encryptionPasswordPlaceHolder = Just(String(localized: .RestoreWallet
-            .privateKeyEncryptionPasswordField(minLength: WalletEncryptionPassword
-                .minimumLength(mode: encryptionPasswordMode))))
+                .privateKeyEncryptionPasswordField(minLength: WalletEncryptionPassword
+                    .minimumLength(mode: encryptionPasswordMode))))
             .eraseToAnyPublisher()
 
-        let privateKeyFieldIsSecureTextEntry: AnyPublisher<Bool, Never> = inputFromView.showPrivateKeyTrigger.scan(true) { lastState, _ in
-            !lastState
-        }.eraseToAnyPublisher()
+        let privateKeyFieldIsSecureTextEntry: AnyPublisher<Bool, Never> = inputFromView.showPrivateKeyTrigger
+            .scan(true) { lastState, _ in
+                !lastState
+            }.eraseToAnyPublisher()
 
         let togglePrivateKeyVisibilityButtonTitle: AnyPublisher<String, Never> = privateKeyFieldIsSecureTextEntry.map {
             $0 ? String(localized: .Generic.show) : String(localized: .Generic.hide)
         }.eraseToAnyPublisher()
 
-        let encryptionPasswordValidationTrigger: AnyPublisher<Bool, Never> = unconfirmedPassword.mapToVoid().map { true }
+        let encryptionPasswordValidationTrigger: AnyPublisher<Bool, Never> = unconfirmedPassword.mapToVoid()
+            .map { true }
             .merge(with: inputFromView.isEditingNewEncryptionPassword)
             .eraseToAnyPublisher()
 
-        let encryptionPasswordValidation: AnyPublisher<AnyValidation, Never> = encryptionPasswordValidationTrigger.withLatestFrom(
-            unconfirmedPassword.map { validator.validateNewEncryptionPassword($0) }.eraseToAnyPublisher()
-        ) {
-            EditingValidation(isEditing: $0, validation: $1.validation)
-        }.eagerValidLazyErrorTurnedToEmptyOnEdit()
+        let encryptionPasswordValidation: AnyPublisher<AnyValidation, Never> = encryptionPasswordValidationTrigger
+            .withLatestFrom(
+                unconfirmedPassword.map { validator.validateNewEncryptionPassword($0) }.eraseToAnyPublisher()
+            ) {
+                EditingValidation(isEditing: $0, validation: $1.validation)
+            }.eagerValidLazyErrorTurnedToEmptyOnEdit()
 
         // map `editingChanged` to `editingDidBegin`
         let confirmEditingTrigger = confirmingPassword.mapToVoid().map { true }

@@ -24,8 +24,9 @@
 
 import Combine
 import Factory
-import Zesame
+import SingleLineControllerCombine
 import SingleLineControllerCore
+import Zesame
 
 /// Navigation from RestoreWallet
 enum RestoreWalletNavigation {
@@ -88,7 +89,7 @@ final class RestoreWalletViewModel: BaseViewModel<
                 // useful if scrypt is mid-decryption with the wrong password.
                 .flatMapLatest { [weak self] restoration -> AnyPublisher<Wallet, Never> in
                     guard let self else { return Empty().eraseToAnyPublisher() }
-                    return self.restoreWalletUseCase.restoreWallet(from: restoration)
+                    return restoreWalletUseCase.restoreWallet(from: restoration)
                         .trackActivity(activityIndicator)
                         .trackError(errorTracker)
                         .replaceErrorWithEmpty()
@@ -150,4 +151,3 @@ extension RestoreWalletViewModel {
         let keystoreRestorationError: AnyPublisher<AnyValidation, Never>
     }
 }
-

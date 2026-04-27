@@ -8,7 +8,6 @@ private final class FakeOwner: UIViewController, NavigationBarLayoutOwner {
 
 @MainActor
 final class NavigationBarLayoutingNavigationControllerTests: XCTestCase {
-
     func test_pushViewController_appliesLayoutFromOwner() {
         let owner = FakeOwner()
         let nav = NavigationBarLayoutingNavigationController()
@@ -117,13 +116,19 @@ final class NavigationBarLayoutingNavigationControllerTests: XCTestCase {
     func test_gestureRecognizer_shouldRecognizeSimultaneously_returnsTrue() {
         let nav = NavigationBarLayoutingNavigationController()
 
-        XCTAssertTrue(nav.gestureRecognizer(UIGestureRecognizer(), shouldRecognizeSimultaneouslyWith: UIGestureRecognizer()))
+        XCTAssertTrue(nav.gestureRecognizer(
+            UIGestureRecognizer(),
+            shouldRecognizeSimultaneouslyWith: UIGestureRecognizer()
+        ))
     }
 
     func test_gestureRecognizer_shouldRequireFailureOf_returnsTrueForScreenEdge() {
         let nav = NavigationBarLayoutingNavigationController()
 
-        XCTAssertTrue(nav.gestureRecognizer(UIGestureRecognizer(), shouldRequireFailureOf: UIScreenEdgePanGestureRecognizer()))
+        XCTAssertTrue(nav.gestureRecognizer(
+            UIGestureRecognizer(),
+            shouldRequireFailureOf: UIScreenEdgePanGestureRecognizer()
+        ))
     }
 
     func test_gestureRecognizer_shouldRequireFailureOf_returnsFalseForOtherTypes() {

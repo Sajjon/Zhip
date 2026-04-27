@@ -28,7 +28,6 @@ import Foundation
 ///
 /// Backed by `Int` so `Digit(rawValue:)` accepts the corresponding integer literal.
 enum Digit: Int, Codable, Equatable {
-
     case zero = 0
     case one
     case two
@@ -42,7 +41,6 @@ enum Digit: Int, Codable, Equatable {
 }
 
 extension Digit {
-
     /// Parses a single-character numeric string. Returns `nil` if `string` is not a
     /// decimal representation of a value in `0...9`.
     init?(string: String) {
@@ -58,7 +56,6 @@ extension Digit {
 }
 
 extension Digit: CustomStringConvertible {
-
     /// The digit's decimal representation (`"0"` through `"9"`).
     var description: String {
         String(describing: rawValue)

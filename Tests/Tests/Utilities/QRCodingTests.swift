@@ -31,7 +31,6 @@ import Zesame
 /// returns nil (no QR content); encoding a valid `TransactionIntent` returns
 /// an image.
 final class QRCodingTests: XCTestCase {
-
     private var sut: QRCoder!
 
     override func setUp() {

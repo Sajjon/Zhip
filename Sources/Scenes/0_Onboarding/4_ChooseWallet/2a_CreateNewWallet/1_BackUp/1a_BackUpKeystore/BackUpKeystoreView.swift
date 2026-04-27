@@ -23,6 +23,7 @@
 //
 
 import Combine
+import SingleLineControllerCombine
 import UIKit
 
 /// Keystore-reveal screen — pretty-printed JSON in a non-editable text view

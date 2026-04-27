@@ -23,6 +23,7 @@
 //
 
 import Combine
+import SingleLineControllerCombine
 import UIKit
 import Zesame
 
@@ -182,7 +183,9 @@ private extension RestoreWalletView {
         add(segment: .privateKey, titled: String(localized: .RestoreWallet.privateKeySegment))
 
         restorationMethodSegmentedControl.publisher(for: .valueChanged)
-            .map { [weak restorationMethodSegmentedControl] _ in restorationMethodSegmentedControl?.selectedSegmentIndex ?? 0 }
+            .map { [weak restorationMethodSegmentedControl] _ in
+                restorationMethodSegmentedControl?.selectedSegmentIndex ?? 0
+            }
             .map { Segment(rawValue: $0) }
             .filterNil()
             .sink { [weak self] in self?.switchToViewFor(selectedSegment: $0) }.store(in: &cancellables)

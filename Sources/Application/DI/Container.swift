@@ -33,7 +33,6 @@ import Zesame
 let network: Network = .mainnet
 
 extension KeyValueStore where KeyType == PreferencesKey {
-
     /// The app-wide default `Preferences` store, backed by `UserDefaults.standard`.
     static var `default`: Preferences {
         KeyValueStore(UserDefaults.standard)
@@ -43,7 +42,6 @@ extension KeyValueStore where KeyType == PreferencesKey {
 // MARK: - Services
 
 extension Container {
-
     /// The reactive façade over `Zesame` blockchain operations. Shared across every
     /// use case so they all talk to the same underlying service instance.
     var zilliqaService: Factory<ZilliqaServiceReactive> {
@@ -139,7 +137,6 @@ extension Container {
 // MARK: - Composite use cases (subsystems that remain monolithic)
 
 extension Container {
-
     var transactionsUseCase: Factory<TransactionsUseCase> {
         self {
             DefaultTransactionsUseCase(
@@ -176,7 +173,6 @@ extension Container {
 // MARK: - Narrow wallet use cases
 
 extension Container {
-
     var createWalletUseCase: Factory<CreateWalletUseCase> {
         self { DefaultCreateWalletUseCase() }
     }
@@ -201,7 +197,6 @@ extension Container {
 // MARK: - Narrow transactions use cases
 
 extension Container {
-
     var balanceCacheUseCase: Factory<BalanceCacheUseCase> {
         self { self.transactionsUseCase() }
     }

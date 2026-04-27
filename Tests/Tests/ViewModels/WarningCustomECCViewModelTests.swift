@@ -31,7 +31,6 @@ import XCTest
 /// Verifies the ViewModel calls `didAcceptCustomECCWarning()` once and emits
 /// the `.acceptRisks` navigation step when the user accepts the warning.
 final class WarningCustomECCViewModelTests: XCTestCase {
-
     private var cancellables: Set<AnyCancellable> = []
     private var useCase: MockOnboardingUseCase!
     private var didScrollToBottom: PassthroughSubject<Void, Never>!

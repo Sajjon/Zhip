@@ -32,13 +32,12 @@ import Foundation
 /// Default `now` is the Unix epoch so tests that don't care about the specific
 /// instant still get a deterministic value.
 final class FixedDateProvider: DateProvider {
-
     /// The `Date` returned by `now()`. Mutate between calls to simulate time
     /// passing within a single test.
     var fixedNow: Date
 
     init(now: Date = Date(timeIntervalSince1970: 0)) {
-        self.fixedNow = now
+        fixedNow = now
     }
 
     func now() -> Date {

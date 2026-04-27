@@ -23,6 +23,7 @@
 //
 
 import Combine
+import SingleLineControllerCombine
 import UIKit
 
 /// Pincode chooser screen — N-digit pincode input + disclaimer + done CTA.

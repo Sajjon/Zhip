@@ -30,7 +30,6 @@ import Foundation
 /// target was requested without triggering a real OS-level open (which hangs
 /// the runloop in the iOS simulator).
 final class MockUrlOpener: UrlOpener {
-
     /// The most recent URL passed to `open(_:)`, or `nil` if none yet.
     private(set) var lastOpenedUrl: URL?
 

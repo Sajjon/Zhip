@@ -22,8 +22,8 @@
 // SOFTWARE.
 //
 
-import UIKit
 import SingleLineControllerCore
+import UIKit
 
 /// Pair of unit-square points describing a gradient's start and end.
 /// `x` is the start point, `y` is the end point — yes the names are awkward,
@@ -163,4 +163,3 @@ public extension GradientViewProvider where Self: GradientView {
 extension GradientView: GradientViewProvider {
     public typealias GradientViewType = GradientLayer
 }
-

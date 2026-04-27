@@ -22,8 +22,8 @@
 // SOFTWARE.
 //
 
-import UIKit
 import SingleLineControllerCore
+import UIKit
 
 /// A concrete `UIView` subclass that also conforms to `ViewModelled` — i.e. a view
 /// that knows how to construct itself empty (`EmptyInitializable`) and how to bind
@@ -44,4 +44,3 @@ typealias ContentView = UIView & ViewModelled
 /// requires subclass, inherit from `SceneController`.
 typealias Scene<View: ContentView> = SceneController<View> & TitledScene
     where View.ViewModel.Input.FromController == InputFromController
-

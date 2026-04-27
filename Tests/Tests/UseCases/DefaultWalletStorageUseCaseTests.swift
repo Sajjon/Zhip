@@ -31,7 +31,6 @@ import XCTest
 /// injected `SecurePersistence` (here an in-memory store from
 /// `TestStoreFactory`).
 final class DefaultWalletStorageUseCaseTests: XCTestCase {
-
     override func setUp() {
         super.setUp()
         Container.shared.securePersistence.register { TestStoreFactory.makeSecurePersistence() }

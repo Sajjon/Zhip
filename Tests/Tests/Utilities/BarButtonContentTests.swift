@@ -3,7 +3,6 @@ import XCTest
 @testable import Zhip
 
 final class BarButtonContentTests: XCTestCase {
-
     func test_initWithTitle_storesTextTypeAndPlainStyle() {
         let sut = BarButtonContent(title: "Cancel")
         if case let .text(text) = sut.type {

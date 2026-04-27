@@ -3,7 +3,6 @@ import XCTest
 @testable import Zhip
 
 final class ToastTests: XCTestCase {
-
     func test_initWithDefaults_createsAutoDismissToast() {
         let sut = Toast("hello")
         _ = sut // non-optional, simply verify init doesn't crash

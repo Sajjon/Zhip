@@ -23,6 +23,7 @@
 //
 
 import Combine
+import SingleLineControllerCombine
 import UIKit
 
 /// Wallet-removal confirmation — "are you sure" header + "I have backed up"

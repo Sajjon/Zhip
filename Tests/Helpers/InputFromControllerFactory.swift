@@ -32,7 +32,6 @@ import Foundation
 /// simulate lifecycle callbacks, then inspect the `leftBarButtonContentSubject` /
 /// `titleSubject` / `toastSubject` outputs the ViewModel pushed back.
 struct FakeInputFromController {
-
     /// Emits when the view controller would notify `viewDidLoad`.
     let viewDidLoadSubject = PassthroughSubject<Void, Never>()
 

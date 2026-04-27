@@ -32,7 +32,6 @@ import XCTest
 /// `zilliqa://` deep-links) and emits `.scanQRContainingTransaction` on success. It
 /// also honors a toast + cancel path on failure/left-bar-button taps.
 final class ScanQRCodeViewModelTests: XCTestCase {
-
     private var cancellables: Set<AnyCancellable> = []
     private var scannedSubject: PassthroughSubject<String?, Never>!
     private var fakeController: FakeInputFromController!

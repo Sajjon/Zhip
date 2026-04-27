@@ -25,9 +25,10 @@
 import Combine
 import Factory
 import Foundation
+import SingleLineControllerCombine
+import SingleLineControllerCore
 import UIKit
 import Zesame
-import SingleLineControllerCore
 
 /// Outcomes the backup sub-flow surfaces to its parent.
 enum BackupWalletCoordinatorNavigationStep {
@@ -70,9 +71,9 @@ final class BackupWalletCoordinator: BaseCoordinator<BackupWalletCoordinatorNavi
     /// reachable on race conditions.
     private lazy var wallet: AnyPublisher<Wallet, Never> = walletOverride
         ?? walletStorageUseCase.wallet
-            .compactMap { $0 }
-            .replaceErrorWithEmpty()
-            .eraseToAnyPublisher()
+        .compactMap { $0 }
+        .replaceErrorWithEmpty()
+        .eraseToAnyPublisher()
 
     /// Captures the wallet source + mode. Defaulting `wallet = nil` and
     /// `mode = .cancellable` lets the create-flow pass `wallet:` and Settings
@@ -82,7 +83,7 @@ final class BackupWalletCoordinator: BaseCoordinator<BackupWalletCoordinatorNavi
         wallet: AnyPublisher<Wallet, Never>? = nil,
         mode: BackupWalletViewModel.Mode = .cancellable
     ) {
-        self.walletOverride = wallet
+        walletOverride = wallet
         self.mode = mode
         super.init(navigationController: navigationController)
     }
@@ -104,10 +105,10 @@ private extension BackupWalletCoordinator {
         push(scene: BackupWallet.self, viewModel: viewModel) { [weak self] userDid in
             guard let self else { return }
             switch userDid {
-            case .revealKeystore: self.toRevealKeystore()
-            case .revealPrivateKey: self.toDecryptKeystoreToRevealKeyPair()
-            case .cancelOrDismiss: self.cancel()
-            case .backupWallet: self.finish()
+            case .revealKeystore: toRevealKeystore()
+            case .revealPrivateKey: toDecryptKeystoreToRevealKeyPair()
+            case .cancelOrDismiss: cancel()
+            case .backupWallet: finish()
             }
         }
     }
@@ -150,4 +151,3 @@ private extension BackupWalletCoordinator {
         navigator.next(userFinished)
     }
 }
-

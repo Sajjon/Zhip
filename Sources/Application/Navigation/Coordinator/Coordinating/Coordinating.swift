@@ -23,5 +23,7 @@ protocol Coordinating: AnyObject, CustomStringConvertible {
 extension Coordinating {
     /// Default `CustomStringConvertible` impl — recursive ascii dump of the
     /// coordinator/scene tree, useful in `po self` during debugging.
-    var description: String { stringRepresentation(level: 1) }
+    var description: String {
+        stringRepresentation(level: 1)
+    }
 }

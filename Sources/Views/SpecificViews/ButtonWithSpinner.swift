@@ -22,8 +22,9 @@
 // SOFTWARE.
 //
 
-import UIKit
+import SingleLineControllerCombine
 import SingleLineControllerCore
+import UIKit
 
 /// `UIButton` subclass that overlays a spinner during async work, surfaced to
 /// the reactive layer via `isLoadingBinder`. Used as the primary continue button
@@ -120,4 +121,3 @@ extension ButtonWithSpinner {
         }
     }
 }
-

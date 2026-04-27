@@ -31,7 +31,6 @@ import Foundation
 /// updates a corresponding `…Called` flag / count so tests can verify the ViewModel
 /// interacted with the use case.
 final class MockOnboardingUseCase: OnboardingUseCase {
-
     // MARK: - TermsOfService
 
     /// Value returned from `hasAcceptedTermsOfService`. Mutable so tests can seed.

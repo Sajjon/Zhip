@@ -22,8 +22,8 @@
 // SOFTWARE.
 //
 
-import UIKit
 import SingleLineControllerCore
+import UIKit
 
 /// `UITextView` subclass that reports its `contentSize.height` as its
 /// `intrinsicContentSize.height` so the surrounding stack view can size it
@@ -59,4 +59,3 @@ final class ScrollableContentSizedTextView: UITextView {
         CGSize(width: UIView.noIntrinsicMetric, height: contentSize.height)
     }
 }
-

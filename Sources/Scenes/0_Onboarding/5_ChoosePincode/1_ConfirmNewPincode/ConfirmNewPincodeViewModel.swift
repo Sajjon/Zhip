@@ -24,6 +24,7 @@
 
 import Combine
 import Foundation
+import SingleLineControllerCombine
 
 // MARK: - ConfirmNewPincodeUserAction
 
@@ -65,9 +66,10 @@ final class ConfirmNewPincodeViewModel: BaseViewModel<
 
         let validator = InputValidator(existingPincode: unconfirmedPincode)
 
-        let pincodeValidationValue: AnyPublisher<PincodeValidator.ValidationResult, Never> = input.fromView.pincode.map {
-            validator.validate(unconfirmedPincode: $0)
-        }.eraseToAnyPublisher()
+        let pincodeValidationValue: AnyPublisher<PincodeValidator.ValidationResult, Never> = input.fromView.pincode
+            .map {
+                validator.validate(unconfirmedPincode: $0)
+            }.eraseToAnyPublisher()
         let isConfirmPincodeEnabled: AnyPublisher<Bool, Never> = pincodeValidationValue.map(\.isValid)
             .combineLatest(input.fromView.isHaveBackedUpPincodeCheckboxChecked) { isPincodeValid, isBackedUpChecked in
                 isPincodeValid && isBackedUpChecked

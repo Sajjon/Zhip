@@ -3,7 +3,6 @@ import Zesame
 @testable import Zhip
 
 final class DeepLinkGeneratorTests: XCTestCase {
-
     func test_linkTo_transaction_usesHttpsAndZhipHostAndSendPath() throws {
         let address = try Address(string: "e3090a1309DfAC40352d03dEc6cCD9cAd213e76B")
         let intent = TransactionIntent(to: address)

@@ -33,7 +33,6 @@ import Zesame
 /// `UINavigationController`, drives `start()`, and verifies the initial scene
 /// is pushed.
 final class MainCoordinatorTests: XCTestCase {
-
     private var window: UIWindow!
     private var navigationController: NavigationBarLayoutingNavigationController!
     private var deeplinkSubject: PassthroughSubject<TransactionIntent, Never>!
@@ -49,8 +48,8 @@ final class MainCoordinatorTests: XCTestCase {
         mockTransactions = MockTransactionsUseCase()
         mockWallet = MockWalletUseCase()
         mockWallet.storedWallet = TestWalletFactory.makeWallet()
-        Container.shared.transactionsUseCase.register { [unowned self] in self.mockTransactions }
-        Container.shared.walletStorageUseCase.register { [unowned self] in self.mockWallet }
+        Container.shared.transactionsUseCase.register { [unowned self] in mockTransactions }
+        Container.shared.walletStorageUseCase.register { [unowned self] in mockWallet }
         window = UIWindow(frame: .init(x: 0, y: 0, width: 320, height: 480))
         window.rootViewController = navigationController
         window.makeKeyAndVisible()
@@ -104,7 +103,7 @@ final class MainCoordinatorTests: XCTestCase {
 
     func test_deeplinkedTransaction_whenChildAlreadyPresented_isNoOp() throws {
         sut.start()
-        let main = top(as: Main.self)!
+        let main = try XCTUnwrap(top(as: Main.self))
         main.viewModel.navigator.next(.send)
         drainRunLoop()
         let childCountBefore = sut.childCoordinators.count
@@ -118,9 +117,9 @@ final class MainCoordinatorTests: XCTestCase {
 
     // MARK: - MainViewModel user-intent branches
 
-    func test_sendIntent_startsSendChildCoordinator() {
+    func test_sendIntent_startsSendChildCoordinator() throws {
         sut.start()
-        let main = top(as: Main.self)!
+        let main = try XCTUnwrap(top(as: Main.self))
 
         main.viewModel.navigator.next(.send)
         drainRunLoop()
@@ -128,9 +127,9 @@ final class MainCoordinatorTests: XCTestCase {
         XCTAssertTrue(sut.childCoordinators.contains { $0 is SendCoordinator })
     }
 
-    func test_receiveIntent_startsReceiveChildCoordinator() {
+    func test_receiveIntent_startsReceiveChildCoordinator() throws {
         sut.start()
-        let main = top(as: Main.self)!
+        let main = try XCTUnwrap(top(as: Main.self))
 
         main.viewModel.navigator.next(.receive)
         drainRunLoop()
@@ -138,9 +137,9 @@ final class MainCoordinatorTests: XCTestCase {
         XCTAssertTrue(sut.childCoordinators.contains { $0 is ReceiveCoordinator })
     }
 
-    func test_goToSettingsIntent_startsSettingsChildCoordinator() {
+    func test_goToSettingsIntent_startsSettingsChildCoordinator() throws {
         sut.start()
-        let main = top(as: Main.self)!
+        let main = try XCTUnwrap(top(as: Main.self))
 
         main.viewModel.navigator.next(.goToSettings)
         drainRunLoop()
@@ -156,7 +155,7 @@ final class MainCoordinatorTests: XCTestCase {
 
     func test_sendFinish_dismissesSendChildCoordinator() throws {
         sut.start()
-        let main = top(as: Main.self)!
+        let main = try XCTUnwrap(top(as: Main.self))
         main.viewModel.navigator.next(.send)
         drainRunLoop()
         let send = try firstChild(as: SendCoordinator.self)
@@ -169,7 +168,7 @@ final class MainCoordinatorTests: XCTestCase {
 
     func test_sendFinish_withoutBalanceFetching_dismissesSendChildCoordinator() throws {
         sut.start()
-        let main = top(as: Main.self)!
+        let main = try XCTUnwrap(top(as: Main.self))
         main.viewModel.navigator.next(.send)
         drainRunLoop()
         let send = try firstChild(as: SendCoordinator.self)
@@ -182,7 +181,7 @@ final class MainCoordinatorTests: XCTestCase {
 
     func test_receiveFinish_dismissesReceiveChildCoordinator() throws {
         sut.start()
-        let main = top(as: Main.self)!
+        let main = try XCTUnwrap(top(as: Main.self))
         main.viewModel.navigator.next(.receive)
         drainRunLoop()
         let receive = try firstChild(as: ReceiveCoordinator.self)
@@ -195,7 +194,7 @@ final class MainCoordinatorTests: XCTestCase {
 
     func test_settingsCloseSettings_dismissesSettingsChildCoordinator() throws {
         sut.start()
-        let main = top(as: Main.self)!
+        let main = try XCTUnwrap(top(as: Main.self))
         main.viewModel.navigator.next(.goToSettings)
         drainRunLoop()
         let settings = try firstChild(as: SettingsCoordinator.self)
@@ -208,7 +207,7 @@ final class MainCoordinatorTests: XCTestCase {
 
     func test_settingsRemoveWallet_bubblesRemoveWalletNavigationStep() throws {
         sut.start()
-        let main = top(as: Main.self)!
+        let main = try XCTUnwrap(top(as: Main.self))
         main.viewModel.navigator.next(.goToSettings)
         drainRunLoop()
         let settings = try firstChild(as: SettingsCoordinator.self)

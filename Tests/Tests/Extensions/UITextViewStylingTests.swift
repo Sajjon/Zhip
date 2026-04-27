@@ -3,7 +3,6 @@ import XCTest
 @testable import Zhip
 
 final class UITextViewStylingTests: XCTestCase {
-
     // MARK: - apply
 
     func test_apply_appliesAllProvidedAttributes() {

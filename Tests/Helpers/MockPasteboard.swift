@@ -29,7 +29,6 @@ import Foundation
 /// Records each `copy(...)` invocation so tests can assert on intent without
 /// leaking clipboard data across test runs or onto the host device.
 final class MockPasteboard: Pasteboard {
-
     /// The most recent string passed to `copy(_:expiringAfter:)`, or `nil` if
     /// no copy has occurred since this mock was created or reset.
     private(set) var copiedString: String?

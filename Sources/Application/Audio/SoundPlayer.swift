@@ -29,7 +29,6 @@ import Foundation
 /// trigger audio without touching `AVFoundation` directly, and so unit tests can
 /// register a no-op implementation that never produces real sound.
 protocol SoundPlayer: AnyObject {
-
     /// Plays the sound resource named `resourceName` with the given file extension
     /// from the provided bundle. Silently no-ops if the file cannot be located or
     /// the audio session cannot be configured.
@@ -46,7 +45,6 @@ extension SoundPlayer {
 /// Production implementation that uses `AVAudioPlayer` against the shared
 /// `AVAudioSession`. Holds onto the player so playback isn't deallocated mid-play.
 final class DefaultSoundPlayer: SoundPlayer {
-
     private var player: AVAudioPlayer?
 
     init() {}

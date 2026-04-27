@@ -40,9 +40,16 @@ struct SufficientFundsValidator: InputValidator {
         case amountError(AmountError<Amount>)
     }
 
+    // swiftlint:disable large_tuple
+
     /// Computes the estimated total cost (amount + gas*price) and compares against the balance.
     /// Returns `.valid(amount)` when the user can afford the transaction, `.invalid` otherwise.
-    func validate(input: (amount: Amount?, gasLimit: GasLimit?, gasPrice: GasPrice?, balance: Amount?)) // swiftlint:disable:this large_tuple
+    func validate(input: (
+        amount: Amount?,
+        gasLimit: GasLimit?,
+        gasPrice: GasPrice?,
+        balance: Amount?
+    ))
         -> Validation<Amount, Error>
     {
         guard let amount = input.amount, let gasLimit = input.gasLimit, let gasPrice = input.gasPrice,
@@ -71,6 +78,8 @@ struct SufficientFundsValidator: InputValidator {
 
         return .valid(amount)
     }
+
+    // swiftlint:enable large_tuple
 }
 
 extension SufficientFundsValidator.Error: InputError {

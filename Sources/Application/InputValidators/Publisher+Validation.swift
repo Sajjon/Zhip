@@ -1,6 +1,7 @@
 // MIT License — Copyright (c) 2018-2026 Open Zesame
 
 import Combine
+import SingleLineControllerCombine
 import SingleLineControllerCore
 
 /// Carrier for "what is the validation, and is the user currently editing the field?".
@@ -59,9 +60,9 @@ extension Publisher where Output == EditingValidation, Failure == Never {
     /// Uses the public `ErrorTracker.compactMap` hook (defined in the
     /// `SingleLineControllerCore` package) instead of the old `asInputErrors`
     /// shim — same semantics, just sourced from the package now.
-    func eagerValidLazyErrorTurnedToEmptyOnEdit<E: InputError>(
+    func eagerValidLazyErrorTurnedToEmptyOnEdit(
         directlyDisplayErrorsTrackedBy errorTracker: ErrorTracker,
-        mapError: @escaping (Swift.Error) -> E?
+        mapError: @escaping (Swift.Error) -> (some InputError)?
     ) -> AnyPublisher<AnyValidation, Never> {
         eagerValidLazyErrorTurnedToEmptyOnEdit(
             directlyDisplayTrackedErrors: errorTracker.compactMap(mapError)
@@ -85,4 +86,3 @@ extension Publisher where Failure == Never, Output: ValidationConvertible {
             .eraseToAnyPublisher()
     }
 }
-

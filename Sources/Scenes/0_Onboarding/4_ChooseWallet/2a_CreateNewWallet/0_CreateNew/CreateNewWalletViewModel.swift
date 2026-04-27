@@ -25,8 +25,9 @@
 import Combine
 import Factory
 import Foundation
-import Zesame
+import SingleLineControllerCombine
 import SingleLineControllerCore
+import Zesame
 
 /// The encryption-password policy used for *all* password inputs on this screen.
 ///
@@ -91,19 +92,24 @@ final class CreateNewWalletViewModel:
         // Re-runs the cross-field validation every time *either* password field changes.
         // The result carries both the validity flag and (when valid) the derived
         // `WalletEncryptionPassword` value, which we extract later to feed the use case.
-        let confirmEncryptionPasswordValidationValue: AnyPublisher<EncryptionPasswordValidator.ValidationResult, Never> = unconfirmedPassword.combineLatest(confirmingPassword)
-			.map { (password: String, confirmPassword: String) in
-                validator.validateConfirmedEncryptionPassword(password, confirmedBy: confirmPassword)
-            }.eraseToAnyPublisher()
+        let confirmEncryptionPasswordValidationValue: AnyPublisher<
+            EncryptionPasswordValidator.ValidationResult,
+            Never
+        > =
+            unconfirmedPassword.combineLatest(confirmingPassword)
+                .map { (password: String, confirmPassword: String) in
+                    validator.validateConfirmedEncryptionPassword(password, confirmedBy: confirmPassword)
+                }.eraseToAnyPublisher()
 
         // The continue button needs BOTH a passing validation AND the explicit
         // "I have backed up my password" checkbox — losing the password is unrecoverable.
         let isContinueButtonEnabled: AnyPublisher<Bool, Never> = confirmEncryptionPasswordValidationValue.map(\.isValid)
-            .combineLatest(input.fromView.isHaveBackedUpPasswordCheckboxChecked) { (isPasswordConfirmed, isBackedUpChecked) in
+            .combineLatest(input.fromView
+                .isHaveBackedUpPasswordCheckboxChecked) { isPasswordConfirmed, isBackedUpChecked in
                 isPasswordConfirmed && isBackedUpChecked
             }.eraseToAnyPublisher()
 
-        /// Tracks the in-flight wallet-creation work so the button can show a spinner.
+        // Tracks the in-flight wallet-creation work so the button can show a spinner.
         let activityIndicator = ActivityIndicator()
 
         [
@@ -134,7 +140,8 @@ final class CreateNewWalletViewModel:
         // typed something OR finished editing the field — never on the very first render
         // when the field is still pristine. Merging text-changes (`mapToVoid().map { true }`)
         // with the focus-change publisher gives us "the user has interacted with this field".
-        let encryptionPasswordValidationTrigger = unconfirmedPassword.mapToVoid().map { true }.merge(with: input.fromView.isEditingNewEncryptionPassword).eraseToAnyPublisher()
+        let encryptionPasswordValidationTrigger = unconfirmedPassword.mapToVoid().map { true }
+            .merge(with: input.fromView.isEditingNewEncryptionPassword).eraseToAnyPublisher()
 
         // Build the password-field validation:
         //   - trigger fires on each interaction,
@@ -143,11 +150,12 @@ final class CreateNewWalletViewModel:
         //     show "valid" the moment it becomes valid, but suppress error states
         //     while the user is still actively editing (avoids angry red flashes
         //     mid-typing).
-        let encryptionPasswordValidation: AnyPublisher<AnyValidation, Never> = encryptionPasswordValidationTrigger.withLatestFrom(
-            unconfirmedPassword.map { validator.validateNewEncryptionPassword($0) }
-        ) {
-            EditingValidation(isEditing: $0, validation: $1.validation)
-        }.eagerValidLazyErrorTurnedToEmptyOnEdit()
+        let encryptionPasswordValidation: AnyPublisher<AnyValidation, Never> = encryptionPasswordValidationTrigger
+            .withLatestFrom(
+                unconfirmedPassword.map { validator.validateNewEncryptionPassword($0) }
+            ) {
+                EditingValidation(isEditing: $0, validation: $1.validation)
+            }.eagerValidLazyErrorTurnedToEmptyOnEdit()
 
         // Same "user has interacted" trigger, but for the *confirm* field.
         // Comment kept for historical clarity: text-changes need to be lifted to
@@ -176,8 +184,8 @@ final class CreateNewWalletViewModel:
             // The minimum-length value is interpolated from the policy so the UI
             // stays in sync with `WalletEncryptionPassword.Mode` if it ever changes.
             encryptionPasswordPlaceholder: Just(String(localized: .CreateNewWallet
-                .encryptionPasswordField(minLength: WalletEncryptionPassword
-                    .minimumLength(mode: encryptionPasswordMode))))
+                    .encryptionPasswordField(minLength: WalletEncryptionPassword
+                        .minimumLength(mode: encryptionPasswordMode))))
                 .eraseToAnyPublisher(),
             encryptionPasswordValidation: encryptionPasswordValidation,
             confirmEncryptionPasswordValidation: confirmEncryptionPasswordValidation,
@@ -252,4 +260,3 @@ extension CreateNewWalletViewModel {
         }
     }
 }
-

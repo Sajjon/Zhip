@@ -24,6 +24,7 @@
 
 import Combine
 import Factory
+import SingleLineControllerCombine
 import UIKit
 import Zesame
 
@@ -61,7 +62,8 @@ final class SendCoordinator: BaseCoordinator<SendCoordinatorNavigationStep> {
         navigationController: UINavigationController,
         deeplinkedTransaction: AnyPublisher<TransactionIntent, Never>
     ) {
-        transactionIntent = deeplinkedTransaction.merge(with: scannedQRTransactionSubject.replaceErrorWithEmpty()).eraseToAnyPublisher()
+        transactionIntent = deeplinkedTransaction.merge(with: scannedQRTransactionSubject.replaceErrorWithEmpty())
+            .eraseToAnyPublisher()
         super.init(navigationController: navigationController)
     }
 
@@ -88,8 +90,8 @@ private extension SendCoordinator {
         let viewModel = PrepareTransactionViewModel(
             scannedOrDeeplinkedTransaction: transactionIntent.filter { [weak self] _ in
                 guard let self else { return false }
-                let prepareTransactionIsCurrentScene = self.navigationController.viewControllers
-                    .isEmpty || self.isTopmost(scene: PrepareTransaction.self)
+                let prepareTransactionIsCurrentScene = navigationController.viewControllers
+                    .isEmpty || isTopmost(scene: PrepareTransaction.self)
                 guard prepareTransactionIsCurrentScene else {
                     // Prevented deeplinked transaction since it is not the active scene
                     return false
@@ -101,9 +103,9 @@ private extension SendCoordinator {
         push(scene: PrepareTransaction.self, viewModel: viewModel) { [weak self] userIntendsTo in
             guard let self else { return }
             switch userIntendsTo {
-            case .cancel: self.finish()
-            case .scanQRCode: self.toScanQRCode()
-            case let .reviewPayment(payment): self.toReviewPaymentBeforeSigning(payment)
+            case .cancel: finish()
+            case .scanQRCode: toScanQRCode()
+            case let .reviewPayment(payment): toReviewPaymentBeforeSigning(payment)
             }
         }
     }
@@ -152,9 +154,9 @@ private extension SendCoordinator {
             guard let self else { return }
             switch userDid {
             case let .sign(transactionResponse):
-                self.toWaitForReceiptForTransactionWith(id: transactionResponse.transactionIdentifier)
+                toWaitForReceiptForTransactionWith(id: transactionResponse.transactionIdentifier)
             case .walletUnavailable:
-                self.finish()
+                finish()
             }
         }
     }
@@ -167,9 +169,9 @@ private extension SendCoordinator {
         push(scene: PollTransactionStatus.self, viewModel: viewModel) { [weak self] userDid in
             guard let self else { return }
             switch userDid {
-            case .skip, .waitUntilTimeout: self.finish()
-            case .dismiss: self.finish(triggerBalanceFetching: true)
-            case let .viewTransactionDetailsInBrowser(txId): self.openInBrowserDetailsForTransaction(id: txId)
+            case .skip, .waitUntilTimeout: finish()
+            case .dismiss: finish(triggerBalanceFetching: true)
+            case let .viewTransactionDetailsInBrowser(txId): openInBrowserDetailsForTransaction(id: txId)
             }
         }
     }

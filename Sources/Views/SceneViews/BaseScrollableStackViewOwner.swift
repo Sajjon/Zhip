@@ -22,8 +22,8 @@
 // SOFTWARE.
 //
 
-import UIKit
 import SingleLineControllerCore
+import UIKit
 
 /// Idiomatic shape used by every "vertical stack inside a scroll view" scene:
 /// `BaseScrollableStackViewOwner` plus `StackViewStyling` so the scene can
@@ -110,4 +110,3 @@ private extension UIView {
         ].forEach { $0.isActive = true }
     }
 }
-

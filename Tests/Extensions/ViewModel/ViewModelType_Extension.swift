@@ -49,4 +49,3 @@ private extension InputFromController {
         )
     }
 }
-

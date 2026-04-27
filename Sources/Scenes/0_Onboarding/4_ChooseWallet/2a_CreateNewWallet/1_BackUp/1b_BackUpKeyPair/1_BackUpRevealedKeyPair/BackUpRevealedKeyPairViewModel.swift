@@ -24,6 +24,7 @@
 
 import Combine
 import Factory
+import SingleLineControllerCombine
 import UIKit
 import Zesame
 
@@ -61,8 +62,10 @@ final class BackUpRevealedKeyPairViewModel: BaseViewModel<
 
         // Hex-encode each key for display. Private key uses raw representation;
         // public key uses x963 (uncompressed) — the format other Zilliqa tools expect.
-        let privateKey: AnyPublisher<String, Never> = keyPair.map(\.privateKey.rawRepresentation.asHex).eraseToAnyPublisher()
-        let publicKeyUncompressed: AnyPublisher<String, Never> = keyPair.map(\.publicKey.x963Representation.asHex).eraseToAnyPublisher()
+        let privateKey: AnyPublisher<String, Never> = keyPair.map(\.privateKey.rawRepresentation.asHex)
+            .eraseToAnyPublisher()
+        let publicKeyUncompressed: AnyPublisher<String, Never> = keyPair.map(\.publicKey.x963Representation.asHex)
+            .eraseToAnyPublisher()
 
         [
             input.fromController.rightBarButtonTrigger

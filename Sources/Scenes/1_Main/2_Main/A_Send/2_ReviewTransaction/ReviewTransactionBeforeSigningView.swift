@@ -23,6 +23,7 @@
 //
 
 import Combine
+import SingleLineControllerCombine
 import UIKit
 
 /// Step 2 of Send — read-only summary of the prepared payment (recipient,
@@ -76,7 +77,8 @@ extension ReviewTransactionBeforeSigningView: ViewModelled {
 
     func populate(with viewModel: ViewModel.Output) -> [AnyCancellable] {
         [
-            viewModel.isHasReviewedNowProceedWithSigningButtonEnabled --> acceptPaymentProceedToSigningButton.isEnabledBinder,
+            viewModel.isHasReviewedNowProceedWithSigningButtonEnabled --> acceptPaymentProceedToSigningButton
+                .isEnabledBinder,
             viewModel.recipientBech32Address --> recipientBech32AddressView.valueBinder,
             viewModel.recipientLegacyAddress --> recipientLegacyAddressView.valueBinder,
             viewModel.amountToPay --> amountToSendView.valueBinder,

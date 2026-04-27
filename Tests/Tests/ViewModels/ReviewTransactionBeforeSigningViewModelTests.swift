@@ -34,7 +34,6 @@ import Zesame
 /// that confirming the transaction emits `.acceptPaymentProceedWithSigning`
 /// carrying the payment.
 final class ReviewTransactionBeforeSigningViewModelTests: XCTestCase {
-
     private var cancellables: Set<AnyCancellable> = []
     private var hasReviewed: CurrentValueSubject<Bool, Never>!
     private var proceedTrigger: PassthroughSubject<Void, Never>!

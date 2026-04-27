@@ -30,7 +30,6 @@ import Foundation
 /// protected by the user's `WalletEncryptionPassword`, not by this pincode. The
 /// pincode only gates re-entry into the already-authenticated app session.
 struct Pincode: Equatable, Codable {
-
     /// The raw digits making up the pincode, in order. Guaranteed to be exactly
     /// `Pincode.length` digits once successfully constructed.
     let digits: [Digit]
@@ -47,7 +46,6 @@ struct Pincode: Equatable, Codable {
 // MARK: Minimum length
 
 extension Pincode {
-
     /// The enforced pincode length, in digits.
     static let length: Int = 4
 }
@@ -55,10 +53,8 @@ extension Pincode {
 // MARK: - Error
 
 extension Pincode {
-
     /// Construction failures surfaced from `Pincode.init(digits:)`.
     enum Error: Swift.Error {
-
         /// Caller supplied more than `Pincode.length` digits.
         case pincodeTooLong
 

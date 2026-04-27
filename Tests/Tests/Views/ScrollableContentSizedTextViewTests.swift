@@ -4,7 +4,6 @@ import XCTest
 
 @MainActor
 final class ScrollableContentSizedTextViewTests: XCTestCase {
-
     func test_init_createsTextView() {
         let sut = ScrollableContentSizedTextView()
         XCTAssertNotNil(sut)

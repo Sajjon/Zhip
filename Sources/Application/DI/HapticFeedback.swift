@@ -28,14 +28,12 @@ import UIKit
 /// unit tests never trigger a real device vibration (on-device haptics can
 /// leak across concurrent test runs and interfere with UI tests).
 protocol HapticFeedback: AnyObject {
-
     /// Fires a system haptic pulse of the requested `type`.
     func notify(_ type: UINotificationFeedbackGenerator.FeedbackType)
 }
 
 /// Production `HapticFeedback` backed by `UINotificationFeedbackGenerator`.
 final class DefaultHapticFeedback: HapticFeedback {
-
     private let generator = UINotificationFeedbackGenerator()
 
     init() {}

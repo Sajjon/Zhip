@@ -23,8 +23,8 @@
 //
 
 import Foundation
-import Zesame
 import SingleLineControllerCore
+import Zesame
 
 extension Zesame.Unit {
     /// User-facing name for the unit. `.li` and `.qa` use Zesame's raw name
@@ -145,4 +145,3 @@ extension String {
         return true
     }
 }
-

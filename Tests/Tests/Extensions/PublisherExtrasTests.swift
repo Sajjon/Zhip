@@ -1,9 +1,9 @@
 import Combine
+import SingleLineControllerCombine
 import XCTest
 @testable import Zhip
 
 final class PublisherExtrasTests: XCTestCase {
-
     private var cancellables: Set<AnyCancellable> = []
 
     override func tearDown() {

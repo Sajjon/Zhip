@@ -31,7 +31,6 @@ import XCTest
 /// possible.  The underlying `SecurePersistence` and `Preferences` are in-memory
 /// so tests are fully hermetic.
 final class DefaultPincodeUseCaseTests: XCTestCase {
-
     private var preferences: Preferences!
     private var secureStore: SecurePersistence!
     private var sut: DefaultPincodeUseCase!

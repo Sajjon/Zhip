@@ -22,8 +22,8 @@
 // SOFTWARE.
 //
 
-import UIKit
 import SingleLineControllerCore
+import UIKit
 
 /// Single-character display cell used inside `InputPincodeView` — one big
 /// glyph (digit or bullet) with a coloured underline below it.
@@ -103,4 +103,3 @@ final class DigitView: UIView {
         }
     }
 }
-

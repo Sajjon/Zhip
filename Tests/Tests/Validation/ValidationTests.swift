@@ -2,7 +2,6 @@ import XCTest
 @testable import Zhip
 
 final class ValidationTests: XCTestCase {
-
     // MARK: - .valid(value)
 
     func test_validConvenience_wrapsValueWithNilRemark() {
@@ -131,5 +130,7 @@ final class ValidationTests: XCTestCase {
 
 private struct StubError: InputError, Equatable {
     let message: String
-    var errorMessage: String { message }
+    var errorMessage: String {
+        message
+    }
 }

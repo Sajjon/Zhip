@@ -33,7 +33,6 @@ import Zesame
 /// EnsureThatYouAreNotBeingWatched → CreateNewWallet → BackupWallet
 /// (via the child coordinator chain).
 final class CreateNewWalletCoordinatorTests: XCTestCase {
-
     private var window: UIWindow!
     private var navigationController: NavigationBarLayoutingNavigationController!
     private var mockWallet: MockWalletUseCase!
@@ -48,8 +47,8 @@ final class CreateNewWalletCoordinatorTests: XCTestCase {
         // `hasConfirmedNewWalletBackup` flag write doesn't leak into real
         // UserDefaults during the test.
         preferences = TestStoreFactory.makePreferences()
-        Container.shared.walletStorageUseCase.register { [unowned self] in self.mockWallet }
-        Container.shared.preferences.register { [unowned self] in self.preferences }
+        Container.shared.walletStorageUseCase.register { [unowned self] in mockWallet }
+        Container.shared.preferences.register { [unowned self] in preferences }
         navigationController = NavigationBarLayoutingNavigationController()
         window = UIWindow(frame: .init(x: 0, y: 0, width: 320, height: 480))
         window.rootViewController = navigationController
@@ -87,9 +86,9 @@ final class CreateNewWalletCoordinatorTests: XCTestCase {
 
     // MARK: - EnsureThatYouAreNotBeingWatched branches
 
-    func test_ensureUnderstand_pushesCreateNewWallet() {
+    func test_ensureUnderstand_pushesCreateNewWallet() throws {
         sut.start()
-        let ensure = top(as: EnsureThatYouAreNotBeingWatched.self)!
+        let ensure = try XCTUnwrap(top(as: EnsureThatYouAreNotBeingWatched.self))
 
         ensure.viewModel.navigator.next(.understand)
         drainRunLoop()
@@ -97,11 +96,11 @@ final class CreateNewWalletCoordinatorTests: XCTestCase {
         XCTAssertTrue(top(as: CreateNewWallet.self) != nil)
     }
 
-    func test_ensureCancel_bubblesCancel() {
+    func test_ensureCancel_bubblesCancel() throws {
         sut.start()
         var received: CreateNewWalletCoordinatorNavigationStep?
         sut.navigator.navigation.sink { received = $0 }.store(in: &cancellables)
-        let ensure = top(as: EnsureThatYouAreNotBeingWatched.self)!
+        let ensure = try XCTUnwrap(top(as: EnsureThatYouAreNotBeingWatched.self))
 
         ensure.viewModel.navigator.next(.cancel)
         drainRunLoop()
@@ -113,13 +112,13 @@ final class CreateNewWalletCoordinatorTests: XCTestCase {
 
     // MARK: - CreateNewWallet branches
 
-    func test_createWalletCancel_bubblesCancel() {
+    func test_createWalletCancel_bubblesCancel() throws {
         sut.start()
-        top(as: EnsureThatYouAreNotBeingWatched.self)!.viewModel.navigator.next(.understand)
+        top(as: EnsureThatYouAreNotBeingWatched.self)?.viewModel.navigator.next(.understand)
         drainRunLoop()
         var received: CreateNewWalletCoordinatorNavigationStep?
         sut.navigator.navigation.sink { received = $0 }.store(in: &cancellables)
-        let create = top(as: CreateNewWallet.self)!
+        let create = try XCTUnwrap(top(as: CreateNewWallet.self))
 
         create.viewModel.navigator.next(.cancel)
         drainRunLoop()
@@ -129,11 +128,11 @@ final class CreateNewWalletCoordinatorTests: XCTestCase {
         }
     }
 
-    func test_createWalletCreateWallet_pushesBackupWallet() {
+    func test_createWalletCreateWallet_pushesBackupWallet() throws {
         sut.start()
-        top(as: EnsureThatYouAreNotBeingWatched.self)!.viewModel.navigator.next(.understand)
+        top(as: EnsureThatYouAreNotBeingWatched.self)?.viewModel.navigator.next(.understand)
         drainRunLoop()
-        let create = top(as: CreateNewWallet.self)!
+        let create = try XCTUnwrap(top(as: CreateNewWallet.self))
 
         create.viewModel.navigator.next(.createWallet(TestWalletFactory.makeWallet()))
         drainRunLoop()
@@ -142,15 +141,15 @@ final class CreateNewWalletCoordinatorTests: XCTestCase {
         XCTAssertTrue(sut.childCoordinators.contains { $0 is BackupWalletCoordinator })
     }
 
-    func test_createWalletCreateWallet_persistsImmediatelyAndMarksNotBackedUp() {
+    func test_createWalletCreateWallet_persistsImmediatelyAndMarksNotBackedUp() throws {
         // The wallet must be persisted on derivation so an app kill before
         // the user reaches "I have backed up" doesn't lose the random
         // private key. The backup-confirmed flag should be `false` until
         // the user finishes the BackupWalletCoordinator.
         sut.start()
-        top(as: EnsureThatYouAreNotBeingWatched.self)!.viewModel.navigator.next(.understand)
+        top(as: EnsureThatYouAreNotBeingWatched.self)?.viewModel.navigator.next(.understand)
         drainRunLoop()
-        let create = top(as: CreateNewWallet.self)!
+        let create = try XCTUnwrap(top(as: CreateNewWallet.self))
         let wallet = TestWalletFactory.makeWallet()
 
         create.viewModel.navigator.next(.createWallet(wallet))
@@ -166,7 +165,10 @@ final class CreateNewWalletCoordinatorTests: XCTestCase {
         backup.viewModel.navigator.next(.backupWallet)
         drainRunLoop()
 
-        XCTAssertTrue(preferences.isTrue(.hasConfirmedNewWalletBackup), "flag should flip true after backup confirmation")
+        XCTAssertTrue(
+            preferences.isTrue(.hasConfirmedNewWalletBackup),
+            "flag should flip true after backup confirmation"
+        )
     }
 
     // MARK: - BackupWalletCoordinator completion branches

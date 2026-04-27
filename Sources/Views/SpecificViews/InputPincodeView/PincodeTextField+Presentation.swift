@@ -22,8 +22,8 @@
 // SOFTWARE.
 //
 
-import UIKit
 import SingleLineControllerCore
+import UIKit
 
 extension PincodeTextField {
     /// The visible row of `DigitView` cells inside `PincodeTextField`.
@@ -101,4 +101,3 @@ extension PincodeTextField {
         }
     }
 }
-

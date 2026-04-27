@@ -24,16 +24,15 @@
 
 import Combine
 import Factory
+import SingleLineControllerCore
 import UIKit
 import XCTest
-import SingleLineControllerCore
 @testable import Zhip
 
 /// Covers shared Coordinating extensions: stack management, navigation-stack
 /// queries, debug printing, and UINavigationController helpers that back
 /// `replaceAllScenes` / `popToRootViewController`.
 final class CoordinatingInfrastructureTests: XCTestCase {
-
     private var mockTransactions: MockTransactionsUseCase!
     private var mockWallet: MockWalletUseCase!
     private var mockPincode: MockPincodeUseCase!
@@ -43,9 +42,9 @@ final class CoordinatingInfrastructureTests: XCTestCase {
         mockTransactions = MockTransactionsUseCase()
         mockWallet = MockWalletUseCase()
         mockPincode = MockPincodeUseCase()
-        Container.shared.transactionsUseCase.register { [unowned self] in self.mockTransactions }
-        Container.shared.walletStorageUseCase.register { [unowned self] in self.mockWallet }
-        Container.shared.pincodeUseCase.register { [unowned self] in self.mockPincode }
+        Container.shared.transactionsUseCase.register { [unowned self] in mockTransactions }
+        Container.shared.walletStorageUseCase.register { [unowned self] in mockWallet }
+        Container.shared.pincodeUseCase.register { [unowned self] in mockPincode }
     }
 
     override func tearDown() {
@@ -212,4 +211,3 @@ final class CoordinatingInfrastructureTests: XCTestCase {
         wait(for: [expectation], timeout: 2)
     }
 }
-

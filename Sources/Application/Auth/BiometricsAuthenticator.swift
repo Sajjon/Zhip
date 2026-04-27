@@ -31,7 +31,6 @@ import LocalAuthentication
 /// touching `LocalAuthentication` directly, and so unit tests register a
 /// no-op implementation that never shows a real system prompt.
 protocol BiometricsAuthenticator: AnyObject {
-
     /// Prompts the user for biometric authentication. Emits exactly once with
     /// `true` when the user authenticates successfully and `false` for every
     /// other outcome (policy unavailable, cancel, failure). Always completes —
@@ -42,7 +41,6 @@ protocol BiometricsAuthenticator: AnyObject {
 /// Production implementation backed by `LAContext` against
 /// `.deviceOwnerAuthenticationWithBiometrics`.
 final class LAContextBiometricsAuthenticator: BiometricsAuthenticator {
-
     init() {}
 
     func authenticate() -> AnyPublisher<Bool, Never> {

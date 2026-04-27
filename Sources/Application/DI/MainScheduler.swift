@@ -37,14 +37,12 @@ import Foundation
 /// scheduler in place, coordinator/navigation tests can assert on side
 /// effects without pumping the runloop.
 protocol MainScheduler: AnyObject {
-
     /// Schedules `work` to run on the main thread.
     func schedule(_ work: @escaping () -> Void)
 }
 
 /// Production `MainScheduler` backed by `DispatchQueue.main.async`.
 final class DispatchMainScheduler: MainScheduler {
-
     init() {}
 
     func schedule(_ work: @escaping () -> Void) {
@@ -55,7 +53,6 @@ final class DispatchMainScheduler: MainScheduler {
 /// Test `MainScheduler` that invokes work synchronously on the calling
 /// thread, so navigation hops resolve before the test's next assertion.
 final class ImmediateMainScheduler: MainScheduler {
-
     init() {}
 
     func schedule(_ work: @escaping () -> Void) {

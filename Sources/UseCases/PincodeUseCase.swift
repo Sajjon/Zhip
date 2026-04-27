@@ -28,7 +28,6 @@ import Foundation
 
 /// Reads the pincode stored in secure storage and whether one has ever been chosen.
 protocol PincodeReadUseCase: AnyObject {
-
     /// The currently-configured pincode, or `nil` if none has been set.
     var pincode: Pincode? { get }
 
@@ -38,7 +37,6 @@ protocol PincodeReadUseCase: AnyObject {
 
 /// Writes or deletes the stored pincode, and records a "skip setup" preference.
 protocol PincodeWriteUseCase: AnyObject {
-
     /// Persists the user-chosen `pincode` to secure storage.
     func userChoose(pincode: Pincode)
 

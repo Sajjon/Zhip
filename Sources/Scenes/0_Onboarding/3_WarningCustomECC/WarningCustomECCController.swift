@@ -6,8 +6,8 @@
 // Copyright (c) 2018-2026 Open Zesame (https://github.com/OpenZesame)
 //
 
-import UIKit
 import SingleLineControllerCore
+import UIKit
 
 /// `SceneController` glue for the "we use a custom ECC implementation" warning screen.
 ///
@@ -34,4 +34,3 @@ final class WarningCustomECC: Scene<WarningCustomECCView>, NavigationBarLayoutOw
         interfaceBuilderSucks
     }
 }
-

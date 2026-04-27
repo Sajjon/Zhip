@@ -24,6 +24,7 @@
 
 import Combine
 import Factory
+import SingleLineControllerCombine
 import UIKit
 import Zesame
 
@@ -35,7 +36,6 @@ enum AppCoordinatorNavigationStep {}
 /// and the main wallet experience on launch, and the lock/unlock transitions when
 /// the app resigns active / returns active.
 final class AppCoordinator: BaseCoordinator<AppCoordinatorNavigationStep> {
-
     /// Handles incoming deep links and decides whether they should be buffered
     /// (while the lock screen is visible) or delivered immediately.
     private let deepLinkHandler: DeepLinkHandler

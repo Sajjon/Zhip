@@ -24,6 +24,7 @@
 
 import Combine
 import Foundation
+import SingleLineControllerCombine
 import SingleLineControllerCore
 
 // MARK: - RemovePincodeUserAction
@@ -69,9 +70,10 @@ final class RemovePincodeViewModel: BaseViewModel<
 
         let validator = InputValidator(existingPincode: pincode)
 
-        let pincodeValidationValue: AnyPublisher<PincodeValidator.ValidationResult, Never> = input.fromView.pincode.map {
-            validator.validate(unconfirmedPincode: $0)
-        }.eraseToAnyPublisher()
+        let pincodeValidationValue: AnyPublisher<PincodeValidator.ValidationResult, Never> = input.fromView.pincode
+            .map {
+                validator.validate(unconfirmedPincode: $0)
+            }.eraseToAnyPublisher()
 
         [
             input.fromController.leftBarButtonTrigger
@@ -125,4 +127,3 @@ extension RemovePincodeViewModel {
         }
     }
 }
-

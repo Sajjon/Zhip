@@ -76,21 +76,21 @@ private extension SettingsCoordinator {
             guard let self else { return }
             switch userIntendsTo {
             // Navigation bar
-            case .closeSettings: self.finish()
+            case .closeSettings: finish()
             // Section 0
-            case .removePincode: self.toRemovePincode()
-            case .setPincode: self.toSetPincode()
+            case .removePincode: toRemovePincode()
+            case .setPincode: toSetPincode()
             // Section 1
-            case .starUsOnGithub: self.toStarUsOnGitHub()
-            case .reportIssueOnGithub: self.toReportIssueOnGithub()
-            case .acknowledgments: self.toAcknowledgments()
+            case .starUsOnGithub: toStarUsOnGitHub()
+            case .reportIssueOnGithub: toReportIssueOnGithub()
+            case .acknowledgments: toAcknowledgments()
             // Section 2
-            case .readTermsOfService: self.toReadTermsOfService()
-            case .changeAnalyticsPermissions: self.toChangeAnalyticsPermissions()
-            case .readCustomECCWarning: self.toReadCustomECCWarning()
+            case .readTermsOfService: toReadTermsOfService()
+            case .changeAnalyticsPermissions: toChangeAnalyticsPermissions()
+            case .readCustomECCWarning: toReadCustomECCWarning()
             // Section 3
-            case .backupWallet: self.toBackupWallet()
-            case .removeWallet: self.toConfirmWalletRemoval()
+            case .backupWallet: toBackupWallet()
+            case .removeWallet: toConfirmWalletRemoval()
             }
         }
     }

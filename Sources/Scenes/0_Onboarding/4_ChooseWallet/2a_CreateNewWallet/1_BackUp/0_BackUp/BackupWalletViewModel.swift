@@ -24,9 +24,10 @@
 
 import Combine
 import Factory
+import SingleLineControllerCombine
+import SingleLineControllerCore
 import UIKit
 import Zesame
-import SingleLineControllerCore
 
 // MARK: - BackupWalletUserAction
 
@@ -127,7 +128,8 @@ final class BackupWalletViewModel: BaseViewModel<
 
         return Output(
             // Confirm group only visible post-create — Settings hides it.
-            isHaveSecurelyBackedUpViewsVisible: AnyPublisher<Mode, Never>.just(mode).map { $0 == .cancellable }.eraseToAnyPublisher(),
+            isHaveSecurelyBackedUpViewsVisible: AnyPublisher<Mode, Never>.just(mode).map { $0 == .cancellable }
+                .eraseToAnyPublisher(),
             isDoneButtonEnabled: isUnderstandsRiskCheckboxChecked
         )
     }
@@ -178,4 +180,3 @@ extension Keystore {
         return jsonString
     }
 }
-

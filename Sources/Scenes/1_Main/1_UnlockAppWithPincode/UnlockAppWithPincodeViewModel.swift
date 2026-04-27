@@ -25,6 +25,7 @@
 import Combine
 import Factory
 import Foundation
+import SingleLineControllerCombine
 import SingleLineControllerCore
 
 // MARK: - UnlockAppWithPincodeUserAction
@@ -141,4 +142,3 @@ extension UnlockAppWithPincodeViewModel {
         }
     }
 }
-

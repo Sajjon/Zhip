@@ -33,7 +33,6 @@ import XCTest
 /// tests.
 @MainActor
 final class RestoreWalletViewTests: XCTestCase {
-
     private var cancellables: Set<AnyCancellable> = []
 
     override func tearDown() {

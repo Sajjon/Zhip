@@ -29,7 +29,6 @@ import Zesame
 
 /// Default implementation of `ExtractKeyPairUseCase`.
 final class DefaultExtractKeyPairUseCase: ExtractKeyPairUseCase {
-
     /// Reactive Zesame façade — performs the actual keystore decryption work.
     @Injected(\.zilliqaService) private var zilliqaService: ZilliqaServiceReactive
 

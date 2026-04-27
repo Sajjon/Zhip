@@ -33,17 +33,17 @@ import Zesame
 /// Each async method is backed by a `*Result` property tests can seed. Storage
 /// methods update a local `storedWallet` property and increment call counters.
 final class MockWalletUseCase: CreateWalletUseCase,
-                               RestoreWalletUseCase,
-                               WalletStorageUseCase,
-                               VerifyEncryptionPasswordUseCase,
-                               ExtractKeyPairUseCase {
-
+    RestoreWalletUseCase,
+    WalletStorageUseCase,
+    VerifyEncryptionPasswordUseCase,
+    ExtractKeyPairUseCase {
     // MARK: - State
 
     var storedWallet: Zhip.Wallet?
 
     var createWalletResult: Result<Zhip.Wallet, Swift.Error> = .success(TestWalletFactory.makeWallet())
-    var restoreWalletResult: Result<Zhip.Wallet, Swift.Error> = .success(TestWalletFactory.makeWallet(origin: .importedKeystore))
+    var restoreWalletResult: Result<Zhip.Wallet, Swift.Error> = .success(TestWalletFactory
+        .makeWallet(origin: .importedKeystore))
     var verifyPasswordResult: Result<Bool, Swift.Error> = .success(true)
     var extractKeyPairResult: Result<KeyPair, Swift.Error>?
 
@@ -88,9 +88,13 @@ final class MockWalletUseCase: CreateWalletUseCase,
         storedWallet = nil
     }
 
-    func loadWallet() -> Zhip.Wallet? { storedWallet }
+    func loadWallet() -> Zhip.Wallet? {
+        storedWallet
+    }
 
-    var hasConfiguredWallet: Bool { storedWallet != nil }
+    var hasConfiguredWallet: Bool {
+        storedWallet != nil
+    }
 
     // MARK: - VerifyEncryptionPasswordUseCase
 
@@ -121,9 +125,9 @@ final class MockWalletUseCase: CreateWalletUseCase,
     private func publisher<Output>(for result: Result<Output, Swift.Error>) -> AnyPublisher<Output, Swift.Error> {
         switch result {
         case let .success(value):
-            return Just(value).setFailureType(to: Swift.Error.self).eraseToAnyPublisher()
+            Just(value).setFailureType(to: Swift.Error.self).eraseToAnyPublisher()
         case let .failure(error):
-            return Fail(error: error).eraseToAnyPublisher()
+            Fail(error: error).eraseToAnyPublisher()
         }
     }
 }

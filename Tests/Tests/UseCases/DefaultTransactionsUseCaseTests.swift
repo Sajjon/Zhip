@@ -31,7 +31,6 @@ import Zesame
 /// Tests for `DefaultTransactionsUseCase`, which uses constructor DI (not
 /// `@Injected`) so tests instantiate it directly with mocked dependencies.
 final class DefaultTransactionsUseCaseTests: XCTestCase {
-
     private var cancellables: Set<AnyCancellable> = []
     private var mockService: MockZilliqaServiceReactive!
     private var preferences: Preferences!
@@ -148,7 +147,7 @@ final class DefaultTransactionsUseCaseTests: XCTestCase {
     }
 
     func test_receiptOfTransaction_forwardsTxIdAndReturnsReceipt() throws {
-        let receipt = TransactionReceipt(id: "0xabc", totalGasCost: try Amount(qa: "100"))
+        let receipt = try TransactionReceipt(id: "0xabc", totalGasCost: Amount(qa: "100"))
         mockService.transactionReceiptResult = .success(receipt)
         var received: TransactionReceipt?
         let expectation = expectation(description: "value")
@@ -180,8 +179,8 @@ final class DefaultTransactionsUseCaseTests: XCTestCase {
         let toAddress = try LegacyAddress(string: "e3090a1309DfAC40352d03dEc6cCD9cAd213e76B")
         let payment = try Payment(
             to: toAddress,
-            amount: try Amount(zil: 1),
-            gasPrice: try GasPrice(li: 1_000_000)
+            amount: Amount(zil: 1),
+            gasPrice: GasPrice(li: 1_000_000)
         )
         var received: TransactionResponse?
         let expectation = expectation(description: "value")

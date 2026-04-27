@@ -2,7 +2,6 @@ import XCTest
 @testable import Zhip
 
 final class BundleVersionBuildTests: XCTestCase {
-
     func test_key_shortVersionString_formsCFBundleKey() {
         XCTAssertEqual(Bundle.Key.shortVersionString.key, "CFBundleShortVersionString")
     }

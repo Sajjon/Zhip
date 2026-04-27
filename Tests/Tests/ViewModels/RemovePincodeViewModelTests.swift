@@ -32,7 +32,6 @@ import XCTest
 /// correct-pincode path (entering the existing pin → `.removePincode` and use case
 /// cleanup).
 final class RemovePincodeViewModelTests: XCTestCase {
-
     private var cancellables: Set<AnyCancellable> = []
     private var pincodeInput: CurrentValueSubject<Pincode?, Never>!
     private var fakeController: FakeInputFromController!

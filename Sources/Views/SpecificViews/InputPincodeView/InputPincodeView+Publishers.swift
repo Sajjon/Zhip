@@ -15,6 +15,7 @@
 //
 
 import Combine
+import SingleLineControllerCombine
 import UIKit
 
 extension InputPincodeView {

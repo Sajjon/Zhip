@@ -22,6 +22,7 @@
 // SOFTWARE.
 //
 
+import SingleLineControllerCombine
 import SkyFloatingLabelTextField
 import UIKit
 

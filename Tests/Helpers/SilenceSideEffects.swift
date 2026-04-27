@@ -37,7 +37,6 @@ import XCTest
 /// here guarantees coverage even for tests that never call `setUp` themselves.
 @objc(ZhipTestsBundle)
 final class ZhipTestsBundle: NSObject, XCTestObservation {
-
     override init() {
         super.init()
         XCTestObservationCenter.shared.addTestObserver(self)
@@ -50,7 +49,7 @@ final class ZhipTestsBundle: NSObject, XCTestObservation {
         Self.registerSilentSideEffects()
     }
 
-    func testCaseWillStart(_ testCase: XCTestCase) {
+    func testCaseWillStart(_: XCTestCase) {
         // Container.shared.manager.reset() in test tearDown wipes registrations,
         // so we re-apply the silent defaults before each test starts.
         Self.registerSilentSideEffects()

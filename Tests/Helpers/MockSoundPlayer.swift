@@ -28,14 +28,13 @@ import Foundation
 /// In-test `SoundPlayer` that NEVER produces real audio. Records each `play(...)`
 /// invocation so tests can assert against intent without leaking sound to the host.
 final class MockSoundPlayer: SoundPlayer {
-
     /// Each tuple captures the resource name + file extension passed to `play(...)`.
     /// Tests that care about whether sound was triggered can assert on this.
     private(set) var playInvocations: [(resource: String, fileExtension: String)] = []
 
     init() {}
 
-    func play(resource resourceName: String, withExtension fileExtension: String, in bundle: Bundle) {
+    func play(resource resourceName: String, withExtension fileExtension: String, in _: Bundle) {
         playInvocations.append((resource: resourceName, fileExtension: fileExtension))
     }
 }

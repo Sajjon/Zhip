@@ -30,7 +30,6 @@ import XCTest
 /// Exercises the `UITableView.setFooterLabel(text:)` helper and
 /// `footerLabelBinder`.
 final class UITableViewFooterTests: XCTestCase {
-
     func test_setFooterLabel_installsFooterView() {
         let tableView = UITableView()
 

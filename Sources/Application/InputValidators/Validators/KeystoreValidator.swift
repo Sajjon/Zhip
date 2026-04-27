@@ -23,8 +23,8 @@
 //
 
 import Foundation
-import Zesame
 import SingleLineControllerCore
+import Zesame
 
 /// Validates a pasted keystore JSON string, producing a typed `Keystore`.
 ///
@@ -105,4 +105,3 @@ extension KeystoreValidator.Error {
         }
     }
 }
-

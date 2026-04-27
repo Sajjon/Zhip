@@ -23,6 +23,7 @@
 //
 
 import Foundation
+import SingleLineControllerCombine
 
 extension Array {
     /// Returns an array of `Void` values with the same count as `self`.

@@ -3,7 +3,6 @@ import Zesame
 @testable import Zhip
 
 final class TransactionIntentTests: XCTestCase {
-
     private let validAddressString = "e3090a1309DfAC40352d03dEc6cCD9cAd213e76B"
 
     func test_initWithAddress_storesRecipient() throws {
@@ -18,7 +17,7 @@ final class TransactionIntentTests: XCTestCase {
         XCTAssertNil(sut)
     }
 
-    func test_initWithString_validAddress_succeeds() throws {
+    func test_initWithString_validAddress_succeeds() {
         let sut = TransactionIntent(to: validAddressString, amount: nil)
         XCTAssertNotNil(sut)
     }
@@ -68,12 +67,13 @@ final class TransactionIntentTests: XCTestCase {
     }
 
     // MARK: - Codable / fromScannedQrCodeString JSON branch
-    //
-    // Note: `Address.init(from decoder:)` lowercases the decoded string before
-    // validating it, which conflicts with EIP-55-style mixed-case checksumming.
-    // So the JSON path always throws "notChecksummed" for properly-formed
-    // Zilliqa addresses. We still exercise the branch by feeding a malformed
-    // JSON body and asserting that `fromScannedQrCodeString` propagates.
+
+    ///
+    /// Note: `Address.init(from decoder:)` lowercases the decoded string before
+    /// validating it, which conflicts with EIP-55-style mixed-case checksumming.
+    /// So the JSON path always throws "notChecksummed" for properly-formed
+    /// Zilliqa addresses. We still exercise the branch by feeding a malformed
+    /// JSON body and asserting that `fromScannedQrCodeString` propagates.
     func test_fromScannedQrCodeString_invalidJson_throws() {
         let json = "{\"to\":\"\(validAddressString)\"}"
 

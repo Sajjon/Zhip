@@ -32,7 +32,6 @@ import Zesame
 /// Forwards to the shared `ZilliqaServiceReactive` via `@Injected` so tests can
 /// substitute the service using `Container.shared.zilliqaService.register { ... }`.
 final class DefaultCreateWalletUseCase: CreateWalletUseCase {
-
     /// The reactive Zesame façade used to derive the keystore. Resolved lazily via
     /// Factory so test doubles can be registered before the use case is invoked.
     @Injected(\.zilliqaService) private var zilliqaService: ZilliqaServiceReactive

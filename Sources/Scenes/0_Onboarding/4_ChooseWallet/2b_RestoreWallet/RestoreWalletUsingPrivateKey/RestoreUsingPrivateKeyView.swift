@@ -23,6 +23,7 @@
 //
 
 import Combine
+import SingleLineControllerCombine
 import UIKit
 
 /// Sub-view of the RestoreWallet screen for the "I have a raw private key,

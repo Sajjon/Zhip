@@ -4,7 +4,6 @@ import XCTest
 
 @MainActor
 final class SpinnerViewTests: XCTestCase {
-
     func test_init_isHiddenAndNotAnimating() {
         let sut = SpinnerView()
         XCTAssertFalse(sut.isAnimating)

@@ -28,7 +28,6 @@ import Foundation
 
 /// Tracks whether the user has accepted the Terms of Service.
 protocol TermsOfServiceAcceptanceUseCase: AnyObject {
-
     /// `true` once the user has accepted the Terms of Service.
     var hasAcceptedTermsOfService: Bool { get }
 
@@ -38,7 +37,6 @@ protocol TermsOfServiceAcceptanceUseCase: AnyObject {
 
 /// Tracks whether the user has read and accepted the custom ECC warning.
 protocol CustomECCWarningAcceptanceUseCase: AnyObject {
-
     /// `true` once the user has acknowledged the custom ECC warning.
     var hasAcceptedCustomECCWarning: Bool { get }
 
@@ -48,7 +46,6 @@ protocol CustomECCWarningAcceptanceUseCase: AnyObject {
 
 /// Tracks whether the user has answered the crash-reporting opt-in prompt.
 protocol CrashReportingPermissionsUseCase: AnyObject {
-
     /// `true` once the user has answered the crash-reporting prompt at least once.
     var hasAnsweredCrashReportingQuestion: Bool { get }
 
@@ -59,7 +56,6 @@ protocol CrashReportingPermissionsUseCase: AnyObject {
 
 /// Computes whether the user should be prompted to choose an app pincode.
 protocol PincodePromptUseCase: AnyObject {
-
     /// `true` if the app should prompt the user to set up a pincode during onboarding.
     var shouldPromptUserToChosePincode: Bool { get }
 }
@@ -69,6 +65,6 @@ protocol PincodePromptUseCase: AnyObject {
 /// Composite onboarding protocol retained for backwards compatibility with existing
 /// call sites. Prefer the narrow protocols above in new code.
 protocol OnboardingUseCase: TermsOfServiceAcceptanceUseCase,
-                            CustomECCWarningAcceptanceUseCase,
-                            CrashReportingPermissionsUseCase,
-                            PincodePromptUseCase {}
+    CustomECCWarningAcceptanceUseCase,
+    CrashReportingPermissionsUseCase,
+    PincodePromptUseCase {}

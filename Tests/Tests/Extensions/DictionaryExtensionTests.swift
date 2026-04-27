@@ -2,7 +2,6 @@ import XCTest
 @testable import Zhip
 
 final class DictionaryExtensionTests: XCTestCase {
-
     func test_compactMapValues_dropsNilResults() {
         let input = ["a": "1", "b": "two", "c": "3"]
         let result = input.compactMapValues { Int($0) }

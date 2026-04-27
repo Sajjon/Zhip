@@ -23,6 +23,7 @@
 //
 
 import Combine
+import SingleLineControllerCombine
 import Zesame
 
 /// Looser password mode for keystore restore — the keystore is already
@@ -66,7 +67,7 @@ final class RestoreWalletUsingKeystoreViewModel {
 
         let keyRestoration: AnyPublisher<KeyRestoration?, Never> = keyStoreValidationValue.map(\.value)
             .combineLatest(encryptionPassword)
-            .map { (keystoreOpt, passwordOpt) -> KeyRestoration? in
+            .map { keystoreOpt, passwordOpt -> KeyRestoration? in
                 guard let keystore = keystoreOpt, let password = passwordOpt else {
                     return nil
                 }
@@ -74,8 +75,8 @@ final class RestoreWalletUsingKeystoreViewModel {
             }.eraseToAnyPublisher()
 
         let encryptionPasswordPlaceHolder = Just(String(localized: .RestoreWallet
-            .keystoreEncryptionPasswordField(minLength: WalletEncryptionPassword
-                .minimumLength(mode: encryptionPasswordMode))))
+                .keystoreEncryptionPasswordField(minLength: WalletEncryptionPassword
+                    .minimumLength(mode: encryptionPasswordMode))))
             .eraseToAnyPublisher()
 
         let keystoreValidation = inputFromView.isEditingKeystore.withLatestFrom(keyStoreValidationValue) {

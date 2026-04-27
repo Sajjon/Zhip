@@ -1,8 +1,8 @@
 // MIT License — Copyright (c) 2018-2026 Open Zesame
 
 import Combine
-import UIKit
 import SingleLineControllerCore
+import UIKit
 
 /// The "Single-Line Controller" base class.
 ///
@@ -220,4 +220,3 @@ private extension SceneController {
         }
     }
 }
-

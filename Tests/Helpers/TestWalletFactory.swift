@@ -30,7 +30,6 @@ import Zesame
 /// parameters (iterations=1) so the expensive PBKDF2 derivation never dominates
 /// test runtime.
 enum TestWalletFactory {
-
     static let testPassword = "apabanan123"
 
     /// Builds a test `Wallet` from a known private key. Uses PBKDF2 with

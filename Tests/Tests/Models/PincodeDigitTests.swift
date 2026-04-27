@@ -2,11 +2,10 @@ import XCTest
 @testable import Zhip
 
 final class PincodeDigitTests: XCTestCase {
-
     // MARK: - Digit(string:)
 
     func test_digit_fromString_zeroToNine_allInitialize() {
-        for i in 0...9 {
+        for i in 0 ... 9 {
             XCTAssertEqual(Digit(string: String(i))?.rawValue, i, "failed for \(i)")
         }
     }

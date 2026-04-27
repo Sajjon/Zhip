@@ -29,7 +29,6 @@ import Foundation
 
 /// The single navigation step the welcome scene can emit.
 enum WelcomeUserAction {
-
     /// The user tapped "Get Started", signalling intent to begin onboarding.
     case /* user intends to */ start
 }
@@ -43,7 +42,6 @@ final class WelcomeViewModel: BaseViewModel<
     WelcomeViewModel.InputFromView,
     WelcomeViewModel.Output
 > {
-
     /// Wires `startTrigger` → `navigator.next(.start)`. Returns an empty `Output`
     /// because the welcome scene has no ViewModel-driven UI state.
     override func transform(input: Input) -> WelcomeViewModel.Output {
@@ -63,10 +61,8 @@ final class WelcomeViewModel: BaseViewModel<
 }
 
 extension WelcomeViewModel {
-
     /// User-event publishers the ViewModel consumes.
     struct InputFromView {
-
         /// Fires when the user taps the "Get Started" button.
         let startTrigger: AnyPublisher<Void, Never>
     }

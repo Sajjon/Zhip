@@ -29,7 +29,6 @@ import Zesame
 
 /// Default implementation of `VerifyEncryptionPasswordUseCase`.
 final class DefaultVerifyEncryptionPasswordUseCase: VerifyEncryptionPasswordUseCase {
-
     /// Reactive Zesame façade — performs the actual decrypt-verification.
     @Injected(\.zilliqaService) private var zilliqaService: ZilliqaServiceReactive
 

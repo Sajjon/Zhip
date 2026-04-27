@@ -25,9 +25,10 @@
 import Combine
 import Factory
 import Foundation
+import SingleLineControllerCombine
+import SingleLineControllerCore
 import UIKit
 import Zesame
-import SingleLineControllerCore
 
 // MARK: - User action and navigation steps
 
@@ -75,17 +76,21 @@ final class PollTransactionStatusViewModel: BaseViewModel<
 
         let activityTracker = ActivityIndicator()
 
-        let receipt = transactionReceiptUseCase.receiptOfTransaction(byId: transactionId, polling: .twentyTimesLinearBackoff)
-            .trackActivity(activityTracker)
-            .handleEvents(receiveCompletion: { completion in
-                if case .failure(let error) = completion,
-                   let zError = error as? Zesame.Error,
-                   case .api(.timeout) = zError {
-                    userDid(.waitUntilTimeout)
-                }
-            })
+        let receipt = transactionReceiptUseCase.receiptOfTransaction(
+            byId: transactionId,
+            polling: .twentyTimesLinearBackoff
+        )
+        .trackActivity(activityTracker)
+        .handleEvents(receiveCompletion: { completion in
+            if case let .failure(error) = completion,
+               let zError = error as? Zesame.Error,
+               case .api(.timeout) = zError {
+                userDid(.waitUntilTimeout)
+            }
+        })
 
-        let hasReceivedReceipt: AnyPublisher<Bool, Never> = receipt.mapToVoid().replaceErrorWithEmpty().map { true }.prepend(false).eraseToAnyPublisher()
+        let hasReceivedReceipt: AnyPublisher<Bool, Never> = receipt.mapToVoid().replaceErrorWithEmpty().map { true }
+            .prepend(false).eraseToAnyPublisher()
 
         // MARK: Navigate
 
@@ -93,7 +98,7 @@ final class PollTransactionStatusViewModel: BaseViewModel<
             input.fromView.copyTransactionIdTrigger
                 .sink { [weak self, pasteboard] in
                     guard let self else { return }
-                    pasteboard.copy(self.transactionId)
+                    pasteboard.copy(transactionId)
                     input.fromController.toastSubject
                         .send(Toast(String(localized: .PollTransaction.copiedTransactionId)))
                 },
@@ -135,4 +140,3 @@ extension PollTransactionStatusViewModel {
         let isSeeTxDetailsButtonLoading: AnyPublisher<Bool, Never>
     }
 }
-

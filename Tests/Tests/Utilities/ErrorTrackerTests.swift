@@ -23,14 +23,13 @@
 //
 
 import Combine
-import XCTest
 import SingleLineControllerCore
+import XCTest
 @testable import Zhip
 
 /// Tests that `ErrorTracker` republishes failures from tracked publishers and
 /// exposes them through `asPublisher()` for downstream subscribers.
 final class ErrorTrackerTests: XCTestCase {
-
     private enum TestError: Error { case boom }
 
     private var cancellables: Set<AnyCancellable> = []
@@ -66,4 +65,3 @@ final class ErrorTrackerTests: XCTestCase {
         XCTAssertEqual(received, [42])
     }
 }
-

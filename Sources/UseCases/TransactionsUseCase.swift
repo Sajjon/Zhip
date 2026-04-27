@@ -31,7 +31,6 @@ import Zesame
 /// Reads and writes the locally-cached wallet balance so the UI can show a last-known
 /// value before a fresh fetch completes.
 protocol BalanceCacheUseCase {
-
     /// The most-recent cached `Amount`, or `nil` if no balance has ever been cached.
     var cachedBalance: Amount? { get }
 
@@ -52,21 +51,18 @@ protocol BalanceCacheUseCase {
 
 /// Fetches the minimum allowed gas price for an outgoing transaction.
 protocol GasPriceUseCase {
-
     /// Returns the network's minimum gas price as a one-shot publisher.
     func getMinimumGasPrice() -> AnyPublisher<Amount, Swift.Error>
 }
 
 /// Fetches a live wallet balance for a given on-chain address.
 protocol FetchBalanceUseCase {
-
     /// Fetches the live balance and nonce for `address`.
     func getBalance(for address: LegacyAddress) -> AnyPublisher<BalanceResponse, Swift.Error>
 }
 
 /// Signs and broadcasts a transaction to the Zilliqa network.
 protocol SendTransactionUseCase {
-
     /// Signs `payment` with the keystore inside `wallet` (unlocked by
     /// `encryptionPassword`) and broadcasts the transaction, emitting the resulting
     /// `TransactionResponse` once on success.
@@ -76,7 +72,6 @@ protocol SendTransactionUseCase {
 
 /// Polls the network for a transaction receipt, confirming inclusion.
 protocol TransactionReceiptUseCase {
-
     /// Polls the network with the supplied `polling` schedule until the transaction
     /// identified by `txId` reaches consensus, then emits its `TransactionReceipt`.
     func receiptOfTransaction(byId txId: String, polling: Polling)
@@ -91,7 +86,7 @@ protocol TransactionReceiptUseCase {
 /// `FetchBalanceUseCase`, `SendTransactionUseCase`, `TransactionReceiptUseCase`) in
 /// new code.
 protocol TransactionsUseCase: BalanceCacheUseCase,
-                              GasPriceUseCase,
-                              FetchBalanceUseCase,
-                              SendTransactionUseCase,
-                              TransactionReceiptUseCase {}
+    GasPriceUseCase,
+    FetchBalanceUseCase,
+    SendTransactionUseCase,
+    TransactionReceiptUseCase {}

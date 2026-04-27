@@ -24,8 +24,9 @@
 
 import Combine
 import Factory
-import Zesame
+import SingleLineControllerCombine
 import SingleLineControllerCore
+import Zesame
 
 /// Outcomes of the decrypt-to-reveal screen.
 enum DecryptKeystoreToRevealKeyPairUserAction {
@@ -97,7 +98,7 @@ final class DecryptKeystoreToRevealKeyPairViewModel: BaseViewModel<
                 // the user expects only the most recent attempt to surface.
                 .flatMapLatest { [weak self] input -> AnyPublisher<KeyPair, Never> in
                     guard let self else { return Empty().eraseToAnyPublisher() }
-                    return self.extractKeyPairUseCase.extractKeyPairFrom(wallet: input.wallet, encryptedBy: input.password)
+                    return extractKeyPairUseCase.extractKeyPairFrom(wallet: input.wallet, encryptedBy: input.password)
                         .trackActivity(activityIndicator)
                         .trackError(errorTracker)
                         .replaceErrorWithEmpty()
@@ -168,4 +169,3 @@ extension DecryptKeystoreToRevealKeyPairViewModel {
         }
     }
 }
-

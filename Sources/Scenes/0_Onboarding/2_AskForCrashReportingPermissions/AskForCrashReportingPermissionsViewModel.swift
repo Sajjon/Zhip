@@ -24,6 +24,7 @@
 
 import Combine
 import Foundation
+import SingleLineControllerCombine
 
 // MARK: - AnalyticsPermissionNavigation
 
@@ -69,7 +70,8 @@ final class AskForCrashReportingPermissionsViewModel: BaseViewModel<
 
         // Collapse both button taps into a single `Bool` stream where
         // `true == accept`, `false == decline`. Avoids forking the persistence path.
-        let hasAnsweredAnalyticsPermissionsQuestionTrigger = input.fromView.acceptTrigger.map { true }.merge(with: input.fromView.declineTrigger.map { false }).eraseToAnyPublisher()
+        let hasAnsweredAnalyticsPermissionsQuestionTrigger = input.fromView.acceptTrigger.map { true }
+            .merge(with: input.fromView.declineTrigger.map { false }).eraseToAnyPublisher()
 
         if isDismissible {
             // Settings-modal context: install a "Done" right-bar button
@@ -83,8 +85,8 @@ final class AskForCrashReportingPermissionsViewModel: BaseViewModel<
             hasAnsweredAnalyticsPermissionsQuestionTrigger.sink { [weak self] in
                 guard let self else { return }
                 // Persist *first* so re-entering onboarding from a kill picks up the new state.
-                self.useCase.answeredCrashReportingQuestion(acceptsCrashReporting: $0)
-                self.navigator.next(.answerQuestionAboutCrashReporting)
+                useCase.answeredCrashReportingQuestion(acceptsCrashReporting: $0)
+                navigator.next(.answerQuestionAboutCrashReporting)
             },
         ].forEach { $0.store(in: &cancellables) }
 

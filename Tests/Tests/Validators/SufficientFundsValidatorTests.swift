@@ -3,7 +3,6 @@ import Zesame
 @testable import Zhip
 
 final class SufficientFundsValidatorTests: XCTestCase {
-
     func test_validate_missingAmount_returnsEmpty() {
         let sut = SufficientFundsValidator()
         let result = sut.validate(input: (amount: nil, gasLimit: nil, gasPrice: nil, balance: nil))

@@ -24,6 +24,7 @@
 
 import Combine
 import Factory
+import SingleLineControllerCombine
 import UIKit
 import Zesame
 
@@ -55,7 +56,8 @@ final class MainCoordinator: BaseCoordinator<MainCoordinatorNavigationStep> {
     ) {
         self.deeplinkedTransaction = deeplinkedTransaction
         super.init(navigationController: navigationController)
-        deeplinkedTransaction.mapToVoid().sink { [weak self] in self?.toSendPrefilTransaction() }.store(in: &cancellables)
+        deeplinkedTransaction.mapToVoid().sink { [weak self] in self?.toSendPrefilTransaction() }
+            .store(in: &cancellables)
     }
 
     /// Begins by pushing the Main hub.
@@ -94,9 +96,9 @@ private extension MainCoordinator {
         ) { [weak self] userIntendsTo in
             guard let self else { return }
             switch userIntendsTo {
-            case .send: self.toSend()
-            case .receive: self.toReceive()
-            case .goToSettings: self.toSettings()
+            case .send: toSend()
+            case .receive: toReceive()
+            case .goToSettings: toSettings()
             }
         }
     }

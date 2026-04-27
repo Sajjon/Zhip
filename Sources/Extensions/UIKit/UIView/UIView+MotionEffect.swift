@@ -29,9 +29,9 @@ extension UIMotionEffect {
     /// by ±`strength` points as the device tilts horizontally and vertically.
     /// Used to give layered hero artwork (welcome screen) a sense of depth.
     class func twoAxesShift(strength: CGFloat) -> UIMotionEffect {
-        // internal method that creates motion effect
-        // Builds one axis's interpolating effect — keypath choice tells UIKit
-        // which centre coordinate to interpolate.
+        /// internal method that creates motion effect
+        /// Builds one axis's interpolating effect — keypath choice tells UIKit
+        /// which centre coordinate to interpolate.
         func motion(type: UIInterpolatingMotionEffect.EffectType) -> UIInterpolatingMotionEffect {
             let keyPath = type == .tiltAlongHorizontalAxis ? "center.x" : "center.y"
             let motion = UIInterpolatingMotionEffect(keyPath: keyPath, type: type)

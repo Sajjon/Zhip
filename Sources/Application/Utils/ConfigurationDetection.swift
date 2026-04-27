@@ -33,7 +33,7 @@ import Foundation
 /// https://stackoverflow.com/a/47443568/1311272
 let isDebug: Bool = {
     var isDebug = false
-    // function with a side effect and Bool return value that we can pass into assert()
+    /// function with a side effect and Bool return value that we can pass into assert()
     func set(debug: Bool) -> Bool {
         isDebug = debug
         return isDebug

@@ -23,6 +23,7 @@
 //
 
 import Combine
+import SingleLineControllerCombine
 import UIKit
 
 /// Wallet hub screen — shows balance with pull-to-refresh + send/receive CTAs.

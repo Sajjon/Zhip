@@ -32,7 +32,6 @@ import Foundation
 /// `ImmediateClock`, which ignores the delay and fires on the next main-queue
 /// cycle — making timer-dependent tests run in milliseconds.
 protocol Clock: AnyObject {
-
     /// Schedules `block` to run on the main thread after `delay` seconds.
     ///
     /// - Returns: A `DispatchWorkItem` that can be cancelled before it fires.
@@ -45,7 +44,6 @@ protocol Clock: AnyObject {
 
 /// Production `Clock` implementation backed by `DispatchQueue.main.asyncAfter`.
 final class MainQueueClock: Clock {
-
     init() {}
 
     @discardableResult

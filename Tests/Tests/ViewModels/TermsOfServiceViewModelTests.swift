@@ -32,7 +32,6 @@ import XCTest
 /// calls `didAcceptTermsOfService()` exactly once when the user accepts, and emits
 /// the right `.acceptTermsOfService` / `.dismiss` navigation steps.
 final class TermsOfServiceViewModelTests: XCTestCase {
-
     private var cancellables: Set<AnyCancellable> = []
     private var useCase: MockOnboardingUseCase!
     private var didScrollToBottom: PassthroughSubject<Void, Never>!

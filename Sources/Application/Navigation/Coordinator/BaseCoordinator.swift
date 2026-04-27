@@ -1,8 +1,8 @@
 // MIT License — Copyright (c) 2018-2026 Open Zesame
 
 import Combine
-import UIKit
 import SingleLineControllerCore
+import UIKit
 
 /// Base class for our coordinators.
 ///
@@ -34,4 +34,3 @@ class BaseCoordinator<NavigationStep>: Coordinating, Navigating {
         abstract
     }
 }
-

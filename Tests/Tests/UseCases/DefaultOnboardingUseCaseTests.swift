@@ -33,7 +33,6 @@ import XCTest
 /// real `Container.shared.zilliqaService()` — which is fine because nothing in these
 /// tests triggers network calls.
 final class DefaultOnboardingUseCaseTests: XCTestCase {
-
     private var preferences: Preferences!
     private var secureStore: SecurePersistence!
     private var sut: DefaultOnboardingUseCase!

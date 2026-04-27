@@ -9,7 +9,6 @@ import Foundation
 /// **into** the ViewModel. Subjects (`titleSubject`, `toastSubject`, etc.) flow the
 /// other direction: the ViewModel `send`s values to drive UI the controller owns.
 struct InputFromController {
-
     /// Fires once, right after the controller's `viewDidLoad`.
     let viewDidLoad: AnyPublisher<Void, Never>
 

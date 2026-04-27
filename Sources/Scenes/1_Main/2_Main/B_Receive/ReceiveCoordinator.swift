@@ -37,7 +37,6 @@ enum ReceiveCoordinatorNavigationStep {
 /// and adds a "share as link" action that builds a `zhip.app/send?...` deep link
 /// via `DeepLinkGenerator` and presents the system share sheet.
 final class ReceiveCoordinator: BaseCoordinator<ReceiveCoordinatorNavigationStep> {
-
     /// Builds outbound `zhip.app` URLs the share sheet uses.
     @Injected(\.deepLinkGenerator) private var deepLinkGenerator: DeepLinkGenerator
 

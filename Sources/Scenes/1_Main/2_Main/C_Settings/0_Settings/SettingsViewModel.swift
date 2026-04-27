@@ -24,9 +24,10 @@
 
 import Combine
 import Foundation
+import SingleLineControllerCombine
+import SingleLineControllerCore
 import UIKit
 import Zesame
-import SingleLineControllerCore
 
 /// Cell model used for every Settings row — wraps a navigation destination
 /// with the row's title + icon + style.
@@ -88,10 +89,11 @@ final class SettingsViewModel: BaseViewModel<
             .map { [weak self] _ in self?.makeSections() ?? [] }
             .eraseToAnyPublisher()
 
-        let selectedCell: AnyPublisher<SettingsItem, Never> = input.fromView.selectedIndexPath.withLatestFrom(sections) {
-            $1[$0.section].items[$0.row]
-        }
-        .eraseToAnyPublisher()
+        let selectedCell: AnyPublisher<SettingsItem, Never> = input.fromView.selectedIndexPath
+            .withLatestFrom(sections) {
+                $1[$0.section].items[$0.row]
+            }
+            .eraseToAnyPublisher()
 
         [
             input.fromController.rightBarButtonTrigger
@@ -226,4 +228,3 @@ private extension Network {
         }
     }
 }
-

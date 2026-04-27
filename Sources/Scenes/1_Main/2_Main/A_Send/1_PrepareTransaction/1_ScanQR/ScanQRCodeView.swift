@@ -25,8 +25,9 @@
 import AVFoundation
 import Combine
 import QRCodeReader
-import UIKit
+import SingleLineControllerCombine
 import SingleLineControllerCore
+import UIKit
 
 /// QR-code scanner view backed by the third-party `QRCodeReader` library.
 /// Captures from the back camera and emits scanned strings through the view-model.
@@ -109,4 +110,3 @@ extension ScanQRCodeView: ViewModelled {
         ]
     }
 }
-

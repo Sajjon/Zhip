@@ -31,14 +31,13 @@ import Zesame
 /// Tests that `DefaultRestoreWalletUseCase` maps the `KeyRestoration` case to
 /// the correct `Wallet.Origin` and forwards to the injected service.
 final class DefaultRestoreWalletUseCaseTests: XCTestCase {
-
     private var cancellables: Set<AnyCancellable> = []
     private var mockService: MockZilliqaServiceReactive!
 
     override func setUp() {
         super.setUp()
         mockService = MockZilliqaServiceReactive()
-        Container.shared.zilliqaService.register { [unowned self] in self.mockService }
+        Container.shared.zilliqaService.register { [unowned self] in mockService }
     }
 
     override func tearDown() {
@@ -48,7 +47,7 @@ final class DefaultRestoreWalletUseCaseTests: XCTestCase {
         super.tearDown()
     }
 
-    func test_restoreFromKeystore_tagsOriginAsImportedKeystore() throws {
+    func test_restoreFromKeystore_tagsOriginAsImportedKeystore() {
         let wallet = TestWalletFactory.makeWallet()
         mockService.restoreWalletResult = .success(wallet.wallet)
         let sut = DefaultRestoreWalletUseCase()

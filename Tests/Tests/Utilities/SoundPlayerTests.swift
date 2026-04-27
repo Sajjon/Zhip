@@ -32,7 +32,6 @@ import XCTest
 /// `Container.shared.soundPlayer` factory to a `MockSoundPlayer` — never the real
 /// `DefaultSoundPlayer` that drives `AVAudioPlayer`.
 final class SoundPlayerTests: XCTestCase {
-
     // MARK: - MockSoundPlayer
 
     func test_mockSoundPlayer_recordsPlayInvocations() {
@@ -89,7 +88,11 @@ final class SoundPlayerTests: XCTestCase {
 
         // Resource doesn't exist in the test bundle — the early `guard` returns
         // before any AVAudioPlayer or AVAudioSession activation, so no sound.
-        player.play(resource: "definitely-not-a-real-resource-xyz", withExtension: "wav", in: Bundle(for: SoundPlayerTests.self))
+        player.play(
+            resource: "definitely-not-a-real-resource-xyz",
+            withExtension: "wav",
+            in: Bundle(for: SoundPlayerTests.self)
+        )
 
         // No assertion needed — we just exercise the guard path without sound.
     }

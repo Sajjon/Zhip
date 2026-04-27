@@ -24,6 +24,7 @@
 
 import Combine
 import Foundation
+import SingleLineControllerCombine
 
 // MARK: - WarningCustomECCUserAction
 
@@ -66,7 +67,8 @@ final class WarningCustomECCViewModel: BaseViewModel<
         }
 
         // Once the user reaches the bottom, the button stays enabled.
-        let isAcceptButtonEnabled: AnyPublisher<Bool, Never> = input.fromView.didScrollToBottom.map { true }.eraseToAnyPublisher()
+        let isAcceptButtonEnabled: AnyPublisher<Bool, Never> = input.fromView.didScrollToBottom.map { true }
+            .eraseToAnyPublisher()
 
         if isDismissible {
             input.fromController.rightBarButtonContentSubject.onBarButton(.done)

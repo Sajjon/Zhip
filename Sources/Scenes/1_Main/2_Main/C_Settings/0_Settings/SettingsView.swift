@@ -23,8 +23,9 @@
 //
 
 import Combine
-import UIKit
+import SingleLineControllerCombine
 import SingleLineControllerCore
+import UIKit
 
 // MARK: - SettingsView
 
@@ -68,4 +69,3 @@ extension SettingsView: ViewModelled {
         )
     }
 }
-

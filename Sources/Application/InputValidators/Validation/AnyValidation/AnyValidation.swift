@@ -42,7 +42,7 @@ enum AnyValidation {
 
     /// Bridge from a typed `Validation<Value, Error>`. Loses the typed value
     /// but preserves error/remark messages.
-    init<Value, Error: InputError>(_ validation: Validation<Value, Error>) {
+    init(_ validation: Validation<some Any, some InputError>) {
         switch validation {
         case let .invalid(invalid):
             switch invalid {

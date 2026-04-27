@@ -25,8 +25,9 @@
 import Combine
 import Factory
 import Foundation
-import Zesame
+import SingleLineControllerCombine
 import SingleLineControllerCore
+import Zesame
 
 // MARK: - MainUserAction
 
@@ -81,7 +82,11 @@ final class MainViewModel: BaseViewModel<
         //   - external (post-send) → updateBalanceTrigger
         //   - user-initiated → pullToRefreshTrigger
         //   - initial load → wallet emission
-        let fetchTrigger = Publishers.Merge3(updateBalanceTrigger, input.fromView.pullToRefreshTrigger, wallet.mapToVoid()).eraseToAnyPublisher()
+        let fetchTrigger = Publishers.Merge3(
+            updateBalanceTrigger,
+            input.fromView.pullToRefreshTrigger,
+            wallet.mapToVoid()
+        ).eraseToAnyPublisher()
 
         // Run the balance call. flatMapLatest cancels in-flight requests when
         // a new trigger fires (e.g. user pulls again before the first fetch returns).
@@ -89,7 +94,7 @@ final class MainViewModel: BaseViewModel<
         let latestBalanceAndNonce: AnyPublisher<BalanceResponse, Never> = fetchTrigger.withLatestFrom(wallet)
             .flatMapLatest { [weak self] wallet -> AnyPublisher<BalanceResponse, Never> in
                 guard let self else { return Empty().eraseToAnyPublisher() }
-                return self.transactionUseCase
+                return transactionUseCase
                     .getBalance(for: wallet.legacyAddress)
                     .trackActivity(activityIndicator)
                     .replaceErrorWithEmpty()
@@ -131,7 +136,8 @@ final class MainViewModel: BaseViewModel<
 
         return Output(
             isFetchingBalance: activityIndicator.asPublisher(),
-            balance: latestBalanceOrZero.map { formatter.format(amount: $0, in: .zil, formatThousands: true) }.eraseToAnyPublisher(),
+            balance: latestBalanceOrZero.map { formatter.format(amount: $0, in: .zil, formatThousands: true) }
+                .eraseToAnyPublisher(),
             refreshControlLastUpdatedTitle: refreshControlLastUpdatedTitle
         )
     }
@@ -158,4 +164,3 @@ extension MainViewModel {
         let refreshControlLastUpdatedTitle: AnyPublisher<String, Never>
     }
 }
-

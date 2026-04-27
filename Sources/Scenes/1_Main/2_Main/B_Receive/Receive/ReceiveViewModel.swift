@@ -24,6 +24,7 @@
 
 import Combine
 import Factory
+import SingleLineControllerCombine
 import UIKit
 import Zesame
 
@@ -65,7 +66,8 @@ final class ReceiveViewModel: BaseViewModel<
 
         let validator = InputValidator()
 
-        let amountValidationValue: AnyPublisher<AmountValidator<Amount>.ValidationResult, Never> = input.fromView.amountToReceive
+        let amountValidationValue: AnyPublisher<AmountValidator<Amount>.ValidationResult, Never> = input.fromView
+            .amountToReceive
             .map { validator.validateAmount($0) }.prepend(.valid(.amount(
                 0,
                 in: .zil
@@ -108,7 +110,8 @@ final class ReceiveViewModel: BaseViewModel<
 
         return Output(
             receivingAddress: receivingAddress,
-            amountPlaceholder: Just(String(localized: .Receive.requestAmountField(unit: Unit.zil.name))).eraseToAnyPublisher(),
+            amountPlaceholder: Just(String(localized: .Receive.requestAmountField(unit: Unit.zil.name)))
+                .eraseToAnyPublisher(),
             amountValidation: amountValidation,
             qrImage: qrImage
         )

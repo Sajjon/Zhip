@@ -22,8 +22,8 @@
 // SOFTWARE.
 //
 
-import Zesame
 import SingleLineControllerCore
+import Zesame
 
 /// Validates a password + confirmation pair, producing a typed
 /// `WalletEncryptionPassword` value the keystore-derivation use case can consume.
@@ -89,4 +89,3 @@ extension WalletEncryptionPassword.Error: InputError, Equatable {
         }
     }
 }
-

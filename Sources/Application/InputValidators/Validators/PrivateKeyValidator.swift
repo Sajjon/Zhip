@@ -23,8 +23,8 @@
 //
 
 import Foundation
-import Zesame
 import SingleLineControllerCore
+import Zesame
 
 /// Validates a hex-encoded Zilliqa private-key string, producing a `PrivateKey`.
 ///
@@ -98,4 +98,3 @@ extension PrivateKeyValidator.Error {
         }
     }
 }
-

@@ -23,13 +23,12 @@
 //
 
 import Combine
+import SingleLineControllerCore
 import UIKit
 import XCTest
-import SingleLineControllerCore
 @testable import Zhip
 
 final class PincodeTextFieldTests: XCTestCase {
-
     private var cancellables: Set<AnyCancellable> = []
 
     override func tearDown() {
@@ -176,7 +175,7 @@ final class PincodeTextFieldTests: XCTestCase {
         XCTAssertTrue(received.contains(where: { $0 == nil }))
     }
 
-    func test_pincodePublisher_emitsPincodeWhenFullLengthTyped() throws {
+    func test_pincodePublisher_emitsPincodeWhenFullLengthTyped() {
         let sut = PincodeTextField()
         var received: [Pincode?] = []
         sut.pincodePublisher.sink { received.append($0) }.store(in: &cancellables)
@@ -191,9 +190,7 @@ final class PincodeTextFieldTests: XCTestCase {
 // MARK: - String.isBackspace
 
 final class StringIsBackspaceTests: XCTestCase {
-
     func test_nonBackspaceString_isNotBackspace() {
         XCTAssertFalse("abc".isBackspace)
     }
 }
-

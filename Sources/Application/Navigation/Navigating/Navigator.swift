@@ -9,7 +9,6 @@ import Combine
 /// subscribes to `navigator.navigation` to receive those steps and perform the
 /// actual UIKit transitions.
 final class Navigator<NavigationStep> {
-
     /// Internal backing subject. Exposed read-only via `navigation`.
     private let navigationSubject = PassthroughSubject<NavigationStep, Never>()
 
@@ -19,7 +18,6 @@ final class Navigator<NavigationStep> {
 }
 
 extension Navigator {
-
     /// Emits `step` on `navigation`. Called by ViewModels to request navigation.
     func next(_ step: NavigationStep) {
         navigationSubject.send(step)

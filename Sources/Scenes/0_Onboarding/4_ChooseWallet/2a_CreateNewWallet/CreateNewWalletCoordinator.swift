@@ -94,10 +94,10 @@ private extension CreateNewWalletCoordinator {
                 // flips to true after BackupWalletCoordinator finishes.
                 // Future work can gate Send behind this flag and surface a
                 // "back up your wallet" banner.
-                self.walletStorageUseCase.save(wallet: wallet)
-                self.preferences.save(value: false, for: .hasConfirmedNewWalletBackup)
-                self.toBackupWallet(wallet: wallet)
-            case .cancel: self.cancel()
+                walletStorageUseCase.save(wallet: wallet)
+                preferences.save(value: false, for: .hasConfirmedNewWalletBackup)
+                toBackupWallet(wallet: wallet)
+            case .cancel: cancel()
             }
         }
     }
@@ -115,11 +115,11 @@ private extension CreateNewWalletCoordinator {
         ) { [weak self] userFinished in
             guard let self else { return }
             switch userFinished {
-            case .cancel: self.cancel()
+            case .cancel: cancel()
             case .backUp:
                 // User confirmed they recorded the backup — flip the flag.
-                self.preferences.save(value: true, for: .hasConfirmedNewWalletBackup)
-                self.toMain(wallet: wallet)
+                preferences.save(value: true, for: .hasConfirmedNewWalletBackup)
+                toMain(wallet: wallet)
             }
         }
     }

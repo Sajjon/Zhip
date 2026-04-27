@@ -22,6 +22,7 @@
 // SOFTWARE.
 //
 
+import SingleLineControllerCombine
 import UIKit
 import XCTest
 @testable import Zhip
@@ -29,7 +30,6 @@ import XCTest
 /// Exercises `TitledValueView`'s `setValue`, `titled`, and `titleBinder` APIs
 /// after configuration via `withStyles`.
 final class TitledValueViewTests: XCTestCase {
-
     private func makeView() -> TitledValueView {
         let view = TitledValueView()
         view.withStyles()

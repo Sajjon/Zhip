@@ -22,8 +22,8 @@
 // SOFTWARE.
 //
 
-import Zesame
 import SingleLineControllerCore
+import Zesame
 
 /// App-side wrapper around `Zesame.Wallet` that additionally records *how* the wallet
 /// entered the app (`Origin`).
@@ -86,4 +86,3 @@ extension Wallet {
         wallet.address
     }
 }
-

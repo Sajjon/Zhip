@@ -25,8 +25,9 @@
 import Combine
 import Factory
 import Foundation
-import Zesame
+import SingleLineControllerCombine
 import SingleLineControllerCore
+import Zesame
 
 // MARK: - PrepareTransactionUserAction
 
@@ -47,7 +48,7 @@ enum PrepareTransactionUserAction {
 /// - real-time per-field validation (recipient, amount, gas limit, gas price);
 /// - cross-field "sufficient funds" check;
 /// - pre-fill from inbound `TransactionIntent` (deep-link or QR scan).
-final class PrepareTransactionViewModel: BaseViewModel< // swiftlint:disable:this type_body_length
+final class PrepareTransactionViewModel: BaseViewModel<// swiftlint:disable:this type_body_length
     PrepareTransactionUserAction,
     PrepareTransactionViewModel.InputFromView,
     PrepareTransactionViewModel.Output
@@ -78,17 +79,18 @@ final class PrepareTransactionViewModel: BaseViewModel< // swiftlint:disable:thi
         let fetchTrigger = input.fromView.pullToRefreshTrigger.merge(with: wallet.mapToVoid()).eraseToAnyPublisher()
 
         // Fetch latest balance from API
-        let latestBalanceAndNonce: AnyPublisher<BalanceResponse, Never> = fetchTrigger.withLatestFrom(wallet).flatMapLatest {
-            self.transactionUseCase
-                .getBalance(for: $0.legacyAddress)
-                .trackActivity(activityIndicator)
-                .trackError(errorTracker)
-                .replaceErrorWithEmpty()
-                .handleEvents(receiveOutput: { [weak self] in
-                    self?.transactionUseCase.cacheBalance($0.balance)
-                })
-        }
-        .eraseToAnyPublisher()
+        let latestBalanceAndNonce: AnyPublisher<BalanceResponse, Never> = fetchTrigger.withLatestFrom(wallet)
+            .flatMapLatest {
+                self.transactionUseCase
+                    .getBalance(for: $0.legacyAddress)
+                    .trackActivity(activityIndicator)
+                    .trackError(errorTracker)
+                    .replaceErrorWithEmpty()
+                    .handleEvents(receiveOutput: { [weak self] in
+                        self?.transactionUseCase.cacheBalance($0.balance)
+                    })
+            }
+            .eraseToAnyPublisher()
 
         // Do NOT `prepend(0)`. Without a real network nonce the Review button
         // would enable on a stale 0 — the network rejects nonce-too-low and
@@ -97,7 +99,8 @@ final class PrepareTransactionViewModel: BaseViewModel< // swiftlint:disable:thi
         // also keeps the Review CTA disabled until the network is reachable.
         let nonce = latestBalanceAndNonce.map(\.nonce)
         let startingBalance: Amount = transactionUseCase.cachedBalance ?? 0
-        let balance: AnyPublisher<Amount, Never> = latestBalanceAndNonce.map(\.balance).prepend(startingBalance).eraseToAnyPublisher()
+        let balance: AnyPublisher<Amount, Never> = latestBalanceAndNonce.map(\.balance).prepend(startingBalance)
+            .eraseToAnyPublisher()
 
         // MARK: - VALIDATION -> VALUE
 
@@ -105,7 +108,8 @@ final class PrepareTransactionViewModel: BaseViewModel< // swiftlint:disable:thi
 
         // MARK: Recipient Input ->  Value + Validation
 
-        let recipientValidationValue: AnyPublisher<Validation<Address, AddressValidator.Error>, Never> = input.fromView.recipientAddress
+        let recipientValidationValue: AnyPublisher<Validation<Address, AddressValidator.Error>, Never> = input.fromView
+            .recipientAddress
             .map { validator.validateRecipient($0) }
             .merge(with: scannedOrDeeplinkedTransaction.map { .valid($0.to) })
             .eraseToAnyPublisher()
@@ -137,13 +141,17 @@ final class PrepareTransactionViewModel: BaseViewModel< // swiftlint:disable:thi
 
         let maxAmountTrigger = input.fromView.maxAmountTrigger
 
-        let gasLimitValidationErrorTrigger: AnyPublisher<Void, Never> = input.fromView.didEndEditingGasLimit.merge(with: maxAmountTrigger).eraseToAnyPublisher()
+        let gasLimitValidationErrorTrigger: AnyPublisher<Void, Never> = input.fromView.didEndEditingGasLimit
+            .merge(with: maxAmountTrigger).eraseToAnyPublisher()
 
-        let gasLimitValidation = gasLimitValidationErrorTrigger.withLatestFrom(gasLimitValidationValue).onlyErrors().merge(with: gasLimitValidationValue.nonErrors()).eraseToAnyPublisher()
+        let gasLimitValidation = gasLimitValidationErrorTrigger.withLatestFrom(gasLimitValidationValue).onlyErrors()
+            .merge(with: gasLimitValidationValue.nonErrors()).eraseToAnyPublisher()
 
-        let gasPriceValidationErrorTrigger: AnyPublisher<Void, Never> = input.fromView.didEndEditingGasPrice.merge(with: maxAmountTrigger).eraseToAnyPublisher()
+        let gasPriceValidationErrorTrigger: AnyPublisher<Void, Never> = input.fromView.didEndEditingGasPrice
+            .merge(with: maxAmountTrigger).eraseToAnyPublisher()
 
-        let gasPriceValidation = gasPriceValidationErrorTrigger.withLatestFrom(gasPriceValidationValue).onlyErrors().merge(with: gasPriceValidationValue.nonErrors()).eraseToAnyPublisher()
+        let gasPriceValidation = gasPriceValidationErrorTrigger.withLatestFrom(gasPriceValidationValue).onlyErrors()
+            .merge(with: gasPriceValidationValue.nonErrors()).eraseToAnyPublisher()
 
         let zilAmountFromScannedOrDeeplinkedTransaction: AnyPublisher<AmountValidator<Amount>.ValidationResult, Never> =
             scannedOrDeeplinkedTransaction.map(\.amount).filterNil().map { .valid(.amount(
@@ -153,34 +161,45 @@ final class PrepareTransactionViewModel: BaseViewModel< // swiftlint:disable:thi
 
         // MARK: Amount + MaxAmountTrigger Input -> Value + Validation
 
-        let amountWithoutSufficientFundsCheckValidationValue: AnyPublisher<AmountValidator<Amount>.ValidationResult, Never> =
-            input.fromView.amountToSend.map { validator.validateAmount($0) }.merge(with: zilAmountFromScannedOrDeeplinkedTransaction).eraseToAnyPublisher()
+        let amountWithoutSufficientFundsCheckValidationValue: AnyPublisher<
+            AmountValidator<Amount>.ValidationResult,
+            Never
+        > =
+            input.fromView.amountToSend.map { validator.validateAmount($0) }
+                .merge(with: zilAmountFromScannedOrDeeplinkedTransaction).eraseToAnyPublisher()
 
-        let amountWithoutSufficientFundsCheck: AnyPublisher<Amount?, Never> = amountWithoutSufficientFundsCheckValidationValue
-            .map { $0.value?.amount }.eraseToAnyPublisher()
+        let amountWithoutSufficientFundsCheck: AnyPublisher<Amount?, Never> =
+            amountWithoutSufficientFundsCheckValidationValue
+                .map { $0.value?.amount }.eraseToAnyPublisher()
 
-        let amountValidationValue: AnyPublisher<SufficientFundsValidator.ValidationResult, Never> = // Input from fields or deeplinked/scanned
-                amountWithoutSufficientFundsCheck.merge(with: // Max trigger -> Balance SUBTRACT GasPrice (default to min)
+        let amountValidationValue: AnyPublisher<
+            SufficientFundsValidator.ValidationResult,
+            Never
+        > = // Input from fields or deeplinked/scanned
+            amountWithoutSufficientFundsCheck.merge(with: // Max trigger -> Balance SUBTRACT GasPrice (default to min)
                 maxAmountTrigger.withLatestFrom(
-                    balance.prepend(startingBalance).combineLatest(gasLimit.prepend(_startingGasLimit), gasPrice.prepend(_startingGasPrice), { (
-                            latestBalance: Amount?,
-                            latestGasLimit: GasLimit?,
-                            latestGasPrice: GasPrice?
-                        ) -> Amount? in
-                            let balanceOrZero: Amount = latestBalance ?? startingBalance
-                            let gasLimitOrMin: GasLimit = latestGasLimit ?? _startingGasLimit
-                            let gasPriceOrMin: GasPrice = latestGasPrice ?? _startingGasPrice
+                    balance.prepend(startingBalance).combineLatest(
+                        gasLimit.prepend(_startingGasLimit),
+                        gasPrice.prepend(_startingGasPrice)
+                    ) { (
+                        latestBalance: Amount?,
+                        latestGasLimit: GasLimit?,
+                        latestGasPrice: GasPrice?
+                    ) -> Amount? in
+                        let balanceOrZero: Amount = latestBalance ?? startingBalance
+                        let gasLimitOrMin: GasLimit = latestGasLimit ?? _startingGasLimit
+                        let gasPriceOrMin: GasPrice = latestGasPrice ?? _startingGasPrice
 
-                            guard let balanceMinusGas: Amount = try? balanceOrZero - Payment
-                                .estimatedTotalTransactionFee(
-                                    gasPrice: gasPriceOrMin,
-                                    gasLimit: gasLimitOrMin
-                                )
-                            else {
-                                return nil
-                            }
-                            return balanceMinusGas
-                        }).eraseToAnyPublisher()
+                        guard let balanceMinusGas: Amount = try? balanceOrZero - Payment
+                            .estimatedTotalTransactionFee(
+                                gasPrice: gasPriceOrMin,
+                                gasLimit: gasLimitOrMin
+                            )
+                        else {
+                            return nil
+                        }
+                        return balanceMinusGas
+                    }.eraseToAnyPublisher()
                 ) { $1 })
             .combineLatest(
                 gasLimit.prepend(_startingGasLimit),
@@ -190,7 +209,8 @@ final class PrepareTransactionViewModel: BaseViewModel< // swiftlint:disable:thi
                 validator.validate(amount: amount, gasLimit: gasLimit, gasPrice: gasPrice, lessThanBalance: balance)
             }.eraseToAnyPublisher()
 
-        let amountBoundByBalance: AnyPublisher<Amount?, Never> = amountValidationValue.map(\.value).eraseToAnyPublisher()
+        let amountBoundByBalance: AnyPublisher<Amount?, Never> = amountValidationValue.map(\.value)
+            .eraseToAnyPublisher()
 
         let amountValidationErrorTrigger: AnyPublisher<Void, Never> = Publishers.Merge3(
             input.fromView.didEndEditingAmount,
@@ -250,7 +270,8 @@ final class PrepareTransactionViewModel: BaseViewModel< // swiftlint:disable:thi
         // unchecksummed input today. If we want to surface that, gate `payment`
         // on a deliberate "did you mean…?" confirmation step instead of auto
         // -correcting in the background.
-        let recipientFormatted: AnyPublisher<String, Never> = recipient.filterNil().map(\.asString).eraseToAnyPublisher()
+        let recipientFormatted: AnyPublisher<String, Never> = recipient.filterNil().map(\.asString)
+            .eraseToAnyPublisher()
 
         let amountFormatted: AnyPublisher<String?, Never> = amountBoundByBalance.filterNil()
             .map { formatter.format(amount: $0, in: .zil, formatThousands: false) as String? }
@@ -277,7 +298,8 @@ final class PrepareTransactionViewModel: BaseViewModel< // swiftlint:disable:thi
             ))
         }.eraseToAnyPublisher()
 
-        let gasLimitFormatted: AnyPublisher<String, Never> = gasLimit.filterNil().map(\.description).eraseToAnyPublisher()
+        let gasLimitFormatted: AnyPublisher<String, Never> = gasLimit.filterNil().map(\.description)
+            .eraseToAnyPublisher()
         let gasPriceFormatted: AnyPublisher<String, Never> = gasPrice.filterNil()
             .map { formatter.format(amount: $0, in: .li, formatThousands: true) }
             .eraseToAnyPublisher()
@@ -290,9 +312,11 @@ final class PrepareTransactionViewModel: BaseViewModel< // swiftlint:disable:thi
             BalanceLastUpdatedFormatter().string(from: $0)
         }.eraseToAnyPublisher()
 
-        let setAmountInViewTrigger = input.fromView.maxAmountTrigger.merge(with: scannedOrDeeplinkedTransaction.mapToVoid()).eraseToAnyPublisher()
+        let setAmountInViewTrigger = input.fromView.maxAmountTrigger
+            .merge(with: scannedOrDeeplinkedTransaction.mapToVoid()).eraseToAnyPublisher()
 
-        let setAmountInViewOnlyByExternalTrigger = setAmountInViewTrigger.withLatestFrom(amountFormatted).eraseToAnyPublisher()
+        let setAmountInViewOnlyByExternalTrigger = setAmountInViewTrigger.withLatestFrom(amountFormatted)
+            .eraseToAnyPublisher()
 
         return Output(
             refreshControlLastUpdatedTitle: refreshControlLastUpdatedTitle,
@@ -331,10 +355,10 @@ final class PrepareTransactionViewModel: BaseViewModel< // swiftlint:disable:thi
                     // and the standard Publisher one) and emits an ambiguity
                     // error. Erasing first collapses to the Publisher overload.
                     Just((gasPrice, gasLimit)).eraseToAnyPublisher()
-                        .compactMap { try? Payment.estimatedTotalTransactionFee(gasPrice: $0, gasLimit: $1) }
-                        .map { formatter.format(amount: $0, in: .zil, formatThousands: true, showUnit: true) }
-                        .map { String(localized: .PrepareTransaction.transactionFeeLabel(fee: $0)) }
-                        .eraseToAnyPublisher()
+                    .compactMap { try? Payment.estimatedTotalTransactionFee(gasPrice: $0, gasLimit: $1) }
+                    .map { formatter.format(amount: $0, in: .zil, formatThousands: true, showUnit: true) }
+                    .map { String(localized: .PrepareTransaction.transactionFeeLabel(fee: $0)) }
+                    .eraseToAnyPublisher()
             }
             .eraseToAnyPublisher()
         )

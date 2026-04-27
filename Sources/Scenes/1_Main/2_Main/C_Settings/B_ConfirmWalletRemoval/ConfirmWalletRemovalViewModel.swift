@@ -24,6 +24,7 @@
 
 import Combine
 import Foundation
+import SingleLineControllerCombine
 
 // MARK: - User action and navigation steps
 
@@ -46,7 +47,6 @@ final class ConfirmWalletRemovalViewModel: BaseViewModel<
     ConfirmWalletRemovalViewModel.InputFromView,
     ConfirmWalletRemovalViewModel.Output
 > {
-
     /// Wires cancel + confirm taps to navigation steps; gates the confirm
     /// button on the "I have backed up" checkbox.
     override func transform(input: Input) -> Output {

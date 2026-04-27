@@ -33,7 +33,6 @@ import XCTest
 /// through `CurrentValueSubject`s and asserts the continue-button enabled state
 /// and the `.createWallet` / `.cancel` navigation steps.
 final class CreateNewWalletViewModelTests: XCTestCase {
-
     private var cancellables: Set<AnyCancellable> = []
     private var newPassword: CurrentValueSubject<String, Never>!
     private var isEditingNewPassword: CurrentValueSubject<Bool, Never>!
@@ -54,7 +53,7 @@ final class CreateNewWalletViewModelTests: XCTestCase {
         createTrigger = PassthroughSubject<Void, Never>()
         fakeController = FakeInputFromController()
         mockWallet = MockWalletUseCase()
-        Container.shared.createWalletUseCase.register { [unowned self] in self.mockWallet }
+        Container.shared.createWalletUseCase.register { [unowned self] in mockWallet }
     }
 
     override func tearDown() {

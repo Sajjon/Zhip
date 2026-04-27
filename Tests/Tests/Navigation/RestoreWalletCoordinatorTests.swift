@@ -32,7 +32,6 @@ import Zesame
 /// Drives `RestoreWalletCoordinator` routing: EnsureThatYouAreNotBeingWatched
 /// → RestoreWallet → finishedRestoring / cancel bubble.
 final class RestoreWalletCoordinatorTests: XCTestCase {
-
     private var window: UIWindow!
     private var navigationController: NavigationBarLayoutingNavigationController!
     private var cancellables: Set<AnyCancellable> = []
@@ -75,9 +74,9 @@ final class RestoreWalletCoordinatorTests: XCTestCase {
 
     // MARK: - EnsureThatYouAreNotBeingWatched branches
 
-    func test_ensureUnderstand_pushesRestoreWallet() {
+    func test_ensureUnderstand_pushesRestoreWallet() throws {
         sut.start()
-        let ensure = top(as: EnsureThatYouAreNotBeingWatched.self)!
+        let ensure = try XCTUnwrap(top(as: EnsureThatYouAreNotBeingWatched.self))
 
         ensure.viewModel.navigator.next(.understand)
         drainRunLoop()
@@ -85,11 +84,11 @@ final class RestoreWalletCoordinatorTests: XCTestCase {
         XCTAssertTrue(top(as: RestoreWallet.self) != nil)
     }
 
-    func test_ensureCancel_bubblesCancel() {
+    func test_ensureCancel_bubblesCancel() throws {
         sut.start()
         var received: RestoreWalletCoordinatorNavigationStep?
         sut.navigator.navigation.sink { received = $0 }.store(in: &cancellables)
-        let ensure = top(as: EnsureThatYouAreNotBeingWatched.self)!
+        let ensure = try XCTUnwrap(top(as: EnsureThatYouAreNotBeingWatched.self))
 
         ensure.viewModel.navigator.next(.cancel)
         drainRunLoop()
@@ -101,13 +100,13 @@ final class RestoreWalletCoordinatorTests: XCTestCase {
 
     // MARK: - RestoreWallet branch
 
-    func test_restoreWallet_bubblesFinishedRestoring() {
+    func test_restoreWallet_bubblesFinishedRestoring() throws {
         sut.start()
-        top(as: EnsureThatYouAreNotBeingWatched.self)!.viewModel.navigator.next(.understand)
+        top(as: EnsureThatYouAreNotBeingWatched.self)?.viewModel.navigator.next(.understand)
         drainRunLoop()
         var received: RestoreWalletCoordinatorNavigationStep?
         sut.navigator.navigation.sink { received = $0 }.store(in: &cancellables)
-        let restore = top(as: RestoreWallet.self)!
+        let restore = try XCTUnwrap(top(as: RestoreWallet.self))
         let wallet = TestWalletFactory.makeWallet()
 
         restore.viewModel.navigator.next(.restoreWallet(wallet))
