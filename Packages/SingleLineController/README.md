@@ -23,8 +23,8 @@ and that's all the controller code there is).
 SingleLineControllerCore           value-types only; no UIKit
   └─ SingleLineControllerCombine   Combine helpers + Binder + --> operator
        └─ SingleLineControllerNavigation   Coordinator pattern + Navigator
-            └─ SingleLineControllerController   AbstractController (more landing here)
-                 └─ SingleLineControllerSceneViews   AbstractSceneView (placeholder)
+            └─ SingleLineControllerController   SceneController, BarButton plumbing, nav-bar layout
+                 └─ SingleLineControllerSceneViews   AbstractSceneView + SingleCellTypeTableView
 
 SingleLineControllerDIPrimitives   protocol-only DI (Clock, MainScheduler, …)
                                     consumed by the layers above; no own deps.
@@ -43,7 +43,7 @@ the reactive-validation framework (`AnyValidation`, `Validation<Value, Error>`,
 | `SingleLineControllerCombine`         | `Binder<T>`, `-->`, `Publisher+Extras`, `Publisher+Helpers`, `Publisher+Operators`, `UIControl+Publishers`, `UITextField+Publishers`, `UIView+Publishers` |
 | `SingleLineControllerNavigation`      | `Navigator<NavigationStep>`, `Navigating`, `Coordinating`, `BaseCoordinator<NavigationStep>`, `CoordinatorTransition`, `Completion`, `DismissScene` |
 | `SingleLineControllerController`      | `AbstractController`, `SceneController<View>`, `Scene<View>` typealias, `TitledScene`, `ContentView` typealias, `ViewModelled`, `InputFromController`, `BarButtonContent`, `RightBarButtonContentMaking`/`LeftBarButtonContentMaking`/`BackButtonHiding`, `Toast`, `NavigationBarLayout`/`NavigationBarLayoutOwner`/`NavigationBarLayoutingNavigationController`, all `Coordinating+Scene/Child/Stack/NavigationStack` extensions |
-| `SingleLineControllerSceneViews`      | _placeholder — landing in a follow-up_                                                   |
+| `SingleLineControllerSceneViews`      | `AbstractSceneView` (open class with `open lazy var refreshControl: UIRefreshControl`), `BaseScrollableStackViewOwner`, `BaseTableViewOwner<Header, Cell>`, `SingleCellTypeTableView<Header, Cell>` (+ `SectionModel`, `CellDeselectionMode`), `TableViewOwner`, `ContentViewProvider`, `ScrollViewOwner`, `PullToRefreshCapable`, `CellConfigurable`, `ClassIdentifiable` + `ReuseIdentifiable`, `SelectionPublishing` + `UITableView.itemSelectedPublisher` |
 | `SingleLineControllerDIPrimitives`    | `Clock`/`MainQueueClock`, `MainScheduler`/`DispatchMainScheduler`/`ImmediateMainScheduler`, `DateProvider`/`DefaultDateProvider`, `HapticFeedback`/`DefaultHapticFeedback`, `UrlOpener`/`DefaultUrlOpener`, `Pasteboard`/`DefaultPasteboard` |
 
 ## Hard rules
@@ -56,15 +56,23 @@ extend in their own modules.
 
 ## Status
 
-The full reactive-MVVM cluster is landed: `SingleLineControllerCore`,
-`SingleLineControllerCombine`, `SingleLineControllerNavigation`,
-`SingleLineControllerController`, and `SingleLineControllerDIPrimitives`.
+All six library products are landed and consumed by Zhip:
+`SingleLineControllerCore`, `SingleLineControllerCombine`,
+`SingleLineControllerNavigation`, `SingleLineControllerController`,
+`SingleLineControllerSceneViews`, and `SingleLineControllerDIPrimitives`.
+
 `Toast`, `BarButtonContent`, and `NavigationBarLayout` ship as the small
 extension-point primitives the plan called for — Zhip layers its brand
 defaults (`.opaque`/`.translucent`/`.hidden` for the layout, `BarButton.skip`
-case for the button catalog) on top via local extensions.
+case for the button catalog, `ImageConvertible`-based `BarButtonContent` init)
+on top via local extensions. Themed UI (RefreshControl, FooterView,
+StackViewStyling, AbstractTableViewCell) stays in Zhip — the package ships
+the protocols and chassis classes; consumers ship the brand styling.
 
-`SingleLineControllerSceneViews` (the planned home for `AbstractSceneView`
-+ `SingleCellTypeTableView`) is still a placeholder — those views remain
-in `Sources/Views/SceneViews/` for now since they don't block any
-consuming-app extraction.
+Per-package test targets:
+- `SingleLineControllerCoreTests` — AbstractTarget, ErrorTracker, smoke tests.
+- `SingleLineControllerCombineTests` — Binder, Publisher+Extras, Publisher+Helpers.
+- `Validation` package's `ValidationTests` — Validation, AnyValidation, ValidationRule.
+
+App-specific tests (per-domain validators, Zhip coordinator integration tests,
+themed-view smoke tests) remain in ZhipTests.
