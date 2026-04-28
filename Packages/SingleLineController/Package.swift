@@ -67,5 +67,9 @@ let package = Package(
             name: "SingleLineControllerCoreTests",
             dependencies: ["SingleLineControllerCore"]
         ),
+        .testTarget(
+            name: "SingleLineControllerCombineTests",
+            dependencies: ["SingleLineControllerCombine"]
+        ),
     ]
 )

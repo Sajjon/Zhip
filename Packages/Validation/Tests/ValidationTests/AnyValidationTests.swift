@@ -1,7 +1,10 @@
-import XCTest
-import Validation
-@testable import Zhip
+// MIT License — Copyright (c) 2018-2026 Open Zesame
 
+import XCTest
+@testable import Validation
+
+/// Tests for the type-erased `AnyValidation` enum and its bridge from the
+/// typed `Validation<Value, Error>` form.
 final class AnyValidationTests: XCTestCase {
     // MARK: - isValid / isEmpty / isError
 
@@ -77,29 +80,22 @@ final class AnyValidationTests: XCTestCase {
     // MARK: - Init from Validation
 
     func test_initFromValidation_validWithoutRemark() {
-        let validation: Validation<Int, StubInputError> = .valid(1)
+        let validation: Validation<Int, StubError> = .valid(1)
         XCTAssertEqual(AnyValidation(validation), .valid(withRemark: nil))
     }
 
     func test_initFromValidation_validWithRemark() {
-        let validation: Validation<Int, StubInputError> = .valid(1, remark: StubInputError(message: "note"))
+        let validation: Validation<Int, StubError> = .valid(1, remark: StubError(message: "note"))
         XCTAssertEqual(AnyValidation(validation), .valid(withRemark: "note"))
     }
 
     func test_initFromValidation_invalidEmpty() {
-        let validation: Validation<Int, StubInputError> = .invalid(.empty)
+        let validation: Validation<Int, StubError> = .invalid(.empty)
         XCTAssertEqual(AnyValidation(validation), .empty)
     }
 
     func test_initFromValidation_invalidError() {
-        let validation: Validation<Int, StubInputError> = .invalid(.error(StubInputError(message: "bad")))
+        let validation: Validation<Int, StubError> = .invalid(.error(StubError(message: "bad")))
         XCTAssertEqual(AnyValidation(validation), .errorMessage("bad"))
-    }
-}
-
-private struct StubInputError: InputError, Equatable {
-    let message: String
-    var errorMessage: String {
-        message
     }
 }

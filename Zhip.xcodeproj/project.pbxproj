@@ -226,13 +226,11 @@
 		B10000000000000000000406 /* DefaultVerifyEncryptionPasswordUseCaseTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000000000000000000407 /* DefaultVerifyEncryptionPasswordUseCaseTests.swift */; };
 		B10000000000000000000408 /* DefaultExtractKeyPairUseCaseTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000000000000000000409 /* DefaultExtractKeyPairUseCaseTests.swift */; };
 		B1000000000000000000040A /* DefaultTransactionsUseCaseTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1000000000000000000040B /* DefaultTransactionsUseCaseTests.swift */; };
-		B1000000000000000000040C /* BinderTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1000000000000000000040D /* BinderTests.swift */; };
 		B1000000000000000000040E /* EnumReflectionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1000000000000000000040F /* EnumReflectionTests.swift */; };
 		B10000000000000000000410 /* UITableViewFooterTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000000000000000000411 /* UITableViewFooterTests.swift */; };
 		B10000000000000000000412 /* UIViewExtensionsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000000000000000000413 /* UIViewExtensionsTests.swift */; };
 		B10000000000000000000414 /* MainCoordinatorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000000000000000000415 /* MainCoordinatorTests.swift */; };
 		B10000000000000000000416 /* CoordinatorSmokeTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000000000000000000417 /* CoordinatorSmokeTests.swift */; };
-		B10000000000000000000418 /* PublisherHelpersTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000000000000000000419 /* PublisherHelpersTests.swift */; };
 		B1000000000000000000041A /* CoordinatingInfrastructureTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1000000000000000000041B /* CoordinatingInfrastructureTests.swift */; };
 		B1000000000000000000041C /* AppCoordinatorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1000000000000000000041D /* AppCoordinatorTests.swift */; };
 		B1000000000000000000041E /* SettingsCoordinatorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1000000000000000000041F /* SettingsCoordinatorTests.swift */; };
@@ -260,7 +258,6 @@
 		B1000000000000000000044A /* InputValidatorExtensionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1000000000000000000044B /* InputValidatorExtensionTests.swift */; };
 		B1000000000000000000044C /* UIColorExtensionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1000000000000000000044D /* UIColorExtensionTests.swift */; };
 		B1000000000000000000044E /* UILabelStylingTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1000000000000000000044F /* UILabelStylingTests.swift */; };
-		B10000000000000000000450 /* PublisherExtrasTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000000000000000000451 /* PublisherExtrasTests.swift */; };
 		B10000000000000000000452 /* SpinnerViewTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000000000000000000453 /* SpinnerViewTests.swift */; };
 		B10000000000000000000454 /* KeyValueStoreKeychainKeyTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000000000000000000455 /* KeyValueStoreKeychainKeyTests.swift */; };
 		B10000000000000000000458 /* AppAppearanceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000000000000000000457 /* AppAppearanceTests.swift */; };
@@ -278,12 +275,10 @@
 		B10000000000000000000470 /* Pasteboard.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000000000000000000471 /* Pasteboard.swift */; };
 		B10000000000000000000472 /* MockPasteboard.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000000000000000000473 /* MockPasteboard.swift */; };
 		B10000000000000000000474 /* DefaultWalletStorageUseCaseTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000000000000000000475 /* DefaultWalletStorageUseCaseTests.swift */; };
-		B10000000000000000000476 /* ErrorTrackerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000000000000000000477 /* ErrorTrackerTests.swift */; };
 		B10000000000000000000478 /* BiometricsAuthenticator.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000000000000000000479 /* BiometricsAuthenticator.swift */; };
 		B1000000000000000000047A /* MockBiometricsAuthenticator.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1000000000000000000047B /* MockBiometricsAuthenticator.swift */; };
 		B1000000000000000000047D /* LAContextBiometricsAuthenticatorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1000000000000000000047E /* LAContextBiometricsAuthenticatorTests.swift */; };
 		B10000000000000000000480 /* ConfigurationDetectionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000000000000000000481 /* ConfigurationDetectionTests.swift */; };
-		B10000000000000000000482 /* AbstractTargetTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000000000000000000483 /* AbstractTargetTests.swift */; };
 		B10000000000000000000486 /* MockUrlOpener.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000000000000000000487 /* MockUrlOpener.swift */; };
 		B10000000000000000000488 /* XCTestCase+DrainRunLoop.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000000000000000000489 /* XCTestCase+DrainRunLoop.swift */; };
 		B10000000000000000000492 /* ImmediateClock.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10000000000000000000493 /* ImmediateClock.swift */; };
@@ -292,9 +287,6 @@
 		B1000000000000000000049A /* MockHapticFeedback.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1000000000000000000049B /* MockHapticFeedback.swift */; };
 		B1000000000000000000049E /* FixedDateProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1000000000000000000049F /* FixedDateProvider.swift */; };
 		B7B961E4E0584B6694455665 /* CreateNewWallet.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = 058EC2B351BF4BE7B8C8D010 /* CreateNewWallet.xcstrings */; };
-		C10000000000000000000101 /* AnyValidationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C10000000000000000000001 /* AnyValidationTests.swift */; };
-		C10000000000000000000102 /* ValidationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C10000000000000000000002 /* ValidationTests.swift */; };
-		C10000000000000000000103 /* ValidationRuleTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C10000000000000000000003 /* ValidationRuleTests.swift */; };
 		C10000000000000000000104 /* AddressValidatorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C10000000000000000000004 /* AddressValidatorTests.swift */; };
 		C10000000000000000000105 /* EncryptionPasswordValidatorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C10000000000000000000005 /* EncryptionPasswordValidatorTests.swift */; };
 		C10000000000000000000106 /* GasLimitValidatorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C10000000000000000000006 /* GasLimitValidatorTests.swift */; };
@@ -740,13 +732,11 @@
 		B10000000000000000000407 /* DefaultVerifyEncryptionPasswordUseCaseTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DefaultVerifyEncryptionPasswordUseCaseTests.swift; sourceTree = "<group>"; };
 		B10000000000000000000409 /* DefaultExtractKeyPairUseCaseTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DefaultExtractKeyPairUseCaseTests.swift; sourceTree = "<group>"; };
 		B1000000000000000000040B /* DefaultTransactionsUseCaseTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DefaultTransactionsUseCaseTests.swift; sourceTree = "<group>"; };
-		B1000000000000000000040D /* BinderTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BinderTests.swift; sourceTree = "<group>"; };
 		B1000000000000000000040F /* EnumReflectionTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EnumReflectionTests.swift; sourceTree = "<group>"; };
 		B10000000000000000000411 /* UITableViewFooterTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UITableViewFooterTests.swift; sourceTree = "<group>"; };
 		B10000000000000000000413 /* UIViewExtensionsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIViewExtensionsTests.swift; sourceTree = "<group>"; };
 		B10000000000000000000415 /* MainCoordinatorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainCoordinatorTests.swift; sourceTree = "<group>"; };
 		B10000000000000000000417 /* CoordinatorSmokeTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoordinatorSmokeTests.swift; sourceTree = "<group>"; };
-		B10000000000000000000419 /* PublisherHelpersTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PublisherHelpersTests.swift; sourceTree = "<group>"; };
 		B1000000000000000000041B /* CoordinatingInfrastructureTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoordinatingInfrastructureTests.swift; sourceTree = "<group>"; };
 		B1000000000000000000041D /* AppCoordinatorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppCoordinatorTests.swift; sourceTree = "<group>"; };
 		B1000000000000000000041F /* SettingsCoordinatorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsCoordinatorTests.swift; sourceTree = "<group>"; };
@@ -774,7 +764,6 @@
 		B1000000000000000000044B /* InputValidatorExtensionTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InputValidatorExtensionTests.swift; sourceTree = "<group>"; };
 		B1000000000000000000044D /* UIColorExtensionTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIColorExtensionTests.swift; sourceTree = "<group>"; };
 		B1000000000000000000044F /* UILabelStylingTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UILabelStylingTests.swift; sourceTree = "<group>"; };
-		B10000000000000000000451 /* PublisherExtrasTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PublisherExtrasTests.swift; sourceTree = "<group>"; };
 		B10000000000000000000453 /* SpinnerViewTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpinnerViewTests.swift; sourceTree = "<group>"; };
 		B10000000000000000000455 /* KeyValueStoreKeychainKeyTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyValueStoreKeychainKeyTests.swift; sourceTree = "<group>"; };
 		B10000000000000000000457 /* AppAppearanceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppAppearanceTests.swift; sourceTree = "<group>"; };
@@ -792,12 +781,10 @@
 		B10000000000000000000471 /* Pasteboard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Pasteboard.swift; sourceTree = "<group>"; };
 		B10000000000000000000473 /* MockPasteboard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockPasteboard.swift; sourceTree = "<group>"; };
 		B10000000000000000000475 /* DefaultWalletStorageUseCaseTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DefaultWalletStorageUseCaseTests.swift; sourceTree = "<group>"; };
-		B10000000000000000000477 /* ErrorTrackerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ErrorTrackerTests.swift; sourceTree = "<group>"; };
 		B10000000000000000000479 /* BiometricsAuthenticator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BiometricsAuthenticator.swift; sourceTree = "<group>"; };
 		B1000000000000000000047B /* MockBiometricsAuthenticator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockBiometricsAuthenticator.swift; sourceTree = "<group>"; };
 		B1000000000000000000047E /* LAContextBiometricsAuthenticatorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LAContextBiometricsAuthenticatorTests.swift; sourceTree = "<group>"; };
 		B10000000000000000000481 /* ConfigurationDetectionTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfigurationDetectionTests.swift; sourceTree = "<group>"; };
-		B10000000000000000000483 /* AbstractTargetTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AbstractTargetTests.swift; sourceTree = "<group>"; };
 		B10000000000000000000487 /* MockUrlOpener.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockUrlOpener.swift; sourceTree = "<group>"; };
 		B10000000000000000000489 /* XCTestCase+DrainRunLoop.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "XCTestCase+DrainRunLoop.swift"; sourceTree = "<group>"; };
 		B10000000000000000000493 /* ImmediateClock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImmediateClock.swift; sourceTree = "<group>"; };
@@ -805,9 +792,6 @@
 		B10000000000000000000497 /* MockHtmlLoader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockHtmlLoader.swift; sourceTree = "<group>"; };
 		B1000000000000000000049B /* MockHapticFeedback.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockHapticFeedback.swift; sourceTree = "<group>"; };
 		B1000000000000000000049F /* FixedDateProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FixedDateProvider.swift; sourceTree = "<group>"; };
-		C10000000000000000000001 /* AnyValidationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnyValidationTests.swift; sourceTree = "<group>"; };
-		C10000000000000000000002 /* ValidationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ValidationTests.swift; sourceTree = "<group>"; };
-		C10000000000000000000003 /* ValidationRuleTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ValidationRuleTests.swift; sourceTree = "<group>"; };
 		C10000000000000000000004 /* AddressValidatorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddressValidatorTests.swift; sourceTree = "<group>"; };
 		C10000000000000000000005 /* EncryptionPasswordValidatorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EncryptionPasswordValidatorTests.swift; sourceTree = "<group>"; };
 		C10000000000000000000006 /* GasLimitValidatorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GasLimitValidatorTests.swift; sourceTree = "<group>"; };
@@ -2035,7 +2019,6 @@
 				B10000000000000000000208 /* MainViewModelTests.swift */,
 				B1000000000000000000020C /* UnlockAppWithPincodeViewModelTests.swift */,
 				B1000000000000000000020E /* PrepareTransactionViewModelTests.swift */,
-				B10000000000000000000483 /* AbstractTargetTests.swift */,
 			);
 			path = ViewModels;
 			sourceTree = "<group>";
@@ -2095,9 +2078,6 @@
 		C10000000000000000000011 /* Validation */ = {
 			isa = PBXGroup;
 			children = (
-				C10000000000000000000001 /* AnyValidationTests.swift */,
-				C10000000000000000000002 /* ValidationTests.swift */,
-				C10000000000000000000003 /* ValidationRuleTests.swift */,
 				B1000000000000000000044B /* InputValidatorExtensionTests.swift */,
 			);
 			path = Validation;
@@ -2129,7 +2109,6 @@
 				B10000000000000000000457 /* AppAppearanceTests.swift */,
 				B10000000000000000000463 /* SoundPlayerTests.swift */,
 				B10000000000000000000469 /* QRCodingTests.swift */,
-				B10000000000000000000477 /* ErrorTrackerTests.swift */,
 				B10000000000000000000481 /* ConfigurationDetectionTests.swift */,
 			);
 			path = Utilities;
@@ -2175,15 +2154,12 @@
 			children = (
 				C10000000000000000000030 /* DictionaryExtensionTests.swift */,
 				C10000000000000000000031 /* EncodableDictionaryTests.swift */,
-				B1000000000000000000040D /* BinderTests.swift */,
 				B10000000000000000000411 /* UITableViewFooterTests.swift */,
 				B10000000000000000000413 /* UIViewExtensionsTests.swift */,
-				B10000000000000000000419 /* PublisherHelpersTests.swift */,
 				B10000000000000000000439 /* MergeableTests.swift */,
 				B10000000000000000000443 /* UITextViewStylingTests.swift */,
 				B1000000000000000000044D /* UIColorExtensionTests.swift */,
 				B1000000000000000000044F /* UILabelStylingTests.swift */,
-				B10000000000000000000451 /* PublisherExtrasTests.swift */,
 				B10000000000000000000459 /* UIKitExtrasTests.swift */,
 				B10000000000000000000465 /* ErrorCustomStringConvertibleTests.swift */,
 			);
@@ -2712,25 +2688,21 @@
 				B10000000000000000000209 /* MockTransactionsUseCase.swift in Sources */,
 				B1000000000000000000020B /* UnlockAppWithPincodeViewModelTests.swift in Sources */,
 				B1000000000000000000020D /* PrepareTransactionViewModelTests.swift in Sources */,
-				B10000000000000000000482 /* AbstractTargetTests.swift in Sources */,
 				B10000000000000000000301 /* SimpleViewSmokeTests.swift in Sources */,
 				B10000000000000000000400 /* MockZilliqaServiceReactive.swift in Sources */,
 				B10000000000000000000402 /* DefaultCreateWalletUseCaseTests.swift in Sources */,
 				B10000000000000000000404 /* DefaultRestoreWalletUseCaseTests.swift in Sources */,
 				B10000000000000000000474 /* DefaultWalletStorageUseCaseTests.swift in Sources */,
-				B10000000000000000000476 /* ErrorTrackerTests.swift in Sources */,
 				B1000000000000000000047D /* LAContextBiometricsAuthenticatorTests.swift in Sources */,
 				B10000000000000000000480 /* ConfigurationDetectionTests.swift in Sources */,
 				B10000000000000000000406 /* DefaultVerifyEncryptionPasswordUseCaseTests.swift in Sources */,
 				B10000000000000000000408 /* DefaultExtractKeyPairUseCaseTests.swift in Sources */,
 				B1000000000000000000040A /* DefaultTransactionsUseCaseTests.swift in Sources */,
-				B1000000000000000000040C /* BinderTests.swift in Sources */,
 				B1000000000000000000040E /* EnumReflectionTests.swift in Sources */,
 				B10000000000000000000410 /* UITableViewFooterTests.swift in Sources */,
 				B10000000000000000000412 /* UIViewExtensionsTests.swift in Sources */,
 				B10000000000000000000414 /* MainCoordinatorTests.swift in Sources */,
 				B10000000000000000000416 /* CoordinatorSmokeTests.swift in Sources */,
-				B10000000000000000000418 /* PublisherHelpersTests.swift in Sources */,
 				B1000000000000000000041A /* CoordinatingInfrastructureTests.swift in Sources */,
 				B1000000000000000000041C /* AppCoordinatorTests.swift in Sources */,
 				B1000000000000000000041E /* SettingsCoordinatorTests.swift in Sources */,
@@ -2762,14 +2734,10 @@
 				B1000000000000000000044A /* InputValidatorExtensionTests.swift in Sources */,
 				B1000000000000000000044C /* UIColorExtensionTests.swift in Sources */,
 				B1000000000000000000044E /* UILabelStylingTests.swift in Sources */,
-				B10000000000000000000450 /* PublisherExtrasTests.swift in Sources */,
 				B10000000000000000000452 /* SpinnerViewTests.swift in Sources */,
 				B10000000000000000000454 /* KeyValueStoreKeychainKeyTests.swift in Sources */,
 				B10000000000000000000458 /* AppAppearanceTests.swift in Sources */,
 				B1000000000000000000045A /* UIKitExtrasTests.swift in Sources */,
-				C10000000000000000000101 /* AnyValidationTests.swift in Sources */,
-				C10000000000000000000102 /* ValidationTests.swift in Sources */,
-				C10000000000000000000103 /* ValidationRuleTests.swift in Sources */,
 				C10000000000000000000104 /* AddressValidatorTests.swift in Sources */,
 				C10000000000000000000105 /* EncryptionPasswordValidatorTests.swift in Sources */,
 				C10000000000000000000106 /* GasLimitValidatorTests.swift in Sources */,

@@ -1,8 +1,12 @@
-import Combine
-import SingleLineControllerCombine
-import XCTest
-@testable import Zhip
+// MIT License — Copyright (c) 2018-2026 Open Zesame
 
+import Combine
+import XCTest
+@testable import SingleLineControllerCombine
+
+/// Tests for `Publisher+Extras` operators (`replaceErrorWithEmpty`,
+/// `mapToVoid`, `filterNil`, `orEmpty`, `flatMapLatest`, `withLatestFrom`,
+/// `ifEmpty(switchTo:)`).
 final class PublisherExtrasTests: XCTestCase {
     private var cancellables: Set<AnyCancellable> = []
 
