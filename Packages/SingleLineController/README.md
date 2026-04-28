@@ -42,7 +42,7 @@ the reactive-validation framework (`AnyValidation`, `Validation<Value, Error>`,
 | `SingleLineControllerCore`            | `ViewModelType`, `InputType`, `EmptyInitializable`, `AbstractTarget`, `AbstractViewModel`, `ActivityIndicator`, `ErrorTracker` |
 | `SingleLineControllerCombine`         | `Binder<T>`, `-->`, `Publisher+Extras`, `Publisher+Helpers`, `Publisher+Operators`, `UIControl+Publishers`, `UITextField+Publishers`, `UIView+Publishers` |
 | `SingleLineControllerNavigation`      | `Navigator<NavigationStep>`, `Navigating`, `Coordinating`, `BaseCoordinator<NavigationStep>`, `CoordinatorTransition`, `Completion`, `DismissScene` |
-| `SingleLineControllerController`      | `AbstractController` (more landing in a follow-up: `SceneController`, `Scene`, `TitledScene`, `InputFromController`, `BarButton`, `Toast`, `NavigationBarLayout`) |
+| `SingleLineControllerController`      | `AbstractController`, `SceneController<View>`, `Scene<View>` typealias, `TitledScene`, `ContentView` typealias, `ViewModelled`, `InputFromController`, `BarButtonContent`, `RightBarButtonContentMaking`/`LeftBarButtonContentMaking`/`BackButtonHiding`, `Toast`, `NavigationBarLayout`/`NavigationBarLayoutOwner`/`NavigationBarLayoutingNavigationController`, all `Coordinating+Scene/Child/Stack/NavigationStack` extensions |
 | `SingleLineControllerSceneViews`      | _placeholder — landing in a follow-up_                                                   |
 | `SingleLineControllerDIPrimitives`    | `Clock`/`MainQueueClock`, `MainScheduler`/`DispatchMainScheduler`/`ImmediateMainScheduler`, `DateProvider`/`DefaultDateProvider`, `HapticFeedback`/`DefaultHapticFeedback`, `UrlOpener`/`DefaultUrlOpener`, `Pasteboard`/`DefaultPasteboard` |
 
@@ -56,9 +56,15 @@ extend in their own modules.
 
 ## Status
 
-This package was extracted from Zhip in stages. As of this writing, the
-core/combine/navigation/DIPrimitives layers are fully landed; the
-controller layer has only `AbstractController` so far. The remaining
-`SceneController` + supporting types are tracked under "Phase 5b" in the
-extraction plan and will be landed in a follow-up that introduces the
-extension-point hooks for `Toast` / `BarButtonContent` / `NavigationBarLayout`.
+The full reactive-MVVM cluster is landed: `SingleLineControllerCore`,
+`SingleLineControllerCombine`, `SingleLineControllerNavigation`,
+`SingleLineControllerController`, and `SingleLineControllerDIPrimitives`.
+`Toast`, `BarButtonContent`, and `NavigationBarLayout` ship as the small
+extension-point primitives the plan called for — Zhip layers its brand
+defaults (`.opaque`/`.translucent`/`.hidden` for the layout, `BarButton.skip`
+case for the button catalog) on top via local extensions.
+
+`SingleLineControllerSceneViews` (the planned home for `AbstractSceneView`
++ `SingleCellTypeTableView`) is still a placeholder — those views remain
+in `Sources/Views/SceneViews/` for now since they don't block any
+consuming-app extraction.
