@@ -1,5 +1,6 @@
 import UIKit
 import XCTest
+import SingleLineControllerController
 @testable import Zhip
 
 private final class FakeOwner: UIViewController, NavigationBarLayoutOwner {

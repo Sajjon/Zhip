@@ -28,6 +28,7 @@ import SingleLineControllerCombine
 import SingleLineControllerCore
 import Zesame
 import Validation
+import SingleLineControllerController
 
 /// Navigation from RestoreWallet
 enum RestoreWalletNavigation {

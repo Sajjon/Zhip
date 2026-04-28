@@ -26,6 +26,7 @@ import Combine
 import UIKit
 import XCTest
 import Validation
+import SingleLineControllerController
 @testable import Zhip
 
 /// Drives `RestoreWalletView`'s `populate(with:)` to exercise the keystore

@@ -23,6 +23,7 @@
 //
 
 import Foundation
+import SingleLineControllerController
 
 /// `SceneController` glue for the wallet-restore screen.
 final class RestoreWallet: Scene<RestoreWalletView> {}

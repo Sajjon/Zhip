@@ -24,6 +24,7 @@
 
 import Foundation
 import SingleLineControllerCore
+import SingleLineControllerController
 
 /// `SceneController` glue for the crash-reporting opt-in screen.
 ///

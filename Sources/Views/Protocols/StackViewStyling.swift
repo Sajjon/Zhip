@@ -23,6 +23,7 @@
 //
 
 import UIKit
+import SingleLineControllerController
 
 /// Refines `ContentViewProvider` so a view can declare its layout as a
 /// `UIStackView.Style` and get the boilerplate `makeContentView()` for free.

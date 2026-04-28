@@ -25,6 +25,7 @@
 import Combine
 import SingleLineControllerCombine
 import UIKit
+import SingleLineControllerController
 
 /// Backup hub screen with two reveal options (private key / keystore) plus
 /// a confirmation checkbox + done button (only shown in `.cancellable` mode).

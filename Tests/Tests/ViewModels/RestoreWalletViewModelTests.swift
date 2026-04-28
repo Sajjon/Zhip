@@ -26,6 +26,7 @@ import Combine
 import Factory
 import XCTest
 import Zesame
+import SingleLineControllerController
 @testable import Zhip
 
 /// Tests for `RestoreWalletViewModel`.

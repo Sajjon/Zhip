@@ -27,6 +27,7 @@ import SingleLineControllerCombine
 import UIKit
 import Zesame
 import Validation
+import SingleLineControllerController
 
 /// Local typealias to avoid the long `RestoreWalletViewModel.InputFromView.Segment` mouthful.
 private typealias Segment = RestoreWalletViewModel.InputFromView.Segment

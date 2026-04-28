@@ -28,6 +28,7 @@ import SingleLineControllerCombine
 import SingleLineControllerCore
 import Zesame
 import Validation
+import SingleLineControllerController
 
 /// Outcomes of the decrypt-to-reveal screen.
 enum DecryptKeystoreToRevealKeyPairUserAction {

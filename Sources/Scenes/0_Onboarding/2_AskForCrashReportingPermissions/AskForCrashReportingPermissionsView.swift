@@ -26,6 +26,7 @@ import Combine
 import SingleLineControllerCombine
 import TinyConstraints
 import UIKit
+import SingleLineControllerController
 
 /// Crash-reporting opt-in screen: hero image, disclaimer text, "I have read"
 /// checkbox, and a horizontally-paired Decline/Accept button row.

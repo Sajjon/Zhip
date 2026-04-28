@@ -25,6 +25,7 @@
 import Combine
 import SingleLineControllerCombine
 import UIKit
+import SingleLineControllerController
 
 /// Step 3 of Send — re-prompt for the keystore password and sign+broadcast on tap.
 final class SignTransactionView: ScrollableStackViewOwner {

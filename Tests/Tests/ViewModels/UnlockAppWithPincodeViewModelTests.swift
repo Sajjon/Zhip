@@ -26,6 +26,7 @@ import Combine
 import Factory
 import XCTest
 import Validation
+import SingleLineControllerController
 @testable import Zhip
 
 /// Tests for `UnlockAppWithPincodeViewModel`.

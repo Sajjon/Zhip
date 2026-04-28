@@ -10,7 +10,7 @@ import SingleLineControllerCore
 /// (read by `SceneController`), and binds the ViewModel's `OutputVM` back into
 /// UI controls via `populate(with:)` — returning the `AnyCancellable`s so the
 /// controller can retain them for the view's lifetime.
-protocol ViewModelled: EmptyInitializable {
+public protocol ViewModelled: EmptyInitializable {
     /// The ViewModel type this view is paired with.
     associatedtype ViewModel: ViewModelType
 
@@ -27,7 +27,7 @@ protocol ViewModelled: EmptyInitializable {
     func populate(with viewModel: ViewModel.OutputVM) -> [AnyCancellable]
 }
 
-extension ViewModelled {
+public extension ViewModelled {
     /// Default no-op so pure-output-less views (e.g. static welcome screens) don't
     /// need to implement `populate`.
     func populate(with _: ViewModel.OutputVM) -> [AnyCancellable] {
@@ -38,9 +38,11 @@ extension ViewModelled {
 /// Sentinel `FromController` type used by views that don't need any controller-
 /// lifecycle input — keeps the ViewModel generic parameter non-optional without
 /// forcing every view to accept an unused `InputFromController`.
-struct NoControllerInput {}
+public struct NoControllerInput {
+    public init() {}
+}
 
-extension ViewModelled where ViewModel.Input.FromController == NoControllerInput {
+public extension ViewModelled where ViewModel.Input.FromController == NoControllerInput {
     /// Convenience: builds the ViewModel input struct with an empty controller
     /// channel for views that don't care about lifecycle events.
     var input: ViewModel.Input {

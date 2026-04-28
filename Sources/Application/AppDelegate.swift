@@ -22,6 +22,7 @@
 // SOFTWARE.
 //
 
+import SingleLineControllerController
 import UIKit
 
 @main

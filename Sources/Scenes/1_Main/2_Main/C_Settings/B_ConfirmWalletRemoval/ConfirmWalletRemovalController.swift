@@ -23,6 +23,7 @@
 //
 
 import UIKit
+import SingleLineControllerController
 
 /// `SceneController` glue for the wallet-removal confirmation modal — the last
 /// "are you sure?" before the destructive wipe.

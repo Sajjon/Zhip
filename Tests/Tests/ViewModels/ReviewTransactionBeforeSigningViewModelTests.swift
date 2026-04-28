@@ -25,6 +25,7 @@
 import Combine
 import XCTest
 import Zesame
+import SingleLineControllerController
 @testable import Zhip
 
 /// Tests for `ReviewTransactionBeforeSigningViewModel`.

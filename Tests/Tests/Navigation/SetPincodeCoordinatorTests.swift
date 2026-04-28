@@ -26,6 +26,7 @@ import Combine
 import Factory
 import UIKit
 import XCTest
+import SingleLineControllerController
 @testable import Zhip
 
 /// Drives the `SetPincodeCoordinator` flow: ChoosePincode → ConfirmNewPincode

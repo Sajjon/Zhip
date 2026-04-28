@@ -23,6 +23,7 @@
 //
 
 import Foundation
+import SingleLineControllerController
 
 /// `SceneController` glue for the revealed-keypair display screen.
 final class BackUpRevealedKeyPair: Scene<BackUpRevealedKeyPairView> {}

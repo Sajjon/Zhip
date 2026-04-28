@@ -23,6 +23,7 @@
 //
 
 import Foundation
+import SingleLineControllerController
 
 /// `SceneController` glue for the pincode-removal confirmation modal.
 /// Auto-removes the pincode as soon as the user enters the matching one.

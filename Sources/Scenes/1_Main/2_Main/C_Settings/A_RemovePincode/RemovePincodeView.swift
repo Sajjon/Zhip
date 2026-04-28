@@ -25,6 +25,7 @@
 import Combine
 import SingleLineControllerCombine
 import UIKit
+import SingleLineControllerController
 
 /// Pincode-removal confirmation — single pincode input that auto-fires removal
 /// when the entered digits match the saved one.

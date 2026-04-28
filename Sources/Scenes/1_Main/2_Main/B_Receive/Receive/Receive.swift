@@ -23,6 +23,7 @@
 //
 
 import UIKit
+import SingleLineControllerController
 
 /// `SceneController` glue for the receive screen.
 final class Receive: Scene<ReceiveView> {}

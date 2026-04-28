@@ -23,6 +23,7 @@
 //
 
 import UIKit
+import SingleLineControllerController
 
 /// `SceneController` glue for the QR-code scanner side-trip from PrepareTransaction.
 final class ScanQRCode: Scene<ScanQRCodeView> {}

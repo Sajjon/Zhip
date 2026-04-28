@@ -23,6 +23,7 @@
 //
 
 import UIKit
+import SingleLineControllerController
 
 /// `SceneController` glue for the prepare-transaction screen (step 1 of Send).
 final class PrepareTransaction: Scene<PrepareTransactionView> {}

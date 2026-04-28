@@ -23,6 +23,7 @@
 //
 
 import UIKit
+import SingleLineControllerController
 
 /// `SceneController` glue for the Settings hub (table-view).
 final class Settings: Scene<SettingsView> {}

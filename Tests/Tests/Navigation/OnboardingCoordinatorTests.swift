@@ -26,6 +26,7 @@ import Combine
 import Factory
 import UIKit
 import XCTest
+import SingleLineControllerController
 @testable import Zhip
 
 /// Covers `OnboardingCoordinator` state-machine routing. Each resumable-state

@@ -28,6 +28,7 @@ import Foundation
 import SingleLineControllerCombine
 import UIKit
 import WebKit
+import SingleLineControllerController
 
 /// Scrollable Terms of Service screen with a "must scroll to bottom" gate
 /// before the accept button enables.

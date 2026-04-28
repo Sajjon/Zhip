@@ -26,6 +26,7 @@ import Combine
 import SingleLineControllerCombine
 import SingleLineControllerCore
 import UIKit
+import SingleLineControllerController
 
 // MARK: - SettingsView
 

@@ -24,6 +24,7 @@
 
 import Combine
 import Foundation
+import SingleLineControllerController
 @testable import Zhip
 
 /// Builds a fake `InputFromController` suitable for driving a ViewModel under test.

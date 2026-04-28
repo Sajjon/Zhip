@@ -51,6 +51,7 @@ let package = Package(
                 "SingleLineControllerCore",
                 "SingleLineControllerCombine",
                 "SingleLineControllerNavigation",
+                "SingleLineControllerDIPrimitives",
             ]
         ),
         .target(

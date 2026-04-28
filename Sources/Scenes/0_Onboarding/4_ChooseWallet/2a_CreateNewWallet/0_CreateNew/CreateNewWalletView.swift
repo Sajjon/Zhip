@@ -25,6 +25,7 @@
 import Combine
 import SingleLineControllerCombine
 import UIKit
+import SingleLineControllerController
 
 /// The "create new wallet" screen view — collects an encryption password (twice),
 /// requires the user to acknowledge they have backed it up, and exposes a continue button.

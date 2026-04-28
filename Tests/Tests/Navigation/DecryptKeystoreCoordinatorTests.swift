@@ -27,6 +27,7 @@ import Factory
 import UIKit
 import XCTest
 import Zesame
+import SingleLineControllerController
 @testable import Zhip
 
 /// Drives `DecryptKeystoreCoordinator` routing: start pushes

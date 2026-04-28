@@ -28,6 +28,7 @@ import Foundation
 import SingleLineControllerCombine
 import SingleLineControllerCore
 import Validation
+import SingleLineControllerController
 
 // MARK: - UnlockAppWithPincodeUserAction
 

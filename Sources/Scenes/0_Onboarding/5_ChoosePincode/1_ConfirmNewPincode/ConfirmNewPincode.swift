@@ -23,6 +23,7 @@
 //
 
 import Foundation
+import SingleLineControllerController
 
 /// `SceneController` glue for the pincode confirmation screen.
 final class ConfirmNewPincode: Scene<ConfirmNewPincodeView> {}

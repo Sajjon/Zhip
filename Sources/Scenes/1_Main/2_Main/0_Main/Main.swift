@@ -24,6 +24,7 @@
 
 import Foundation
 import UIKit
+import SingleLineControllerController
 
 /// `SceneController` glue for the wallet hub screen.
 final class Main: Scene<MainView> {}

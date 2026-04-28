@@ -2,10 +2,10 @@
 
 import Combine
 import SingleLineControllerCombine
-import UIKit
 import SingleLineControllerNavigation
+import UIKit
 
-extension Coordinating {
+public extension Coordinating {
     /// Convenience overload: builds the `Scene` from its type + view model and forwards.
     func push<S: Scene<V>, V: ContentView>(
         scene _: S.Type,

@@ -2,8 +2,8 @@
 
 import Combine
 import SingleLineControllerCore
+import SingleLineControllerDIPrimitives
 import UIKit
-import SingleLineControllerController
 
 /// The "Single-Line Controller" base class.
 ///
@@ -13,19 +13,29 @@ import SingleLineControllerController
 /// output back to the view via `View.populate(with:)`. It is almost never
 /// subclassed — coordinators push instances of this class directly using the
 /// `Scene` typealias.
-class SceneController<View: ContentView>: AbstractController
+open class SceneController<View: ContentView>: AbstractController
     where View.ViewModel.Input.FromController == InputFromController
 // swiftlint:disable:next opening_brace
 {
     /// Convenience alias for the view's ViewModel type.
-    typealias ViewModel = View.ViewModel
+    public typealias ViewModel = View.ViewModel
 
     /// Bag of Combine subscriptions owned by this controller (navigation bar bindings,
     /// toasts, title updates, view ↔ view-model bindings).
     private var cancellables = Set<AnyCancellable>()
 
     /// The ViewModel injected by the coordinator at construction time.
-    let viewModel: ViewModel
+    public let viewModel: ViewModel
+
+    /// Clock used to auto-dismiss toasts emitted via `InputFromController.toastSubject`.
+    /// Defaults to a real `MainQueueClock`. Subclasses (or test fakes) override
+    /// to substitute an immediate clock so toast auto-dismiss skips the runloop.
+    open var clock: any Clock { MainQueueClock() }
+
+    /// Optional override-point: the colour the controller's `view.backgroundColor`
+    /// is set to in `viewDidLoad`. Defaults to `.systemBackground`. Subclasses
+    /// (or app-level extensions) override this to apply a brand background.
+    open var rootBackgroundColor: UIColor { .systemBackground }
 
     /// Fires when `viewDidLoad` runs. Piped into `InputFromController.viewDidLoad`.
     private let viewDidLoadSubject = PassthroughSubject<Void, Never>()
@@ -47,7 +57,7 @@ class SceneController<View: ContentView>: AbstractController
     /// Designated initializer. Coordinators call this with a freshly-constructed
     /// ViewModel; `setup()` wires the bindings eagerly so the View has live
     /// publishers before `viewDidLoad` runs.
-    required init(viewModel: ViewModel) {
+    public required init(viewModel: ViewModel) {
         self.viewModel = viewModel
         super.init(nibName: nil, bundle: nil)
         setup()
@@ -55,7 +65,8 @@ class SceneController<View: ContentView>: AbstractController
 
     /// Unavailable — Interface Builder is not supported. Traps to enforce the
     /// programmatic-only invariant.
-    required init?(coder _: NSCoder) {
+    @available(*, unavailable)
+    public required init?(coder _: NSCoder) {
         interfaceBuilderSucks
     }
 
@@ -67,16 +78,22 @@ class SceneController<View: ContentView>: AbstractController
     /// Each opt-in protocol (`TitledScene`, `Right/LeftBarButtonContentMaking`,
     /// `BackButtonHiding`) is detected via runtime cast — there is no required
     /// override in subclasses, and absence is the no-op default.
-    override func viewDidLoad() {
+    override open func viewDidLoad() {
         super.viewDidLoad()
 
         // App-wide background colour goes on the controller's view (visible behind
         // the content view during animations); content view is transparent so it
         // composes against this colour rather than masking it.
-        view.backgroundColor = .deepBlue
+        view.backgroundColor = rootBackgroundColor
         rootContentView.backgroundColor = .clear
         view.addSubview(rootContentView)
-        rootContentView.edgesToSuperview()
+        rootContentView.translatesAutoresizingMaskIntoConstraints = false
+        NSLayoutConstraint.activate([
+            rootContentView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            rootContentView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            rootContentView.topAnchor.constraint(equalTo: view.topAnchor),
+            rootContentView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+        ])
 
         // Auto-set the navigation title only if a non-empty `TitledScene.title` is provided.
         // `case let sceneTitle = …` is just a destructuring binding — could be a plain `let`.
@@ -111,14 +128,14 @@ class SceneController<View: ContentView>: AbstractController
 
     /// Re-applies the navigation bar layout (in case it was changed by a previous
     /// scene) and forwards the lifecycle event.
-    override func viewWillAppear(_ animated: Bool) {
+    override open func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         applyLayoutIfNeeded()
         viewWillAppearSubject.send(())
     }
 
     /// Forwards the `viewDidAppear` lifecycle event to the ViewModel pipeline.
-    override func viewDidAppear(_ animated: Bool) {
+    override open func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         viewDidAppearSubject.send(())
     }
@@ -144,6 +161,10 @@ private extension SceneController {
         let leftBarButtonContentSubject = PassthroughSubject<BarButtonContent, Never>()
         let rightBarButtonContentSubject = PassthroughSubject<BarButtonContent, Never>()
         let toastSubject = PassthroughSubject<Toast, Never>()
+        // Snapshot the (overridable) clock at wiring time so the toast sink
+        // closes over a single instance rather than re-resolving the
+        // computed property on every emission.
+        let clock = self.clock
 
         [
             // Dynamic title updates emitted by the ViewModel.
@@ -151,7 +172,7 @@ private extension SceneController {
             // Toasts are presented by the toast itself using `self` as the host VC.
             toastSubject.receive(on: RunLoop.main).sink { [weak self] in
                 guard let self else { return }
-                $0.present(using: self)
+                $0.present(using: self, clock: clock)
             },
             // Dynamic bar-button content swaps (e.g. enable/disable, change icon).
             leftBarButtonContentSubject.receive(on: RunLoop.main).sink { [weak self] in
@@ -196,7 +217,7 @@ private extension SceneController {
     /// Logic ladder:
     ///   1. No nav controller? Nothing to do.
     ///   2. Nav controller is the wrong class? That's a programming error — crash loudly.
-    ///   3. Scene doesn't own a layout? Use the `.opaque` default.
+    ///   3. Scene doesn't own a layout? No-op (the previous layout stays).
     ///   4. Same layout as last applied? Skip the work (avoid pointless animations).
     ///   5. Otherwise apply the new layout.
     func applyLayoutIfNeeded() {
@@ -208,7 +229,6 @@ private extension SceneController {
         }
 
         guard let barLayoutOwner = self as? NavigationBarLayoutOwner else {
-            barLayoutingNavController.applyLayout(.opaque)
             return
         }
 

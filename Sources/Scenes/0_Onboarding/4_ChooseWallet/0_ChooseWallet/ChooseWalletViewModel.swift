@@ -23,6 +23,7 @@
 //
 
 import Combine
+import SingleLineControllerController
 
 // MARK: - ChooseWalletUserAction
 

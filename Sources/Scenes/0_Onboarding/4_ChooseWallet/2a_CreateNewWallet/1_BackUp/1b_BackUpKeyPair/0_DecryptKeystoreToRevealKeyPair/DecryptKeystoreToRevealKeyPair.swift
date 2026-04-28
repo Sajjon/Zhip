@@ -23,6 +23,7 @@
 //
 
 import Foundation
+import SingleLineControllerController
 
 /// `SceneController` glue for the password-gate that decrypts the keystore
 /// and reveals the underlying private key + address.

@@ -25,6 +25,7 @@
 import Combine
 import SingleLineControllerCombine
 import UIKit
+import SingleLineControllerController
 
 /// Wallet hub screen — shows balance with pull-to-refresh + send/receive CTAs.
 /// `PullToRefreshCapable` brings in the refresh control + its publishers.

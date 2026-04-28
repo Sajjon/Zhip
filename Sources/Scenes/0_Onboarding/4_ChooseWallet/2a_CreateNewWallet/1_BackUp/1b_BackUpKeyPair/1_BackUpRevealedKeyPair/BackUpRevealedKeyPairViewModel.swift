@@ -28,6 +28,7 @@ import SingleLineControllerCombine
 import UIKit
 import Zesame
 import SingleLineControllerDIPrimitives
+import SingleLineControllerController
 
 /// Outcome of the revealed-keypair display screen.
 enum BackUpRevealedKeyPairUserAction {

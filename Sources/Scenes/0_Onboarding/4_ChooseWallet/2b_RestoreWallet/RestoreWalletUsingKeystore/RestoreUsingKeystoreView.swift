@@ -26,6 +26,7 @@ import Combine
 import SingleLineControllerCombine
 import UIKit
 import Validation
+import SingleLineControllerController
 
 // MARK: - RestoreWithKeystoreView
 

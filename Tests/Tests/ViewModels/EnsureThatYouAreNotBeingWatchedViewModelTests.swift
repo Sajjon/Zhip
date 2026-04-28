@@ -1,5 +1,6 @@
 import Combine
 import XCTest
+import SingleLineControllerController
 @testable import Zhip
 
 final class EnsureThatYouAreNotBeingWatchedViewModelTests: XCTestCase {

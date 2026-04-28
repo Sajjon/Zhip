@@ -29,6 +29,7 @@ import SingleLineControllerCombine
 import SingleLineControllerCore
 import Zesame
 import Validation
+import SingleLineControllerController
 
 // MARK: - PrepareTransactionUserAction
 

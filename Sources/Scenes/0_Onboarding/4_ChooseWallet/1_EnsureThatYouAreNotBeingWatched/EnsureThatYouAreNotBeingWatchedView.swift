@@ -24,6 +24,7 @@
 
 import SingleLineControllerCombine
 import UIKit
+import SingleLineControllerController
 
 /// "Make sure you're alone" privacy gate shown right before the user is asked
 /// to commit to a fresh wallet password. Has a single CTA — "I understand".

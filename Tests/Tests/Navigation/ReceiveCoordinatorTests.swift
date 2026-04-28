@@ -27,6 +27,7 @@ import Factory
 import UIKit
 import XCTest
 import Zesame
+import SingleLineControllerController
 @testable import Zhip
 
 /// Drives each branch of `ReceiveCoordinator`: start, `.finish` bubble, and

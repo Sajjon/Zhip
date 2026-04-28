@@ -8,6 +8,7 @@
 
 import SingleLineControllerCore
 import UIKit
+import SingleLineControllerController
 
 /// `SceneController` glue for the "we use a custom ECC implementation" warning screen.
 ///

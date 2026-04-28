@@ -29,6 +29,7 @@ import UIKit
 import Zesame
 import Validation
 import SingleLineControllerDIPrimitives
+import SingleLineControllerController
 
 // MARK: - ReceiveUserAction
 

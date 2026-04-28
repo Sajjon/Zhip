@@ -23,6 +23,7 @@
 //
 
 import UIKit
+import SingleLineControllerController
 
 /// `SceneController` glue for the "create new vs restore existing" wallet
 /// chooser screen.

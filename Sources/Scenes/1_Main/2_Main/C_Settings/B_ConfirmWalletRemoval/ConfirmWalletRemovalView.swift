@@ -25,6 +25,7 @@
 import Combine
 import SingleLineControllerCombine
 import UIKit
+import SingleLineControllerController
 
 /// Wallet-removal confirmation — "are you sure" header + "I have backed up"
 /// checkbox + confirm CTA gated on the checkbox.

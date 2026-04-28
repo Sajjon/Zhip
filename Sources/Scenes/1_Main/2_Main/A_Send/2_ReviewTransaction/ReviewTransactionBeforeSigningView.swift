@@ -25,6 +25,7 @@
 import Combine
 import SingleLineControllerCombine
 import UIKit
+import SingleLineControllerController
 
 /// Step 2 of Send — read-only summary of the prepared payment (recipient,
 /// amount, gas, total) plus an "I have reviewed" checkbox + accept CTA.

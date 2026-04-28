@@ -23,6 +23,7 @@
 //
 
 import Foundation
+import SingleLineControllerController
 
 /// `SceneController` glue for the wallet-backup hub screen.
 final class BackupWallet: Scene<BackupWalletView> {}

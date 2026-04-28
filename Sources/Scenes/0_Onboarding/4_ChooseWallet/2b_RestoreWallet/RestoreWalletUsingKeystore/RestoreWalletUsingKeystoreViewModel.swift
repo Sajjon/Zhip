@@ -26,6 +26,7 @@ import Combine
 import SingleLineControllerCombine
 import Zesame
 import Validation
+import SingleLineControllerController
 
 /// Looser password mode for keystore restore — the keystore is already
 /// encrypted with whatever the user picked at creation time, so we don't enforce

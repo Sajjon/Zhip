@@ -1,3 +1,4 @@
+import SingleLineControllerController
 import UIKit
 import XCTest
 @testable import Zhip

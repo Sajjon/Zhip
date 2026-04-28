@@ -23,6 +23,7 @@
 //
 
 import UIKit
+import SingleLineControllerController
 
 /// `SceneController` glue for the pincode chooser screen.
 final class ChoosePincode: Scene<ChoosePincodeView> {}

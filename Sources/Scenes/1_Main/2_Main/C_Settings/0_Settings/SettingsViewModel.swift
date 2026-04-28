@@ -28,6 +28,7 @@ import SingleLineControllerCombine
 import SingleLineControllerCore
 import UIKit
 import Zesame
+import SingleLineControllerController
 
 /// Cell model used for every Settings row — wraps a navigation destination
 /// with the row's title + icon + style.

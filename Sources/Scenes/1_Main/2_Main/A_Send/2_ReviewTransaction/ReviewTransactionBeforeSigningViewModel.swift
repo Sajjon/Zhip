@@ -26,6 +26,7 @@ import Combine
 import Foundation
 import SingleLineControllerCombine
 import Zesame
+import SingleLineControllerController
 
 /// Outcome of step 2 of Send.
 enum ReviewTransactionBeforeSigningUserAction {

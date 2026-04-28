@@ -30,6 +30,7 @@ import SingleLineControllerCore
 import UIKit
 import Zesame
 import SingleLineControllerDIPrimitives
+import SingleLineControllerController
 
 // MARK: - User action and navigation steps
 

@@ -2,6 +2,7 @@
 
 import Combine
 import Foundation
+import SingleLineControllerController
 
 /// Convenience for ViewModels driving the bar-button-content subjects on
 /// `InputFromController` (`leftBarButtonContentSubject`, `rightBarButtonContentSubject`).

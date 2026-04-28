@@ -25,6 +25,7 @@
 import Combine
 import SingleLineControllerCombine
 import UIKit
+import SingleLineControllerController
 
 /// Password-entry screen that decrypts the keystore to reveal the underlying
 /// `KeyPair` (private key + address). One field, one CTA.

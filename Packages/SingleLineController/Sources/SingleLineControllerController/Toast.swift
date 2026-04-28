@@ -1,30 +1,8 @@
-//
-// MIT License
-//
-// Copyright (c) 2018-2026 Open Zesame (https://github.com/OpenZesame)
-//
-// Permission is hereby granted, free of charge, to any person obtaining a copy
-// of this software and associated documentation files (the "Software"), to deal
-// in the Software without restriction, including without limitation the rights
-// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-// copies of the Software, and to permit persons to whom the Software is
-// furnished to do so, subject to the following conditions:
-//
-// The above copyright notice and this permission notice shall be included in all
-// copies or substantial portions of the Software.
-//
-// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-// SOFTWARE.
-//
+// MIT License — Copyright (c) 2018-2026 Open Zesame
 
-import Factory
-import UIKit
+import SingleLineControllerDIPrimitives
 import SingleLineControllerNavigation
+import UIKit
 
 /// A lightweight text message the UI surfaces as an auto-dismissing alert,
 /// named after the Android equivalent.
@@ -32,9 +10,9 @@ import SingleLineControllerNavigation
 /// ViewModels `send(Toast(...))` into `InputFromController.toastSubject` to
 /// request a display; the `SceneController` presents it on the active view
 /// controller.
-struct Toast {
+public struct Toast {
     /// Describes how the toast should disappear after presentation.
-    enum Dismissing {
+    public enum Dismissing {
         /// Dismiss automatically after `duration` seconds.
         case after(duration: TimeInterval)
 
@@ -52,7 +30,7 @@ struct Toast {
     private let completion: Completion?
 
     /// Creates a toast. Default `dismissing` is "auto-dismiss after 0.6 s".
-    init(_ message: String, dismissing: Dismissing = .after(duration: 0.6), completion: Completion? = nil) {
+    public init(_ message: String, dismissing: Dismissing = .after(duration: 0.6), completion: Completion? = nil) {
         self.message = message
         self.dismissing = dismissing
         self.completion = completion
@@ -62,15 +40,24 @@ struct Toast {
 // MARK: ExpressibleByStringLiteral
 
 extension Toast: ExpressibleByStringLiteral {
-    init(stringLiteral message: String) {
+    public init(stringLiteral message: String) {
         self.init(message)
     }
 }
 
 // MARK: - Toast + Presentation
 
-extension Toast {
-    func present(using navigationController: UIViewController, dismissedCompletion: Completion? = nil) {
+public extension Toast {
+    /// Presents the toast on `navigationController`. The auto-dismiss path
+    /// schedules the dismiss via `clock.schedule(after:)` — pass an immediate
+    /// clock in tests, the production `MainQueueClock` in production. The
+    /// package itself does not own a DI container, so the `clock` parameter
+    /// is the only acceptable way to inject delayed dispatch here.
+    func present(
+        using navigationController: UIViewController,
+        clock: any Clock,
+        dismissedCompletion: Completion? = nil
+    ) {
         let dismissedCompletion = dismissedCompletion ?? completion
         let alert = UIAlertController(title: nil, message: message, preferredStyle: .alert)
 
@@ -81,7 +68,7 @@ extension Toast {
             }
             alert.addAction(dismissAction)
         case let .after(duration):
-            Container.shared.clock().schedule(after: duration) {
+            clock.schedule(after: duration) {
                 alert.dismiss(animated: true, completion: dismissedCompletion)
             }
         }

@@ -10,6 +10,7 @@ import Combine
 import Factory
 import SingleLineControllerCombine
 import UIKit
+import SingleLineControllerController
 
 /// Custom-ECC warning screen — identical layout to Terms but with a warning
 /// triangle hero and selectable text (so the linked bug-bounty URL is tappable).
