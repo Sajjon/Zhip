@@ -26,6 +26,7 @@ import Combine
 import Foundation
 import XCTest
 import SingleLineControllerController
+import SingleLineControllerSceneViews
 @testable import Zhip
 
 /// Tests for `SettingsViewModel`.

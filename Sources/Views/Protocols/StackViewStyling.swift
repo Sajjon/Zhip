@@ -24,6 +24,7 @@
 
 import UIKit
 import SingleLineControllerController
+import SingleLineControllerSceneViews
 
 /// Refines `ContentViewProvider` so a view can declare its layout as a
 /// `UIStackView.Style` and get the boilerplate `makeContentView()` for free.
@@ -46,3 +47,14 @@ extension ContentViewProvider where Self: StackViewStyling {
         UIStackView(frame: .zero).withStyle(stackViewStyle)
     }
 }
+
+/// Idiomatic shape used by every "vertical stack inside a scroll view" scene:
+/// `BaseScrollableStackViewOwner` plus `StackViewStyling` so the scene can
+/// declare a `stackViewStyle` and get the rest for free.
+///
+/// Pre-extraction this typealias lived next to `BaseScrollableStackViewOwner`
+/// in `Sources/Views/SceneViews/`; that file moved to the
+/// `SingleLineControllerSceneViews` package, but `StackViewStyling` is
+/// Zhip-specific (refines the package's `ContentViewProvider` with Zhip's
+/// `UIStackView.Style`), so the typealias stays on the Zhip side too.
+typealias ScrollableStackViewOwner = BaseScrollableStackViewOwner & StackViewStyling

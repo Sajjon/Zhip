@@ -26,6 +26,7 @@ import Combine
 import SingleLineControllerCombine
 import UIKit
 import SingleLineControllerController
+import SingleLineControllerSceneViews
 
 /// Pincode chooser screen — N-digit pincode input + disclaimer + done CTA.
 final class ChoosePincodeView: ScrollableStackViewOwner {

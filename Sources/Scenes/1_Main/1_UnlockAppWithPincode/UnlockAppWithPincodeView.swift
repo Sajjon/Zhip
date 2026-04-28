@@ -26,6 +26,7 @@ import Combine
 import SingleLineControllerCombine
 import UIKit
 import SingleLineControllerController
+import SingleLineControllerSceneViews
 
 /// Pincode-unlock screen — N-digit input + descriptive label. No CTA — entering
 /// a matching pincode auto-unlocks (the view-model emits `.unlockApp` as soon

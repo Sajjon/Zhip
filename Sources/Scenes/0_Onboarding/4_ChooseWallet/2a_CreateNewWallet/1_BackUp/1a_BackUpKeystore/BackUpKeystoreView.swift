@@ -26,6 +26,7 @@ import Combine
 import SingleLineControllerCombine
 import UIKit
 import SingleLineControllerController
+import SingleLineControllerSceneViews
 
 /// Keystore-reveal screen — pretty-printed JSON in a non-editable text view
 /// plus a "Copy keystore" button.

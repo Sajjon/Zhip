@@ -28,6 +28,7 @@ import SingleLineControllerCombine
 import UIKit
 import SingleLineControllerDIPrimitives
 import SingleLineControllerController
+import SingleLineControllerSceneViews
 
 /// Step 4 of Send — celebratory "transaction broadcast" screen with a stars
 /// gradient background, copy/view-details buttons, and a skip CTA. Plays a

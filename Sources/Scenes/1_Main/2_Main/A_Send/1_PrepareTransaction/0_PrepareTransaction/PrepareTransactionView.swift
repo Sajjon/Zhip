@@ -28,6 +28,7 @@ import SingleLineControllerCombine
 import UIKit
 import Zesame
 import SingleLineControllerController
+import SingleLineControllerSceneViews
 
 /// Step 1 of Send — recipient/amount/gas entry with QR-scan + max-amount conveniences,
 /// plus pull-to-refresh on balance. The view-model handles validation, max-amount

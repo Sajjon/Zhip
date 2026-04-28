@@ -1,32 +1,10 @@
-//
-// MIT License
-//
-// Copyright (c) 2018-2026 Open Zesame (https://github.com/OpenZesame)
-//
-// Permission is hereby granted, free of charge, to any person obtaining a copy
-// of this software and associated documentation files (the "Software"), to deal
-// in the Software without restriction, including without limitation the rights
-// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-// copies of the Software, and to permit persons to whom the Software is
-// furnished to do so, subject to the following conditions:
-//
-// The above copyright notice and this permission notice shall be included in all
-// copies or substantial portions of the Software.
-//
-// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-// SOFTWARE.
-//
+// MIT License — Copyright (c) 2018-2026 Open Zesame
 
 import UIKit
 
 /// Protocol exposing the runtime class name as a `String`. Restricted to
 /// `NSObjectProtocol` so we can reach `NSStringFromClass`.
-protocol ClassIdentifiable: NSObjectProtocol {
+public protocol ClassIdentifiable: NSObjectProtocol {
     /// The class name (without the module prefix).
     static var className: String { get }
 }
@@ -39,12 +17,12 @@ protocol ClassIdentifiable: NSObjectProtocol {
 /// They are unrelated — `Swift.Identifiable` requires an `id` of any
 /// `Hashable` type for SwiftUI/diffing, whereas this requires a `String`
 /// for UIKit cell registration.
-protocol ReuseIdentifiable {
+public protocol ReuseIdentifiable {
     /// Stable string identifier used as the UIKit cell-reuse identifier.
     static var identifier: String { get }
 }
 
-extension ReuseIdentifiable where Self: ClassIdentifiable {
+public extension ReuseIdentifiable where Self: ClassIdentifiable {
     /// Default — derive `identifier` from the class name. Lets every cell
     /// type get a unique reuse identifier without per-cell boilerplate.
     static var identifier: String {
@@ -61,7 +39,7 @@ extension NSObject: ClassIdentifiable {
     /// type name (e.g. `"Zhip.SettingsTableViewCell"` → `"SettingsTableViewCell"`).
     /// Force-unwraps the last component because every `NSStringFromClass`
     /// result is non-empty by definition.
-    static var className: String {
+    public static var className: String {
         NSStringFromClass(self).components(separatedBy: ".").last!
     }
 }

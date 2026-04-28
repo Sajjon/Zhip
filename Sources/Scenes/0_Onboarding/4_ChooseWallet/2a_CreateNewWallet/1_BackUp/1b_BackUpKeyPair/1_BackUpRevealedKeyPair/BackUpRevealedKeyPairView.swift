@@ -26,6 +26,7 @@ import Combine
 import SingleLineControllerCombine
 import UIKit
 import SingleLineControllerController
+import SingleLineControllerSceneViews
 
 /// Reveals the user's private key + uncompressed public key in titled
 /// `TitledValueView`s with copy-to-pasteboard buttons next to each.

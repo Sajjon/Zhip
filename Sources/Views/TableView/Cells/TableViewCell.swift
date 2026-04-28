@@ -24,6 +24,7 @@
 
 import SingleLineControllerCore
 import UIKit
+import SingleLineControllerSceneViews
 
 /// Base class for the project's table-view cells. Composes a horizontal
 /// `UIStackView` of [icon, label] inside `contentView` so subclasses get a

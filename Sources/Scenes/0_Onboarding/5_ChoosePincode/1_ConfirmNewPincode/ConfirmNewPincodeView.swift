@@ -26,6 +26,7 @@ import Combine
 import SingleLineControllerCombine
 import UIKit
 import SingleLineControllerController
+import SingleLineControllerSceneViews
 
 /// Pincode confirmation screen — input + "I have backed up" checkbox + done CTA.
 /// `isClearedOnValidInput: false` keeps the entered pincode visible on mismatch

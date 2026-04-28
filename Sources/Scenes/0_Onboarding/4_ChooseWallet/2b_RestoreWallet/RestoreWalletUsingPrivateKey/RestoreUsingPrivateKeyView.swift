@@ -26,6 +26,7 @@ import Combine
 import SingleLineControllerCombine
 import UIKit
 import SingleLineControllerController
+import SingleLineControllerSceneViews
 
 /// Sub-view of the RestoreWallet screen for the "I have a raw private key,
 /// encrypt it with a new password" restore method.

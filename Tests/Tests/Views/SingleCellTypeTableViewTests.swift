@@ -25,6 +25,7 @@
 import Combine
 import UIKit
 import XCTest
+import SingleLineControllerSceneViews
 @testable import Zhip
 
 /// Drives `SingleCellTypeTableView` selection forwarding and data loading so

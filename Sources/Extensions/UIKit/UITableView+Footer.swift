@@ -37,29 +37,4 @@ extension UITableView {
     var footerLabelBinder: Binder<String> {
         Binder(self) { $0.setFooterLabel(text: $1) }
     }
-
-    /// Publisher of selected row indices.
-    ///
-    /// Forwards to whichever `SelectionPublishing` subclass actually implements
-    /// the publisher (project-specific subclasses like `SingleCellTypeTableView`).
-    /// A plain `UITableView` cannot satisfy it on its own — using this on a
-    /// non-conforming table is a programming error and yields an empty publisher
-    /// after an `assertionFailure` in DEBUG.
-    var itemSelectedPublisher: AnyPublisher<IndexPath, Never> {
-        guard let selectableTable = self as? SelectionPublishing else {
-            assertionFailure("UITableView must adopt SelectionPublishing to expose itemSelectedPublisher")
-            return Empty().eraseToAnyPublisher()
-        }
-        return selectableTable.selectionPublisher
-    }
-}
-
-/// Marker protocol that the project's table-view subclasses adopt to expose a
-/// reactive selection stream. Class-bound (`AnyObject`) so it composes with
-/// `UITableView` subclasses without requiring `where Self: UIView` clutter.
-///
-/// Views that want `itemSelectedPublisher` must conform to this.
-protocol SelectionPublishing: AnyObject {
-    /// Emits each `IndexPath` selected by the user.
-    var selectionPublisher: AnyPublisher<IndexPath, Never> { get }
 }

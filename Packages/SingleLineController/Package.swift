@@ -57,6 +57,7 @@ let package = Package(
         .target(
             name: "SingleLineControllerSceneViews",
             dependencies: [
+                "SingleLineControllerCore",
                 "SingleLineControllerCombine",
                 "SingleLineControllerController",
             ]
