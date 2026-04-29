@@ -29,8 +29,8 @@ final class SingleLineControllerCoreSmokeTests: XCTestCase {
         var captured: [Error] = []
         let trackerCancellable = tracker.asPublisher().sink { captured.append($0) }
 
-        struct E: Swift.Error {}
-        let upstream = Fail<Int, Swift.Error>(error: E())
+        struct StubError: Swift.Error {}
+        let upstream = Fail<Int, Swift.Error>(error: StubError())
         let pipelineCancellable = tracker.track(from: upstream).sink(receiveCompletion: { _ in }, receiveValue: { _ in })
 
         XCTAssertEqual(captured.count, 1)

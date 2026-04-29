@@ -2300,8 +2300,7 @@
 				489D40E42663707D000D35F2 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
 				5A1B2C3D4E5F6A7B8C9D0E01 /* XCRemoteSwiftPackageReference "swift-snapshot-testing" */,
 				5A1B2C3D4E5F6A7B8C9D0E10 /* XCRemoteSwiftPackageReference "Factory" */,
-				5A0E000000000000005C0001 /* XCLocalSwiftPackageReference "Packages/SingleLineController" */,
-				5A0E000000000000005C0002 /* XCLocalSwiftPackageReference "Packages/Validation" */,
+				5A0E000000000000005C0001 /* XCLocalSwiftPackageReference "." */,
 			);
 			preferredProjectObjectVersion = 90;
 			productRefGroup = 484B063720BA0C2D00C4E50A /* Products */;
@@ -3027,13 +3026,9 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCLocalSwiftPackageReference section */
-		5A0E000000000000005C0001 /* XCLocalSwiftPackageReference "Packages/SingleLineController" */ = {
+		5A0E000000000000005C0001 /* XCLocalSwiftPackageReference "." */ = {
 			isa = XCLocalSwiftPackageReference;
-			relativePath = Packages/SingleLineController;
-		};
-		5A0E000000000000005C0002 /* XCLocalSwiftPackageReference "Packages/Validation" */ = {
-			isa = XCLocalSwiftPackageReference;
-			relativePath = Packages/Validation;
+			relativePath = .;
 		};
 /* End XCLocalSwiftPackageReference section */
 
