@@ -39,8 +39,12 @@ enum AppCoordinatorNavigationStep {}
 /// the app resigns active / returns active.
 final class AppCoordinator: BaseCoordinator<AppCoordinatorNavigationStep> {
     /// Handles incoming deep links and decides whether they should be buffered
-    /// (while the lock screen is visible) or delivered immediately.
-    private let deepLinkHandler: DeepLinkHandler
+    /// (while the lock screen is visible) or delivered immediately. Resolved
+    /// via Factory so `AppDelegate` (which receives universal-link URLs and
+    /// forwards them via `handle(url:)`) and this coordinator share the same
+    /// singleton handler — the buffered link from before unlock must be
+    /// observable by the unlock flow.
+    @Injected(\.deepLinkHandler) private var deepLinkHandler: DeepLinkHandler
 
     @Injected(\.walletStorageUseCase) private var walletStorageUseCase: WalletStorageUseCase
     @Injected(\.pincodeUseCase) private var pincodeUseCase: PincodeUseCase
@@ -80,17 +84,13 @@ final class AppCoordinator: BaseCoordinator<AppCoordinatorNavigationStep> {
     ///
     /// - Parameters:
     ///   - navigationController: the wallet/onboarding navigation stack.
-    ///   - deepLinkHandler: handles buffering and replay of deep links around the
-    ///     lock/unlock boundary.
     ///   - isViewControllerRootOfWindow: window-level root predicate.
     ///   - setRootViewControllerOfWindow: window-level root setter.
     init(
         navigationController: UINavigationController,
-        deepLinkHandler: DeepLinkHandler,
         isViewControllerRootOfWindow: @escaping (UIViewController) -> Bool,
         setRootViewControllerOfWindow: @escaping (UIViewController) -> Void
     ) {
-        self.deepLinkHandler = deepLinkHandler
         __setRootViewControllerOfWindow = setRootViewControllerOfWindow
         self.isViewControllerRootOfWindow = isViewControllerRootOfWindow
         super.init(navigationController: navigationController)

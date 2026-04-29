@@ -64,6 +64,17 @@ extension Container {
         self { DefaultDeepLinkGenerator() }
     }
 
+    /// Universal-link dispatcher. Singleton because the buffered link must
+    /// survive the lock/unlock boundary — `AppDelegate` writes (on URL
+    /// receipt), `AppCoordinator` reads (on unlock), and the unlock-flow
+    /// publisher in between needs both sides to share the same instance.
+    /// Tests override via `Container.shared.deepLinkHandler.register { … }`
+    /// to install a fresh handler per test (Factory's `register` shadows
+    /// `.singleton`).
+    var deepLinkHandler: Factory<DeepLinkHandler> {
+        self { DeepLinkHandler() }.singleton
+    }
+
     /// Plays bundled sound effects. Tests register a no-op so unit tests never
     /// produce real audio.
     var soundPlayer: Factory<SoundPlayer> {

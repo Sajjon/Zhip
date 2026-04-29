@@ -83,10 +83,12 @@ final class AppCoordinatorTests: XCTestCase {
             mockPincode.pincode = try? Pincode(digits: [Digit.zero, .one, .two, .three])
         }
         let nav = UINavigationController()
-        let handler = DeepLinkHandler()
+        // Override the singleton DeepLinkHandler so each test starts with a
+        // fresh buffer state. `Container.shared.manager.reset()` in tearDown
+        // restores the production registration.
+        Container.shared.deepLinkHandler.register { DeepLinkHandler() }
         sut = AppCoordinator(
             navigationController: nav,
-            deepLinkHandler: handler,
             isViewControllerRootOfWindow: { [weak self] vc in self?.currentRoot === vc },
             setRootViewControllerOfWindow: { [weak self] vc in
                 self?.setRootCallCount += 1

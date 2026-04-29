@@ -36,12 +36,11 @@ class AppDelegate: UIResponder {
 
         return AppCoordinator(
             navigationController: navigationController,
-            deepLinkHandler: DeepLinkHandler(),
-            isViewControllerRootOfWindow: { [weak self] in
-                self?.window?.rootViewController == $0
+            isViewControllerRootOfWindow: { [weak window] in
+                window?.rootViewController == $0
             },
-            setRootViewControllerOfWindow: { [weak self] in
-                self?.window?.rootViewController = $0
+            setRootViewControllerOfWindow: { [weak window] in
+                window?.rootViewController = $0
             }
         )
     }()
