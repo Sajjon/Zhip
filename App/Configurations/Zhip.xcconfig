@@ -1,12 +1,12 @@
-#include "../../../Configurations/Zhip-shared.xcconfig"
-#include "../../../Configurations/base_apps.xcconfig"
+#include "../../Configurations/Zhip-shared.xcconfig"
+#include "../../Configurations/base_apps.xcconfig"
 
 SDKROOT = iphoneos
 
 PRODUCT_BUNDLE_IDENTIFIER = com.openzesame.zhip
 PRODUCT_NAME = $(_APP_NAME)
 
-CODE_SIGN_ENTITLEMENTS = Zhip.entitlements
+CODE_SIGN_ENTITLEMENTS = $(SRCROOT)/App/Zhip.entitlements
 
 LD_RUNPATH_SEARCH_PATHS = $(inherited) @executable_path/../Frameworks
 

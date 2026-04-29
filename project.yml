@@ -78,8 +78,8 @@ targets:
     # The Zhip-target-specific xcconfig (bundle id, signing, INFOPLIST_KEY_*)
     # already #include's Configurations/Zhip-shared.xcconfig + base_apps.xcconfig.
     configFiles:
-      Debug: Sources/Application/Configurations/Zhip.xcconfig
-      Release: Sources/Application/Configurations/Zhip.xcconfig
+      Debug: App/Configurations/Zhip-Debug.xcconfig
+      Release: App/Configurations/Zhip-Release.xcconfig
     settings:
       base:
         # Per-config keys that the original pbxproj had inline (xcconfig can't
@@ -87,8 +87,15 @@ targets:
         # Manual signing matches base_shared.xcconfig.
         CODE_SIGN_STYLE: Manual
     sources:
-      # Walk the entire app Sources/ tree EXCEPT modules already in SPM. That
-      # exclusion set shrinks each time another group migrates to /Package.swift.
+      # The tiny App/ shell — AppDelegate.swift only. Everything else
+      # (Info.plist gen, asset catalog, fonts/etc.) ships as resources.
+      - path: App/AppDelegate.swift
+      # Bundle resources — XcodeGen sees these as Resources by file type.
+      - path: App/Assets.xcassets
+      - path: App/Base.lproj
+      - path: App/Settings.bundle
+      - path: App/GoogleService-Info.plist
+      # The Zhip-app source tree. Per-feature SPM extraction shrinks this.
       - path: Sources
         excludes:
           # Already-extracted SPM modules — consumed via package products instead.
@@ -100,22 +107,11 @@ targets:
           - "SingleLineControllerDIPrimitives/**"
           - "Validation/**"
           - "Resources/**"
-          # AppIcon must be referenced as the asset catalog directly so the
-          # ASSETCATALOG_COMPILER_APPICON_NAME setting resolves.
-          - "Application/Assets/AppIcon.appiconset/**"
-    # Resources are compiled into the bundle; the asset catalog (AppIcon
-    # + Images + Icons), Settings.bundle, GoogleService-Info.plist, all the
-    # .xcstrings catalogs, and LaunchScreen.storyboard.
-    # Note: Settings.bundle is treated as a folder reference so its internal
-    # structure is preserved.
     # No `info:` block — `GENERATE_INFOPLIST_FILE = YES` (set in xcconfig)
-    # plus the `INFOPLIST_KEY_*` settings produce the full plist at build
-    # time. The legacy supplemental `Sources/Application/Zhip-Info.plist`
-    # is unused.
-    #
+    # plus the `INFOPLIST_KEY_*` settings produce the full plist at build time.
     # No `entitlements:` block either — `CODE_SIGN_ENTITLEMENTS =
-    # Zhip.entitlements` in the xcconfig points at the hand-managed file at
-    # repo root. XcodeGen would otherwise overwrite the file's contents.
+    # $(SRCROOT)/App/Zhip.entitlements` in the xcconfig points at the
+    # hand-managed file. XcodeGen would otherwise overwrite the file.
     dependencies:
       # Third-party SPM libs — names match the package products.
       - package: Zesame
@@ -174,7 +170,7 @@ targets:
         script: |
           "${BUILD_DIR%Build/*}SourcePackages/checkouts/firebase-ios-sdk/Crashlytics/run"
         inputFiles:
-          - $(SRCROOT)/Sources/Application/GoogleService-Info.plist
+          - $(SRCROOT)/App/GoogleService-Info.plist
         runOnlyWhenInstalling: false
         basedOnDependencyAnalysis: false
 
