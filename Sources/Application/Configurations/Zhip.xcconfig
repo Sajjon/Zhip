@@ -6,12 +6,18 @@ SDKROOT = iphoneos
 PRODUCT_BUNDLE_IDENTIFIER = com.openzesame.zhip
 PRODUCT_NAME = $(_APP_NAME)
 
+CODE_SIGN_ENTITLEMENTS = Zhip.entitlements
+
 LD_RUNPATH_SEARCH_PATHS = $(inherited) @executable_path/../Frameworks
 
 // Auto-generate standard Info.plist keys; all required keys are set via INFOPLIST_KEY_* build settings below.
 GENERATE_INFOPLIST_FILE = YES
 
 ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon
+
+// Auto-generate `String.LocalizationValue.<Catalog>.<key>` Swift symbols from
+// each .xcstrings file in the bundle (Xcode 26+).
+STRING_CATALOG_GENERATE_SYMBOLS = YES
 
 ENABLE_TESTABILITY = YES
 

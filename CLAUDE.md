@@ -6,12 +6,23 @@ Zhip is an iOS Zilliqa wallet app built with UIKit + Combine using a custom MVVM
 
 The reactive layer is Apple's `Combine` framework throughout. There are no RxSwift/RxCocoa/RxDataSources dependencies — all streams are `AnyPublisher`, all subjects are `PassthroughSubject`/`CurrentValueSubject`, and subscription lifetime is managed by `Set<AnyCancellable>`.
 
-The reactive-MVVM scaffolding (`ViewModelType`, `Binder<T>`, `-->`, `Coordinating`/`BaseCoordinator`/`Navigator`, the DI primitives, the validation framework) lives in two local SPM packages under `Packages/`:
+The reactive-MVVM scaffolding (`ViewModelType`, `Binder<T>`, `-->`, `Coordinating`/`BaseCoordinator`/`Navigator`, the DI primitives, the validation framework) lives in a single flat SPM package at the repo root (`/Package.swift`), with one library product per module:
 
-- [`Packages/SingleLineController/`](Packages/SingleLineController/README.md) — the SLC architecture itself, split across `SingleLineControllerCore`/`Combine`/`Navigation`/`Controller`/`SceneViews`/`DIPrimitives` library products.
-- [`Packages/Validation/`](Packages/Validation/README.md) — sibling reactive-validation framework consumed by the SLC layer.
+- `SingleLineControllerCore` / `Combine` / `Navigation` / `Controller` / `SceneViews` / `DIPrimitives` — the SLC architecture itself.
+- `Validation` — sibling reactive-validation framework consumed by the SLC layer.
+- `Resources` — bundled fonts/html/audio (Bundle.module shim).
 
-The Zhip target imports the relevant package products. Domain code (Zesame wallet logic, KeychainSwift persistence, scene-specific ViewModels/Views) lives in `Sources/`.
+Sources for each SPM target live at `/Sources/<TargetName>/`. The Zhip-app source code (Application/, Scenes/, Views/, etc.) currently lives at `/Sources/Application/` etc. — consumed by the Zhip iOS-app target directly until it migrates into per-feature SPM modules.
+
+### Project generation
+
+The `Zhip.xcodeproj` is **generated** from `/project.yml` via XcodeGen and is gitignored. After cloning / checking out / changing `project.yml`:
+
+```sh
+just gen   # alias for `xcodegen generate`
+```
+
+`just test` / `just cov` etc. assume `Zhip.xcodeproj` exists, so run `just gen` first.
 
 ---
 

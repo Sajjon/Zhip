@@ -8,6 +8,9 @@
 build/
 DerivedData/
 
+## XcodeGen-generated project — `xcodegen generate` reproduces it from project.yml.
+/Zhip.xcodeproj/
+
 ## Various settings
 *.pbxuser
 !default.pbxuser

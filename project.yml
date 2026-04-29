@@ -1,0 +1,219 @@
+# XcodeGen spec for the Zhip iOS app.
+#
+# `xcodegen generate` reads this file and produces `Zhip.xcodeproj`.
+# The generated project is gitignored — this YAML is the source of truth.
+#
+# Project layout:
+#   /Package.swift              SPM root: SLC modules, Validation, Resources.
+#   /Sources/                   Per-target SPM source trees plus the legacy
+#                               Zhip-app source tree (Application/, Scenes/, …)
+#                               which is consumed by the Zhip target directly
+#                               until it migrates into per-feature SPM modules.
+#   /Tests/                     Mirror of /Sources for ZhipTests + per-package
+#                               XCTest bundles.
+#   /Configurations/            Shared base xcconfigs (warnings, code-sign, deployment).
+#   /Sources/Application/Configurations/Zhip*.xcconfig   Zhip-target-specific
+#                               xcconfig (bundle id, signing, INFOPLIST_KEY_*).
+#   /Tests/Configurations/      ZhipTests xcconfig.
+
+name: Zhip
+options:
+  bundleIdPrefix: com.openzesame
+  createIntermediateGroups: true
+  generateEmptyDirectories: false
+  defaultConfig: Release
+  deploymentTarget:
+    iOS: "17.0"
+  groupSortPosition: top
+
+# Configurations are shared via xcconfig files at the project + target level.
+# The project-wide pair just defines names; xcconfigs drive everything else.
+configs:
+  Debug: debug
+  Release: release
+
+# SPM dependencies — version requirements mirror the pre-generated pbxproj.
+packages:
+  Zesame:
+    url: https://github.com/OpenZesame/Zesame
+    majorVersion: 2.0.0
+  EFQRCode:
+    url: https://github.com/EFPrefix/EFQRCode
+    majorVersion: 6.1.0
+  SkyFloatingLabelTextField:
+    url: https://github.com/Skyscanner/SkyFloatingLabelTextField
+    majorVersion: 4.0.0
+  TinyConstraints:
+    url: https://github.com/roberthein/TinyConstraints
+    majorVersion: 4.0.1
+  SwiftyBeaver:
+    url: https://github.com/SwiftyBeaver/SwiftyBeaver
+    majorVersion: 1.9.5
+  QRCodeReader:
+    url: https://github.com/yannickl/QRCodeReader.swift
+    majorVersion: 10.1.1
+  KeychainSwift:
+    url: https://github.com/evgenyneu/keychain-swift
+    majorVersion: 19.0.0
+  IQKeyboardManager:
+    url: https://github.com/hackiftekhar/IQKeyboardManager
+    majorVersion: 6.5.6
+  Firebase:
+    url: https://github.com/firebase/firebase-ios-sdk
+    majorVersion: 11.0.0
+  SnapshotTesting:
+    url: https://github.com/pointfreeco/swift-snapshot-testing
+    majorVersion: 1.17.0
+  Factory:
+    url: https://github.com/hmlongco/Factory
+    majorVersion: 2.4.0
+  # Local SPM root — provides every Sources/<TargetName>/ module declared in /Package.swift.
+  Zhip:
+    path: .
+
+targets:
+  Zhip:
+    type: application
+    platform: iOS
+    # The Zhip-target-specific xcconfig (bundle id, signing, INFOPLIST_KEY_*)
+    # already #include's Configurations/Zhip-shared.xcconfig + base_apps.xcconfig.
+    configFiles:
+      Debug: Sources/Application/Configurations/Zhip.xcconfig
+      Release: Sources/Application/Configurations/Zhip.xcconfig
+    settings:
+      base:
+        # Per-config keys that the original pbxproj had inline (xcconfig can't
+        # express config-only PROVISIONING_PROFILE_SPECIFIER without splitting).
+        # Manual signing matches base_shared.xcconfig.
+        CODE_SIGN_STYLE: Manual
+    sources:
+      # Walk the entire app Sources/ tree EXCEPT modules already in SPM. That
+      # exclusion set shrinks each time another group migrates to /Package.swift.
+      - path: Sources
+        excludes:
+          # Already-extracted SPM modules — consumed via package products instead.
+          - "SingleLineControllerCore/**"
+          - "SingleLineControllerCombine/**"
+          - "SingleLineControllerNavigation/**"
+          - "SingleLineControllerController/**"
+          - "SingleLineControllerSceneViews/**"
+          - "SingleLineControllerDIPrimitives/**"
+          - "Validation/**"
+          - "Resources/**"
+          # AppIcon must be referenced as the asset catalog directly so the
+          # ASSETCATALOG_COMPILER_APPICON_NAME setting resolves.
+          - "Application/Assets/AppIcon.appiconset/**"
+    # Resources are compiled into the bundle; the asset catalog (AppIcon
+    # + Images + Icons), Settings.bundle, GoogleService-Info.plist, all the
+    # .xcstrings catalogs, and LaunchScreen.storyboard.
+    # Note: Settings.bundle is treated as a folder reference so its internal
+    # structure is preserved.
+    # No `info:` block — `GENERATE_INFOPLIST_FILE = YES` (set in xcconfig)
+    # plus the `INFOPLIST_KEY_*` settings produce the full plist at build
+    # time. The legacy supplemental `Sources/Application/Zhip-Info.plist`
+    # is unused.
+    #
+    # No `entitlements:` block either — `CODE_SIGN_ENTITLEMENTS =
+    # Zhip.entitlements` in the xcconfig points at the hand-managed file at
+    # repo root. XcodeGen would otherwise overwrite the file's contents.
+    dependencies:
+      # Third-party SPM libs — names match the package products.
+      - package: Zesame
+        product: Zesame
+      - package: EFQRCode
+        product: EFQRCode
+      - package: SkyFloatingLabelTextField
+        product: SkyFloatingLabelTextField
+      - package: TinyConstraints
+        product: TinyConstraints
+      - package: SwiftyBeaver
+        product: SwiftyBeaver
+      - package: QRCodeReader
+        product: QRCodeReader
+      - package: KeychainSwift
+        product: KeychainSwift
+      - package: IQKeyboardManager
+        product: IQKeyboardManagerSwift
+      - package: Firebase
+        product: FirebaseAnalytics
+      - package: Firebase
+        product: FirebaseCrashlytics
+      - package: Factory
+        product: Factory
+      # Local SPM products — the SLC stack, Validation, Resources.
+      - package: Zhip
+        product: SingleLineControllerCore
+      - package: Zhip
+        product: SingleLineControllerCombine
+      - package: Zhip
+        product: SingleLineControllerNavigation
+      - package: Zhip
+        product: SingleLineControllerController
+      - package: Zhip
+        product: SingleLineControllerSceneViews
+      - package: Zhip
+        product: SingleLineControllerDIPrimitives
+      - package: Zhip
+        product: Validation
+      - package: Zhip
+        product: Resources
+    preBuildScripts:
+      - name: "✅ Swiftlint"
+        script: |
+          if [ -f "/opt/homebrew/bin/swiftlint" ]; then
+            /opt/homebrew/bin/swiftlint
+          else
+            echo "warning: SwiftLint not installed, download from https://github.com/realm/SwiftLint"
+          fi
+        runOnlyWhenInstalling: false
+        basedOnDependencyAnalysis: false
+    postBuildScripts:
+      - name: "📣 Crashlytics"
+        # Firebase's Crashlytics dSYM upload helper is fetched from the
+        # SourcePackages/checkouts dir at build time (see firebase-ios-sdk).
+        script: |
+          "${BUILD_DIR%Build/*}SourcePackages/checkouts/firebase-ios-sdk/Crashlytics/run"
+        inputFiles:
+          - $(SRCROOT)/Sources/Application/GoogleService-Info.plist
+        runOnlyWhenInstalling: false
+        basedOnDependencyAnalysis: false
+
+  ZhipTests:
+    type: bundle.unit-test
+    platform: iOS
+    configFiles:
+      Debug: Tests/Configurations/ZhipTests-Debug.xcconfig
+      Release: Tests/Configurations/ZhipTests-Release.xcconfig
+    sources:
+      - path: Tests
+        excludes:
+          # Per-package SPM test bundles — those run via the package's own
+          # scheme, not through ZhipTests.
+          - "SingleLineControllerCoreTests/**"
+          - "SingleLineControllerCombineTests/**"
+          - "ValidationTests/**"
+          - "Configurations/**"
+    dependencies:
+      - target: Zhip
+      - package: SnapshotTesting
+        product: SnapshotTesting
+      - package: SnapshotTesting
+        product: InlineSnapshotTesting
+
+schemes:
+  Zhip:
+    build:
+      targets:
+        Zhip: all
+    run:
+      config: Debug
+    test:
+      config: Debug
+      targets:
+        - ZhipTests
+    profile:
+      config: Release
+    analyze:
+      config: Debug
+    archive:
+      config: Release
