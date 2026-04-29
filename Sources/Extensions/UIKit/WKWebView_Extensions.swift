@@ -22,6 +22,7 @@
 // SOFTWARE.
 //
 
+import Resources
 import SingleLineControllerCore
 import UIKit
 import WebKit
@@ -39,7 +40,7 @@ extension WKWebView {
     /// Crashes via `incorrectImplementation` if the resource is missing or
     /// unreadable — these are static, in-bundle assets, so any failure is a
     /// programmer/asset-manifest bug rather than a runtime condition.
-    func loadHtml(file: String, in bundle: Bundle = Bundle.main) {
+    func loadHtml(file: String, in bundle: Bundle = Resources.bundle) {
         let htmlFile = bundle.path(forResource: file, ofType: "html")!
         guard let html = try? String(contentsOfFile: htmlFile, encoding: .utf8) else {
             incorrectImplementation("Bad HTML file, fix it please.")

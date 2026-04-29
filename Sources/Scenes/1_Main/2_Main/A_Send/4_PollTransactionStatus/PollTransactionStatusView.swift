@@ -24,6 +24,7 @@
 
 import Combine
 import Factory
+import Resources
 import SingleLineControllerCombine
 import UIKit
 import SingleLineControllerDIPrimitives
@@ -141,6 +142,6 @@ private extension PollTransactionStatusView {
 
     /// Sound found here: https://freesound.org/people/MATTIX/sounds/445723/
     func playSound() {
-        soundPlayer.play(resource: "freesound_mattix_radar", withExtension: "wav")
+        soundPlayer.play(resource: "freesound_mattix_radar", withExtension: "wav", in: Resources.bundle)
     }
 }

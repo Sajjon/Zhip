@@ -28,6 +28,7 @@ import FirebaseAnalytics
 import FirebaseCore
 import Foundation
 import IQKeyboardManagerSwift
+import Resources
 import SingleLineControllerCore
 import SwiftyBeaver
 import Zesame
@@ -101,8 +102,12 @@ private func registerFonts() {
         "Barlow-SemiBold", "Barlow-SemiBoldItalic",
         "Barlow-Thin", "Barlow-ThinItalic",
     ]
+    // The font files now ship inside the SPM `Resources` module bundle,
+    // not the host app's main bundle, so look them up via `Resources.bundle`.
+    // SPM's `process` resource policy flattens directory structure, so the
+    // `Fonts/Barlow/` subpath disappears at runtime — look up by bare name.
     for name in fontFileNames {
-        guard let url = Bundle.main.url(forResource: name, withExtension: "ttf") else {
+        guard let url = Resources.bundle.url(forResource: name, withExtension: "ttf") else {
             incorrectImplementation("Missing font file: \(name).ttf")
         }
         CTFontManagerRegisterFontsForURL(url as CFURL, .process, nil)

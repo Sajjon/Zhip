@@ -41,6 +41,8 @@ let package = Package(
         .library(name: "SingleLineControllerDIPrimitives", targets: ["SingleLineControllerDIPrimitives"]),
         // Reactive validation framework.
         .library(name: "Validation", targets: ["Validation"]),
+        // Bundled resources (fonts, html, audio) routed through Bundle.module.
+        .library(name: "Resources", targets: ["Resources"]),
     ],
     targets: [
         // MARK: - SingleLineController
@@ -80,6 +82,16 @@ let package = Package(
             dependencies: [
                 "SingleLineControllerCore",
                 "SingleLineControllerCombine",
+            ]
+        ),
+
+        // MARK: - Resources
+
+        .target(
+            name: "Resources",
+            // Resources/ subdir is implicitly processed by SPM.
+            resources: [
+                .process("Resources"),
             ]
         ),
 

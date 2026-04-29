@@ -22,6 +22,7 @@
 // SOFTWARE.
 //
 
+import Resources
 import SingleLineControllerCore
 import UIKit
 
@@ -45,9 +46,10 @@ import UIKit
 func htmlAsAttributedString(
     htmlFileName: String,
     textColor: UIColor = .white,
-    font: UIFont = .body
+    font: UIFont = .body,
+    bundle: Bundle = Resources.bundle
 ) -> NSAttributedString {
-    guard let path = Bundle.main.path(forResource: htmlFileName, ofType: "html") else {
+    guard let path = bundle.path(forResource: htmlFileName, ofType: "html") else {
         incorrectImplementation("bad path")
     }
     do {
