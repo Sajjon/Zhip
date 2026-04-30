@@ -75,6 +75,11 @@ public extension UIButton {
     /// foreground/background colours, font, optional border/rounding/height.
     /// Same nil-means-default convention as `UILabel.Style`.
     struct Style {
+        /// Default tap-target height (64pt) — thumb-friendly hit area for
+        /// primary buttons. Nested here so the memberwise init's default
+        /// argument can reference it without a public top-level constant.
+        public static let defaultHeight: CGFloat = 64
+
         fileprivate var titleNormal: String?
         fileprivate var imageNormal: UIImage?
         public var tintColor: UIColor?
@@ -95,7 +100,7 @@ public extension UIButton {
             titleNormal: String? = nil,
             imageNormal: UIImage? = nil,
             tintColor: UIColor? = UIColor.teal,
-            height: CGFloat? = defaultHeight,
+            height: CGFloat? = Self.defaultHeight,
             font: UIFont? = nil,
             textColorNormal: UIColor? = nil,
             textColorDisabled: UIColor? = nil,
@@ -122,10 +127,6 @@ public extension UIButton {
         }
     }
 }
-
-/// Default tap target height (64pt) — chosen for thumb-friendly hit area on
-/// primary buttons. Made `private` so call sites must go through the presets.
-public let defaultHeight: CGFloat = 64
 
 public extension UIButton {
     /// Writes `style` to this button, substituting project-wide defaults for
