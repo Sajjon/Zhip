@@ -36,7 +36,8 @@ final class MockWalletUseCase: CreateWalletUseCase,
     RestoreWalletUseCase,
     WalletStorageUseCase,
     VerifyEncryptionPasswordUseCase,
-    ExtractKeyPairUseCase {
+    ExtractKeyPairUseCase
+{
     // MARK: - State
 
     var storedWallet: AppFeature.Wallet?

@@ -15,7 +15,6 @@ import UIKit
 /// `Scene` typealias.
 open class SceneController<View: ContentView>: AbstractController
     where View.ViewModel.Input.FromController == InputFromController
-// swiftlint:disable:next opening_brace
 {
     /// Convenience alias for the view's ViewModel type.
     public typealias ViewModel = View.ViewModel

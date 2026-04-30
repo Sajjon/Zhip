@@ -62,14 +62,11 @@ public enum CreateNewWalletUserAction {
 /// 3. On tap of "continue", invoke `CreateWalletUseCase` to derive a wallet from the password
 ///    and forward the result through `navigator` as a `.createWallet(_:)` step.
 /// 4. Forward the left bar-button tap as `.cancel`.
-public final class CreateNewWalletViewModel:
-    BaseViewModel<
-        CreateNewWalletUserAction,
-        CreateNewWalletViewModel.InputFromView,
-        CreateNewWalletViewModel.Output
-    >
-// swiftlint:disable:next opening_brace
-{
+public final class CreateNewWalletViewModel: BaseViewModel<
+    CreateNewWalletUserAction,
+    CreateNewWalletViewModel.InputFromView,
+    CreateNewWalletViewModel.Output
+> {
     /// Use case that performs the (CPU-intensive) keystore derivation from a plaintext password.
     /// Resolved lazily via Factory so tests can register a fast in-memory fake.
     @Injected(\.createWalletUseCase) private var createWalletUseCase: CreateWalletUseCase
@@ -105,11 +102,11 @@ public final class CreateNewWalletViewModel:
 
         // The continue button needs BOTH a passing validation AND the explicit
         // "I have backed up my password" checkbox — losing the password is unrecoverable.
-        let isContinueButtonEnabled: AnyPublisher<Bool, Never> = confirmEncryptionPasswordValidationValue.map(\.isValid)
-            .combineLatest(input.fromView
-                .isHaveBackedUpPasswordCheckboxChecked) { isPasswordConfirmed, isBackedUpChecked in
-                isPasswordConfirmed && isBackedUpChecked
-            }.eraseToAnyPublisher()
+        let isContinueButtonEnabled: AnyPublisher<Bool, Never> = confirmEncryptionPasswordValidationValue
+            .map(\.isValid)
+            .combineLatest(input.fromView.isHaveBackedUpPasswordCheckboxChecked)
+            .map { $0 && $1 }
+            .eraseToAnyPublisher()
 
         // Tracks the in-flight wallet-creation work so the button can show a spinner.
         let activityIndicator = ActivityIndicator()

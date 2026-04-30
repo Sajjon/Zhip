@@ -18,7 +18,8 @@ public typealias ListCell = CellConfigurable & UITableViewCell
 /// explicit about that lets the type system carry the cell/model pairing
 /// end-to-end and avoids the usual cast-and-pray pattern.
 open class SingleCellTypeTableView<Header, Cell: ListCell>: UITableView, UITableViewDelegate, UITableViewDataSource,
-    SelectionPublishing {
+    SelectionPublishing
+{
     // MARK: - Data
 
     /// The data backing the table. Setting it triggers a full `reloadData()`

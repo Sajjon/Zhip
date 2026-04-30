@@ -86,7 +86,8 @@ public final class PollTransactionStatusViewModel: BaseViewModel<
         .handleEvents(receiveCompletion: { completion in
             if case let .failure(error) = completion,
                let zError = error as? Zesame.Error,
-               case .api(.timeout) = zError {
+               case .api(.timeout) = zError
+            {
                 userDid(.waitUntilTimeout)
             }
         })

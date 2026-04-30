@@ -125,7 +125,8 @@ private struct WithLatestFromPublisher<
     }
 
     private final class Inner<Downstream: Subscriber>: Subscription, Subscriber
-        where Downstream.Input == Result, Downstream.Failure == Never {
+        where Downstream.Input == Result, Downstream.Failure == Never
+    {
         typealias Input = Upstream.Output
         typealias Failure = Never
 

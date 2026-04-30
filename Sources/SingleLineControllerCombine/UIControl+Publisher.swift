@@ -46,7 +46,8 @@ public struct UIControlPublisher<Control: UIControl>: Publisher {
 /// Per-subscription `Subscription` object. See the original Zhip source for
 /// the full design rationale.
 final class UIControlSubscription<S: Subscriber, Control: UIControl>: Subscription
-    where S.Input == Void, S.Failure == Never {
+    where S.Input == Void, S.Failure == Never
+{
     private var subscriber: S?
     private weak var control: Control?
     private let events: UIControl.Event
