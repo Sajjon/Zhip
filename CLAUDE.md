@@ -11,8 +11,9 @@ The reactive-MVVM scaffolding (`ViewModelType`, `Binder<T>`, `-->`, `Coordinatin
 - `SingleLineControllerCore` / `Combine` / `Navigation` / `Controller` / `SceneViews` / `DIPrimitives` — the SLC architecture itself.
 - `Validation` — sibling reactive-validation framework consumed by the SLC layer.
 - `Resources` — bundled fonts/html/audio (Bundle.module shim).
+- `AppFeature` — the entire Zhip app: Coordinators, Scenes, ViewModels, Views, Models, UseCases, Persistence, DI, Extensions. Consumed by the Zhip iOS-app target as a single SPM product; the iOS-app target itself is just `App/AppDelegate.swift` plus bundle resources.
 
-Sources for each SPM target live at `/Sources/<TargetName>/`. The Zhip-app source code (Application/, Scenes/, Views/, etc.) currently lives at `/Sources/Application/` etc. — consumed by the Zhip iOS-app target directly until it migrates into per-feature SPM modules.
+Sources for each SPM target live at `/Sources/<TargetName>/`. Per-feature extraction of `AppFeature` into smaller SPM modules is a possible future step.
 
 ### Project generation
 
@@ -57,7 +58,7 @@ UI updated via `-->` operator binding outputs to Binders
 ## Key Protocols & Types
 
 ### `ViewModelType`
-**File**: `Sources/Application/ViewModel/ViewModelType.swift`
+**File**: `Sources/SingleLineControllerCore/ViewModelType.swift`
 
 ```swift
 protocol ViewModelType {
@@ -70,7 +71,7 @@ protocol ViewModelType {
 All ViewModels implement `transform`. It is the only public method — input in, output out.
 
 ### `InputType`
-**File**: `Sources/Application/ViewModel/InputType.swift`
+**File**: `Sources/SingleLineControllerCore/InputType.swift`
 
 ```swift
 protocol InputType {
@@ -87,7 +88,7 @@ Every ViewModel's `Input` has two channels:
 - `fromController` — lifecycle events and navigation subjects from `InputFromController`
 
 ### `ViewModelled`
-**File**: `Sources/Views/Protocols/ViewModelled.swift`
+**File**: `Sources/SingleLineControllerController/ViewModelled.swift`
 
 ```swift
 protocol ViewModelled: EmptyInitializable {
@@ -103,7 +104,7 @@ Views provide:
 - `populate(with:)` — binds ViewModel output streams back to UI controls, returns `[AnyCancellable]`
 
 ### `InputFromController`
-**File**: `Sources/Application/ViewModel/InputFromController.swift`
+**File**: `Sources/SingleLineControllerController/InputFromController.swift`
 
 ```swift
 struct InputFromController {
@@ -134,7 +135,7 @@ AbstractViewModel<FromView, FromController, Output>  (has cancellables: Set<AnyC
 ---
 
 ## SceneController — The Orchestrator
-**File**: `Sources/Controller/SceneController.swift`
+**File**: `Sources/SingleLineControllerController/SceneController.swift`
 
 ```swift
 class SceneController<View: ContentView>: AbstractController
@@ -150,12 +151,12 @@ Key responsibility chain on init:
 `SceneController` is never overridden for logic — it's purely mechanical wiring.
 
 ### `TitledScene`
-**File**: `Sources/Controller/TitledScene.swift`
+**File**: `Sources/SingleLineControllerController/TitledScene.swift`
 
 Optional protocol on `SceneController` subclasses. When conformed, `SceneController` sets `title` automatically from `static var title: String`.
 
 ### Scene Typealias
-**File**: `Sources/Controller/Scene.swift`
+**File**: `Sources/SingleLineControllerController/Scene.swift`
 
 ```swift
 typealias Scene<View: ContentView> = SceneController<View> & TitledScene
@@ -167,7 +168,7 @@ Used throughout coordinators: `Scene<ChoosePincodeView>`, `Scene<SettingsView>`,
 ---
 
 ## The `-->` Binding Operator
-**File**: `Sources/Extensions/Combine/Publisher+Operators.swift`
+**File**: `Sources/SingleLineControllerCombine/Publisher+Operators.swift`
 
 ```swift
 infix operator -->
@@ -203,7 +204,7 @@ Usage in ViewModel `transform`:
 
 ## Custom UIKit Publisher Extensions
 
-Generic publisher/binder extensions live in `Sources/Extensions/UIKit/UIViews+Publishers/`; view-specific ones live in the view file itself.
+Generic publisher/binder extensions live in `Sources/AppFeature/Extensions/UIKit/UIViews+Publishers/`; view-specific ones live in the view file itself.
 
 | Extension | File | Type |
 |-----------|------|-----|
@@ -229,7 +230,7 @@ Generic publisher/binder extensions live in `Sources/Extensions/UIKit/UIViews+Pu
 
 ## Table Views
 
-`SingleCellTypeTableView<Header, Cell>` in `Sources/Views/TableView/SingleCellTypeTableView.swift` is backed by `UITableViewDiffableDataSource`. Sections arrive as `AnyPublisher<[SectionSnapshot<Header, Cell.Model>], Never>` and item selection is exposed as `didSelectItem: AnyPublisher<IndexPath, Never>`.
+`SingleCellTypeTableView<Header, Cell>` in `Sources/SingleLineControllerSceneViews/SingleCellTypeTableView.swift` is backed by `UITableViewDiffableDataSource`. Sections arrive as `AnyPublisher<[SectionSnapshot<Header, Cell.Model>], Never>` and item selection is exposed as `didSelectItem: AnyPublisher<IndexPath, Never>`.
 
 Used by `SettingsView` and similar table-backed screens.
 
@@ -263,7 +264,7 @@ Coordinators hold a `cancellables: Set<AnyCancellable>` for retaining navigation
 
 ## Use Cases
 
-Use cases live in `Sources/UseCases/`. The wallet subsystem is split into five
+Use cases live in `Sources/AppFeature/UseCases/`. The wallet subsystem is split into five
 narrow protocols, each backed by its own concrete `Default*` implementation
 that uses `@Injected` to resolve its own dependencies. The transactions,
 onboarding, and pincode subsystems still have a composite façade protocol
@@ -300,7 +301,7 @@ all resolve to the same shared instance (no adapter glue needed).
 ## Dependency Injection: `Container`
 
 The shared DI container is `Container.shared`, implemented in
-`Sources/Application/DI/Container.swift`. Its API mirrors
+`Sources/AppFeature/DI/Container.swift`. Its API mirrors
 [hmlongco/Factory](https://github.com/hmlongco/Factory) so a future swap to
 the real SPM package is a near-no-op.
 
@@ -342,19 +343,19 @@ Full guide: [TESTING.md](./TESTING.md).
 
 | Concept | Path |
 |---------|------|
-| `ViewModelType` | `Sources/Application/ViewModel/ViewModelType.swift` |
-| `InputType` | `Sources/Application/ViewModel/InputType.swift` |
-| `ViewModelled` | `Sources/Views/Protocols/ViewModelled.swift` |
-| `AbstractViewModel` | `Sources/Application/ViewModel/BaseClasses/AbstractViewModel.swift` |
-| `BaseViewModel` | `Sources/Application/ViewModel/BaseClasses/BaseViewModel.swift` |
-| `SceneController` | `Sources/Controller/SceneController.swift` |
-| `InputFromController` | `Sources/Application/ViewModel/InputFromController.swift` |
-| `Scene` typealias | `Sources/Controller/Scene.swift` |
-| `Binder` + `-->` operator | `Sources/Extensions/Combine/Binder.swift`, `Publisher+Operators.swift` |
-| Publisher helpers (`mapToVoid`, `filterNil`, `orEmpty`, `withLatestFrom`, etc.) | `Sources/Extensions/Combine/Publisher+Extras.swift`, `Publisher+Helpers.swift` |
-| `ActivityIndicator` | `Sources/Application/ViewModel/ActivityIndicator.swift` |
-| `AnyValidation` | `Sources/Application/InputValidators/Validation/AnyValidation/AnyValidation.swift` |
-| `SingleCellTypeTableView` | `Sources/Views/TableView/SingleCellTypeTableView.swift` |
-| `Factory` + `Container` | `Sources/Application/DI/Container.swift` |
-| Use case protocols | `Sources/UseCases/*.swift` |
-| `Default*UseCase` | `Sources/UseCases/Implementations/*.swift` |
+| `ViewModelType` | `Sources/SingleLineControllerCore/ViewModelType.swift` |
+| `InputType` | `Sources/SingleLineControllerCore/InputType.swift` |
+| `ViewModelled` | `Sources/SingleLineControllerController/ViewModelled.swift` |
+| `AbstractViewModel` | `Sources/SingleLineControllerCore/AbstractViewModel.swift` |
+| `BaseViewModel` | `Sources/AppFeature/ViewModel/BaseClasses/BaseViewModel.swift` |
+| `SceneController` | `Sources/SingleLineControllerController/SceneController.swift` |
+| `InputFromController` | `Sources/SingleLineControllerController/InputFromController.swift` |
+| `Scene` typealias | `Sources/SingleLineControllerController/Scene.swift` |
+| `Binder` + `-->` operator | `Sources/SingleLineControllerCombine/Binder.swift`, `Publisher+Operators.swift` |
+| Publisher helpers (`mapToVoid`, `filterNil`, `orEmpty`, `withLatestFrom`, etc.) | `Sources/SingleLineControllerCombine/Publisher+Extras.swift`, `Publisher+Helpers.swift` |
+| `ActivityIndicator` | `Sources/SingleLineControllerCore/ActivityIndicator.swift` |
+| `AnyValidation` | `Sources/Validation/AnyValidation/AnyValidation.swift` |
+| `SingleCellTypeTableView` | `Sources/SingleLineControllerSceneViews/SingleCellTypeTableView.swift` |
+| `Factory` + `Container` | `Sources/AppFeature/DI/Container.swift` |
+| Use case protocols | `Sources/AppFeature/UseCases/*.swift` |
+| `Default*UseCase` | `Sources/AppFeature/UseCases/Implementations/*.swift` |

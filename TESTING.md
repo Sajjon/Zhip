@@ -11,7 +11,7 @@ or fresh dependency.
 - **Pattern**: strict Arrange-Act-Assert. One-line arrange / one-line act /
   one-line assert is the goal; more than five lines in any phase is a smell.
 - **DI**: every injectable dependency resolves from `Container.shared`
-  (`Sources/Application/DI/Container.swift`). Tests substitute fakes with
+  (`Sources/AppFeature/DI/Container.swift`). Tests substitute fakes with
   `Container.shared.<factory>.register { Mock() }` and `Container.shared.reset()`
   in `tearDown`.
 - **Running locally**: `just test` (unit tests) or `just cov` (tests + coverage
@@ -64,7 +64,7 @@ the target. One-time setup:
    `Tests/Tests/ViewModels/` directories.
 4. In the dialog: uncheck "Copy items if needed", set Targets → only
    **ZhipTests**, click Add.
-5. Same story for `Sources/Application/DI/Container.swift` — add to the **Zhip**
+5. Same story for `Sources/AppFeature/DI/Container.swift` — add to the **Zhip**
    target (not ZhipTests).
 
 You can confirm everything is wired by running `just test`.
@@ -166,7 +166,7 @@ reacted correctly.
 
 ## Dependency-injection container (`Container`)
 
-The DI layer lives at `Sources/Application/DI/Container.swift`. It is
+The DI layer lives at `Sources/AppFeature/DI/Container.swift`. It is
 intentionally shaped like [hmlongco/Factory](https://github.com/hmlongco/Factory)
 so you can swap this in-repo implementation for the real SPM package with
 ~zero call-site churn:
@@ -202,7 +202,7 @@ When you want to swap in the real SPM package:
 
 1. Add `https://github.com/hmlongco/Factory` as a Swift Package dependency of
    the Zhip target.
-2. Delete `Sources/Application/DI/Container.swift`.
+2. Delete `Sources/AppFeature/DI/Container.swift`.
 3. Replace the file with a set of `Container` extensions that use Factory's
    `@Injected` / `Factory` property wrappers. The registered types are
    unchanged, so call sites (`Container.shared.walletUseCase()`) continue to
@@ -241,7 +241,7 @@ Snapshot testing is **not yet wired in**. To enable it:
    generated `__Snapshots__/` directory.
 
 Once set up, snapshot tests should cover every top-level view in
-`Sources/Scenes/`: Welcome, TermsOfService, AskForCrashReportingPermissions,
+`Sources/AppFeature/Scenes/`: Welcome, TermsOfService, AskForCrashReportingPermissions,
 WarningCustomECC, ChooseWallet, Main, Send, Receive, Settings, and the
 pincode / backup flows.
 
