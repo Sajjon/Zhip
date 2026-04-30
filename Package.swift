@@ -34,7 +34,8 @@ let package = Package(
     // macOS 13 listed alongside iOS so `swift build` / `swift test` on a
     // macOS host can exercise the Combine APIs. The actual app is iOS-only;
     // the macOS minimum exists only for the package's own host-side runs.
-    platforms: [.iOS(.v16), .macOS(.v13)],
+    // iOS 17 matches the Zhip iOS-app target's deployment target in project.yml.
+    platforms: [.iOS(.v17), .macOS(.v13)],
     products: [
         // SLC product surface (will be re-extracted to a sibling repo later).
         .library(name: "SingleLineControllerCore", targets: ["SingleLineControllerCore"]),
