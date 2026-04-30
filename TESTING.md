@@ -12,7 +12,7 @@ or fresh dependency.
   one-line assert is the goal; more than five lines in any phase is a smell.
 - **DI**: every injectable dependency resolves from `Container.shared`
   (`Sources/AppFeature/DI/Container.swift`). Tests substitute fakes with
-  `Container.shared.<factory>.register { Mock() }` and `Container.shared.reset()`
+  `Container.shared.<factory>.register { Mock() }` and `Container.shared.manager.reset()`
   in `tearDown`.
 - **Running locally**: `just test` (unit tests) or `just cov` (tests + coverage
   table). `just cov-detailed` highlights every uncovered line — read it when
@@ -178,7 +178,7 @@ let wallet = Container.shared.walletUseCase()
 // Test-time override
 Container.shared.walletUseCase.register { MyMockWalletUseCase() }
 // ...test code...
-Container.shared.reset()  // tearDown
+Container.shared.manager.reset()  // tearDown
 ```
 
 ### Registered dependencies
