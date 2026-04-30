@@ -24,7 +24,7 @@
 
 import UIKit
 import SingleLineControllerDIPrimitives
-@testable import Zhip
+@testable import AppFeature
 
 /// In-test `HapticFeedback` that NEVER forwards to
 /// `UINotificationFeedbackGenerator`. Records every requested feedback type so

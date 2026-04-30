@@ -1,5 +1,5 @@
 import XCTest
-@testable import Zhip
+@testable import AppFeature
 
 final class EncodableDictionaryTests: XCTestCase {
     private struct SimpleEncodable: Encodable {

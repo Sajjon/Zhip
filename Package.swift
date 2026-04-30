@@ -28,6 +28,9 @@ import PackageDescription
 
 let package = Package(
     name: "Zhip",
+    // Required by SPM when any target ships localized resources (.xcstrings etc.).
+    // The Resources/AppFeature targets host the .xcstrings catalogs.
+    defaultLocalization: "en",
     // macOS 13 listed alongside iOS so `swift build` / `swift test` on a
     // macOS host can exercise the Combine APIs. The actual app is iOS-only;
     // the macOS minimum exists only for the package's own host-side runs.
@@ -139,9 +142,15 @@ let package = Package(
                 .product(name: "FirebaseCrashlytics", package: "firebase-ios-sdk"),
                 .product(name: "Factory", package: "Factory"),
             ],
-            // The .xcstrings catalogs move alongside their consumers in Phase A5;
-            // for now this target only contains a placeholder shim.
-            resources: []
+            resources: [
+                // .xcstrings catalogs auto-generate `String.LocalizationValue.<Catalog>`
+                // symbols scoped to this module.
+                .process("Localization"),
+                // Asset catalog (Images/Icons) auto-generates `ImageResource.<name>`
+                // symbols. AppIcon.appiconset stays in App/Assets.xcassets because
+                // ASSETCATALOG_COMPILER_APPICON_NAME on the iOS-app target needs it.
+                .process("Resources/Assets.xcassets"),
+            ]
         ),
 
         // MARK: - Test targets

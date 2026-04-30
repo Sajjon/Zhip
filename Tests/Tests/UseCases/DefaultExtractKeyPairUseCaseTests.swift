@@ -26,7 +26,7 @@ import Combine
 import Factory
 import XCTest
 import Zesame
-@testable import Zhip
+@testable import AppFeature
 
 /// Tests that `DefaultExtractKeyPairUseCase` forwards to the injected service
 /// and surfaces its `KeyPair` result.

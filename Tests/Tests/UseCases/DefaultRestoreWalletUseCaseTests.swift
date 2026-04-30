@@ -26,7 +26,7 @@ import Combine
 import Factory
 import XCTest
 import Zesame
-@testable import Zhip
+@testable import AppFeature
 
 /// Tests that `DefaultRestoreWalletUseCase` maps the `KeyRestoration` case to
 /// the correct `Wallet.Origin` and forwards to the injected service.
@@ -51,7 +51,7 @@ final class DefaultRestoreWalletUseCaseTests: XCTestCase {
         let wallet = TestWalletFactory.makeWallet()
         mockService.restoreWalletResult = .success(wallet.wallet)
         let sut = DefaultRestoreWalletUseCase()
-        var produced: Zhip.Wallet?
+        var produced: AppFeature.Wallet?
         let expectation = expectation(description: "value")
 
         sut.restoreWallet(from: .keystore(wallet.wallet.keystore, password: TestWalletFactory.testPassword))
@@ -73,7 +73,7 @@ final class DefaultRestoreWalletUseCaseTests: XCTestCase {
         let privateKey = try PrivateKey(
             rawRepresentation: Data(hex: "0E891B9DFF485000C7D1DC22ECF3A583CC50328684321D61947A86E57CF6C638")
         )
-        var produced: Zhip.Wallet?
+        var produced: AppFeature.Wallet?
         let expectation = expectation(description: "value")
 
         sut.restoreWallet(from: .privateKey(privateKey, encryptBy: "apabanan123", kdf: .pbkdf2))

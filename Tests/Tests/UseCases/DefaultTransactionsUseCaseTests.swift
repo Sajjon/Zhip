@@ -27,7 +27,7 @@ import Factory
 import XCTest
 import Zesame
 import SingleLineControllerDIPrimitives
-@testable import Zhip
+@testable import AppFeature
 
 /// Tests for `DefaultTransactionsUseCase`, which uses constructor DI (not
 /// `@Injected`) so tests instantiate it directly with mocked dependencies.

@@ -23,7 +23,7 @@
 //
 
 import XCTest
-@testable import Zhip
+@testable import AppFeature
 
 /// Exercises the default `description` provided for enum-based `Error` types
 /// conforming to `CustomStringConvertible` via mirror reflection.

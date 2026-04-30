@@ -24,7 +24,7 @@
 
 import Factory
 import XCTest
-@testable import Zhip
+@testable import AppFeature
 
 /// Tests the Factory-compatible DI container: register, resolve, reset.
 ///

@@ -25,7 +25,7 @@
 import Combine
 import Factory
 import XCTest
-@testable import Zhip
+@testable import AppFeature
 
 /// Tests that `DefaultWalletStorageUseCase` forwards each operation to the
 /// injected `SecurePersistence` (here an in-memory store from

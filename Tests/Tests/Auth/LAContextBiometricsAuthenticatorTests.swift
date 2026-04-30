@@ -24,7 +24,7 @@
 
 import Combine
 import XCTest
-@testable import Zhip
+@testable import AppFeature
 
 /// Tests the production `LAContextBiometricsAuthenticator`. On the simulator
 /// `canEvaluatePolicy(.deviceOwnerAuthenticationWithBiometrics)` returns

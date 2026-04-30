@@ -28,7 +28,7 @@ import UIKit
 import XCTest
 import Zesame
 import SingleLineControllerController
-@testable import Zhip
+@testable import AppFeature
 
 /// Drives `CreateNewWalletCoordinator` routing:
 /// EnsureThatYouAreNotBeingWatched → CreateNewWallet → BackupWallet

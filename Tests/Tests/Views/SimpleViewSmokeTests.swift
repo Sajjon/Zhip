@@ -25,7 +25,7 @@
 import SingleLineControllerCore
 import UIKit
 import XCTest
-@testable import Zhip
+@testable import AppFeature
 
 /// Smoke-tests for `UIView` subclasses that have no required dependencies.
 ///

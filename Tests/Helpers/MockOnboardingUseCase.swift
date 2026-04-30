@@ -23,7 +23,7 @@
 //
 
 import Foundation
-@testable import Zhip
+@testable import AppFeature
 
 /// Hand-written mock of `OnboardingUseCase` for ViewModel tests.
 ///

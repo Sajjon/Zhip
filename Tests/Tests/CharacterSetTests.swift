@@ -26,7 +26,7 @@ import Foundation
 import UIKit
 import XCTest
 import Zesame
-@testable import Zhip
+@testable import AppFeature
 
 class CharacterSetTests: XCTestCase {
     func testDecimalsWithSeparator() {

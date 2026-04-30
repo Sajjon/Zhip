@@ -28,7 +28,7 @@ import UIKit
 import XCTest
 import SingleLineControllerDIPrimitives
 import SingleLineControllerController
-@testable import Zhip
+@testable import AppFeature
 
 /// Drives each `SettingsCoordinator` navigation branch so every case in
 /// `toSettings`'s big switch is exercised. Modal presentations run against a

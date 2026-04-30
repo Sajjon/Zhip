@@ -1,7 +1,7 @@
 import Combine
 import XCTest
 import SingleLineControllerController
-@testable import Zhip
+@testable import AppFeature
 
 final class ChooseWalletViewModelTests: XCTestCase {
     private var cancellables: Set<AnyCancellable> = []

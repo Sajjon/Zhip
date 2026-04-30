@@ -27,7 +27,7 @@ import Factory
 import UIKit
 import XCTest
 import Zesame
-@testable import Zhip
+@testable import AppFeature
 
 /// Smoke tests that coordinator `.start()` pushes an initial scene onto the
 /// supplied `UINavigationController`.
@@ -87,7 +87,7 @@ final class CoordinatorSmokeTests: XCTestCase {
 
     func test_backupWalletCoordinator_start_pushesBackup() {
         let nav = UINavigationController()
-        let walletSubject = CurrentValueSubject<Zhip.Wallet, Never>(TestWalletFactory.makeWallet())
+        let walletSubject = CurrentValueSubject<AppFeature.Wallet, Never>(TestWalletFactory.makeWallet())
         let sut = BackupWalletCoordinator(
             navigationController: nav,
             wallet: walletSubject.eraseToAnyPublisher()
@@ -118,7 +118,7 @@ final class CoordinatorSmokeTests: XCTestCase {
 
     func test_decryptKeystoreCoordinator_start_pushesDecrypt() {
         let nav = UINavigationController()
-        let walletSubject = CurrentValueSubject<Zhip.Wallet, Never>(TestWalletFactory.makeWallet())
+        let walletSubject = CurrentValueSubject<AppFeature.Wallet, Never>(TestWalletFactory.makeWallet())
         let sut = DecryptKeystoreCoordinator(
             navigationController: nav,
             wallet: walletSubject.eraseToAnyPublisher()

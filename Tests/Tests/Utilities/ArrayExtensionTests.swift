@@ -1,6 +1,6 @@
 import SingleLineControllerCombine
 import XCTest
-@testable import Zhip
+@testable import AppFeature
 
 final class ArrayExtensionTests: XCTestCase {
     func test_mapToVoid_emptyArray_returnsEmpty() {

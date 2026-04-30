@@ -25,7 +25,7 @@
 import Combine
 import XCTest
 import SingleLineControllerController
-@testable import Zhip
+@testable import AppFeature
 
 /// Tests for `ChoosePincodeViewModel`.
 ///

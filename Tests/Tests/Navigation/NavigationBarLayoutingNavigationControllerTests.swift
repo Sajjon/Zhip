@@ -1,7 +1,7 @@
 import UIKit
 import XCTest
 import SingleLineControllerController
-@testable import Zhip
+@testable import AppFeature
 
 private final class FakeOwner: UIViewController, NavigationBarLayoutOwner {
     var navigationBarLayout: NavigationBarLayout = .hidden

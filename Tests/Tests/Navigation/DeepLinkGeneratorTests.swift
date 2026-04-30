@@ -1,6 +1,6 @@
 import XCTest
 import Zesame
-@testable import Zhip
+@testable import AppFeature
 
 final class DeepLinkGeneratorTests: XCTestCase {
     func test_linkTo_transaction_usesHttpsAndZhipHostAndSendPath() throws {

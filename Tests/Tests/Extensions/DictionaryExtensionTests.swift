@@ -1,5 +1,5 @@
 import XCTest
-@testable import Zhip
+@testable import AppFeature
 
 final class DictionaryExtensionTests: XCTestCase {
     func test_compactMapValues_dropsNilResults() {

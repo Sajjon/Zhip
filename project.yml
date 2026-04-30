@@ -107,6 +107,7 @@ targets:
           - "SingleLineControllerDIPrimitives/**"
           - "Validation/**"
           - "Resources/**"
+          - "AppFeature/**"
     # No `info:` block — `GENERATE_INFOPLIST_FILE = YES` (set in xcconfig)
     # plus the `INFOPLIST_KEY_*` settings produce the full plist at build time.
     # No `entitlements:` block either — `CODE_SIGN_ENTITLEMENTS =
@@ -153,6 +154,8 @@ targets:
         product: Validation
       - package: Zhip
         product: Resources
+      - package: Zhip
+        product: AppFeature
     preBuildScripts:
       - name: "✅ Swiftlint"
         script: |

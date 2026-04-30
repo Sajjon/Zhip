@@ -24,7 +24,7 @@
 
 import Foundation
 import SingleLineControllerDIPrimitives
-@testable import Zhip
+@testable import AppFeature
 
 /// In-test `Pasteboard` that NEVER mutates the real `UIPasteboard.general`.
 /// Records each `copy(...)` invocation so tests can assert on intent without

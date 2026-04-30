@@ -23,7 +23,7 @@
 //
 
 import UIKit
-@testable import Zhip
+@testable import AppFeature
 
 /// In-test `HtmlLoader` that NEVER invokes the WebKit-backed
 /// `NSAttributedString(data:options:…)` parser. Returns an empty attributed

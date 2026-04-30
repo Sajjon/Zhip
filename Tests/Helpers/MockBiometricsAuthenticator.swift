@@ -24,7 +24,7 @@
 
 import Combine
 import Foundation
-@testable import Zhip
+@testable import AppFeature
 
 /// In-test `BiometricsAuthenticator` that NEVER shows a real system prompt.
 /// Returns the pre-configured `result` on every call. Default is `false` so

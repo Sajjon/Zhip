@@ -1,6 +1,6 @@
 import UIKit
 import XCTest
-@testable import Zhip
+@testable import AppFeature
 
 final class UIColorExtensionTests: XCTestCase {
     func test_defaultText_isWhite() {

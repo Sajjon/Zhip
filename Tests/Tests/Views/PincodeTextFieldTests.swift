@@ -26,7 +26,7 @@ import Combine
 import SingleLineControllerCore
 import UIKit
 import XCTest
-@testable import Zhip
+@testable import AppFeature
 
 final class PincodeTextFieldTests: XCTestCase {
     private var cancellables: Set<AnyCancellable> = []

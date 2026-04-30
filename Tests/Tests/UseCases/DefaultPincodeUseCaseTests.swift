@@ -23,7 +23,7 @@
 //
 
 import XCTest
-@testable import Zhip
+@testable import AppFeature
 
 /// Unit tests for `DefaultPincodeUseCase`.
 ///

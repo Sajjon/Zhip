@@ -24,7 +24,7 @@
 
 import Foundation
 import SingleLineControllerDIPrimitives
-@testable import Zhip
+@testable import AppFeature
 
 /// Test `Clock`: ignores the requested delay and fires on the next main-queue
 /// cycle so timer-driven flows run in milliseconds instead of seconds.

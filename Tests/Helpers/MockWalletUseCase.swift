@@ -25,7 +25,7 @@
 import Combine
 import Foundation
 import Zesame
-@testable import Zhip
+@testable import AppFeature
 
 /// Hand-written mock conforming to every narrow wallet use-case protocol for
 /// ViewModel tests.
@@ -39,10 +39,10 @@ final class MockWalletUseCase: CreateWalletUseCase,
     ExtractKeyPairUseCase {
     // MARK: - State
 
-    var storedWallet: Zhip.Wallet?
+    var storedWallet: AppFeature.Wallet?
 
-    var createWalletResult: Result<Zhip.Wallet, Swift.Error> = .success(TestWalletFactory.makeWallet())
-    var restoreWalletResult: Result<Zhip.Wallet, Swift.Error> = .success(TestWalletFactory
+    var createWalletResult: Result<AppFeature.Wallet, Swift.Error> = .success(TestWalletFactory.makeWallet())
+    var restoreWalletResult: Result<AppFeature.Wallet, Swift.Error> = .success(TestWalletFactory
         .makeWallet(origin: .importedKeystore))
     var verifyPasswordResult: Result<Bool, Swift.Error> = .success(true)
     var extractKeyPairResult: Result<KeyPair, Swift.Error>?
@@ -62,7 +62,7 @@ final class MockWalletUseCase: CreateWalletUseCase,
 
     // MARK: - CreateWalletUseCase
 
-    func createNewWallet(encryptionPassword: String) -> AnyPublisher<Zhip.Wallet, Swift.Error> {
+    func createNewWallet(encryptionPassword: String) -> AnyPublisher<AppFeature.Wallet, Swift.Error> {
         createNewWalletCallCount += 1
         lastCreateEncryptionPassword = encryptionPassword
         return publisher(for: createWalletResult)
@@ -70,7 +70,7 @@ final class MockWalletUseCase: CreateWalletUseCase,
 
     // MARK: - RestoreWalletUseCase
 
-    func restoreWallet(from restoration: KeyRestoration) -> AnyPublisher<Zhip.Wallet, Swift.Error> {
+    func restoreWallet(from restoration: KeyRestoration) -> AnyPublisher<AppFeature.Wallet, Swift.Error> {
         restoreWalletCallCount += 1
         lastRestoreInput = restoration
         return publisher(for: restoreWalletResult)
@@ -78,7 +78,7 @@ final class MockWalletUseCase: CreateWalletUseCase,
 
     // MARK: - WalletStorageUseCase
 
-    func save(wallet: Zhip.Wallet) {
+    func save(wallet: AppFeature.Wallet) {
         saveWalletCallCount += 1
         storedWallet = wallet
     }
@@ -88,7 +88,7 @@ final class MockWalletUseCase: CreateWalletUseCase,
         storedWallet = nil
     }
 
-    func loadWallet() -> Zhip.Wallet? {
+    func loadWallet() -> AppFeature.Wallet? {
         storedWallet
     }
 

@@ -25,7 +25,7 @@
 import Combine
 import Foundation
 import Zesame
-@testable import Zhip
+@testable import AppFeature
 
 /// Hand-written mock conforming to every narrow transactions use-case protocol for
 /// ViewModel tests. Async methods read from seedable `*Result` properties; cache
@@ -92,7 +92,7 @@ final class MockTransactionsUseCase: TransactionsUseCase {
 
     func sendTransaction(
         for payment: Payment,
-        wallet _: Zhip.Wallet,
+        wallet _: AppFeature.Wallet,
         encryptionPassword _: String
     ) -> AnyPublisher<TransactionResponse, Swift.Error> {
         sendTransactionCallCount += 1

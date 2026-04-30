@@ -23,7 +23,7 @@
 //
 
 import Foundation
-@testable import Zhip
+@testable import AppFeature
 
 /// In-test `SoundPlayer` that NEVER produces real audio. Records each `play(...)`
 /// invocation so tests can assert against intent without leaking sound to the host.

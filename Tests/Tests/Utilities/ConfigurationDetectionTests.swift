@@ -23,7 +23,7 @@
 //
 
 import XCTest
-@testable import Zhip
+@testable import AppFeature
 
 /// Smoke test that forces evaluation of the `isDebug` lazy `let` closure so the
 /// `assert`-based probe and `set(debug:)` function both register as covered.

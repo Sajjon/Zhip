@@ -1,6 +1,6 @@
 import XCTest
 import Zesame
-@testable import Zhip
+@testable import AppFeature
 
 final class GasLimitValidatorTests: XCTestCase {
     private let sut = GasLimitValidator()

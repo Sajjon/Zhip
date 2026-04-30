@@ -26,7 +26,7 @@ import Combine
 import Factory
 import XCTest
 import Zesame
-@testable import Zhip
+@testable import AppFeature
 
 /// Tests that `DefaultVerifyEncryptionPasswordUseCase` forwards the password
 /// and keystore to the injected service and propagates its boolean result.

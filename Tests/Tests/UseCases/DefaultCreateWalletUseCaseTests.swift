@@ -26,7 +26,7 @@ import Combine
 import Factory
 import XCTest
 import Zesame
-@testable import Zhip
+@testable import AppFeature
 
 /// Tests that `DefaultCreateWalletUseCase` forwards to the injected
 /// `ZilliqaServiceReactive`, tags the resulting wallet with
@@ -67,7 +67,7 @@ final class DefaultCreateWalletUseCaseTests: XCTestCase {
         let zesameWallet = TestWalletFactory.makeWallet().wallet
         mockService.createNewWalletResult = .success(zesameWallet)
         let sut = DefaultCreateWalletUseCase()
-        var produced: Zhip.Wallet?
+        var produced: AppFeature.Wallet?
         let expectation = expectation(description: "value")
 
         sut.createNewWallet(encryptionPassword: "pw")

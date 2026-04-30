@@ -26,7 +26,7 @@ import Combine
 import Factory
 import XCTest
 import SingleLineControllerController
-@testable import Zhip
+@testable import AppFeature
 
 /// Tests for `ReceiveViewModel`.
 ///

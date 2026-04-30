@@ -23,7 +23,7 @@
 //
 
 import Foundation
-@testable import Zhip
+@testable import AppFeature
 
 /// Convenience factories to produce test-friendly `Preferences` and
 /// `SecurePersistence` instances backed by `InMemoryKeyValueStore`.

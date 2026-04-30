@@ -1,6 +1,6 @@
 import XCTest
 import Zesame
-@testable import Zhip
+@testable import AppFeature
 
 final class AmountValidatorTests: XCTestCase {
     func test_validate_validZilAmountString_returnsValid() {
@@ -22,28 +22,28 @@ final class AmountValidatorTests: XCTestCase {
     }
 
     func test_errorMessage_nonNumericString_hasMessage() {
-        let error: Zhip.AmountError<Amount> = .nonNumericString
+        let error: AppFeature.AmountError<Amount> = .nonNumericString
         XCTAssertFalse(error.errorMessage.isEmpty)
     }
 
     func test_errorMessage_tooLarge_hasMessage() {
-        let error: Zhip.AmountError<Amount> = .tooLarge(max: "1000", unit: .zil)
+        let error: AppFeature.AmountError<Amount> = .tooLarge(max: "1000", unit: .zil)
         XCTAssertFalse(error.errorMessage.isEmpty)
     }
 
     func test_errorMessage_tooSmall_withUnit_hasMessage() {
-        let error: Zhip.AmountError<Amount> = .tooSmall(min: "1", unit: .zil, showUnit: true)
+        let error: AppFeature.AmountError<Amount> = .tooSmall(min: "1", unit: .zil, showUnit: true)
         XCTAssertFalse(error.errorMessage.isEmpty)
     }
 
     func test_errorMessage_tooSmall_withoutUnit_hasMessage() {
-        let error: Zhip.AmountError<Amount> = .tooSmall(min: "1", unit: .zil, showUnit: false)
+        let error: AppFeature.AmountError<Amount> = .tooSmall(min: "1", unit: .zil, showUnit: false)
         XCTAssertFalse(error.errorMessage.isEmpty)
     }
 
     func test_errorMessage_other_hasMessage() {
         struct DummyError: Swift.Error {}
-        let error: Zhip.AmountError<Amount> = .other(DummyError())
+        let error: AppFeature.AmountError<Amount> = .other(DummyError())
         XCTAssertFalse(error.errorMessage.isEmpty)
     }
 
@@ -53,7 +53,7 @@ final class AmountValidatorTests: XCTestCase {
         let maxGas = try GasPrice(qa: GasPrice.maxInQa)
         let zesameError = Zesame.AmountError<GasPrice>.tooLarge(max: maxGas)
 
-        let error = Zhip.AmountError<Amount>(error: zesameError)
+        let error = AppFeature.AmountError<Amount>(error: zesameError)
 
         if case .tooLarge = error {} else { XCTFail("expected .tooLarge, got \(error)") }
     }
@@ -62,7 +62,7 @@ final class AmountValidatorTests: XCTestCase {
         let minGas = try GasPrice(qa: GasPrice.minInQa)
         let zesameError = Zesame.AmountError<GasPrice>.tooSmall(min: minGas)
 
-        let error = Zhip.AmountError<Amount>(error: zesameError)
+        let error = AppFeature.AmountError<Amount>(error: zesameError)
 
         if case .tooSmall = error {} else { XCTFail("expected .tooSmall, got \(error)") }
     }
@@ -70,7 +70,7 @@ final class AmountValidatorTests: XCTestCase {
     func test_init_error_fromZilError_nonNumericString() {
         let zesameError = Zesame.AmountError<Zil>.nonNumericString
 
-        let error = Zhip.AmountError<Amount>(error: zesameError)
+        let error = AppFeature.AmountError<Amount>(error: zesameError)
 
         if case .nonNumericString = error {} else { XCTFail("expected .nonNumericString, got \(error)") }
     }
@@ -78,7 +78,7 @@ final class AmountValidatorTests: XCTestCase {
     func test_init_error_fromUnknownError_mapsToOther() {
         struct Custom: Swift.Error {}
 
-        let error = Zhip.AmountError<Amount>(error: Custom())
+        let error = AppFeature.AmountError<Amount>(error: Custom())
 
         if case .other = error {} else { XCTFail("expected .other, got \(error)") }
     }

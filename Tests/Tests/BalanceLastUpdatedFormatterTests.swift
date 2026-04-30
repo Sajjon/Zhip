@@ -23,7 +23,7 @@
 //
 
 import XCTest
-@testable import Zhip
+@testable import AppFeature
 
 /// Tests for `BalanceLastUpdatedFormatter`: a pure formatter with no
 /// dependencies, so each test is a one-liner.

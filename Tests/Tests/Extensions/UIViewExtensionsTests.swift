@@ -25,7 +25,7 @@
 import UIKit
 import XCTest
 import Validation
-@testable import Zhip
+@testable import AppFeature
 
 /// Covers UIView extensions: `shake(...)` animation and the publisher binders
 /// not already exercised elsewhere.

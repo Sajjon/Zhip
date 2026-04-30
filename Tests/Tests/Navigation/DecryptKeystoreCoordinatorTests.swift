@@ -28,7 +28,7 @@ import UIKit
 import XCTest
 import Zesame
 import SingleLineControllerController
-@testable import Zhip
+@testable import AppFeature
 
 /// Drives `DecryptKeystoreCoordinator` routing: start pushes
 /// `DecryptKeystoreToRevealKeyPair`; dismiss bubbles .dismiss; successful
@@ -38,7 +38,7 @@ final class DecryptKeystoreCoordinatorTests: XCTestCase {
     private var window: UIWindow!
     private var navigationController: NavigationBarLayoutingNavigationController!
     private var mockWallet: MockWalletUseCase!
-    private var walletSubject: CurrentValueSubject<Zhip.Wallet, Never>!
+    private var walletSubject: CurrentValueSubject<AppFeature.Wallet, Never>!
     private var cancellables: Set<AnyCancellable> = []
     private var sut: DecryptKeystoreCoordinator!
 
@@ -47,7 +47,7 @@ final class DecryptKeystoreCoordinatorTests: XCTestCase {
         mockWallet = MockWalletUseCase()
         let wallet = TestWalletFactory.makeWallet()
         mockWallet.storedWallet = wallet
-        walletSubject = CurrentValueSubject<Zhip.Wallet, Never>(wallet)
+        walletSubject = CurrentValueSubject<AppFeature.Wallet, Never>(wallet)
         Container.shared.walletStorageUseCase.register { [unowned self] in mockWallet }
         navigationController = NavigationBarLayoutingNavigationController()
         window = UIWindow(frame: .init(x: 0, y: 0, width: 320, height: 480))

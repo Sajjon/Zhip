@@ -25,7 +25,7 @@
 import Foundation
 import UIKit
 import XCTest
-@testable import Zhip
+@testable import AppFeature
 
 class StringFormattingTests: XCTestCase {
     func testFormatting() {

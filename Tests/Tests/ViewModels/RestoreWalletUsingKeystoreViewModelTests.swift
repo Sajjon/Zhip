@@ -25,7 +25,7 @@
 import Combine
 import XCTest
 import Zesame
-@testable import Zhip
+@testable import AppFeature
 
 /// Tests for `RestoreWalletUsingKeystoreViewModel`.
 ///

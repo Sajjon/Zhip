@@ -27,7 +27,7 @@ import Factory
 import XCTest
 import Zesame
 import SingleLineControllerController
-@testable import Zhip
+@testable import AppFeature
 
 /// Tests for `BackupWalletViewModel`.
 ///
@@ -43,7 +43,7 @@ final class BackupWalletViewModelTests: XCTestCase {
     private var isUnderstandsRisk: CurrentValueSubject<Bool, Never>!
     private var doneTrigger: PassthroughSubject<Void, Never>!
     private var fakeController: FakeInputFromController!
-    private var wallet: Zhip.Wallet!
+    private var wallet: AppFeature.Wallet!
     private var mockPasteboard: MockPasteboard!
 
     override func setUp() {

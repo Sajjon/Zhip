@@ -1,5 +1,5 @@
 import XCTest
-@testable import Zhip
+@testable import AppFeature
 
 final class DeepLinkTests: XCTestCase {
     private let validAddressString = "e3090a1309DfAC40352d03dEc6cCD9cAd213e76B"

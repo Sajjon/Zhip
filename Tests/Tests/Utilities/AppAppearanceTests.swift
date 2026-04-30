@@ -1,6 +1,6 @@
 import UIKit
 import XCTest
-@testable import Zhip
+@testable import AppFeature
 
 @MainActor
 final class AppAppearanceTests: XCTestCase {

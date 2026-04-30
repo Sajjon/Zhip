@@ -1,6 +1,6 @@
 import XCTest
 import Zesame
-@testable import Zhip
+@testable import AppFeature
 
 final class SufficientFundsValidatorTests: XCTestCase {
     func test_validate_missingAmount_returnsEmpty() {
@@ -16,7 +16,7 @@ final class SufficientFundsValidatorTests: XCTestCase {
     }
 
     func test_errorMessage_amountError_delegatesToInner() {
-        let inner: Zhip.AmountError<Amount> = .nonNumericString
+        let inner: AppFeature.AmountError<Amount> = .nonNumericString
         let error = SufficientFundsValidator.Error.amountError(inner)
         XCTAssertEqual(error.errorMessage, inner.errorMessage)
     }

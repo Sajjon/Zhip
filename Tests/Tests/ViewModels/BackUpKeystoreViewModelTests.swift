@@ -27,7 +27,7 @@ import Factory
 import XCTest
 import Zesame
 import SingleLineControllerController
-@testable import Zhip
+@testable import AppFeature
 
 /// Tests for `BackUpKeystoreViewModel`.
 ///
@@ -37,7 +37,7 @@ final class BackUpKeystoreViewModelTests: XCTestCase {
     private var cancellables: Set<AnyCancellable> = []
     private var copyTrigger: PassthroughSubject<Void, Never>!
     private var fakeController: FakeInputFromController!
-    private var wallet: Zhip.Wallet!
+    private var wallet: AppFeature.Wallet!
     private var mockPasteboard: MockPasteboard!
 
     override func setUp() {

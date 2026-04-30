@@ -25,7 +25,7 @@
 import UIKit
 import XCTest
 import Zesame
-@testable import Zhip
+@testable import AppFeature
 
 /// Exercises `QRCoder`'s encode and decode paths. Decoding a blank image
 /// returns nil (no QR content); encoding a valid `TransactionIntent` returns

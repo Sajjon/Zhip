@@ -24,7 +24,7 @@
 
 import XCTest
 import Zesame
-@testable import Zhip
+@testable import AppFeature
 
 final class KeystoreValidatorTests: XCTestCase {
     private let sut = KeystoreValidator()

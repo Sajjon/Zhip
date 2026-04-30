@@ -27,7 +27,7 @@ import Factory
 import UIKit
 import XCTest
 import SingleLineControllerController
-@testable import Zhip
+@testable import AppFeature
 
 /// Drives the `SetPincodeCoordinator` flow: ChoosePincode → ConfirmNewPincode
 /// on selection, or straight to `.setPincode` on skip from either stage.

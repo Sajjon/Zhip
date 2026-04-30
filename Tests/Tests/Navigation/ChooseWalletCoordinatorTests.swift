@@ -27,7 +27,7 @@ import Factory
 import UIKit
 import XCTest
 import SingleLineControllerController
-@testable import Zhip
+@testable import AppFeature
 
 /// Covers `ChooseWalletCoordinator` routing: `.createNewWallet` /
 /// `.restoreWallet` branches, each presenting a child modal coordinator.

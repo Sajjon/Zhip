@@ -27,7 +27,7 @@ import UIKit
 import XCTest
 import Validation
 import SingleLineControllerController
-@testable import Zhip
+@testable import AppFeature
 
 /// Drives `RestoreWalletView`'s `populate(with:)` to exercise the keystore
 /// error binder — which forces a segment switch to `.keystore` and runs the

@@ -26,7 +26,7 @@ import Combine
 import Foundation
 import SingleLineControllerCore
 import SingleLineControllerController
-@testable import Zhip
+@testable import AppFeature
 
 extension ViewModelType where Input: InputType, Self.Input.FromController == InputFromController {
     func transform(inputFromView: Input.FromView) -> OutputVM {

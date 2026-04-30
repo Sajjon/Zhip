@@ -28,7 +28,7 @@ import UIKit
 import XCTest
 import Zesame
 import SingleLineControllerController
-@testable import Zhip
+@testable import AppFeature
 
 /// Drives each branch of `ReceiveCoordinator`: start, `.finish` bubble, and
 /// `.requestTransaction` which triggers the share-sheet path.

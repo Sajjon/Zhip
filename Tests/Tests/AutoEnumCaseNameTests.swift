@@ -23,7 +23,7 @@
 //
 
 import XCTest
-@testable import Zhip
+@testable import AppFeature
 
 enum EnumWithAssociatedValue {
     case foo(Int)

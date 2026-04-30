@@ -28,7 +28,7 @@ import UIKit
 import XCTest
 import Zesame
 import SingleLineControllerController
-@testable import Zhip
+@testable import AppFeature
 
 /// Tests for `MainCoordinator` — instantiates the coordinator with a real
 /// `UINavigationController`, drives `start()`, and verifies the initial scene

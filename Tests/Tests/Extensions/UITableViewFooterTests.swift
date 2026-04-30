@@ -25,7 +25,7 @@
 import Combine
 import UIKit
 import XCTest
-@testable import Zhip
+@testable import AppFeature
 
 /// Exercises the `UITableView.setFooterLabel(text:)` helper and
 /// `footerLabelBinder`.

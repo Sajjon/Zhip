@@ -26,7 +26,7 @@ import Combine
 import UIKit
 import XCTest
 import SingleLineControllerSceneViews
-@testable import Zhip
+@testable import AppFeature
 
 /// Drives `SingleCellTypeTableView` selection forwarding and data loading so
 /// its delegate/data-source methods and `CellDeselectionMode` branches run.

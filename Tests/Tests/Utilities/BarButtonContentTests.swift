@@ -1,7 +1,7 @@
 import SingleLineControllerController
 import UIKit
 import XCTest
-@testable import Zhip
+@testable import AppFeature
 
 final class BarButtonContentTests: XCTestCase {
     func test_initWithTitle_storesTextTypeAndPlainStyle() {

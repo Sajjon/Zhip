@@ -27,7 +27,7 @@ import Factory
 import XCTest
 import Zesame
 import SingleLineControllerController
-@testable import Zhip
+@testable import AppFeature
 
 /// Tests for `DecryptKeystoreToRevealKeyPairViewModel`.
 ///
@@ -42,7 +42,7 @@ final class DecryptKeystoreToRevealKeyPairViewModelTests: XCTestCase {
     private var revealTrigger: PassthroughSubject<Void, Never>!
     private var fakeController: FakeInputFromController!
     private var mockWallet: MockWalletUseCase!
-    private var wallet: Zhip.Wallet!
+    private var wallet: AppFeature.Wallet!
 
     override func setUp() {
         super.setUp()

@@ -2,7 +2,7 @@ import Factory
 import SingleLineControllerController
 import UIKit
 import XCTest
-@testable import Zhip
+@testable import AppFeature
 
 final class ToastTests: XCTestCase {
     func test_initWithDefaults_createsAutoDismissToast() {

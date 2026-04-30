@@ -29,7 +29,7 @@ import UIKit
 import XCTest
 import SingleLineControllerNavigation
 import SingleLineControllerController
-@testable import Zhip
+@testable import AppFeature
 
 /// Covers shared Coordinating extensions: stack management, navigation-stack
 /// queries, debug printing, and UINavigationController helpers that back
