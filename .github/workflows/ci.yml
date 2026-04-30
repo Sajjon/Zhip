@@ -103,6 +103,14 @@ jobs:
       - name: Install xcpretty
         run: gem install xcpretty --no-document
 
+      # Zhip.xcodeproj is gitignored — XcodeGen reproduces it from
+      # project.yml. Must run before any xcodebuild step.
+      - name: Install XcodeGen
+        run: brew install xcodegen
+
+      - name: Generate Xcode project
+        run: xcodegen generate
+
       - name: Build & test with coverage
         run: |
           set -o pipefail
