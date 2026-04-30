@@ -31,7 +31,7 @@ import Zesame
 /// The Zilliqa network this build targets. Currently wired to `.mainnet`. When we
 /// add staging/testnet builds this will move into a build-configuration driven
 /// registration on `Container.shared.zilliqaService`.
-public let network: Network = .mainnet
+let network: Network = .mainnet
 
 extension KeyValueStore where KeyType == PreferencesKey {
     /// The app-wide default `Preferences` store, backed by `UserDefaults.standard`.
