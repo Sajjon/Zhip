@@ -1,8 +1,8 @@
 # Zhip — task runner (https://github.com/casey/just)
 #
-# Prerequisites:
-#   brew install just xcpretty xcodegen
-#   CI only: brew install xcresultparser  (converts xcresult → Cobertura for Codecov)
+# First-time setup:
+#   brew install just     # bootstraps the rest
+#   just bootstrap        # `brew bundle install` + xcodegen generate
 #
 # The Xcode project is generated from project.yml — run `just gen` after
 # pulling new commits or whenever project.yml / Package.swift changes.
@@ -26,6 +26,14 @@ sim := "platform=iOS Simulator,name=" + sim_device + ",OS=" + sim_os + ",arch=ar
 # List available recipes
 default:
     @just --list
+
+# ── Bootstrap ────────────────────────────────────────────────────────────────
+
+# One-shot: install every brew tool the repo needs, then generate the Xcode
+# project. Run after a fresh checkout. Idempotent — safe to re-run anytime.
+bootstrap:
+    brew bundle install
+    just gen
 
 # ── Project generation ───────────────────────────────────────────────────────
 
