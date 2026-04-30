@@ -95,19 +95,9 @@ targets:
       - path: App/Base.lproj
       - path: App/Settings.bundle
       - path: App/GoogleService-Info.plist
-      # The Zhip-app source tree. Per-feature SPM extraction shrinks this.
-      - path: Sources
-        excludes:
-          # Already-extracted SPM modules — consumed via package products instead.
-          - "SingleLineControllerCore/**"
-          - "SingleLineControllerCombine/**"
-          - "SingleLineControllerNavigation/**"
-          - "SingleLineControllerController/**"
-          - "SingleLineControllerSceneViews/**"
-          - "SingleLineControllerDIPrimitives/**"
-          - "Validation/**"
-          - "Resources/**"
-          - "AppFeature/**"
+      # /Sources is consumed entirely via SPM products (declared below in
+      # `dependencies`). Nothing under Sources/ is compiled directly into
+      # the Zhip target anymore.
     # No `info:` block — `GENERATE_INFOPLIST_FILE = YES` (set in xcconfig)
     # plus the `INFOPLIST_KEY_*` settings produce the full plist at build time.
     # No `entitlements:` block either — `CODE_SIGN_ENTITLEMENTS =
