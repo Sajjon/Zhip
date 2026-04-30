@@ -212,38 +212,36 @@ When you want to swap in the real SPM package:
 
 ## Snapshot testing
 
-Snapshot testing is **not yet wired in**. To enable it:
+`swift-snapshot-testing` is wired in as a `ZhipTests` dependency
+(see `project.yml`). The first reference snapshot lives at:
 
-1. Add `https://github.com/pointfreeco/swift-snapshot-testing` as an SPM
-   dependency of the `ZhipTests` target (Xcode → File → Add Package
-   Dependencies…).
-2. Create `Tests/Tests/Snapshots/` and put one `*ViewTests.swift` per scene
-   view, using the `SnapshotTesting` API:
+```
+Tests/Tests/Snapshots/__Snapshots__/WelcomeViewSnapshotTests/test_welcomeView_iPhone17.1.png
+```
 
-   ```swift
-   import SnapshotTesting
-   import XCTest
-   @testable import Zhip
+`Tests/Tests/Snapshots/WelcomeViewSnapshotTests.swift` is the canonical
+template — copy + adapt it for new scenes. Reference images are
+device-/iOS-version-specific, so always use the same simulator that CI uses
+(see `justfile`'s `sim_device` / `sim_os`, currently iPhone 17 / iOS 26.1).
 
-   final class WelcomeViewTests: XCTestCase {
-       func test_welcomeView_rendersCorrectly() {
-           // Arrange
-           let view = WelcomeView()
-           view.frame = CGRect(x: 0, y: 0, width: 390, height: 844)
-           view.populate(with: .init()) // or mocked output
-           // Act + Assert
-           assertSnapshot(of: view, as: .image(precision: 0.99))
-       }
-   }
-   ```
+**Adding a new snapshot test:**
 
-3. Run the test once to record snapshots (`record = true`), then commit the
-   generated `__Snapshots__/` directory.
+1. Create `Tests/Tests/Snapshots/<Scene>SnapshotTests.swift` modelled on
+   `WelcomeViewSnapshotTests.swift`.
+2. Run `just gen` to regenerate the project, then run the new test once —
+   it fails with "No reference was found" and auto-records the PNG under
+   `__Snapshots__/<TestClass>/`.
+3. Inspect the recorded PNG visually, then commit it alongside the test file.
+4. Re-run the test to confirm it passes against the new baseline.
 
-Once set up, snapshot tests should cover every top-level view in
-`Sources/AppFeature/Scenes/`: Welcome, TermsOfService, AskForCrashReportingPermissions,
-WarningCustomECC, ChooseWallet, Main, Send, Receive, Settings, and the
-pincode / backup flows.
+**Re-recording an existing snapshot** (e.g. after an intentional UI change):
+delete the existing PNG and re-run the test, or wrap the test body in
+`withSnapshotTesting(record: .all) { … }` for a one-shot record.
+
+Snapshot coverage to target over time: every top-level view in
+`Sources/AppFeature/Scenes/` — Welcome (done), TermsOfService,
+AskForCrashReportingPermissions, WarningCustomECC, ChooseWallet, Main,
+Send, Receive, Settings, plus the pincode / backup flows.
 
 ---
 
