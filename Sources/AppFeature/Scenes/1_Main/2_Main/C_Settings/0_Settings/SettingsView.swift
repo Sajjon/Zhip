@@ -24,10 +24,10 @@
 
 import Combine
 import SingleLineControllerCombine
-import SingleLineControllerCore
-import UIKit
 import SingleLineControllerController
+import SingleLineControllerCore
 import SingleLineControllerSceneViews
+import UIKit
 
 // MARK: - SettingsView
 
@@ -47,7 +47,7 @@ public final class SettingsView: HeaderlessTableViewSceneView<SettingsTableViewC
 
     /// Override-hook from `HeaderlessTableViewSceneView` — adds bottom inset
     /// so the version-string footer doesn't crowd the screen edge.
-    public override func setup() {
+    override public func setup() {
         tableView.contentInset = UIEdgeInsets(top: 0, bottom: 30)
     }
 }

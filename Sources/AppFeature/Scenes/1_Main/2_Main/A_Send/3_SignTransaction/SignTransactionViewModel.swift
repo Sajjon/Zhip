@@ -26,10 +26,10 @@ import Combine
 import Factory
 import Foundation
 import SingleLineControllerCombine
-import SingleLineControllerCore
-import Zesame
-import Validation
 import SingleLineControllerController
+import SingleLineControllerCore
+import Validation
+import Zesame
 
 /// Outcome of step 3 of Send.
 public enum SignTransactionUserAction {
@@ -77,7 +77,7 @@ public final class SignTransactionViewModel: BaseViewModel<
     /// `.walletUnavailable` and return an inert output so the coordinator can
     /// pop the user out of Send instead of trapping. Defense in depth — Send
     /// should not normally be reachable without a wallet.
-    public override func transform(input: Input) -> Output {
+    override public func transform(input: Input) -> Output {
         func userDid(_ userAction: NavigationStep) {
             navigator.next(userAction)
         }
@@ -171,21 +171,21 @@ public final class SignTransactionViewModel: BaseViewModel<
     }
 }
 
-extension SignTransactionViewModel {
-    public struct InputFromView {
+public extension SignTransactionViewModel {
+    struct InputFromView {
         let encryptionPassword: AnyPublisher<String, Never>
         let isEditingEncryptionPassword: AnyPublisher<Bool, Never>
         let signAndSendTrigger: AnyPublisher<Void, Never>
     }
 
-    public struct Output {
+    struct Output {
         let isSignButtonEnabled: AnyPublisher<Bool, Never>
         let isSignButtonLoading: AnyPublisher<Bool, Never>
         let encryptionPasswordValidation: AnyPublisher<AnyValidation, Never>
         let inputBecomeFirstResponder: AnyPublisher<Void, Never>
     }
 
-    struct InputValidator {
+    internal struct InputValidator {
         func validateEncryptionPassword(_ password: String, for wallet: Wallet) -> EncryptionPasswordValidator
             .ValidationResult
         {

@@ -22,10 +22,10 @@
 // SOFTWARE.
 //
 
+@testable import AppFeature
 import Combine
 import Foundation
 import SingleLineControllerController
-@testable import AppFeature
 
 /// Builds a fake `InputFromController` suitable for driving a ViewModel under test.
 ///

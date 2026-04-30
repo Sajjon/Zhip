@@ -113,7 +113,8 @@ private struct WithLatestFromPublisher<
     let resultSelector: (Upstream.Output, Other.Output) -> Result
 
     func receive<S: Subscriber>(subscriber: S)
-        where S.Input == Result, S.Failure == Never {
+        where S.Input == Result, S.Failure == Never
+    {
         let subscription = Inner(
             downstream: subscriber,
             other: other,
@@ -124,7 +125,7 @@ private struct WithLatestFromPublisher<
     }
 
     private final class Inner<Downstream: Subscriber>: Subscription, Subscriber
-    where Downstream.Input == Result, Downstream.Failure == Never {
+        where Downstream.Input == Result, Downstream.Failure == Never {
         typealias Input = Upstream.Output
         typealias Failure = Never
 
@@ -142,7 +143,7 @@ private struct WithLatestFromPublisher<
         ) {
             self.downstream = downstream
             self.resultSelector = resultSelector
-            self.otherCancellable = other.sink { [weak self] value in
+            otherCancellable = other.sink { [weak self] value in
                 self?.latestOther = value
             }
         }

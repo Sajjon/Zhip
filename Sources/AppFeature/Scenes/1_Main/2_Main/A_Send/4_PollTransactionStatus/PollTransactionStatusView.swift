@@ -26,10 +26,10 @@ import Combine
 import Factory
 import Resources
 import SingleLineControllerCombine
-import UIKit
-import SingleLineControllerDIPrimitives
 import SingleLineControllerController
+import SingleLineControllerDIPrimitives
 import SingleLineControllerSceneViews
+import UIKit
 
 /// Step 4 of Send — celebratory "transaction broadcast" screen with a stars
 /// gradient background, copy/view-details buttons, and a skip CTA. Plays a
@@ -59,7 +59,7 @@ public final class PollTransactionStatusView: ScrollableStackViewOwner {
         skipWaitingOrDoneButton,
     ], layoutMargins: UIEdgeInsets(top: 50, left: 16, bottom: 0, right: 16))
 
-    public override func setup() {
+    override public func setup() {
         setupSubviews()
     }
 }

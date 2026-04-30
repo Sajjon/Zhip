@@ -58,7 +58,7 @@ public final class ScanQRCodeViewModel: BaseViewModel<
 
     /// Decodes scanned strings, strips an optional `zilliqa://` prefix, and
     /// surfaces the resulting `TransactionIntent` (or cancel on bar-button tap).
-    public override func transform(input: Input) -> Output {
+    override public func transform(input: Input) -> Output {
         func userDid(_ userAction: NavigationStep) {
             navigator.next(userAction)
         }
@@ -107,12 +107,12 @@ public final class ScanQRCodeViewModel: BaseViewModel<
     }
 }
 
-extension ScanQRCodeViewModel {
-    public struct InputFromView {
+public extension ScanQRCodeViewModel {
+    struct InputFromView {
         let scannedQrCodeString: AnyPublisher<String?, Never>
     }
 
-    public struct Output {
+    struct Output {
         let startScanning: AnyPublisher<Void, Never>
     }
 }

@@ -29,6 +29,6 @@ import SingleLineControllerController
 public final class UnlockAppWithPincode: Scene<UnlockAppWithPincodeView> {}
 
 /// Localized navigation title.
-extension UnlockAppWithPincode {
-    public static let title = String(localized: .UnlockApp.title)
+public extension UnlockAppWithPincode {
+    static let title = String(localized: .UnlockApp.title)
 }

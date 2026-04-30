@@ -22,11 +22,11 @@
 // SOFTWARE.
 //
 
+@testable import AppFeature
 import Combine
 import Factory
 import XCTest
 import Zesame
-@testable import AppFeature
 
 /// Tests that `DefaultCreateWalletUseCase` forwards to the injected
 /// `ZilliqaServiceReactive`, tags the resulting wallet with

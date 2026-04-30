@@ -1,5 +1,5 @@
-import XCTest
 @testable import AppFeature
+import XCTest
 
 final class WeakTests: XCTestCase {
     func test_weak_holdsValueWhileObjectLives() {

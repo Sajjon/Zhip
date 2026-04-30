@@ -44,7 +44,7 @@ public final class ChoosePincodeViewModel: BaseViewModel<
 > {
     /// Wires done-tap (with the latest entered pincode) and skip-tap; gates the
     /// done button on pincode-completeness; auto-focuses the input on appear.
-    public override func transform(input: Input) -> Output {
+    override public func transform(input: Input) -> Output {
         func userDid(_ step: NavigationStep) {
             navigator.next(step)
         }
@@ -68,9 +68,9 @@ public final class ChoosePincodeViewModel: BaseViewModel<
     }
 }
 
-extension ChoosePincodeViewModel {
+public extension ChoosePincodeViewModel {
     /// User-event publishers the view-model consumes.
-    public struct InputFromView {
+    struct InputFromView {
         /// Latest pincode value — `nil` while the user hasn't entered all digits yet.
         let pincode: AnyPublisher<Pincode?, Never>
         /// Fires when the user taps the done CTA.
@@ -78,7 +78,7 @@ extension ChoosePincodeViewModel {
     }
 
     /// Reactive bindings the view installs.
-    public struct Output {
+    struct Output {
         /// Pulses on `viewWillAppear` to put the pincode input in focus.
         let inputBecomeFirstResponder: AnyPublisher<Void, Never>
         /// Drives `doneButton.isEnabledBinder` — true once a complete pincode is entered.

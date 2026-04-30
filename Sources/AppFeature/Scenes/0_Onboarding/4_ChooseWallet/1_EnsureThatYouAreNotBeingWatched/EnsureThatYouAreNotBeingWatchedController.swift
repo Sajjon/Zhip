@@ -22,8 +22,8 @@
 // SOFTWARE.
 //
 
-import UIKit
 import SingleLineControllerController
+import UIKit
 
 /// `SceneController` glue for the privacy-warning gate that appears between
 /// "Create new wallet" and the actual wallet-generation step. Cancellable so

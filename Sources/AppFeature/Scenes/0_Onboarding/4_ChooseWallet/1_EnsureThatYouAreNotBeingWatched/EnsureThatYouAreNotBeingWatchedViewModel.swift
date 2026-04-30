@@ -46,7 +46,7 @@ public final class EnsureThatYouAreNotBeingWatchedViewModel: BaseViewModel<
     EnsureThatYouAreNotBeingWatchedViewModel.Output
 > {
     /// Wires both inputs (cancel bar-button + understand CTA) directly to navigator steps.
-    public override func transform(input: Input) -> Output {
+    override public func transform(input: Input) -> Output {
         func userDid(_ userAction: NavigationStep) {
             navigator.next(userAction)
         }
@@ -65,13 +65,13 @@ public final class EnsureThatYouAreNotBeingWatchedViewModel: BaseViewModel<
     }
 }
 
-extension EnsureThatYouAreNotBeingWatchedViewModel {
+public extension EnsureThatYouAreNotBeingWatchedViewModel {
     /// User-event publishers the view-model consumes.
-    public struct InputFromView {
+    struct InputFromView {
         /// Fires when the user taps "I understand".
         let understandTrigger: AnyPublisher<Void, Never>
     }
 
     /// No outputs — entirely static screen.
-    public struct Output {}
+    struct Output {}
 }

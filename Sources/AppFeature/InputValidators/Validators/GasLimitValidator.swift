@@ -6,8 +6,8 @@
 // Copyright (c) 2018-2026 Open Zesame (https://github.com/OpenZesame)
 //
 
-import Zesame
 import Validation
+import Zesame
 
 /// Validates a Zilliqa transaction gas limit string, producing a `GasLimit`.
 ///

@@ -24,9 +24,9 @@
 
 import Combine
 import SingleLineControllerCombine
-import Zesame
-import Validation
 import SingleLineControllerController
+import Validation
+import Zesame
 
 /// Looser password mode for keystore restore — the keystore is already
 /// encrypted with whatever the user picked at creation time, so we don't enforce
@@ -101,9 +101,9 @@ public final class RestoreWalletUsingKeystoreViewModel {
     }
 }
 
-extension RestoreWalletUsingKeystoreViewModel {
+public extension RestoreWalletUsingKeystoreViewModel {
     /// User-event publishers the view-model consumes.
-    public struct InputFromView {
+    struct InputFromView {
         /// Fires the first time the keystore textview becomes the first responder
         /// (used to clear the placeholder text).
         let keystoreDidBeginEditing: AnyPublisher<Void, Never>
@@ -118,7 +118,7 @@ extension RestoreWalletUsingKeystoreViewModel {
     }
 
     /// Reactive bindings the embedding view installs.
-    public struct Output {
+    struct Output {
         /// Drives the keystore textview's placeholder text (cleared on first edit).
         let keystoreTextFieldPlaceholder: AnyPublisher<String, Never>
         /// Drives the password field's placeholder (includes the min-length hint).
@@ -134,7 +134,7 @@ extension RestoreWalletUsingKeystoreViewModel {
 
     /// Composes a `KeystoreValidator` with an `EncryptionPasswordValidator`
     /// so the view-model can validate both fields with one type.
-    struct InputValidator {
+    internal struct InputValidator {
         private let encryptionPasswordValidator = EncryptionPasswordValidator(mode: encryptionPasswordMode)
 
         private let keystoreValidator = KeystoreValidator()

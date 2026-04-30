@@ -1,8 +1,8 @@
 // MIT License — Copyright (c) 2018-2026 Open Zesame
 
 import Combine
-import XCTest
 @testable import SingleLineControllerCore
+import XCTest
 
 /// Tests that `ErrorTracker` republishes failures from tracked publishers and
 /// exposes them through `asPublisher()` for downstream subscribers.

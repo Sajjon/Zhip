@@ -10,7 +10,6 @@ import Foundation
 /// emits its first output / completes / cancels. Bind `indicator.asPublisher()`
 /// to a UIButton's `isLoadingBinder` to drive spinner UI.
 public final class ActivityIndicator {
-
     /// Serializes send writes to `subject` so concurrent trackers can't interleave
     /// start/stop calls and leave the indicator in a wrong state.
     private let lock = NSRecursiveLock()
@@ -29,7 +28,6 @@ public final class ActivityIndicator {
 }
 
 private extension ActivityIndicator {
-
     /// Emits `true` under lock.
     func start() {
         lock.lock(); subject.send(true); lock.unlock()
@@ -54,11 +52,9 @@ private extension ActivityIndicator {
 }
 
 public extension Publisher {
-
     /// Tracks this publisher's in-flight state on `indicator`. Use the resulting
     /// publisher in place of the original to get spinner-on-while-running UI for free.
     func trackActivity(_ indicator: ActivityIndicator) -> some Publisher<Output, Failure> {
         indicator.track(self)
     }
 }
-

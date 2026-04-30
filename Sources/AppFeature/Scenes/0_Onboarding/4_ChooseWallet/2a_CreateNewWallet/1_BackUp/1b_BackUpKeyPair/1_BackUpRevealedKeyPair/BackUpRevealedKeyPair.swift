@@ -28,9 +28,9 @@ import SingleLineControllerController
 /// `SceneController` glue for the revealed-keypair display screen.
 public final class BackUpRevealedKeyPair: Scene<BackUpRevealedKeyPairView> {}
 
-extension BackUpRevealedKeyPair {
+public extension BackUpRevealedKeyPair {
     /// keep same title as previous scene
-    public static let title = String(localized: .DecryptKeystore.title)
+    static let title = String(localized: .DecryptKeystore.title)
 }
 
 /// Done button on the right + suppress the back arrow so the user can't

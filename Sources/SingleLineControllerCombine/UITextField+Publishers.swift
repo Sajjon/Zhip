@@ -83,9 +83,9 @@ public extension UITextView {
         publisher(for: \.contentOffset)
             .map { [weak self] _ -> Bool in
                 guard let self else { return false }
-                let excess = self.contentSize.height - self.frame.height
+                let excess = contentSize.height - frame.height
                 guard excess > 0 else { return true }
-                return self.contentOffset.y >= yThreshold * excess
+                return contentOffset.y >= yThreshold * excess
             }
             .eraseToAnyPublisher()
     }

@@ -24,10 +24,10 @@
 
 import Combine
 import SingleLineControllerCombine
-import TinyConstraints
-import UIKit
 import SingleLineControllerController
 import SingleLineControllerSceneViews
+import TinyConstraints
+import UIKit
 
 /// Crash-reporting opt-in screen: hero image, disclaimer text, "I have read"
 /// checkbox, and a horizontally-paired Decline/Accept button row.
@@ -59,7 +59,7 @@ public final class AskForCrashReportingPermissionsView: ScrollableStackViewOwner
     ]
 
     /// Override-hook from `ScrollableStackViewOwner` — wires styling.
-    public override func setup() {
+    override public func setup() {
         setupSubviews()
     }
 }

@@ -22,11 +22,11 @@
 // SOFTWARE.
 //
 
+@testable import AppFeature
 import Combine
 import Factory
-import XCTest
 import SingleLineControllerController
-@testable import AppFeature
+import XCTest
 
 /// Tests for `CreateNewWalletViewModel`.
 ///

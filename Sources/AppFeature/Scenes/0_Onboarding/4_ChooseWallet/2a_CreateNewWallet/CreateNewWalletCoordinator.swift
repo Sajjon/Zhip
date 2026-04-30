@@ -24,9 +24,9 @@
 
 import Combine
 import Factory
+import SingleLineControllerNavigation
 import UIKit
 import Zesame
-import SingleLineControllerNavigation
 
 /// Outcomes the create-new-wallet sub-flow surfaces to its parent
 /// (`ChooseWalletCoordinator`).
@@ -60,7 +60,7 @@ public final class CreateNewWalletCoordinator: BaseCoordinator<CreateNewWalletCo
     @Injected(\.preferences) private var preferences: Preferences
 
     /// Begins at step 1 — the privacy gate.
-    public override func start(didStart _: Completion? = nil) {
+    override public func start(didStart _: Completion? = nil) {
         toEnsureThatYouAreNotBeingWatched()
     }
 }

@@ -22,10 +22,10 @@
 // SOFTWARE.
 //
 
+@testable import AppFeature
 import Combine
 import Foundation
 import Zesame
-@testable import AppFeature
 
 /// Hand-written mock conforming to every narrow transactions use-case protocol for
 /// ViewModel tests. Async methods read from seedable `*Result` properties; cache

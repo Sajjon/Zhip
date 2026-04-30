@@ -44,22 +44,22 @@ public protocol KeyValueStoring: AnyKeyValueStoring {
 
 // MARK: Default Implementation making use of `AnyKeyValueStoring` protocol
 
-extension KeyValueStoring {
+public extension KeyValueStoring {
     /// Default impl that simply unwraps `key` to its string form and delegates
     /// to the type-erased `AnyKeyValueStoring` member.
-    public func save(value: Any, for key: Key) {
+    func save(value: Any, for key: Key) {
         save(value: value, for: key.key)
     }
 
     /// Default impl that loads the raw `Any?` and tries to cast to `Value`.
     /// Returns `nil` if the key is absent OR the stored value is the wrong type.
-    public func loadValue<Value>(for key: Key) -> Value? {
+    func loadValue<Value>(for key: Key) -> Value? {
         guard let value = loadValue(for: key.key), let typed = value as? Value else { return nil }
         return typed
     }
 
     /// Default impl that simply forwards to the type-erased `deleteValue(for:)`.
-    public func deleteValue(for key: Key) {
+    func deleteValue(for key: Key) {
         deleteValue(for: key.key)
     }
 }

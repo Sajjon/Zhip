@@ -1,6 +1,6 @@
+@testable import AppFeature
 import UIKit
 import XCTest
-@testable import AppFeature
 
 final class UITextViewStylingTests: XCTestCase {
     // MARK: - apply

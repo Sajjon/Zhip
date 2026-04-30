@@ -24,9 +24,9 @@
 
 import Combine
 import SingleLineControllerCombine
-import UIKit
 import SingleLineControllerController
 import SingleLineControllerSceneViews
+import UIKit
 
 /// Reveals the user's private key + uncompressed public key in titled
 /// `TitledValueView`s with copy-to-pasteboard buttons next to each.
@@ -57,7 +57,7 @@ public final class BackUpRevealedKeyPairView: ScrollableStackViewOwner {
     ]
 
     /// Override-hook from `ScrollableStackViewOwner` — wires styling.
-    public override func setup() {
+    override public func setup() {
         setupSubviews()
     }
 }

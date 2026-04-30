@@ -27,7 +27,8 @@ public struct UIControlPublisher<Control: UIControl>: Publisher {
     }
 
     public func receive<S: Subscriber>(subscriber: S)
-        where S.Input == Void, S.Failure == Never {
+        where S.Input == Void, S.Failure == Never
+    {
         guard let control = control.value else {
             subscriber.receive(subscription: Subscriptions.empty)
             subscriber.receive(completion: .finished)
@@ -46,7 +47,6 @@ public struct UIControlPublisher<Control: UIControl>: Publisher {
 /// the full design rationale.
 final class UIControlSubscription<S: Subscriber, Control: UIControl>: Subscription
     where S.Input == Void, S.Failure == Never {
-
     private var subscriber: S?
     private weak var control: Control?
     private let events: UIControl.Event
@@ -58,9 +58,9 @@ final class UIControlSubscription<S: Subscriber, Control: UIControl>: Subscripti
         control.addTarget(self, action: #selector(handleEvent), for: events)
     }
 
-    public func request(_ demand: Subscribers.Demand) {}
+    func request(_: Subscribers.Demand) {}
 
-    public func cancel() {
+    func cancel() {
         control?.removeTarget(self, action: #selector(handleEvent), for: events)
         subscriber = nil
     }

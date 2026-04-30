@@ -25,10 +25,10 @@
 import Combine
 import Factory
 import SingleLineControllerCombine
-import SingleLineControllerCore
-import Zesame
-import Validation
 import SingleLineControllerController
+import SingleLineControllerCore
+import Validation
+import Zesame
 
 /// Navigation from RestoreWallet
 public enum RestoreWalletNavigation {
@@ -54,7 +54,7 @@ public final class RestoreWalletViewModel: BaseViewModel<
 
     /// Wires segment-driven payload selection, restore-button gating, and
     /// the (cancellable) restore use-case call. Detail in inline comments.
-    public override func transform(input: Input) -> Output {
+    override public func transform(input: Input) -> Output {
         func userIntends(to intention: NavigationStep) {
             navigator.next(intention)
         }
@@ -120,9 +120,9 @@ public final class RestoreWalletViewModel: BaseViewModel<
     }
 }
 
-extension RestoreWalletViewModel {
+public extension RestoreWalletViewModel {
     /// User-event publishers the view-model consumes.
-    public struct InputFromView {
+    struct InputFromView {
         /// Which restore method is selected.
         enum Segment: Int {
             /// Private-key restore (default).
@@ -142,7 +142,7 @@ extension RestoreWalletViewModel {
     }
 
     /// Reactive bindings the view installs.
-    public struct Output {
+    struct Output {
         /// Drives `headerLabel.textBinder` based on the selected segment.
         let headerLabel: AnyPublisher<String, Never>
         /// Drives `restoreWalletButton.isEnabledBinder`.

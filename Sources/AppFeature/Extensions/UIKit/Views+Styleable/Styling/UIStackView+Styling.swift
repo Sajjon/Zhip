@@ -29,30 +29,30 @@ import UIKit
 // `stackViewStyle` property can read like an array of subviews — see the
 // `CreateNewWalletView.stackViewStyle` use site for how that lands.
 
-extension UIEdgeInsets {
+public extension UIEdgeInsets {
     /// Top/bottom-only insets — left/right zero. Common shape for vertical
     /// stack layouts that only need padding above/below.
-    public init(top: CGFloat, bottom: CGFloat) {
+    init(top: CGFloat, bottom: CGFloat) {
         self.init(top: top, left: 0, bottom: bottom, right: 0)
     }
 
     /// Uniform insets on all four sides.
-    public init(all margin: CGFloat) {
+    init(all margin: CGFloat) {
         self.init(top: margin, left: margin, bottom: margin, right: margin)
     }
 
     /// Symmetric vertical/horizontal insets — use when top == bottom and left == right.
-    public init(vertical: CGFloat = 0, horizontal: CGFloat = 0) {
+    init(vertical: CGFloat = 0, horizontal: CGFloat = 0) {
         self.init(top: vertical, left: horizontal, bottom: vertical, right: horizontal)
     }
 }
 
 // MARK: - Style
 
-extension UIStackView {
+public extension UIStackView {
     /// Description of a stack view's layout — axis, alignment, distribution,
     /// spacing, margins, plus the initial set of arranged subviews.
-    public struct Style {
+    struct Style {
         /// Default spacing between arranged subviews (16pt) — matches the
         /// design system's vertical rhythm.
         public static let defaultSpacing: CGFloat = 16
@@ -110,7 +110,7 @@ extension UIEdgeInsets {
 
 // MARK: - Apply Style
 
-extension UIStackView {
+public extension UIStackView {
     /// Writes `style` to this stack view, substituting project-wide defaults
     /// for any nil attribute.
     ///
@@ -118,7 +118,7 @@ extension UIStackView {
     /// it preserves the order in `style.views` while inserting at the head,
     /// so this is safe to call even if the stack already has arranged subviews
     /// (those end up *after* the styled ones).
-    public func apply(style: Style) {
+    func apply(style: Style) {
         if let views = style.views, !views.isEmpty {
             views.reversed().forEach { self.insertArrangedSubview($0, at: 0) }
         }
@@ -137,7 +137,7 @@ extension UIStackView {
     /// Apply `style` (optionally customised) and return `self`. Same call-site
     /// shape as `UILabel.withStyle(_:customize:)`.
     @discardableResult
-    public func withStyle(
+    func withStyle(
         _ style: UIStackView.Style,
         customize: ((UIStackView.Style) -> UIStackView.Style)? = nil
     ) -> UIStackView {
@@ -152,10 +152,10 @@ extension UIStackView {
 
 // Chainable single-field replacements. See UILabel+Styling.swift for pattern.
 
-extension UIStackView.Style {
+public extension UIStackView.Style {
     /// Returns a copy of this style with `alignment` replaced.
     @discardableResult
-    public func alignment(_ alignment: UIStackView.Alignment) -> UIStackView.Style {
+    func alignment(_ alignment: UIStackView.Alignment) -> UIStackView.Style {
         var style = self
         style.alignment = alignment
         return style
@@ -163,7 +163,7 @@ extension UIStackView.Style {
 
     /// Returns a copy of this style with `distribution` replaced.
     @discardableResult
-    public func distribution(_ distribution: UIStackView.Distribution) -> UIStackView.Style {
+    func distribution(_ distribution: UIStackView.Distribution) -> UIStackView.Style {
         var style = self
         style.distribution = distribution
         return style
@@ -171,7 +171,7 @@ extension UIStackView.Style {
 
     /// Returns a copy of this style with `spacing` replaced.
     @discardableResult
-    public func spacing(_ spacing: CGFloat) -> UIStackView.Style {
+    func spacing(_ spacing: CGFloat) -> UIStackView.Style {
         var style = self
         style.spacing = spacing
         return style
@@ -179,7 +179,7 @@ extension UIStackView.Style {
 
     /// Returns a copy of this style with `layoutMargins` replaced.
     @discardableResult
-    public func layoutMargins(_ layoutMargins: UIEdgeInsets) -> UIStackView.Style {
+    func layoutMargins(_ layoutMargins: UIEdgeInsets) -> UIStackView.Style {
         var style = self
         style.layoutMargins = layoutMargins
         return style
@@ -188,15 +188,15 @@ extension UIStackView.Style {
 
 // MARK: - Style Presets
 
-extension UIStackView.Style {
+public extension UIStackView.Style {
     /// Empty default — vertical, default spacing/margins, no subviews yet.
-    public static var `default`: UIStackView.Style {
+    static var `default`: UIStackView.Style {
         UIStackView.Style([])
     }
 
     /// Vertical layout with zero outer margins (caller will pin to a parent
     /// view that already has its own margins / safe-area handling).
-    public static var vertical: UIStackView.Style {
+    static var vertical: UIStackView.Style {
         UIStackView.Style(
             layoutMargins: .zero
         )
@@ -204,7 +204,7 @@ extension UIStackView.Style {
 
     /// Horizontal layout with subviews evenly spaced around their centres
     /// (`.equalCentering`). Used for evenly-spaced icon rows.
-    public static var horizontalEqualCentering: UIStackView.Style {
+    static var horizontalEqualCentering: UIStackView.Style {
         UIStackView.Style(
             axis: .horizontal,
             alignment: .center,
@@ -215,7 +215,7 @@ extension UIStackView.Style {
     }
 
     /// Plain horizontal layout — default alignment/distribution, zero margins.
-    public static var horizontal: UIStackView.Style {
+    static var horizontal: UIStackView.Style {
         UIStackView.Style(
             axis: .horizontal,
             layoutMargins: .zero
@@ -224,7 +224,7 @@ extension UIStackView.Style {
 
     /// Horizontal layout where every subview gets equal width
     /// (`.fillEqually`). Used for tab bars, segmented controls, etc.
-    public static var horizontalFillingEqually: UIStackView.Style {
+    static var horizontalFillingEqually: UIStackView.Style {
         UIStackView.Style(
             axis: .horizontal,
             distribution: .fillEqually,

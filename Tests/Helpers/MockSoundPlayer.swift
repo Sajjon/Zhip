@@ -22,8 +22,8 @@
 // SOFTWARE.
 //
 
-import Foundation
 @testable import AppFeature
+import Foundation
 
 /// In-test `SoundPlayer` that NEVER produces real audio. Records each `play(...)`
 /// invocation so tests can assert against intent without leaking sound to the host.

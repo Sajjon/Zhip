@@ -24,9 +24,9 @@
 
 import Combine
 import SingleLineControllerCombine
-import UIKit
 import SingleLineControllerController
 import SingleLineControllerSceneViews
+import UIKit
 
 /// Pincode-removal confirmation — single pincode input that auto-fires removal
 /// when the entered digits match the saved one.
@@ -41,7 +41,7 @@ public final class RemovePincodeView: ScrollableStackViewOwner {
 
     /// Override-hook from `ScrollableStackViewOwner`. Eagerly grabs first-responder
     /// status so the keyboard appears as soon as the modal does.
-    public override func setup() {
+    override public func setup() {
         inputPincodeView.becomeFirstResponder()
     }
 }

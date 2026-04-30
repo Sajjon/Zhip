@@ -24,9 +24,9 @@
 
 import Combine
 import SingleLineControllerCombine
-import UIKit
 import SingleLineControllerController
 import SingleLineControllerSceneViews
+import UIKit
 
 /// Wallet-removal confirmation — "are you sure" header + "I have backed up"
 /// checkbox + confirm CTA gated on the checkbox.
@@ -47,7 +47,7 @@ public final class ConfirmWalletRemovalView: ScrollableStackViewOwner {
     ]
 
     /// Override-hook from `ScrollableStackViewOwner` — wires styling.
-    public override func setup() {
+    override public func setup() {
         setupSubviews()
     }
 }

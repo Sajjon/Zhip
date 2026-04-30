@@ -22,8 +22,8 @@
 // SOFTWARE.
 //
 
-import UIKit
 import SingleLineControllerController
+import UIKit
 
 /// `SceneController` glue for the welcome screen — purely declarative, all
 /// behaviour lives in `WelcomeView` + `WelcomeViewModel`.

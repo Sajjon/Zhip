@@ -24,10 +24,10 @@
 
 import Combine
 import SingleLineControllerCombine
-import UIKit
-import Validation
 import SingleLineControllerController
 import SingleLineControllerSceneViews
+import UIKit
+import Validation
 
 // MARK: - RestoreWithKeystoreView
 
@@ -67,7 +67,7 @@ public final class RestoreUsingKeystoreView: ScrollableStackViewOwner {
     ]
 
     /// Override-hook from `ScrollableStackViewOwner` — wires styling + bindings.
-    public override func setup() {
+    override public func setup() {
         setupSubviews()
         setupViewModelBinding()
     }

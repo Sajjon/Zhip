@@ -25,11 +25,11 @@
 import Foundation
 import Zesame
 
-extension FloatingLabelTextField {
+public extension FloatingLabelTextField {
     /// Input role for a `FloatingLabelTextField`. Drives the keyboard, the
     /// allowed character set (`limitingCharacterSet`), and the validation
     /// surface used by the parent scene.
-    public enum TypeOfInput {
+    enum TypeOfInput {
         /// Whole-number numeric pad input.
         case number
         /// Hex digits + the literal `0x` prefix characters.

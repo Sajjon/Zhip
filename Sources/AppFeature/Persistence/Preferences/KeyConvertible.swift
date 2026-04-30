@@ -36,10 +36,10 @@ public protocol KeyConvertible {
 
 // MARK: - Default Implementation for `enum SomeKey: String`
 
-extension KeyConvertible where Self: RawRepresentable, Self.RawValue == String {
+public extension KeyConvertible where Self: RawRepresentable, Self.RawValue == String {
     /// Default impl that simply forwards to the enum's raw value, so
     /// `.hasRunAppBefore` becomes `"hasRunAppBefore"` automatically.
-    public var key: String {
+    var key: String {
         rawValue
     }
 }

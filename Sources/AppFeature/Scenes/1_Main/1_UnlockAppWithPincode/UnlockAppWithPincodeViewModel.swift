@@ -26,9 +26,9 @@ import Combine
 import Factory
 import Foundation
 import SingleLineControllerCombine
+import SingleLineControllerController
 import SingleLineControllerCore
 import Validation
-import SingleLineControllerController
 
 // MARK: - UnlockAppWithPincodeUserAction
 
@@ -66,7 +66,7 @@ public final class UnlockAppWithPincodeViewModel: BaseViewModel<
 
     /// Wires real-time pincode comparison + biometric prompt; either path
     /// succeeding fires `.unlockApp`.
-    public override func transform(input: Input) -> Output {
+    override public func transform(input: Input) -> Output {
         func userDid(_ userAction: NavigationStep) {
             navigator.next(userAction)
         }
@@ -112,15 +112,15 @@ public final class UnlockAppWithPincodeViewModel: BaseViewModel<
     }
 }
 
-extension UnlockAppWithPincodeViewModel {
+public extension UnlockAppWithPincodeViewModel {
     /// User-event publishers the view-model consumes.
-    public struct InputFromView {
+    struct InputFromView {
         /// Latest pincode value from the input view.
         let pincode: AnyPublisher<Pincode?, Never>
     }
 
     /// Reactive bindings the view installs.
-    public struct Output {
+    struct Output {
         /// Pulses on viewWillAppear to put the input in focus.
         let inputBecomeFirstResponder: AnyPublisher<Void, Never>
         /// Drives the input's validation styling.
@@ -129,7 +129,7 @@ extension UnlockAppWithPincodeViewModel {
 
     /// Adapts `PincodeValidator(settingNew: false)` to the screen — captures
     /// the saved pincode and delegates each validation to the shared validator.
-    struct InputValidator {
+    internal struct InputValidator {
         private let existingPincode: Pincode
         private let pincodeValidator = PincodeValidator(settingNew: false)
 

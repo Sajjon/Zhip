@@ -22,13 +22,13 @@
 // SOFTWARE.
 //
 
+@testable import AppFeature
 import Combine
 import Factory
+import SingleLineControllerController
+import SingleLineControllerDIPrimitives
 import UIKit
 import XCTest
-import SingleLineControllerDIPrimitives
-import SingleLineControllerController
-@testable import AppFeature
 
 /// Drives each `SettingsCoordinator` navigation branch so every case in
 /// `toSettings`'s big switch is exercised. Modal presentations run against a

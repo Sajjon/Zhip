@@ -1,14 +1,13 @@
 // MIT License — Copyright (c) 2018-2026 Open Zesame
 
 import Combine
-import XCTest
 @testable import SingleLineControllerCore
+import XCTest
 
 /// Smoke tests for the Phase 1 set of Core types. Covers the protocols and
 /// the helpers that have no UIKit/Combine dependency surface beyond what's
 /// already in Core. Richer tests migrate from the Zhip target in Phase 7.
 final class SingleLineControllerCoreSmokeTests: XCTestCase {
-
     func test_emptyInitializable_canSpinUpInstance() {
         struct Foo: EmptyInitializable {
             var marker = "spun"
@@ -31,7 +30,10 @@ final class SingleLineControllerCoreSmokeTests: XCTestCase {
 
         struct StubError: Swift.Error {}
         let upstream = Fail<Int, Swift.Error>(error: StubError())
-        let pipelineCancellable = tracker.track(from: upstream).sink(receiveCompletion: { _ in }, receiveValue: { _ in })
+        let pipelineCancellable = tracker.track(from: upstream).sink(
+            receiveCompletion: { _ in },
+            receiveValue: { _ in }
+        )
 
         XCTAssertEqual(captured.count, 1)
         trackerCancellable.cancel()

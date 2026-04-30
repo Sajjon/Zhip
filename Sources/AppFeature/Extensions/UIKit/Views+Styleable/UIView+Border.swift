@@ -25,11 +25,11 @@
 import UIKit
 import Validation
 
-extension UIView {
+public extension UIView {
     /// Lightweight value type describing a border's appearance.
     /// Stored as `CGColor` because `CALayer.borderColor` only accepts that —
     /// converting eagerly avoids a re-conversion on every `addBorder` call.
-    public struct Border {
+    struct Border {
         /// Border colour (already converted to `CGColor` for direct use on `CALayer`).
         public let color: CGColor
         /// Border width in points. Default 1.5pt matches the form-input style.
@@ -44,21 +44,21 @@ extension UIView {
 
     /// Applies a border by writing through to `layer.borderWidth` /
     /// `layer.borderColor`. Pure mutation — no animation.
-    public func addBorder(_ border: Border) {
+    func addBorder(_ border: Border) {
         layer.borderWidth = border.width
         layer.borderColor = border.color
     }
 }
 
-extension UIView.Border {
+public extension UIView.Border {
     /// Border style used when the field has no validation state to convey
     /// (subtle, low-emphasis colour from `AnyValidation.Color.empty`).
-    public static var empty: UIView.Border {
+    static var empty: UIView.Border {
         UIView.Border(color: AnyValidation.Color.empty)
     }
 
     /// Border style for the error state — typically red, `AnyValidation.Color.error`.
-    public static var error: UIView.Border {
+    static var error: UIView.Border {
         UIView.Border(color: AnyValidation.Color.error)
     }
 
@@ -66,7 +66,7 @@ extension UIView.Border {
     /// single source of truth for "what does this field look like right now?".
     /// Distinguishes `.valid(nil)` (clean valid) from `.valid(remark)` (valid
     /// with helpful note) so the two can carry different colours.
-    public static func fromValidation(_ validation: AnyValidation) -> UIView.Border {
+    static func fromValidation(_ validation: AnyValidation) -> UIView.Border {
         switch validation {
         case .empty: return .empty
         case .errorMessage: return .error

@@ -22,8 +22,8 @@
 // SOFTWARE.
 //
 
-import Zesame
 import Validation
+import Zesame
 
 /// Validates a gas price string in `Li`, producing a `GasPrice`.
 ///

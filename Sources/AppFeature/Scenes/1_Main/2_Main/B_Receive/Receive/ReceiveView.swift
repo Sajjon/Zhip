@@ -24,10 +24,10 @@
 
 import Combine
 import SingleLineControllerCombine
-import UIKit
-import Zesame
 import SingleLineControllerController
 import SingleLineControllerSceneViews
+import UIKit
+import Zesame
 
 // MARK: - ReceiveView
 
@@ -53,7 +53,7 @@ public final class ReceiveView: ScrollableStackViewOwner {
         requestPaymentButton,
     ])
 
-    public override func setup() {
+    override public func setup() {
         setupSubviews()
     }
 }

@@ -24,9 +24,9 @@
 
 import Combine
 import SingleLineControllerCombine
-import UIKit
 import SingleLineControllerController
 import SingleLineControllerSceneViews
+import UIKit
 
 /// Step 2 of Send — read-only summary of the prepared payment (recipient,
 /// amount, gas, total) plus an "I have reviewed" checkbox + accept CTA.
@@ -62,7 +62,7 @@ public final class ReviewTransactionBeforeSigningView: ScrollableStackViewOwner 
         .spacer,
     ]
 
-    public override func setup() {
+    override public func setup() {
         setupSubviews()
     }
 }

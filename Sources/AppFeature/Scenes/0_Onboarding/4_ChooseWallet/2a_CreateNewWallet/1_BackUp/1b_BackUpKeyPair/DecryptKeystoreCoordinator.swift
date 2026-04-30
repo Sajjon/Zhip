@@ -27,9 +27,9 @@ import Factory
 import Foundation
 import SingleLineControllerCombine
 import SingleLineControllerCore
+import SingleLineControllerNavigation
 import UIKit
 import Zesame
-import SingleLineControllerNavigation
 
 /// Outcomes the decrypt-keystore sub-flow surfaces to its parent.
 public enum DecryptKeystoreCoordinatorNavigationStep {
@@ -74,7 +74,7 @@ public final class DecryptKeystoreCoordinator: BaseCoordinator<DecryptKeystoreCo
     }
 
     /// Begins at the password entry / decrypt screen.
-    public override func start(didStart _: Completion? = nil) {
+    override public func start(didStart _: Completion? = nil) {
         toDecryptKeystore()
     }
 }

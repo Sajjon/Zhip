@@ -88,6 +88,7 @@ public func combineLatest<A, B, C, D>(
 ) -> AnyPublisher<(A, B, C, D), Never> {
     a.combineLatest(b, c, d).eraseToAnyPublisher()
 }
+
 // swiftlint:enable large_tuple
 
 public func combineLatest<A, B, R>(
@@ -133,6 +134,7 @@ public func combineLatest<A, B, C, D, E, R>(
         .map { tuple4, eVal in resultSelector(tuple4.0, tuple4.1, tuple4.2, tuple4.3, eVal) }
         .eraseToAnyPublisher()
 }
+
 // swiftlint:enable function_parameter_count
 
 // MARK: - AnyPublisher.combineLatest(...) static overloads
@@ -162,6 +164,7 @@ public extension AnyPublisher where Failure == Never {
     ) -> AnyPublisher<(A, B, C, D), Never> {
         a.combineLatest(b, c, d).eraseToAnyPublisher()
     }
+
     // swiftlint:enable large_tuple
 
     static func combineLatest<A, B, R>(

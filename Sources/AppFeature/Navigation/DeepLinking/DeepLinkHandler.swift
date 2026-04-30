@@ -23,8 +23,8 @@
 //
 
 import Combine
-import UIKit
 import SingleLineControllerNavigation
+import UIKit
 
 /// App-level dispatcher that turns inbound universal-link URLs into typed
 /// `DeepLink` events on `navigation`.

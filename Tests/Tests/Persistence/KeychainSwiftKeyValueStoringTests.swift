@@ -22,9 +22,9 @@
 // SOFTWARE.
 //
 
+@testable import AppFeature
 import KeychainSwift
 import XCTest
-@testable import AppFeature
 
 /// Exercises `KeychainSwift`'s `KeyValueStoring` conformance against the real
 /// simulator keychain. Each test uses a namespaced key to avoid collisions.

@@ -22,8 +22,8 @@
 // SOFTWARE.
 //
 
-import UIKit
 @testable import AppFeature
+import UIKit
 
 /// In-test `HtmlLoader` that NEVER invokes the WebKit-backed
 /// `NSAttributedString(data:options:…)` parser. Returns an empty attributed

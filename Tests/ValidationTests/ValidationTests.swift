@@ -1,7 +1,7 @@
 // MIT License — Copyright (c) 2018-2026 Open Zesame
 
-import XCTest
 @testable import Validation
+import XCTest
 
 /// Tests for the typed `Validation<Value, Error>` enum and its
 /// `ValidationConvertible` projection to `AnyValidation`.

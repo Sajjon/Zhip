@@ -75,23 +75,23 @@ extension UIColor {
     }
 }
 
-extension UIColor {
+public extension UIColor {
     /// Brand teal — primary accent.
-    public static let teal = UIColor(hex: .teal)
+    static let teal = UIColor(hex: .teal)
     /// Brand teal pressed/disabled state.
-    public static let darkTeal = UIColor(hex: .darkTeal)
+    static let darkTeal = UIColor(hex: .darkTeal)
     /// App-wide background.
-    public static let deepBlue = UIColor(hex: .deepBlue)
+    static let deepBlue = UIColor(hex: .deepBlue)
     /// Mellow yellow — warning accent.
-    public static let mellowYellow = UIColor(hex: .mellowYellow)
+    static let mellowYellow = UIColor(hex: .mellowYellow)
     /// Blood red — error/destructive accent.
-    public static let bloodRed = UIColor(hex: .bloodRed)
+    static let bloodRed = UIColor(hex: .bloodRed)
     /// Asphalt grey — secondary surface.
-    public static let asphaltGrey = UIColor(hex: .asphaltGrey)
+    static let asphaltGrey = UIColor(hex: .asphaltGrey)
     /// Silver grey — disabled / placeholder text.
-    public static let silverGrey = UIColor(hex: .silverGrey)
+    static let silverGrey = UIColor(hex: .silverGrey)
     /// Dusk — navigation bar.
-    public static let dusk = UIColor(hex: .dusk)
+    static let dusk = UIColor(hex: .dusk)
 }
 
 // MARK: - Private

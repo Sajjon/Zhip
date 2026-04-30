@@ -23,8 +23,8 @@
 //
 
 import Foundation
-import UIKit
 import SingleLineControllerController
+import UIKit
 
 /// `SceneController` glue for the wallet hub screen.
 public final class Main: Scene<MainView> {}

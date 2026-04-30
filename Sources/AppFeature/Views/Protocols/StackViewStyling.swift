@@ -22,9 +22,9 @@
 // SOFTWARE.
 //
 
-import UIKit
 import SingleLineControllerController
 import SingleLineControllerSceneViews
+import UIKit
 
 /// Refines `ContentViewProvider` so a view can declare its layout as a
 /// `UIStackView.Style` and get the boilerplate `makeContentView()` for free.
@@ -38,12 +38,12 @@ public protocol StackViewStyling: ContentViewProvider {
     var stackViewStyle: UIStackView.Style { get }
 }
 
-extension ContentViewProvider where Self: StackViewStyling {
+public extension ContentViewProvider where Self: StackViewStyling {
     /// Default — builds the stack view from the conformer's `stackViewStyle`.
     /// Note: `withStyle(_:)` here mirrors the call shape on the existing
     /// stack view rather than the constructor used in the Extensions-side
     /// extension; both produce equivalent output.
-    public func makeContentView() -> UIView {
+    func makeContentView() -> UIView {
         UIStackView(frame: .zero).withStyle(stackViewStyle)
     }
 }

@@ -22,9 +22,9 @@
 // SOFTWARE.
 //
 
-import UIKit
-import SingleLineControllerNavigation
 import SingleLineControllerController
+import SingleLineControllerNavigation
+import UIKit
 
 extension Coordinating {
     /// Recursive ascii dump of this coordinator (and its child-coordinator

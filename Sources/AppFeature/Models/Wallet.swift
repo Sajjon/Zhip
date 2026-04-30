@@ -62,9 +62,9 @@ public struct Wallet: Codable {
     }
 }
 
-extension Wallet {
+public extension Wallet {
     /// Convenience pass-through to the underlying Zesame keystore.
-    public var keystore: Keystore {
+    var keystore: Keystore {
         wallet.keystore
     }
 
@@ -75,14 +75,14 @@ extension Wallet {
     /// We surface that invariant via `incorrectImplementation(_:)` rather than rethrow,
     /// so a future regression in Zesame would crash loudly with a clear message instead
     /// of silently propagating an impossible error up the call stack.
-    public var bech32Address: Bech32Address {
+    var bech32Address: Bech32Address {
         do {
             return try Bech32Address(ethStyleAddress: wallet.address, network: network)
         } catch { incorrectImplementation("should work") }
     }
 
     /// The wallet's address rendered in the legacy (Ethereum-style) hex form.
-    public var legacyAddress: LegacyAddress {
+    var legacyAddress: LegacyAddress {
         wallet.address
     }
 }

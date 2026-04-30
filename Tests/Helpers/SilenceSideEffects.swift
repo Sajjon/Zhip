@@ -22,12 +22,12 @@
 // SOFTWARE.
 //
 
+@testable import AppFeature
 import Factory
 import Foundation
+import SingleLineControllerDIPrimitives
 import UIKit
 import XCTest
-import SingleLineControllerDIPrimitives
-@testable import AppFeature
 
 /// Test-bundle principal class — instantiated automatically by XCTest at bundle
 /// load and re-applied before every individual test case.

@@ -22,15 +22,15 @@
 // SOFTWARE.
 //
 
-import UIKit
 import SingleLineControllerController
+import UIKit
 
 /// `SceneController` glue for the Settings hub (table-view).
 public final class Settings: Scene<SettingsView> {}
 
 /// Localized navigation title.
-extension Settings {
-    public static let title = String(localized: .Settings.title)
+public extension Settings {
+    static let title = String(localized: .Settings.title)
 }
 
 /// Right "Done" bar-button — closes the modal.

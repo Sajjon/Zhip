@@ -30,6 +30,6 @@ import SingleLineControllerController
 public final class ReviewTransactionBeforeSigning: Scene<ReviewTransactionBeforeSigningView> {}
 
 /// Localized navigation title.
-extension ReviewTransactionBeforeSigning {
-    public static let title = String(localized: .ReviewTransaction.title)
+public extension ReviewTransactionBeforeSigning {
+    static let title = String(localized: .ReviewTransaction.title)
 }

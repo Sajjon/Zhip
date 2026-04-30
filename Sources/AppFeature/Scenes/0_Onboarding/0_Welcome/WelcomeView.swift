@@ -23,9 +23,9 @@
 //
 
 import SingleLineControllerCombine
+import SingleLineControllerController
 import SingleLineControllerCore
 import UIKit
-import SingleLineControllerController
 
 /// First-run welcome screen: a parallax spaceship illustration with a
 /// "Get Started" CTA. The view owns the layout, the view model just bridges

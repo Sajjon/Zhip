@@ -22,12 +22,12 @@
 // SOFTWARE.
 //
 
-import Combine
-import UIKit
-import XCTest
-import Validation
-import SingleLineControllerController
 @testable import AppFeature
+import Combine
+import SingleLineControllerController
+import UIKit
+import Validation
+import XCTest
 
 /// Drives `RestoreWalletView`'s `populate(with:)` to exercise the keystore
 /// error binder — which forces a segment switch to `.keystore` and runs the

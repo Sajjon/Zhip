@@ -1,10 +1,10 @@
+@testable import AppFeature
 import Combine
 import Factory
 import SingleLineControllerCombine
+import SingleLineControllerDIPrimitives
 import UIKit
 import XCTest
-import SingleLineControllerDIPrimitives
-@testable import AppFeature
 
 final class InputPincodeViewTests: XCTestCase {
     private var cancellables: Set<AnyCancellable> = []

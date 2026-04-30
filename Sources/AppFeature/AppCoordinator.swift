@@ -25,10 +25,10 @@
 import Combine
 import Factory
 import SingleLineControllerCombine
+import SingleLineControllerDIPrimitives
+import SingleLineControllerNavigation
 import UIKit
 import Zesame
-import SingleLineControllerNavigation
-import SingleLineControllerDIPrimitives
 
 /// Navigation steps the app-level coordinator itself can emit. Empty because
 /// `AppCoordinator` is the root — it has nowhere "above" to report back to.
@@ -165,12 +165,12 @@ private extension AppCoordinator {
 
 // MARK: - Lock app with pincode
 
-extension AppCoordinator {
-    public func appWillResignActive() {
+public extension AppCoordinator {
+    func appWillResignActive() {
         lockApp()
     }
 
-    public func appDidBecomeActive() {
+    func appDidBecomeActive() {
         unlockApp()
     }
 }
@@ -215,10 +215,10 @@ private extension AppCoordinator {
 
 // MARK: - DeepLink Handler
 
-extension AppCoordinator {
+public extension AppCoordinator {
     /// returns: `true` if the delegate successfully handled the request or `false` if the attempt to open the URL
     /// resource failed.
-    public func handleDeepLink(_ url: URL) -> Bool {
+    func handleDeepLink(_ url: URL) -> Bool {
         deepLinkHandler.handle(url: url)
     }
 }

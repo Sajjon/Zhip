@@ -22,12 +22,12 @@
 // SOFTWARE.
 //
 
+@testable import AppFeature
 import Combine
 import Foundation
-import XCTest
 import SingleLineControllerController
 import SingleLineControllerSceneViews
-@testable import AppFeature
+import XCTest
 
 /// Tests for `SettingsViewModel`.
 ///

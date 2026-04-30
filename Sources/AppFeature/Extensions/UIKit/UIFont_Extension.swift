@@ -30,48 +30,48 @@ import UIKit
 // sites should reference — adding a one-off `UIFont(name:size:)` somewhere is
 // a smell. To add a new typography role, add a token here.
 
-extension UIFont {
+public extension UIFont {
     /// 16pt Barlow Medium — `UITextField` floating placeholder.
-    public static let hint = Font(.𝟙𝟞, .medium).make()
+    static let hint = Font(.𝟙𝟞, .medium).make()
     /// 16pt Barlow Regular — small caption text above a value.
-    public static let valueTitle = Font(.𝟙𝟞, .regular).make()
+    static let valueTitle = Font(.𝟙𝟞, .regular).make()
     /// 18pt Barlow Bold — primary value text (numbers, addresses).
-    public static let value = Font(.𝟙𝟠, .bold).make()
+    static let value = Font(.𝟙𝟠, .bold).make()
 
     /// For bread text
-    public static let body = Font(.𝟙𝟠, .regular).make()
+    static let body = Font(.𝟙𝟠, .regular).make()
 
     /// `UIViewController`'s `title`, checkboxes, `UIBarButtonItem`, `UITextField`'s placeholder & value
-    public static let title = Font(.𝟙𝟠, .semiBold).make()
+    static let title = Font(.𝟙𝟠, .semiBold).make()
 
     /// UIButton
-    public static let callToAction = Font(.𝟚𝟘, .semiBold).make()
+    static let callToAction = Font(.𝟚𝟘, .semiBold).make()
 
     /// First label in a scene
-    public static let header = Font(.𝟛𝟜, .bold).make()
+    static let header = Font(.𝟛𝟜, .bold).make()
 
     /// Welcome, ChoseWallet scene
-    public static let impression = Font(.𝟜𝟠, .bold).make()
+    static let impression = Font(.𝟜𝟠, .bold).make()
 
     /// 86pt Barlow SemiBold — splash/hero "BIG BANG" text.
-    public static let bigBang = Font(.𝟠𝟞, .semiBold).make()
+    static let bigBang = Font(.𝟠𝟞, .semiBold).make()
 }
 
 /// Semantic aliases — same underlying fonts, but with names that read at the
 /// call site. `someLabel.font = .sceneTitle` is clearer than `.title` when the
 /// label *is* a scene title.
-extension UIFont {
+public extension UIFont {
     /// Alias of `.title` used by navigation/scene title labels.
-    public static let sceneTitle: UIFont = .title
+    static let sceneTitle: UIFont = .title
     /// Alias of `.title` used by checkbox labels.
-    public static let checkbox: UIFont = .title
+    static let checkbox: UIFont = .title
     /// Alias of `.title` used by `UIBarButtonItem` text.
-    public static let barButtonItem: UIFont = .title
+    static let barButtonItem: UIFont = .title
     /// Alias of `.callToAction` used by primary `UIButton`s.
-    public static let button: UIFont = .callToAction
+    static let button: UIFont = .callToAction
 
     /// Namespace grouping the fonts intended for label use.
-    enum Label {
+    internal enum Label {
         /// Hero/welcome label font.
         public static let impression: UIFont = .impression
         /// Scene-header label font.
@@ -81,7 +81,7 @@ extension UIFont {
     }
 
     /// Namespace grouping the fonts intended for input-field use.
-    enum Field {
+    internal enum Field {
         /// Floating-label placeholder font.
         public static let floatingPlaceholder: UIFont = .hint
         /// Main text + non-floating placeholder font.
@@ -147,10 +147,10 @@ public protocol FontNameExpressible {
     var name: String { get }
 }
 
-extension FontNameExpressible where Self: RawRepresentable, Self.RawValue == String {
+public extension FontNameExpressible where Self: RawRepresentable, Self.RawValue == String {
     /// Default — the raw string value *is* the PostScript name.
     /// Lets `enum FontBarlow: String` get `name` for free.
-    public var name: String {
+    var name: String {
         rawValue
     }
 }

@@ -25,8 +25,8 @@
 import Combine
 import Foundation
 import SingleLineControllerCombine
-import Zesame
 import SingleLineControllerController
+import Zesame
 
 /// Outcome of step 2 of Send.
 public enum ReviewTransactionBeforeSigningUserAction {
@@ -52,7 +52,7 @@ public final class ReviewTransactionBeforeSigningViewModel: BaseViewModel<
 
     /// Wires the accept-tap (carries `paymentToReview` upstream) and formats
     /// the four displayed values (recipient hex/bech32, amount, fee, total).
-    public override func transform(input: Input) -> Output {
+    override public func transform(input: Input) -> Output {
         func userDid(_ userAction: NavigationStep) {
             navigator.next(userAction)
         }
@@ -111,13 +111,13 @@ public final class ReviewTransactionBeforeSigningViewModel: BaseViewModel<
     }
 }
 
-extension ReviewTransactionBeforeSigningViewModel {
-    public struct InputFromView {
+public extension ReviewTransactionBeforeSigningViewModel {
+    struct InputFromView {
         let isHasReviewedPaymentCheckboxChecked: AnyPublisher<Bool, Never>
         let hasReviewedNowProceedWithSigningTrigger: AnyPublisher<Void, Never>
     }
 
-    public struct Output {
+    struct Output {
         let isHasReviewedNowProceedWithSigningButtonEnabled: AnyPublisher<Bool, Never>
         let recipientLegacyAddress: AnyPublisher<String, Never>
         let recipientBech32Address: AnyPublisher<String, Never>

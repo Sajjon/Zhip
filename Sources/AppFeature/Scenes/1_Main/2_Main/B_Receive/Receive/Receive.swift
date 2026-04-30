@@ -22,8 +22,8 @@
 // SOFTWARE.
 //
 
-import UIKit
 import SingleLineControllerController
+import UIKit
 
 /// `SceneController` glue for the receive screen.
 public final class Receive: Scene<ReceiveView> {}

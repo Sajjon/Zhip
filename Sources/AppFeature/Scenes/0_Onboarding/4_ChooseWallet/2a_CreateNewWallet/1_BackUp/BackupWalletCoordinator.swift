@@ -27,9 +27,9 @@ import Factory
 import Foundation
 import SingleLineControllerCombine
 import SingleLineControllerCore
+import SingleLineControllerNavigation
 import UIKit
 import Zesame
-import SingleLineControllerNavigation
 
 /// Outcomes the backup sub-flow surfaces to its parent.
 public enum BackupWalletCoordinatorNavigationStep {
@@ -90,7 +90,7 @@ public final class BackupWalletCoordinator: BaseCoordinator<BackupWalletCoordina
     }
 
     /// Begins at the backup hub scene that fans out to the two reveal flows.
-    public override func start(didStart _: Completion? = nil) {
+    override public func start(didStart _: Completion? = nil) {
         toBackUpWallet()
     }
 }

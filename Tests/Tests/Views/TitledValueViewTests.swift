@@ -22,10 +22,10 @@
 // SOFTWARE.
 //
 
+@testable import AppFeature
 import SingleLineControllerCombine
 import UIKit
 import XCTest
-@testable import AppFeature
 
 /// Exercises `TitledValueView`'s `setValue`, `titled`, and `titleBinder` APIs
 /// after configuration via `withStyles`.

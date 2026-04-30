@@ -22,8 +22,8 @@
 // SOFTWARE.
 //
 
-import UIKit
 import SingleLineControllerController
+import UIKit
 
 /// Privacy-cover screen shown over the live Main UI when the app goes to the
 /// background. Renders the app name on a parallax aurora background.
@@ -40,7 +40,7 @@ public final class LockAppScene: AbstractController {
     private lazy var titleLabel = UILabel()
     /// Builds the static layout — black background, parallax aurora behind a
     /// centered app-name label drawn in the "bigBang" hero font.
-    public override func viewDidLoad() {
+    override public func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .black
         view.addSubview(motionEffectAuroraImageView)

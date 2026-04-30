@@ -22,11 +22,11 @@
 // SOFTWARE.
 //
 
+@testable import AppFeature
 import Combine
+import SingleLineControllerController
 import XCTest
 import Zesame
-import SingleLineControllerController
-@testable import AppFeature
 
 /// Tests for `ReviewTransactionBeforeSigningViewModel`.
 ///

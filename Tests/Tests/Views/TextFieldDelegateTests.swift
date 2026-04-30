@@ -1,6 +1,6 @@
+@testable import AppFeature
 import UIKit
 import XCTest
-@testable import AppFeature
 
 final class TextFieldDelegateTests: XCTestCase {
     func test_init_withTypeOfInput_setsLimitingCharacterSet() {

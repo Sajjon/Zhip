@@ -46,7 +46,7 @@ public final class ChooseWalletViewModel: BaseViewModel<
     ChooseWalletViewModel.Output
 > {
     /// Wires both button taps directly to navigator steps and returns an empty `Output`.
-    public override func transform(input: Input) -> Output {
+    override public func transform(input: Input) -> Output {
         func userIntends(to intention: NavigationStep) {
             navigator.next(intention)
         }
@@ -62,9 +62,9 @@ public final class ChooseWalletViewModel: BaseViewModel<
     }
 }
 
-extension ChooseWalletViewModel {
+public extension ChooseWalletViewModel {
     /// User-event publishers the view-model consumes.
-    public struct InputFromView {
+    struct InputFromView {
         /// Fires when the user taps "Create new wallet".
         let createNewWalletTrigger: AnyPublisher<Void, Never>
         /// Fires when the user taps "Restore wallet".
@@ -72,5 +72,5 @@ extension ChooseWalletViewModel {
     }
 
     /// No outputs — the screen is entirely static.
-    public struct Output {}
+    struct Output {}
 }

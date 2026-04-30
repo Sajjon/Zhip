@@ -24,8 +24,8 @@
 
 import Foundation
 import SingleLineControllerCore
-import Zesame
 import Validation
+import Zesame
 
 /// Validates a hex-encoded Zilliqa private-key string, producing a `PrivateKey`.
 ///
@@ -38,7 +38,7 @@ public struct PrivateKeyValidator: InputValidator {
     public typealias Output = PrivateKey
 
     /// Validation failures surfaced to the user.
-public enum Error: InputError {
+    public enum Error: InputError {
         /// Fewer than 64 hex chars submitted.
         case tooShort(lengthKeySubmitted: Int)
         /// More than 64 hex chars submitted.
@@ -80,10 +80,10 @@ public enum Error: InputError {
     }
 }
 
-extension PrivateKeyValidator.Error {
+public extension PrivateKeyValidator.Error {
     /// Localized message — the length cases include "missing N chars" / "excess N chars"
     /// hints to help the user spot a copy-paste truncation/duplication.
-    public var errorMessage: String {
+    var errorMessage: String {
         let expectedLength = PrivateKeyValidator.expectedLengthOfPrivateKey
 
         switch self {

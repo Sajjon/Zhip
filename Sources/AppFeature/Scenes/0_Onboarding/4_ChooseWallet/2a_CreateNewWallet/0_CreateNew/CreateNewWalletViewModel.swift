@@ -26,10 +26,10 @@ import Combine
 import Factory
 import Foundation
 import SingleLineControllerCombine
-import SingleLineControllerCore
-import Zesame
-import Validation
 import SingleLineControllerController
+import SingleLineControllerCore
+import Validation
+import Zesame
 
 /// The encryption-password policy used for *all* password inputs on this screen.
 ///
@@ -79,7 +79,7 @@ public final class CreateNewWalletViewModel:
     /// All side-effecting subscriptions (navigation, `createWallet` use-case invocation) are
     /// eagerly stored in `cancellables` here; pure `Output` streams are returned and bound
     /// by the view in `populate(with:)`.
-    public override func transform(input: Input) -> Output {
+    override public func transform(input: Input) -> Output {
         /// Local helper that pushes a navigation step onto the `BaseViewModel` navigator.
         /// Kept as a nested function purely for readability of the call sites below.
         func userDid(_ userAction: NavigationStep) {
@@ -197,12 +197,12 @@ public final class CreateNewWalletViewModel:
     }
 }
 
-extension CreateNewWalletViewModel {
+public extension CreateNewWalletViewModel {
     /// Reactive inputs sourced from `CreateNewWalletView` (user interactions).
     ///
     /// All publishers are `Never`-failing per the project-wide convention — UI streams
     /// must not terminate the pipeline.
-    public struct InputFromView {
+    struct InputFromView {
         /// Live text contents of the primary password field.
         let newEncryptionPassword: AnyPublisher<String, Never>
         /// `true` while the user is focused in the primary password field, `false` on resign.
@@ -219,7 +219,7 @@ extension CreateNewWalletViewModel {
     }
 
     /// Reactive outputs delivered to `CreateNewWalletView.populate(with:)` for one-way binding.
-    public struct Output {
+    struct Output {
         /// Fully-formatted placeholder text (with interpolated minimum length) for the password field.
         let encryptionPasswordPlaceholder: AnyPublisher<String, Never>
         /// Validation state to render on the primary password field (border colour, remark text, …).
@@ -237,7 +237,7 @@ extension CreateNewWalletViewModel {
     ///
     /// The underlying validator is constructed per-call (it is cheap and stateless)
     /// to keep this struct itself a value type with no setup ceremony.
-    struct InputValidator {
+    internal struct InputValidator {
         /// Validates a single password against the new-wallet policy.
         ///
         /// Implementation note: the underlying validator expects a `(password, confirmation)`

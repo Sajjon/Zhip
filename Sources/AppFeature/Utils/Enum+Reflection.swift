@@ -36,7 +36,11 @@ import Foundation
 ///   - parent: The enum case being mirrored.
 ///   - recursiveTriesLeft: Recursion budget. Decremented on every step that
 ///     fails to match `Nested`. Returns `nil` when exhausted.
-public func findNestedEnumOfType<Nested>(_ wantedType: Nested.Type, in parent: Any, recursiveTriesLeft: Int) -> Nested? {
+public func findNestedEnumOfType<Nested>(
+    _ wantedType: Nested.Type,
+    in parent: Any,
+    recursiveTriesLeft: Int
+) -> Nested? {
     guard recursiveTriesLeft >= 0 else { return nil }
 
     guard

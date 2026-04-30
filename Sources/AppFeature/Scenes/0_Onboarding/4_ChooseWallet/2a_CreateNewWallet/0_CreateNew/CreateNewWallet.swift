@@ -29,8 +29,8 @@ import SingleLineControllerController
 public final class CreateNewWallet: Scene<CreateNewWalletView> {}
 
 /// Localized navigation title — set by `SceneController` via `TitledScene`.
-extension CreateNewWallet {
-    public static let title = String(localized: .CreateNewWallet.title)
+public extension CreateNewWallet {
+    static let title = String(localized: .CreateNewWallet.title)
 }
 
 /// Provides the cancel "X" left bar-button.

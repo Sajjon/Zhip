@@ -25,10 +25,10 @@
 import Combine
 import Factory
 import SingleLineControllerCombine
-import SingleLineControllerCore
-import Zesame
-import Validation
 import SingleLineControllerController
+import SingleLineControllerCore
+import Validation
+import Zesame
 
 /// Outcomes of the decrypt-to-reveal screen.
 public enum DecryptKeystoreToRevealKeyPairUserAction {
@@ -59,7 +59,7 @@ public final class DecryptKeystoreToRevealKeyPairViewModel: BaseViewModel<
     }
 
     /// Wires validation, decryption, and lifecycle. Detail in inline comments below.
-    public override func transform(input: Input) -> Output {
+    override public func transform(input: Input) -> Output {
         func userDid(_ step: NavigationStep) {
             navigator.next(step)
         }
@@ -136,9 +136,9 @@ public final class DecryptKeystoreToRevealKeyPairViewModel: BaseViewModel<
     }
 }
 
-extension DecryptKeystoreToRevealKeyPairViewModel {
+public extension DecryptKeystoreToRevealKeyPairViewModel {
     /// User-event publishers the view-model consumes.
-    public struct InputFromView {
+    struct InputFromView {
         /// Latest password text.
         let encryptionPassword: AnyPublisher<String, Never>
         /// `true` while the password field is the first responder.
@@ -148,7 +148,7 @@ extension DecryptKeystoreToRevealKeyPairViewModel {
     }
 
     /// Reactive bindings the view installs.
-    public struct Output {
+    struct Output {
         /// Drives `encryptionPasswordField.validationBinder`.
         let encryptionPasswordValidation: AnyPublisher<AnyValidation, Never>
         /// Drives the reveal button's enabled state.
@@ -159,7 +159,7 @@ extension DecryptKeystoreToRevealKeyPairViewModel {
 
     /// Validator that picks the right password-policy mode for the wallet
     /// (different rule sets for new wallets vs unlock).
-    struct InputValidator {
+    internal struct InputValidator {
         /// Runs the password through `EncryptionPasswordValidator` configured
         /// with the wallet's policy mode. Same string for both `password` and
         /// `confirmingPassword` because there's only one field on this screen.

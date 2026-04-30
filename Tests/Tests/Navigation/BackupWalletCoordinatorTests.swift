@@ -22,13 +22,13 @@
 // SOFTWARE.
 //
 
+@testable import AppFeature
 import Combine
 import Factory
+import SingleLineControllerController
 import UIKit
 import XCTest
 import Zesame
-import SingleLineControllerController
-@testable import AppFeature
 
 /// Drives each `BackupWalletUserAction` branch of
 /// `BackupWalletCoordinator` so all four navigation handlers run.

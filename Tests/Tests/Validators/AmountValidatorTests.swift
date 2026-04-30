@@ -1,6 +1,6 @@
+@testable import AppFeature
 import XCTest
 import Zesame
-@testable import AppFeature
 
 final class AmountValidatorTests: XCTestCase {
     func test_validate_validZilAmountString_returnsValid() {

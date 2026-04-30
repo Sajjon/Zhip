@@ -64,7 +64,7 @@ public final class AskForCrashReportingPermissionsViewModel: BaseViewModel<
     ///   emit `.answerQuestionAboutCrashReporting`.
     /// - Both buttons gated on the "I have read" checkbox via `areButtonsEnabled`.
     /// - For the dismissible variant: install a "Done" right bar-button.
-    public override func transform(input: Input) -> Output {
+    override public func transform(input: Input) -> Output {
         func userDid(_ userAction: NavigationStep) {
             navigator.next(userAction)
         }
@@ -98,9 +98,9 @@ public final class AskForCrashReportingPermissionsViewModel: BaseViewModel<
     }
 }
 
-extension AskForCrashReportingPermissionsViewModel {
+public extension AskForCrashReportingPermissionsViewModel {
     /// User-event publishers the view-model consumes.
-    public struct InputFromView {
+    struct InputFromView {
         /// `true` whenever the "I have read the disclaimer" checkbox is checked.
         let isHaveReadDisclaimerCheckboxChecked: AnyPublisher<Bool, Never>
         /// Fires when the user opts in.
@@ -110,7 +110,7 @@ extension AskForCrashReportingPermissionsViewModel {
     }
 
     /// Reactive bindings the view installs.
-    public struct Output {
+    struct Output {
         /// Drives both buttons' `isEnabledBinder` — they share the same gate.
         let areButtonsEnabled: AnyPublisher<Bool, Never>
     }

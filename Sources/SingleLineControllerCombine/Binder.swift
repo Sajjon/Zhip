@@ -10,7 +10,6 @@ import Foundation
 /// expose binders as properties (e.g. `UIControl.isEnabledBinder`,
 /// `UIView.isVisibleBinder`).
 public struct Binder<Value> {
-
     /// Thread-aware closure that applies a value to the wrapped object. Assigned
     /// once in `init` and never mutated.
     private let _binding: (Value) -> Void

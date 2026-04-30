@@ -22,10 +22,10 @@
 // SOFTWARE.
 //
 
+@testable import AppFeature
 import SingleLineControllerCore
 import UIKit
 import XCTest
-@testable import AppFeature
 
 /// Smoke-tests for `UIView` subclasses that have no required dependencies.
 ///

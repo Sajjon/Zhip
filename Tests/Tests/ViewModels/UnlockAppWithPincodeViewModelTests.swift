@@ -22,12 +22,12 @@
 // SOFTWARE.
 //
 
+@testable import AppFeature
 import Combine
 import Factory
-import XCTest
-import Validation
 import SingleLineControllerController
-@testable import AppFeature
+import Validation
+import XCTest
 
 /// Tests for `UnlockAppWithPincodeViewModel`.
 ///

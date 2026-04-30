@@ -11,9 +11,9 @@ public protocol LeftBarButtonMaking: LeftBarButtonContentMaking {
     static var makeLeft: BarButton { get }
 }
 
-extension LeftBarButtonMaking {
+public extension LeftBarButtonMaking {
     /// Default bridge: derive the content from the chosen predefined `BarButton`.
-    public static var makeLeftContent: BarButtonContent {
+    static var makeLeftContent: BarButtonContent {
         makeLeft.content
     }
 }

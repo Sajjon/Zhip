@@ -1,6 +1,6 @@
+@testable import AppFeature
 import XCTest
 import Zesame
-@testable import AppFeature
 
 final class SufficientFundsValidatorTests: XCTestCase {
     func test_validate_missingAmount_returnsEmpty() {

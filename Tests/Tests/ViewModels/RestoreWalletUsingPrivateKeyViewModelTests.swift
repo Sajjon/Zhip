@@ -22,10 +22,10 @@
 // SOFTWARE.
 //
 
+@testable import AppFeature
 import Combine
 import XCTest
 import Zesame
-@testable import AppFeature
 
 /// Tests for `RestoreWalletUsingPrivateKeyViewModel`.
 ///

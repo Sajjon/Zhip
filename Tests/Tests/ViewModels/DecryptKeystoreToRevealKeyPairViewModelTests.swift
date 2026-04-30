@@ -22,12 +22,12 @@
 // SOFTWARE.
 //
 
+@testable import AppFeature
 import Combine
 import Factory
+import SingleLineControllerController
 import XCTest
 import Zesame
-import SingleLineControllerController
-@testable import AppFeature
 
 /// Tests for `DecryptKeystoreToRevealKeyPairViewModel`.
 ///

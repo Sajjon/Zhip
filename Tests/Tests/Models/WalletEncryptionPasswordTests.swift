@@ -22,9 +22,9 @@
 // SOFTWARE.
 //
 
+@testable import AppFeature
 import XCTest
 import Zesame
-@testable import AppFeature
 
 final class WalletEncryptionPasswordTests: XCTestCase {
     // MARK: - init

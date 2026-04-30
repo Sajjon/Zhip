@@ -24,12 +24,12 @@
 
 import UIKit
 
-extension UIWindow {
+public extension UIWindow {
     /// Builds the app's primary window — full-screen frame, immediately made
     /// key and visible. Called once during app startup.
     /// Backtick syntax (`` `default` ``) is required because `default` is a Swift
     /// keyword but reads cleaner than alternatives like `defaultWindow`.
-    public static var `default`: UIWindow {
+    static var `default`: UIWindow {
         let window = UIWindow(frame: UIScreen.main.bounds)
         window.makeKeyAndVisible()
         return window

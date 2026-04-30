@@ -15,9 +15,9 @@ public protocol RightBarButtonMaking: RightBarButtonContentMaking {
     static var makeRight: BarButton { get }
 }
 
-extension RightBarButtonMaking {
+public extension RightBarButtonMaking {
     /// Default bridge — derive the content from the chosen predefined `BarButton`.
-    public static var makeRightContent: BarButtonContent {
+    static var makeRightContent: BarButtonContent {
         makeRight.content
     }
 }

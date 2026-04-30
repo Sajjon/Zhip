@@ -1,6 +1,6 @@
+@testable import AppFeature
 import UIKit
 import XCTest
-@testable import AppFeature
 
 final class GradientViewTests: XCTestCase {
     // MARK: - GradientPoint

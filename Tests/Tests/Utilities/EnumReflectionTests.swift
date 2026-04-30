@@ -22,8 +22,8 @@
 // SOFTWARE.
 //
 
-import XCTest
 @testable import AppFeature
+import XCTest
 
 /// Exercises `findNestedEnumOfType(_:in:recursiveTriesLeft:)`, a reflection
 /// helper used to extract nested enum case names for `Error` descriptions.

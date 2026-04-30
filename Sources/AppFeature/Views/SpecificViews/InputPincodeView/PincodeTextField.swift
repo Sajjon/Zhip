@@ -40,7 +40,7 @@ public final class PincodeTextField: UITextField {
     /// The pincode must be entered character-by-character by the user — pasting
     /// would defeat the security model and copy would leak it to the pasteboard.
     /// creds: https://stackoverflow.com/a/44701936/1311272
-    public override func canPerformAction(_ action: Selector, withSender sender: Any?) -> Bool {
+    override public func canPerformAction(_ action: Selector, withSender sender: Any?) -> Bool {
         switch action {
         case #selector(UIResponderStandardEditActions.paste(_:)),
              #selector(UIResponderStandardEditActions.select(_:)),
@@ -57,7 +57,7 @@ public final class PincodeTextField: UITextField {
     /// Disable the long-press magnifier. Triggered before any gesture
     /// recogniser is attached so even system-installed ones get neutered.
     /// creds: https://stackoverflow.com/a/10641203/1311272
-    public override func addGestureRecognizer(_ gestureRecognizer: UIGestureRecognizer) {
+    override public func addGestureRecognizer(_ gestureRecognizer: UIGestureRecognizer) {
         // Prevent long press to show the magnifying glass
         if gestureRecognizer is UILongPressGestureRecognizer {
             gestureRecognizer.isEnabled = false
@@ -68,7 +68,7 @@ public final class PincodeTextField: UITextField {
 
     /// Belt-and-braces: even if some long-press recogniser slipped past
     /// `addGestureRecognizer`, refuse to let it begin tracking.
-    public override func gestureRecognizerShouldBegin(_ gestureRecognizer: UIGestureRecognizer) -> Bool {
+    override public func gestureRecognizerShouldBegin(_ gestureRecognizer: UIGestureRecognizer) -> Bool {
         if gestureRecognizer is UILongPressGestureRecognizer, !gestureRecognizer.delaysTouchesEnded {
             return false
         }

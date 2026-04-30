@@ -25,8 +25,8 @@
 import Combine
 import Foundation
 import SingleLineControllerCombine
-import Validation
 import SingleLineControllerController
+import Validation
 
 // MARK: - ConfirmNewPincodeUserAction
 
@@ -61,7 +61,7 @@ public final class ConfirmNewPincodeViewModel: BaseViewModel<
 
     /// Wires real-time validation, the confirm-tap (persists + emits), the
     /// skip-tap, and the (matches && checkbox-checked) gate for the CTA.
-    public override func transform(input: Input) -> Output {
+    override public func transform(input: Input) -> Output {
         func userDid(_ step: NavigationStep) {
             navigator.next(step)
         }
@@ -96,9 +96,9 @@ public final class ConfirmNewPincodeViewModel: BaseViewModel<
     }
 }
 
-extension ConfirmNewPincodeViewModel {
+public extension ConfirmNewPincodeViewModel {
     /// User-event publishers the view-model consumes.
-    public struct InputFromView {
+    struct InputFromView {
         /// Latest re-entered pincode (`nil` while incomplete).
         let pincode: AnyPublisher<Pincode?, Never>
         /// `true` whenever the "I have backed up" checkbox is checked.
@@ -108,7 +108,7 @@ extension ConfirmNewPincodeViewModel {
     }
 
     /// Reactive bindings the view installs.
-    public struct Output {
+    struct Output {
         /// Drives the pincode input's validation styling.
         let pincodeValidation: AnyPublisher<AnyValidation, Never>
         /// Drives the confirm-button enabled state — true iff matching && checked.
@@ -119,7 +119,7 @@ extension ConfirmNewPincodeViewModel {
 
     /// Adapts `PincodeValidator` to the screen's needs by capturing the
     /// expected pincode and delegating validation to the shared validator.
-    struct InputValidator {
+    internal struct InputValidator {
         private let existingPincode: Pincode
         private let pincodeValidator = PincodeValidator(settingNew: true)
 
@@ -171,10 +171,10 @@ public struct PincodeValidator: InputValidator {
     }
 }
 
-extension PincodeValidator.Error {
+public extension PincodeValidator.Error {
     /// Localized error string. Both `settingNew` branches currently render
     /// the same copy; the switch is kept for future copy divergence.
-    public var errorMessage: String {
+    var errorMessage: String {
         switch self {
         case let .incorrectPincode(settingNew):
             if settingNew {

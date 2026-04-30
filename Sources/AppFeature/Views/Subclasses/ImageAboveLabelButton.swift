@@ -56,7 +56,7 @@ public final class ImageAboveLabelButton: UIButton {
     /// Asserts that the inherited UIButton title/image slots stay empty (they'd
     /// fight our stack view's layout) and that `setTitle(_:image:)` was called
     /// to populate the custom views.
-    public override func layoutSubviews() {
+    override public func layoutSubviews() {
         super.layoutSubviews()
         assert(titleLabel?.text == nil, "You should not use the default `titleLabel`, but rather `customLabel` view")
         assert(imageView?.image == nil, "You should not use the default `titleLabel`, but rather `customLabel` view")
@@ -96,21 +96,21 @@ extension ImageAboveLabelButton {
 // would announce nothing because the system reads from the (empty) inherited
 // label rather than our custom one.
 
-extension ImageAboveLabelButton {
+public extension ImageAboveLabelButton {
     /// Forward to `customLabel` — see header comment.
-    public override var accessibilityLabel: String? {
+    override var accessibilityLabel: String? {
         get { customLabel.accessibilityLabel }
         set { customLabel.accessibilityLabel = newValue }
     }
 
     /// Forward to `customLabel` — see header comment.
-    public override var accessibilityHint: String? {
+    override var accessibilityHint: String? {
         get { customLabel.accessibilityHint }
         set { customLabel.accessibilityHint = newValue }
     }
 
     /// Forward to `customLabel` — see header comment.
-    public override var accessibilityValue: String? {
+    override var accessibilityValue: String? {
         get { customLabel.accessibilityValue }
         set { customLabel.accessibilityValue = newValue }
     }

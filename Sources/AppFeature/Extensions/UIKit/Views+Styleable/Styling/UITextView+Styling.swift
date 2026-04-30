@@ -29,10 +29,10 @@ import UIKit
 
 // MARK: - Style
 
-extension UITextView {
+public extension UITextView {
     /// Description of a `UITextView`'s appearance and behavior — text, fonts,
     /// colours, and editability/selectability flags.
-    public struct Style {
+    struct Style {
         public var text: String?
         public var textAlignment: NSTextAlignment?
         public var textColor: UIColor?
@@ -73,11 +73,11 @@ extension UITextView {
 
 // MARK: Apply Style
 
-extension UITextView {
+public extension UITextView {
     /// Writes `style` to this text view, substituting project-wide defaults
     /// for any nil attribute (left-aligned body font, white text, transparent
     /// background, fully editable/selectable/scrollable by default).
-    public func apply(style: UITextView.Style) {
+    func apply(style: UITextView.Style) {
         text = style.text
         textAlignment = style.textAlignment ?? .left
         font = style.font ?? UIFont.body
@@ -91,7 +91,7 @@ extension UITextView {
 
     /// Apply `style` (optionally customised) and return `self`.
     @discardableResult
-    public func withStyle(
+    func withStyle(
         _ style: UITextView.Style,
         customize: ((UITextView.Style) -> UITextView.Style)? = nil
     ) -> UITextView {
@@ -106,10 +106,10 @@ extension UITextView {
 
 // Single-field replacement mutators. See UILabel+Styling.swift for the pattern.
 
-extension UITextView.Style {
+public extension UITextView.Style {
     /// Returns a copy with `text` replaced.
     @discardableResult
-    public func text(_ text: String?) -> UITextView.Style {
+    func text(_ text: String?) -> UITextView.Style {
         var style = self
         style.text = text
         return style
@@ -117,7 +117,7 @@ extension UITextView.Style {
 
     /// Returns a copy with `font` replaced.
     @discardableResult
-    public func font(_ font: UIFont) -> UITextView.Style {
+    func font(_ font: UIFont) -> UITextView.Style {
         var style = self
         style.font = font
         return style
@@ -125,7 +125,7 @@ extension UITextView.Style {
 
     /// Returns a copy with `textAlignment` replaced.
     @discardableResult
-    public func textAlignment(_ textAlignment: NSTextAlignment) -> UITextView.Style {
+    func textAlignment(_ textAlignment: NSTextAlignment) -> UITextView.Style {
         var style = self
         style.textAlignment = textAlignment
         return style
@@ -133,7 +133,7 @@ extension UITextView.Style {
 
     /// Returns a copy with `textColor` replaced.
     @discardableResult
-    public func textColor(_ textColor: UIColor) -> UITextView.Style {
+    func textColor(_ textColor: UIColor) -> UITextView.Style {
         var style = self
         style.textColor = textColor
         return style
@@ -141,7 +141,7 @@ extension UITextView.Style {
 
     /// Returns a copy with `isSelectable` replaced.
     @discardableResult
-    public func isSelectable(_ isSelectable: Bool) -> UITextView.Style {
+    func isSelectable(_ isSelectable: Bool) -> UITextView.Style {
         var style = self
         style.isSelectable = isSelectable
         return style
@@ -149,7 +149,7 @@ extension UITextView.Style {
 
     /// Returns a copy with `isScrollEnabled` replaced.
     @discardableResult
-    public func isScrollEnabled(_ isScrollEnabled: Bool) -> UITextView.Style {
+    func isScrollEnabled(_ isScrollEnabled: Bool) -> UITextView.Style {
         var style = self
         style.isScrollEnabled = isScrollEnabled
         return style
@@ -158,10 +158,10 @@ extension UITextView.Style {
 
 // MARK: - Style Presets
 
-extension UITextView.Style {
+public extension UITextView.Style {
     /// Read-only display — text is selectable (so users can copy) but not
     /// editable. Used for legal/long-form copy.
-    public static var nonEditable: UITextView.Style {
+    static var nonEditable: UITextView.Style {
         UITextView.Style(
             isEditable: false
         )
@@ -169,7 +169,7 @@ extension UITextView.Style {
 
     /// Pure display — neither editable nor selectable, centre-aligned. Used
     /// for short status labels rendered as text views (e.g. for inline links).
-    public static var nonSelectable: UITextView.Style {
+    static var nonSelectable: UITextView.Style {
         UITextView.Style(
             textAlignment: .center,
             isEditable: false,
@@ -178,14 +178,14 @@ extension UITextView.Style {
     }
 
     /// Free-form input — fully editable.
-    public static var editable: UITextView.Style {
+    static var editable: UITextView.Style {
         UITextView.Style(
             isEditable: true
         )
     }
 
     /// Centred header text in the header font, read-only.
-    public static var header: UITextView.Style {
+    static var header: UITextView.Style {
         UITextView.Style(
             textAlignment: .center,
             font: UIFont.header,

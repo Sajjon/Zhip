@@ -22,9 +22,9 @@
 // SOFTWARE.
 //
 
+@testable import AppFeature
 import Foundation
 import SingleLineControllerDIPrimitives
-@testable import AppFeature
 
 /// In-test `UrlOpener` that NEVER forwards to `UIApplication.shared.open(_:)`.
 /// Records every dispatched URL so tests can assert which external navigation

@@ -48,14 +48,14 @@ public final class ScrollableContentSizedTextView: UITextView {
     /// Invalidate intrinsic size whenever the text engine reports a new
     /// content size — triggers Auto Layout to ask for our new
     /// `intrinsicContentSize` and re-lay out the parent.
-    public override var contentSize: CGSize {
+    override public var contentSize: CGSize {
         didSet {
             invalidateIntrinsicContentSize()
         }
     }
 
     /// Width is left to Auto Layout; height tracks `contentSize.height`.
-    public override var intrinsicContentSize: CGSize {
+    override public var intrinsicContentSize: CGSize {
         CGSize(width: UIView.noIntrinsicMetric, height: contentSize.height)
     }
 }

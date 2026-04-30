@@ -30,12 +30,16 @@ open class SceneController<View: ContentView>: AbstractController
     /// Clock used to auto-dismiss toasts emitted via `InputFromController.toastSubject`.
     /// Defaults to a real `MainQueueClock`. Subclasses (or test fakes) override
     /// to substitute an immediate clock so toast auto-dismiss skips the runloop.
-    open var clock: any Clock { MainQueueClock() }
+    open var clock: any Clock {
+        MainQueueClock()
+    }
 
     /// Optional override-point: the colour the controller's `view.backgroundColor`
     /// is set to in `viewDidLoad`. Defaults to `.systemBackground`. Subclasses
     /// (or app-level extensions) override this to apply a brand background.
-    open var rootBackgroundColor: UIColor { .systemBackground }
+    open var rootBackgroundColor: UIColor {
+        .systemBackground
+    }
 
     /// Fires when `viewDidLoad` runs. Piped into `InputFromController.viewDidLoad`.
     private let viewDidLoadSubject = PassthroughSubject<Void, Never>()
@@ -164,7 +168,7 @@ private extension SceneController {
         // Snapshot the (overridable) clock at wiring time so the toast sink
         // closes over a single instance rather than re-resolving the
         // computed property on every emission.
-        let clock = self.clock
+        let clock = clock
 
         [
             // Dynamic title updates emitted by the ViewModel.

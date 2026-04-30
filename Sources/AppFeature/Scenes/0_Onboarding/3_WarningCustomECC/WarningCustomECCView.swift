@@ -9,9 +9,9 @@
 import Combine
 import Factory
 import SingleLineControllerCombine
-import UIKit
 import SingleLineControllerController
 import SingleLineControllerSceneViews
+import UIKit
 
 /// Custom-ECC warning screen — identical layout to Terms but with a warning
 /// triangle hero and selectable text (so the linked bug-bounty URL is tappable).
@@ -36,7 +36,7 @@ public final class WarningCustomECCView: ScrollableStackViewOwner {
     ]
 
     /// Override-hook from `ScrollableStackViewOwner` — wires styling.
-    public override func setup() {
+    override public func setup() {
         setupSubviews()
     }
 }

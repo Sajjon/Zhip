@@ -22,12 +22,12 @@
 // SOFTWARE.
 //
 
+@testable import AppFeature
 import Combine
 import Factory
+import SingleLineControllerController
 import UIKit
 import XCTest
-import SingleLineControllerController
-@testable import AppFeature
 
 /// Covers `ChooseWalletCoordinator` routing: `.createNewWallet` /
 /// `.restoreWallet` branches, each presenting a child modal coordinator.

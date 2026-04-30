@@ -25,10 +25,10 @@
 import Combine
 import Factory
 import SingleLineControllerCombine
+import SingleLineControllerController
+import SingleLineControllerDIPrimitives
 import UIKit
 import Zesame
-import SingleLineControllerDIPrimitives
-import SingleLineControllerController
 
 /// Outcome of the revealed-keypair display screen.
 public enum BackUpRevealedKeyPairUserAction {
@@ -55,7 +55,7 @@ public final class BackUpRevealedKeyPairViewModel: BaseViewModel<
 
     /// Converts the key pair to hex strings, wires the right "Done" bar-button to
     /// `.finish`, and routes copy taps to pasteboard + toast.
-    public override func transform(input: Input) -> Output {
+    override public func transform(input: Input) -> Output {
         func userDid(_ step: NavigationStep) {
             navigator.next(step)
         }
@@ -103,9 +103,9 @@ public final class BackUpRevealedKeyPairViewModel: BaseViewModel<
     }
 }
 
-extension BackUpRevealedKeyPairViewModel {
+public extension BackUpRevealedKeyPairViewModel {
     /// User-event publishers the view-model consumes.
-    public struct InputFromView {
+    struct InputFromView {
         /// Fires when the user taps "Copy" next to the private key.
         let copyPrivateKeyTrigger: AnyPublisher<Void, Never>
         /// Fires when the user taps "Copy" next to the public key.
@@ -113,7 +113,7 @@ extension BackUpRevealedKeyPairViewModel {
     }
 
     /// Reactive bindings the view installs.
-    public struct Output {
+    struct Output {
         /// Hex-encoded private key — drives `privateKeyTextView.valueBinder`.
         let privateKey: AnyPublisher<String, Never>
         /// Hex-encoded uncompressed public key — drives `publicKeyUncompressedTextView.valueBinder`.

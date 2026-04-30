@@ -24,9 +24,9 @@
 
 import Combine
 import SingleLineControllerCombine
-import UIKit
 import SingleLineControllerController
 import SingleLineControllerSceneViews
+import UIKit
 
 /// Keystore-reveal screen — pretty-printed JSON in a non-editable text view
 /// plus a "Copy keystore" button.
@@ -43,7 +43,7 @@ public final class BackUpKeystoreView: ScrollableStackViewOwner {
     ]
 
     /// Override-hook from `ScrollableStackViewOwner` — wires styling.
-    public override func setup() {
+    override public func setup() {
         setupSubviews()
     }
 }

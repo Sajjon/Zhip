@@ -45,7 +45,7 @@ public final class WelcomeViewModel: BaseViewModel<
 > {
     /// Wires `startTrigger` → `navigator.next(.start)`. Returns an empty `Output`
     /// because the welcome scene has no ViewModel-driven UI state.
-    public override func transform(input: Input) -> WelcomeViewModel.Output {
+    override public func transform(input: Input) -> WelcomeViewModel.Output {
         func userIntends(to userAction: NavigationStep) {
             navigator.next(userAction)
         }
@@ -61,13 +61,13 @@ public final class WelcomeViewModel: BaseViewModel<
     }
 }
 
-extension WelcomeViewModel {
+public extension WelcomeViewModel {
     /// User-event publishers the ViewModel consumes.
-    public struct InputFromView {
+    struct InputFromView {
         /// Fires when the user taps the "Get Started" button.
         let startTrigger: AnyPublisher<Void, Never>
     }
 
     /// No outputs — the scene is entirely static until the user taps Start.
-    public struct Output {}
+    struct Output {}
 }

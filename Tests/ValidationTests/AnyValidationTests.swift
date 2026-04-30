@@ -1,7 +1,7 @@
 // MIT License — Copyright (c) 2018-2026 Open Zesame
 
-import XCTest
 @testable import Validation
+import XCTest
 
 /// Tests for the type-erased `AnyValidation` enum and its bridge from the
 /// typed `Validation<Value, Error>` form.

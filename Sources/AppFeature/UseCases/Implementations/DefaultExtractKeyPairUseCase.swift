@@ -37,7 +37,10 @@ public final class DefaultExtractKeyPairUseCase: ExtractKeyPairUseCase {
 
     /// Decrypts `keystore` with `password` and emits the underlying `KeyPair`.
     /// Errors from Zesame are lifted to the protocol's generic `Swift.Error`.
-    public func extractKeyPairFrom(keystore: Keystore, encryptedBy password: String) -> AnyPublisher<KeyPair, Swift.Error> {
+    public func extractKeyPairFrom(
+        keystore: Keystore,
+        encryptedBy password: String
+    ) -> AnyPublisher<KeyPair, Swift.Error> {
         zilliqaService.extractKeyPairFrom(keystore: keystore, encryptedBy: password)
             .mapError { $0 as Swift.Error }
             .eraseToAnyPublisher()

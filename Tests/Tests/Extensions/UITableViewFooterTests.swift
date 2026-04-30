@@ -22,10 +22,10 @@
 // SOFTWARE.
 //
 
+@testable import AppFeature
 import Combine
 import UIKit
 import XCTest
-@testable import AppFeature
 
 /// Exercises the `UITableView.setFooterLabel(text:)` helper and
 /// `footerLabelBinder`.

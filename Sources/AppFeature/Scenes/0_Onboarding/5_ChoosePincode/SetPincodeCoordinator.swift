@@ -23,8 +23,8 @@
 //
 
 import SingleLineControllerCore
-import UIKit
 import SingleLineControllerNavigation
+import UIKit
 
 /// Outcome of the set-pincode sub-flow. Both the "user picked + confirmed a
 /// pincode" path and the "user explicitly skipped" path collapse to this single
@@ -55,7 +55,7 @@ public final class SetPincodeCoordinator: BaseCoordinator<SetPincodeCoordinatorN
     /// Begins at step 1. Crashes if a pincode is already set — that would
     /// indicate the parent flow forgot to gate this coordinator on
     /// `hasConfiguredPincode == false`.
-    public override func start(didStart _: Completion? = nil) {
+    override public func start(didStart _: Completion? = nil) {
         guard !useCase.hasConfiguredPincode else {
             incorrectImplementation(
                 "Changing a pincode is not supported, make changes in UI so that user need to remove wallet first, then present user with the option to set a (new) pincode."

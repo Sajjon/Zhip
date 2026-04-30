@@ -27,9 +27,9 @@ import UIKit
 // Same Style/Apply/Customizing/Presets shape as `UILabel+Styling.swift`.
 // See that file for the canonical doc walkthrough.
 
-extension UIImageView {
+public extension UIImageView {
     /// Optional-keypath assignment helper — see `UIButton.setOptional(_:ifNotNil:)`.
-    public func setOptional<Attribute>(
+    func setOptional<Attribute>(
         _ keyPath: ReferenceWritableKeyPath<UIImageView, Attribute?>,
         ifNotNil attribute: Attribute?
     ) {
@@ -38,7 +38,7 @@ extension UIImageView {
     }
 
     /// Non-optional-keypath assignment helper — same semantics as `setOptional`.
-    public func set<Attribute>(_ keyPath: ReferenceWritableKeyPath<UIImageView, Attribute>, ifNotNil attribute: Attribute?) {
+    func set<Attribute>(_ keyPath: ReferenceWritableKeyPath<UIImageView, Attribute>, ifNotNil attribute: Attribute?) {
         guard let attribute else { return }
         self[keyPath: keyPath] = attribute
     }
@@ -46,10 +46,10 @@ extension UIImageView {
 
 // MARK: - Style
 
-extension UIImageView {
+public extension UIImageView {
     /// Description of an image view's appearance — image, tint, content mode,
     /// clipping, and background colour.
-    public struct Style {
+    struct Style {
         public var image: UIImage?
         public var tintColor: UIColor?
         public var backgroundColor: UIColor?
@@ -76,10 +76,10 @@ extension UIImageView {
 
 // MARK: - Apply Style
 
-extension UIImageView {
+public extension UIImageView {
     /// Writes `style` to this image view, leaving any nil attribute untouched
     /// (so existing values persist when the style is partial).
-    public func apply(style: Style) {
+    func apply(style: Style) {
         set(\.image, ifNotNil: style.image)
         set(\.contentMode, ifNotNil: style.contentMode)
         set(\.clipsToBounds, ifNotNil: style.clipsToBounds)
@@ -90,7 +90,7 @@ extension UIImageView {
     /// Apply `style` (optionally customised) and return `self`.
     /// See `UILabel.withStyle(_:customize:)` for the canonical pattern.
     @discardableResult
-    public func withStyle(
+    func withStyle(
         _ style: UIImageView.Style,
         customize: ((UIImageView.Style) -> UIImageView.Style)? = nil
     ) -> UIImageView {
@@ -105,10 +105,10 @@ extension UIImageView {
 
 // Single-field replacement mutators. See UILabel+Styling.swift for the pattern.
 
-extension UIImageView.Style {
+public extension UIImageView.Style {
     /// Returns a copy with `image` replaced.
     @discardableResult
-    public func image(_ image: UIImage?) -> UIImageView.Style {
+    func image(_ image: UIImage?) -> UIImageView.Style {
         var style = self
         style.image = image
         return style
@@ -116,7 +116,7 @@ extension UIImageView.Style {
 
     /// Returns a copy with `contentMode` replaced.
     @discardableResult
-    public func contentMode(_ contentMode: UIView.ContentMode?) -> UIImageView.Style {
+    func contentMode(_ contentMode: UIView.ContentMode?) -> UIImageView.Style {
         var style = self
         style.contentMode = contentMode
         return style
@@ -124,7 +124,7 @@ extension UIImageView.Style {
 
     /// Returns a copy with `backgroundColor` replaced.
     @discardableResult
-    public func backgroundColor(_ backgroundColor: UIColor) -> UIImageView.Style {
+    func backgroundColor(_ backgroundColor: UIColor) -> UIImageView.Style {
         var style = self
         style.backgroundColor = backgroundColor
         return style

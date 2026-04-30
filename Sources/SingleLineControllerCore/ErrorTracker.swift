@@ -30,7 +30,8 @@ public final class ErrorTracker {
     /// tracker. The returned publisher preserves `source`'s `Output`/`Failure`
     /// shape — handy as a transparent middle stage in a chain.
     public func track<P: Publisher>(from source: P) -> some Publisher<P.Output, P.Failure>
-        where P.Failure: Error {
+        where P.Failure: Error
+    {
         source
             .handleEvents(receiveCompletion: { [weak self] completion in
                 if case let .failure(error) = completion {
@@ -55,7 +56,8 @@ public extension Publisher {
     /// the upstream's `Output`/`Failure` types. The standard call-site form
     /// for capturing errors at the use-case boundary.
     func trackError(_ tracker: ErrorTracker) -> some Publisher<Output, Failure>
-        where Failure: Error {
+        where Failure: Error
+    {
         tracker.track(from: self)
     }
 }

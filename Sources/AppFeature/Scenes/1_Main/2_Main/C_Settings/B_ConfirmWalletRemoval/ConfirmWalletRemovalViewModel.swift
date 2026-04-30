@@ -50,7 +50,7 @@ public final class ConfirmWalletRemovalViewModel: BaseViewModel<
 > {
     /// Wires cancel + confirm taps to navigation steps; gates the confirm
     /// button on the "I have backed up" checkbox.
-    public override func transform(input: Input) -> Output {
+    override public func transform(input: Input) -> Output {
         func userDid(_ userAction: NavigationStep) {
             navigator.next(userAction)
         }
@@ -73,9 +73,9 @@ public final class ConfirmWalletRemovalViewModel: BaseViewModel<
     }
 }
 
-extension ConfirmWalletRemovalViewModel {
+public extension ConfirmWalletRemovalViewModel {
     /// User-event publishers the view-model consumes.
-    public struct InputFromView {
+    struct InputFromView {
         /// Fires when the user taps Confirm.
         let confirmTrigger: AnyPublisher<Void, Never>
         /// Latest state of the "I have backed up" checkbox.
@@ -83,7 +83,7 @@ extension ConfirmWalletRemovalViewModel {
     }
 
     /// Reactive bindings the view installs.
-    public struct Output {
+    struct Output {
         /// Drives `confirmButton.isEnabledBinder`.
         let isConfirmButtonEnabled: AnyPublisher<Bool, Never>
     }

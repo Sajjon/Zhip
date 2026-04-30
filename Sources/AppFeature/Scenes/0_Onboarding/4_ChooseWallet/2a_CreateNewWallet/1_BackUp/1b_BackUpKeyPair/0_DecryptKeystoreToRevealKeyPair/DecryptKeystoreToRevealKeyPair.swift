@@ -30,8 +30,8 @@ import SingleLineControllerController
 public final class DecryptKeystoreToRevealKeyPair: Scene<DecryptKeystoreToRevealKeyPairView> {}
 
 /// Localized navigation title.
-extension DecryptKeystoreToRevealKeyPair {
-    public static let title = String(localized: .DecryptKeystore.title)
+public extension DecryptKeystoreToRevealKeyPair {
+    static let title = String(localized: .DecryptKeystore.title)
 }
 
 /// Right "Done" bar button — used as the dismiss action when entering from a modal.

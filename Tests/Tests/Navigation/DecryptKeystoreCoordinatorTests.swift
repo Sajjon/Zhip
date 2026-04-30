@@ -22,13 +22,13 @@
 // SOFTWARE.
 //
 
+@testable import AppFeature
 import Combine
 import Factory
+import SingleLineControllerController
 import UIKit
 import XCTest
 import Zesame
-import SingleLineControllerController
-@testable import AppFeature
 
 /// Drives `DecryptKeystoreCoordinator` routing: start pushes
 /// `DecryptKeystoreToRevealKeyPair`; dismiss bubbles .dismiss; successful

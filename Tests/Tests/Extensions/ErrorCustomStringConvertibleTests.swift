@@ -22,8 +22,8 @@
 // SOFTWARE.
 //
 
-import XCTest
 @testable import AppFeature
+import XCTest
 
 /// Exercises the default `description` provided for enum-based `Error` types
 /// conforming to `CustomStringConvertible` via mirror reflection.

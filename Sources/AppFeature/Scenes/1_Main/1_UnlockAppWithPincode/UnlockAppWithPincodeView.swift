@@ -24,9 +24,9 @@
 
 import Combine
 import SingleLineControllerCombine
-import UIKit
 import SingleLineControllerController
 import SingleLineControllerSceneViews
+import UIKit
 
 /// Pincode-unlock screen — N-digit input + descriptive label. No CTA — entering
 /// a matching pincode auto-unlocks (the view-model emits `.unlockApp` as soon
@@ -45,7 +45,7 @@ public final class UnlockAppWithPincodeView: ScrollableStackViewOwner {
     ]
 
     /// Override-hook from `ScrollableStackViewOwner` — wires styling.
-    public override func setup() {
+    override public func setup() {
         setupSubviews()
     }
 }

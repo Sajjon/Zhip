@@ -32,11 +32,11 @@ import UIKit
 // hexadecimal, etc.) that drives both keyboard and validation, since a
 // floating-label field always belongs to one specific input role.
 
-extension FloatingLabelTextField {
+public extension FloatingLabelTextField {
     /// Description of a `FloatingLabelTextField`'s appearance + input policy.
     /// Unlike the other Style structs, `typeOfInput` is required (non-optional)
     /// because every field has *some* input role.
-    public struct Style {
+    struct Style {
         /// Input role — drives keyboard, allowed character set, validation hooks.
         public var typeOfInput: TypeOfInput
         /// Placeholder copy (also displayed in the floating label area).
@@ -74,11 +74,11 @@ extension FloatingLabelTextField {
 
 // MARK: - Apply Syyle
 
-extension FloatingLabelTextField {
+public extension FloatingLabelTextField {
     /// Writes `style` to this field, substituting project-wide defaults for any
     /// nil attribute and routing `typeOfInput` through `updateTypeOfInput`
     /// (which configures keyboard/auto-correct/text-content-type in one step).
-    public func apply(style: Style) {
+    func apply(style: Style) {
         updateTypeOfInput(style.typeOfInput)
         textColor = style.textColor ?? .defaultText
         placeholder = style.placeholder
@@ -94,11 +94,11 @@ extension FloatingLabelTextField {
 
 // MARK: - Style + Customizing
 
-extension FloatingLabelTextField.Style {
+public extension FloatingLabelTextField.Style {
     /// Returns a copy with `placeholder` replaced — the most common per-field
     /// override applied via the `withStyle(_:customize:)` `customize` closure.
     @discardableResult
-    public func placeholder(_ placeholder: String?) -> FloatingLabelTextField.Style {
+    func placeholder(_ placeholder: String?) -> FloatingLabelTextField.Style {
         var style = self
         style.placeholder = placeholder
         return style
@@ -107,9 +107,9 @@ extension FloatingLabelTextField.Style {
 
 // MARK: - Style Presets
 
-extension FloatingLabelTextField.Style {
+public extension FloatingLabelTextField.Style {
     /// Plain free-text input — no special validation, default keyboard.
-    public static var text: FloatingLabelTextField.Style {
+    static var text: FloatingLabelTextField.Style {
         FloatingLabelTextField.Style(
             typeOfInput: .text
         )
@@ -117,7 +117,7 @@ extension FloatingLabelTextField.Style {
 
     /// Wallet address input — accepts either Bech32 (`zil1…`) or hex addresses.
     /// The character-set restriction is enforced by `typeOfInput`.
-    public static var addressBech32OrHex: FloatingLabelTextField.Style {
+    static var addressBech32OrHex: FloatingLabelTextField.Style {
         FloatingLabelTextField.Style(
             typeOfInput: .bech32OrHex
         )
@@ -125,7 +125,7 @@ extension FloatingLabelTextField.Style {
 
     /// Encryption-password input — secure entry on by default so the OS
     /// shouldn't suggest auto-fill or expose the contents.
-    public static var password: FloatingLabelTextField.Style {
+    static var password: FloatingLabelTextField.Style {
         FloatingLabelTextField.Style(
             typeOfInput: .password,
             isSecureTextEntry: true
@@ -134,7 +134,7 @@ extension FloatingLabelTextField.Style {
 
     /// Private key input — secure entry plus hex-only character restriction.
     /// Highest sensitivity input in the app.
-    public static var privateKey: FloatingLabelTextField.Style {
+    static var privateKey: FloatingLabelTextField.Style {
         FloatingLabelTextField.Style(
             typeOfInput: .hexadecimal,
             isSecureTextEntry: true
@@ -142,7 +142,7 @@ extension FloatingLabelTextField.Style {
     }
 
     /// Whole-number input with the system numeric keyboard.
-    public static var number: FloatingLabelTextField.Style {
+    static var number: FloatingLabelTextField.Style {
         FloatingLabelTextField.Style(
             typeOfInput: .number,
             keyboardType: .numberPad
@@ -151,7 +151,7 @@ extension FloatingLabelTextField.Style {
 
     /// Decimal-amount input with locale-aware separator handling and the
     /// system decimal keypad.
-    public static var decimal: FloatingLabelTextField.Style {
+    static var decimal: FloatingLabelTextField.Style {
         FloatingLabelTextField.Style(
             typeOfInput: .decimalWithSeparator,
             keyboardType: .decimalPad

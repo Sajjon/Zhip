@@ -1,5 +1,5 @@
-import XCTest
 @testable import AppFeature
+import XCTest
 
 final class PrivateKeyValidatorTests: XCTestCase {
     private let sut = PrivateKeyValidator()

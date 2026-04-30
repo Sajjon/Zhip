@@ -8,7 +8,7 @@ import UIKit
 /// Constraint typealias for cells usable with `SingleCellTypeTableView` —
 /// must be both a `UITableViewCell` (for the layout chassis) and
 /// `CellConfigurable` (so `configure(model:)` is callable).
-public typealias ListCell = UITableViewCell & CellConfigurable
+public typealias ListCell = CellConfigurable & UITableViewCell
 
 /// Strongly-typed table view: one cell type, one model type per row, optional
 /// `Header` per section. Also serves as its own `dataSource` and `delegate`,

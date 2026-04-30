@@ -24,8 +24,8 @@
 
 import Foundation
 import SingleLineControllerCore
-import Zesame
 import Validation
+import Zesame
 
 /// Validates a pasted keystore JSON string, producing a typed `Keystore`.
 ///
@@ -38,7 +38,7 @@ public struct KeystoreValidator: InputValidator {
     public typealias Output = Keystore
 
     /// Validation failures surfaced to the user.
-public enum Error: InputError {
+    public enum Error: InputError {
         /// The input string couldn't be UTF-8 encoded into `Data` (impossible in practice).
         case stringToDataConversionFailed
         /// JSON decoding failed — either malformed JSON or wrong shape for `Keystore`.
@@ -94,12 +94,12 @@ public enum Error: InputError {
     }
 }
 
-extension KeystoreValidator.Error {
+public extension KeystoreValidator.Error {
     /// Localized message rendered on the keystore-restore screen.
     /// `badJSON` and `stringToDataConversionFailed` collapse to the same
     /// "bad format" message because the user has nothing actionable to do
     /// with the difference.
-    public var errorMessage: String {
+    var errorMessage: String {
         switch self {
         case .badJSON, .stringToDataConversionFailed: String(localized: .Errors.keystoreBadFormat)
         case .incorrectPassword: String(localized: .Errors.keystoreIncorrectPassword)

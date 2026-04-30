@@ -24,9 +24,9 @@
 
 import Combine
 import SingleLineControllerCombine
-import UIKit
 import SingleLineControllerController
 import SingleLineControllerSceneViews
+import UIKit
 
 /// Sub-view of the RestoreWallet screen for the "I have a raw private key,
 /// encrypt it with a new password" restore method.
@@ -73,7 +73,7 @@ public final class RestoreUsingPrivateKeyView: ScrollableStackViewOwner {
     ]
 
     /// Override-hook from `ScrollableStackViewOwner` — wires styling + bindings.
-    public override func setup() {
+    override public func setup() {
         setupSubviews()
         setupViewModelBinding()
     }

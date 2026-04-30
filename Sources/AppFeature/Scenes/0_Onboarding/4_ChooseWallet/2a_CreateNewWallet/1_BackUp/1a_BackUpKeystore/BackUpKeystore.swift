@@ -22,15 +22,15 @@
 // SOFTWARE.
 //
 
-import UIKit
 import SingleLineControllerController
+import UIKit
 
 /// `SceneController` glue for the keystore-reveal modal.
 public final class BackUpKeystore: Scene<BackUpKeystoreView> {}
 
 /// Localized navigation title.
-extension BackUpKeystore {
-    public static let title = String(localized: .BackUpKeystore.title)
+public extension BackUpKeystore {
+    static let title = String(localized: .BackUpKeystore.title)
 }
 
 /// Right "Done" bar button — closes the modal once the user has copied/saved the keystore.

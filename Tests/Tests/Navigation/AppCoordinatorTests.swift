@@ -22,11 +22,11 @@
 // SOFTWARE.
 //
 
+@testable import AppFeature
 import Combine
 import Factory
 import UIKit
 import XCTest
-@testable import AppFeature
 
 /// Covers `AppCoordinator` routing behavior: the decision between onboarding
 /// and main on start, lock/unlock transitions around background/foreground

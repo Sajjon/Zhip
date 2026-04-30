@@ -23,8 +23,8 @@
 //
 
 import Factory
-import UIKit
 import SingleLineControllerDIPrimitives
+import UIKit
 
 /// Resolves `baseUrlString` (optionally appending `path`), and asks the
 /// injected `UrlOpener` to open the resulting URL.

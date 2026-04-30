@@ -22,10 +22,10 @@
 // SOFTWARE.
 //
 
+@testable import AppFeature
 import Factory
 import Foundation
 import XCTest
-@testable import AppFeature
 
 /// Verifies the `SoundPlayer` dependency contract and that the global test-bundle
 /// observer (`ZhipTestsBundle`) keeps unit tests silent by always resolving the

@@ -58,7 +58,7 @@ public class SpinnerView: UIView {
 
     /// Recompute the arc path on every layout pass *only* if the bounds
     /// changed — `path` rebuilds are expensive enough to be worth gating.
-    public override func layoutSubviews() {
+    override public func layoutSubviews() {
         super.layoutSubviews()
         if circleLayer.frame != bounds {
             updateCircleLayer()

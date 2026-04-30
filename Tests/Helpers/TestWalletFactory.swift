@@ -22,9 +22,9 @@
 // SOFTWARE.
 //
 
+@testable import AppFeature
 import Foundation
 import Zesame
-@testable import AppFeature
 
 /// Produces Zhip `Wallet` fixtures for tests using deterministic, fast KDF
 /// parameters (iterations=1) so the expensive PBKDF2 derivation never dominates

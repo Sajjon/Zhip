@@ -25,10 +25,10 @@
 import Combine
 import Factory
 import SingleLineControllerCombine
+import SingleLineControllerDIPrimitives
+import SingleLineControllerNavigation
 import UIKit
 import Zesame
-import SingleLineControllerNavigation
-import SingleLineControllerDIPrimitives
 
 /// Outcome the Send sub-flow surfaces to its parent (`MainCoordinator`).
 public enum SendCoordinatorNavigationStep {
@@ -70,7 +70,7 @@ public final class SendCoordinator: BaseCoordinator<SendCoordinatorNavigationSte
     }
 
     /// Begins at step 1.
-    public override func start(didStart _: Completion? = nil) {
+    override public func start(didStart _: Completion? = nil) {
         toFirst()
     }
 }

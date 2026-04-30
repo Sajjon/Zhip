@@ -25,11 +25,11 @@
 import Combine
 import Foundation
 import SingleLineControllerCombine
+import SingleLineControllerController
 import SingleLineControllerCore
+import SingleLineControllerSceneViews
 import UIKit
 import Zesame
-import SingleLineControllerController
-import SingleLineControllerSceneViews
 
 /// Cell model used for every Settings row — wraps a navigation destination
 /// with the row's title + icon + style.
@@ -82,7 +82,7 @@ public final class SettingsViewModel: BaseViewModel<
 
     /// Wires the section emission, row-tap → navigation step, and the
     /// done bar-button → close.
-    public override func transform(input: Input) -> Output {
+    override public func transform(input: Input) -> Output {
         func userWantsToNavigate(to intention: NavigationStep) {
             navigator.next(intention)
         }
@@ -113,15 +113,15 @@ public final class SettingsViewModel: BaseViewModel<
     }
 }
 
-extension SettingsViewModel {
+public extension SettingsViewModel {
     /// User-event publishers the view-model consumes.
-    public struct InputFromView {
+    struct InputFromView {
         /// Fires when the user taps a row.
         let selectedIndexPath: AnyPublisher<IndexPath, Never>
     }
 
     /// Reactive bindings the view installs.
-    public struct Output {
+    struct Output {
         /// Drives the diffable data source.
         let sections: AnyPublisher<[SectionModel<Void, SettingsItem>], Never>
         /// "AppName vX.Y.Z (build) — network: …" footer text.

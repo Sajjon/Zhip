@@ -22,9 +22,9 @@
 // SOFTWARE.
 //
 
-import UIKit
-import SingleLineControllerDIPrimitives
 @testable import AppFeature
+import SingleLineControllerDIPrimitives
+import UIKit
 
 /// In-test `HapticFeedback` that NEVER forwards to
 /// `UINotificationFeedbackGenerator`. Records every requested feedback type so

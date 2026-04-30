@@ -22,9 +22,9 @@
 // SOFTWARE.
 //
 
+@testable import AppFeature
 import Factory
 import XCTest
-@testable import AppFeature
 
 /// Tests the Factory-compatible DI container: register, resolve, reset.
 ///

@@ -22,12 +22,12 @@
 // SOFTWARE.
 //
 
+@testable import AppFeature
 import Combine
 import Factory
+import SingleLineControllerController
 import UIKit
 import XCTest
-import SingleLineControllerController
-@testable import AppFeature
 
 /// Covers `OnboardingCoordinator` state-machine routing. Each resumable-state
 /// combo is seeded via `MockOnboardingUseCase`/`MockWalletUseCase` so every

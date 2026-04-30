@@ -24,9 +24,9 @@
 
 import Combine
 import SingleLineControllerCombine
-import UIKit
 import SingleLineControllerController
 import SingleLineControllerSceneViews
+import UIKit
 
 /// Pincode chooser screen — N-digit pincode input + disclaimer + done CTA.
 public final class ChoosePincodeView: ScrollableStackViewOwner {
@@ -46,7 +46,7 @@ public final class ChoosePincodeView: ScrollableStackViewOwner {
     ]
 
     /// Override-hook from `ScrollableStackViewOwner` — wires styling.
-    public override func setup() {
+    override public func setup() {
         setupSubviews()
     }
 }

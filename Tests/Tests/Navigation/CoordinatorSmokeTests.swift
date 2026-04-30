@@ -22,12 +22,12 @@
 // SOFTWARE.
 //
 
+@testable import AppFeature
 import Combine
 import Factory
 import UIKit
 import XCTest
 import Zesame
-@testable import AppFeature
 
 /// Smoke tests that coordinator `.start()` pushes an initial scene onto the
 /// supplied `UINavigationController`.

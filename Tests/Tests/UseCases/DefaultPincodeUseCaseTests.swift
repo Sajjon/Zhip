@@ -22,8 +22,8 @@
 // SOFTWARE.
 //
 
-import XCTest
 @testable import AppFeature
+import XCTest
 
 /// Unit tests for `DefaultPincodeUseCase`.
 ///

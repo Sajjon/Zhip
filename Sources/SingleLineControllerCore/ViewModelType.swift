@@ -10,7 +10,6 @@ import Foundation
 /// and lifecycle events, invokes `transform`, and hands the `OutputVM` back to the
 /// view via `populate(with:)`.
 public protocol ViewModelType {
-
     /// The combined user-action + controller-lifecycle input the ViewModel consumes.
     associatedtype Input: InputType
 

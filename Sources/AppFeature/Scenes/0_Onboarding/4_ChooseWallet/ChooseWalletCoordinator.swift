@@ -23,9 +23,9 @@
 //
 
 import Factory
+import SingleLineControllerNavigation
 import UIKit
 import Zesame
-import SingleLineControllerNavigation
 
 /// Outbound navigation steps emitted by `ChooseWalletCoordinator` to its parent.
 ///
@@ -60,7 +60,7 @@ public final class ChooseWalletCoordinator: BaseCoordinator<ChooseWalletCoordina
 
     /// Entry point invoked by the parent coordinator. Kicks off the flow at step 1.
     /// - Parameter didStart: Optional completion (unused here; satisfies the base-class API).
-    public override func start(didStart _: Completion? = nil) {
+    override public func start(didStart _: Completion? = nil) {
         toChooseWallet()
     }
 }

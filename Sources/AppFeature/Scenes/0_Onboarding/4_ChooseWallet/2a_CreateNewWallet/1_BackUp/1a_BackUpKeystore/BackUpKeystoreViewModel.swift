@@ -25,10 +25,10 @@
 import Combine
 import Factory
 import SingleLineControllerCombine
+import SingleLineControllerController
+import SingleLineControllerDIPrimitives
 import UIKit
 import Zesame
-import SingleLineControllerDIPrimitives
-import SingleLineControllerController
 
 /// Outcome of the keystore-reveal modal.
 public enum BackUpKeystoreUserAction {
@@ -57,7 +57,7 @@ public final class BackUpKeystoreViewModel: BaseViewModel<
     /// Wires:
     /// - Right bar-button → `.finished` navigation step.
     /// - Copy tap → `pasteboard.copy(...)` + toast confirmation.
-    public override func transform(input: Input) -> Output {
+    override public func transform(input: Input) -> Output {
         func userDid(_ step: NavigationStep) {
             navigator.next(step)
         }
@@ -93,15 +93,15 @@ extension BackUpKeystoreViewModel {
     }
 }
 
-extension BackUpKeystoreViewModel {
+public extension BackUpKeystoreViewModel {
     /// User-event publishers the view-model consumes.
-    public struct InputFromView {
+    struct InputFromView {
         /// Fires when the user taps the copy-keystore button.
         let copyTrigger: AnyPublisher<Void, Never>
     }
 
     /// Reactive bindings the view installs.
-    public struct Output {
+    struct Output {
         /// Drives `keystoreTextView.textBinder` with the pretty-printed JSON.
         let keystore: AnyPublisher<String, Never>
     }

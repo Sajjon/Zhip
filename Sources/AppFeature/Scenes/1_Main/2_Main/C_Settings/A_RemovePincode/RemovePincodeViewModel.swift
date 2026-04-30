@@ -25,9 +25,9 @@
 import Combine
 import Foundation
 import SingleLineControllerCombine
+import SingleLineControllerController
 import SingleLineControllerCore
 import Validation
-import SingleLineControllerController
 
 // MARK: - RemovePincodeUserAction
 
@@ -65,7 +65,7 @@ public final class RemovePincodeViewModel: BaseViewModel<
 
     /// Wires real-time pincode comparison; on first match, deletes the pincode
     /// and emits `.removePincode`. Cancel bar-button emits `.cancelPincodeRemoval`.
-    public override func transform(input: Input) -> RemovePincodeViewModel.Output {
+    override public func transform(input: Input) -> RemovePincodeViewModel.Output {
         func userDid(_ userAction: NavigationStep) {
             navigator.next(userAction)
         }
@@ -97,15 +97,15 @@ public final class RemovePincodeViewModel: BaseViewModel<
     }
 }
 
-extension RemovePincodeViewModel {
+public extension RemovePincodeViewModel {
     /// User-event publishers the view-model consumes.
-    public struct InputFromView {
+    struct InputFromView {
         /// Latest pincode value (`nil` while incomplete).
         let pincode: AnyPublisher<Pincode?, Never>
     }
 
     /// Reactive bindings the view installs.
-    public struct Output {
+    struct Output {
         /// Pulses on viewDidAppear to put the input in focus.
         let inputBecomeFirstResponder: AnyPublisher<Void, Never>
         /// Drives the input's validation styling.
@@ -114,7 +114,7 @@ extension RemovePincodeViewModel {
 
     /// Adapts `PincodeValidator(settingNew: false)` to the modal — captures the
     /// saved pincode and delegates each validation to the shared validator.
-    struct InputValidator {
+    internal struct InputValidator {
         private let existingPincode: Pincode
         private let pincodeValidator = PincodeValidator(settingNew: false)
 

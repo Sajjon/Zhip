@@ -1,6 +1,6 @@
-import XCTest
-import Validation
 @testable import AppFeature
+import Validation
+import XCTest
 
 final class InputValidatorExtensionTests: XCTestCase {
     // MARK: - validate(input: nil) → .empty

@@ -22,11 +22,11 @@
 // SOFTWARE.
 //
 
+@testable import AppFeature
 import Combine
 import Factory
 import XCTest
 import Zesame
-@testable import AppFeature
 
 /// Tests that `DefaultRestoreWalletUseCase` maps the `KeyRestoration` case to
 /// the correct `Wallet.Origin` and forwards to the injected service.

@@ -24,9 +24,9 @@
 
 import Combine
 import SingleLineControllerCombine
-import UIKit
 import SingleLineControllerController
 import SingleLineControllerSceneViews
+import UIKit
 
 /// Pincode confirmation screen — input + "I have backed up" checkbox + done CTA.
 /// `isClearedOnValidInput: false` keeps the entered pincode visible on mismatch
@@ -49,7 +49,7 @@ public final class ConfirmNewPincodeView: ScrollableStackViewOwner {
     ]
 
     /// Override-hook from `ScrollableStackViewOwner` — wires styling.
-    public override func setup() {
+    override public func setup() {
         setupSubviews()
     }
 }

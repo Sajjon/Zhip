@@ -23,9 +23,9 @@
 //
 
 import SingleLineControllerCombine
+import SingleLineControllerController
 import SingleLineControllerCore
 import UIKit
-import SingleLineControllerController
 
 /// "Create new vs restore existing" wallet chooser. Mirrors `WelcomeView`'s
 /// layout but with two buttons (primary/secondary) and a different parallax background.

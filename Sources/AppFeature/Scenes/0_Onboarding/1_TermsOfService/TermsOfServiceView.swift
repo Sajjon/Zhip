@@ -26,10 +26,10 @@ import Combine
 import Factory
 import Foundation
 import SingleLineControllerCombine
-import UIKit
-import WebKit
 import SingleLineControllerController
 import SingleLineControllerSceneViews
+import UIKit
+import WebKit
 
 /// Scrollable Terms of Service screen with a "must scroll to bottom" gate
 /// before the accept button enables.
@@ -54,7 +54,7 @@ public final class TermsOfServiceView: ScrollableStackViewOwner {
     ]
 
     /// Override-hook from `ScrollableStackViewOwner` — wires styling.
-    public override func setup() {
+    override public func setup() {
         setupSubviews()
     }
 }

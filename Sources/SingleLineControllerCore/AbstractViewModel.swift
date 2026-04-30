@@ -10,7 +10,6 @@ import Foundation
 /// Subclasses should inherit from `BaseViewModel` (which wraps this class with a
 /// `Navigator`), not directly from `AbstractViewModel`.
 open class AbstractViewModel<FromView, FromController, OutputFromViewModel>: ViewModelType {
-
     /// Bag of Combine subscriptions owned by this ViewModel. `transform` implementations
     /// call `.store(in: &cancellables)` on every subscription they create so the
     /// subscriptions outlive the `transform` call and are deinitialized with the
@@ -19,7 +18,6 @@ open class AbstractViewModel<FromView, FromController, OutputFromViewModel>: Vie
 
     /// The concrete `InputType` Swift synthesizes for each `AbstractViewModel` subclass.
     public struct Input: InputType {
-
         /// Controller-lifecycle + write-back subjects channel.
         public let fromController: FromController
 

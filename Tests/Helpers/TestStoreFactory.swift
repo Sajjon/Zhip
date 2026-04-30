@@ -22,8 +22,8 @@
 // SOFTWARE.
 //
 
-import Foundation
 @testable import AppFeature
+import Foundation
 
 /// Convenience factories to produce test-friendly `Preferences` and
 /// `SecurePersistence` instances backed by `InMemoryKeyValueStore`.

@@ -22,12 +22,12 @@
 // SOFTWARE.
 //
 
+@testable import AppFeature
 import Combine
 import Factory
+import SingleLineControllerController
 import UIKit
 import XCTest
-import SingleLineControllerController
-@testable import AppFeature
 
 /// Drives the `SetPincodeCoordinator` flow: ChoosePincode → ConfirmNewPincode
 /// on selection, or straight to `.setPincode` on skip from either stage.

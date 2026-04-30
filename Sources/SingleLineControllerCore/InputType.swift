@@ -9,7 +9,6 @@ import Foundation
 /// carries lifecycle events and write-back subjects (title, toasts, bar-button
 /// updates). `AbstractViewModel.Input` provides the conforming implementation.
 public protocol InputType {
-
     /// The view-driven publishers — taps, text, toggle state, etc.
     associatedtype FromView
 

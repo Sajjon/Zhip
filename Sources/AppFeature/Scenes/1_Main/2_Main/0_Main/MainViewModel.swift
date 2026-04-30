@@ -26,9 +26,9 @@ import Combine
 import Factory
 import Foundation
 import SingleLineControllerCombine
+import SingleLineControllerController
 import SingleLineControllerCore
 import Zesame
-import SingleLineControllerController
 
 // MARK: - MainUserAction
 
@@ -70,7 +70,7 @@ public final class MainViewModel: BaseViewModel<
 
     /// Composes the three refetch triggers, runs the balance use case,
     /// caches the result, and surfaces formatted balance + freshness.
-    public override func transform(input: Input) -> Output {
+    override public func transform(input: Input) -> Output {
         func userIntends(to intention: NavigationStep) {
             navigator.next(intention)
         }
@@ -144,9 +144,9 @@ public final class MainViewModel: BaseViewModel<
     }
 }
 
-extension MainViewModel {
+public extension MainViewModel {
     /// User-event publishers the view-model consumes.
-    public struct InputFromView {
+    struct InputFromView {
         /// Fires when the user pulls to refresh.
         let pullToRefreshTrigger: AnyPublisher<Void, Never>
         /// Fires when the user taps Send.
@@ -156,7 +156,7 @@ extension MainViewModel {
     }
 
     /// Reactive bindings the view installs.
-    public struct Output {
+    struct Output {
         /// Drives the pull-to-refresh spinner.
         let isFetchingBalance: AnyPublisher<Bool, Never>
         /// Pre-formatted balance string (ZIL, with thousands separator).

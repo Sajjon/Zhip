@@ -22,8 +22,8 @@
 // SOFTWARE.
 //
 
-import Foundation
 @testable import AppFeature
+import Foundation
 
 /// In-memory backing for `KeyValueStoring`, used by tests to build mock
 /// `Preferences` / `SecurePersistence` instances without touching UserDefaults or

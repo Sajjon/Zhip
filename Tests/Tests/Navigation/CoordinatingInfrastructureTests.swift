@@ -22,14 +22,14 @@
 // SOFTWARE.
 //
 
+@testable import AppFeature
 import Combine
 import Factory
+import SingleLineControllerController
 import SingleLineControllerCore
+import SingleLineControllerNavigation
 import UIKit
 import XCTest
-import SingleLineControllerNavigation
-import SingleLineControllerController
-@testable import AppFeature
 
 /// Covers shared Coordinating extensions: stack management, navigation-stack
 /// queries, debug printing, and UINavigationController helpers that back

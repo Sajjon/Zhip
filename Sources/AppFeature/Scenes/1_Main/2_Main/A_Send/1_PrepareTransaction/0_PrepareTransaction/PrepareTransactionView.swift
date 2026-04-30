@@ -25,10 +25,10 @@
 import Combine
 import Factory
 import SingleLineControllerCombine
-import UIKit
-import Zesame
 import SingleLineControllerController
 import SingleLineControllerSceneViews
+import UIKit
+import Zesame
 
 /// Step 1 of Send — recipient/amount/gas entry with QR-scan + max-amount conveniences,
 /// plus pull-to-refresh on balance. The view-model handles validation, max-amount
@@ -62,7 +62,7 @@ public final class PrepareTransactionView: ScrollableStackViewOwner, PullToRefre
         toReviewButton,
     ]
 
-    public override func setup() {
+    override public func setup() {
         setupSubviews()
         prefillValuesForDebugBuilds()
     }

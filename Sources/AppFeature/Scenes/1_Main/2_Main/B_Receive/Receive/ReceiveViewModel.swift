@@ -25,11 +25,11 @@
 import Combine
 import Factory
 import SingleLineControllerCombine
-import UIKit
-import Zesame
-import Validation
-import SingleLineControllerDIPrimitives
 import SingleLineControllerController
+import SingleLineControllerDIPrimitives
+import UIKit
+import Validation
+import Zesame
 
 // MARK: - ReceiveUserAction
 
@@ -60,7 +60,7 @@ public final class ReceiveViewModel: BaseViewModel<
 
     /// Wires the address QR generation, amount validation, copy-to-pasteboard
     /// behavior, and the request-payment hand-off to the coordinator.
-    public override func transform(input: Input) -> Output {
+    override public func transform(input: Input) -> Output {
         func userDid(_ userAction: NavigationStep) {
             navigator.next(userAction)
         }
@@ -121,8 +121,8 @@ public final class ReceiveViewModel: BaseViewModel<
     }
 }
 
-extension ReceiveViewModel {
-    public struct InputFromView {
+public extension ReceiveViewModel {
+    struct InputFromView {
         let qrCodeImageHeight: CGFloat
         let amountToReceive: AnyPublisher<String, Never>
         let didEndEditingAmount: AnyPublisher<Void, Never>
@@ -130,14 +130,14 @@ extension ReceiveViewModel {
         let shareTrigger: AnyPublisher<Void, Never>
     }
 
-    public struct Output {
+    struct Output {
         let receivingAddress: AnyPublisher<String, Never>
         let amountPlaceholder: AnyPublisher<String, Never>
         let amountValidation: AnyPublisher<AnyValidation, Never>
         let qrImage: AnyPublisher<UIImage?, Never>
     }
 
-    struct InputValidator {
+    internal struct InputValidator {
         private let zilAmountValidator = AmountValidator<Amount>()
 
         func validateAmount(_ amount: String) -> AmountValidator<Amount>.ValidationResult {

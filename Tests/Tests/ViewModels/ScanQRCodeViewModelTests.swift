@@ -22,10 +22,10 @@
 // SOFTWARE.
 //
 
-import Combine
-import XCTest
-import SingleLineControllerController
 @testable import AppFeature
+import Combine
+import SingleLineControllerController
+import XCTest
 
 /// Tests for `ScanQRCodeViewModel`.
 ///

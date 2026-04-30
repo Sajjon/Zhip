@@ -30,8 +30,8 @@ import SingleLineControllerController
 public final class RemovePincode: Scene<RemovePincodeView> {}
 
 /// Localized navigation title.
-extension RemovePincode {
-    public static let title = String(localized: .RemovePincode.title)
+public extension RemovePincode {
+    static let title = String(localized: .RemovePincode.title)
 }
 
 /// Left "Cancel" bar-button — closes without removing.

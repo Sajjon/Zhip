@@ -37,7 +37,7 @@ public final class RefreshControl: UIRefreshControl {
     private lazy var stackView = UIStackView(arrangedSubviews: [spinner, label])
 
     /// Programmatic initialiser. Spins up the layout via `setup()`.
-    public override init() {
+    override public init() {
         super.init(frame: .zero)
         setup()
     }
@@ -52,7 +52,7 @@ public final class RefreshControl: UIRefreshControl {
     /// `alpha` does. Without this hack the system spinner shows through
     /// alongside our custom `SpinnerView`, which looks broken.
     /// Original technique: https://stackoverflow.com/a/33472020/1311272
-    public override func didMoveToSuperview() {
+    override public func didMoveToSuperview() {
         super.didMoveToSuperview()
         guard superview != nil else { return }
         // setting `isHidden = true` does not work

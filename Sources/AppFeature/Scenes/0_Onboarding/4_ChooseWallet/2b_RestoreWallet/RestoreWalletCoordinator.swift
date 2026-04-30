@@ -22,9 +22,9 @@
 // SOFTWARE.
 //
 
+import SingleLineControllerNavigation
 import UIKit
 import Zesame
-import SingleLineControllerNavigation
 
 /// Outcomes the restore-wallet sub-flow surfaces to its parent
 /// (`ChooseWalletCoordinator`).
@@ -46,7 +46,7 @@ public enum RestoreWalletCoordinatorNavigationStep {
 /// the restore use case successfully resolves a wallet.
 public final class RestoreWalletCoordinator: BaseCoordinator<RestoreWalletCoordinatorNavigationStep> {
     /// Begins at the privacy gate.
-    public override func start(didStart _: Completion? = nil) {
+    override public func start(didStart _: Completion? = nil) {
         toEnsureThatYouAreNotBeingWatched()
     }
 }

@@ -1,9 +1,9 @@
 // MIT License — Copyright (c) 2018-2026 Open Zesame
 
 import Combine
+@testable import SingleLineControllerCombine
 import UIKit
 import XCTest
-@testable import SingleLineControllerCombine
 
 /// Tests `Binder<Value>` — the write-only, main-thread UI primitive used by
 /// `populate(with:)` to propagate ViewModel output into UIKit controls.

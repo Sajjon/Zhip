@@ -23,8 +23,8 @@
 //
 
 import Foundation
-import SingleLineControllerCore
 import SingleLineControllerController
+import SingleLineControllerCore
 
 /// `SceneController` glue for the Terms of Service screen.
 ///

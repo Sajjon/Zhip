@@ -22,16 +22,16 @@
 // SOFTWARE.
 //
 
-import UIKit
 import SingleLineControllerController
+import UIKit
 
 /// `SceneController` glue for the wallet-removal confirmation modal — the last
 /// "are you sure?" before the destructive wipe.
 public final class ConfirmWalletRemoval: Scene<ConfirmWalletRemovalView> {}
 
 /// Localized navigation title.
-extension ConfirmWalletRemoval {
-    public static let title = String(localized: .ConfirmWalletRemoval.title)
+public extension ConfirmWalletRemoval {
+    static let title = String(localized: .ConfirmWalletRemoval.title)
 }
 
 /// Left "Cancel" bar-button — closes without removing.

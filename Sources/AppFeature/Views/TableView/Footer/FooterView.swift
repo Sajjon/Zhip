@@ -33,7 +33,7 @@ public final class FooterView: UITableViewHeaderFooterView {
     private lazy var label = UILabel()
 
     /// Designated initialiser — runs `setup()` to install and style the label.
-    public override init(reuseIdentifier: String?) {
+    override public init(reuseIdentifier: String?) {
         super.init(reuseIdentifier: reuseIdentifier)
         setup()
     }

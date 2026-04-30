@@ -23,15 +23,16 @@
 //
 
 import Foundation
-import SingleLineControllerCore
 import SingleLineControllerController
+import SingleLineControllerCore
 
 /// `SceneController` glue for the crash-reporting opt-in screen.
 ///
 /// Shares the dual-presentation pattern with `TermsOfService`: hidden bar
 /// during onboarding, translucent bar (with a "Done" button) when re-opened
 /// from Settings.
-public final class AskForCrashReportingPermissions: Scene<AskForCrashReportingPermissionsView>, NavigationBarLayoutOwner {
+public final class AskForCrashReportingPermissions: Scene<AskForCrashReportingPermissionsView>,
+    NavigationBarLayoutOwner {
     /// Per-presentation navigation-bar layout.
     public let navigationBarLayout: NavigationBarLayout
 

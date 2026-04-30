@@ -1,8 +1,8 @@
 // MIT License — Copyright (c) 2018-2026 Open Zesame
 
 import Combine
-import XCTest
 @testable import SingleLineControllerCombine
+import XCTest
 
 /// Tests for `Publisher+Extras` operators (`replaceErrorWithEmpty`,
 /// `mapToVoid`, `filterNil`, `orEmpty`, `flatMapLatest`, `withLatestFrom`,

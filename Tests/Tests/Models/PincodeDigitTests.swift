@@ -1,5 +1,5 @@
-import XCTest
 @testable import AppFeature
+import XCTest
 
 final class PincodeDigitTests: XCTestCase {
     // MARK: - Digit(string:)

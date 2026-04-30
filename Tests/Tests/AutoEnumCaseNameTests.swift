@@ -22,8 +22,8 @@
 // SOFTWARE.
 //
 
-import XCTest
 @testable import AppFeature
+import XCTest
 
 enum EnumWithAssociatedValue {
     case foo(Int)

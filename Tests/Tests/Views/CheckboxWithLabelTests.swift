@@ -1,7 +1,7 @@
+@testable import AppFeature
 import Combine
 import UIKit
 import XCTest
-@testable import AppFeature
 
 final class CheckboxWithLabelTests: XCTestCase {
     private var cancellables: Set<AnyCancellable> = []

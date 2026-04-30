@@ -24,9 +24,9 @@
 
 import Combine
 import SingleLineControllerCombine
-import UIKit
 import SingleLineControllerController
 import SingleLineControllerSceneViews
+import UIKit
 
 /// Backup hub screen with two reveal options (private key / keystore) plus
 /// a confirmation checkbox + done button (only shown in `.cancellable` mode).
@@ -83,7 +83,7 @@ public final class BackupWalletView: ScrollableStackViewOwner {
     ]
 
     /// Override-hook from `ScrollableStackViewOwner` — wires styling.
-    public override func setup() {
+    override public func setup() {
         setupSubviews()
     }
 }

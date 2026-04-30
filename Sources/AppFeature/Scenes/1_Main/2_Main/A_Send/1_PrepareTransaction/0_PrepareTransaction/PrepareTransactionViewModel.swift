@@ -26,10 +26,10 @@ import Combine
 import Factory
 import Foundation
 import SingleLineControllerCombine
-import SingleLineControllerCore
-import Zesame
-import Validation
 import SingleLineControllerController
+import SingleLineControllerCore
+import Validation
+import Zesame
 
 // MARK: - PrepareTransactionUserAction
 
@@ -69,7 +69,7 @@ public final class PrepareTransactionViewModel: BaseViewModel<// swiftlint:disab
     }
 
     // swiftlint:disable:next function_body_length
-    public override func transform(input: Input) -> Output {
+    override public func transform(input: Input) -> Output {
         func userIntends(to intention: NavigationStep) {
             navigator.next(intention)
         }
@@ -367,8 +367,8 @@ public final class PrepareTransactionViewModel: BaseViewModel<// swiftlint:disab
     }
 }
 
-extension PrepareTransactionViewModel {
-    public struct InputFromView {
+public extension PrepareTransactionViewModel {
+    struct InputFromView {
         let pullToRefreshTrigger: AnyPublisher<Void, Never>
         let scanQRTrigger: AnyPublisher<Void, Never>
         let maxAmountTrigger: AnyPublisher<Void, Never>
@@ -387,7 +387,7 @@ extension PrepareTransactionViewModel {
         let didEndEditingGasPrice: AnyPublisher<Void, Never>
     }
 
-    public struct Output {
+    struct Output {
         let refreshControlLastUpdatedTitle: AnyPublisher<String, Never>
         let isFetchingBalance: AnyPublisher<Bool, Never>
         let isReviewButtonEnabled: AnyPublisher<Bool, Never>

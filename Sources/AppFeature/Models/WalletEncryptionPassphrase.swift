@@ -52,30 +52,30 @@ public struct WalletEncryptionPassword {
     }
 }
 
-extension WalletEncryptionPassword {
+public extension WalletEncryptionPassword {
     /// The minimum number of characters required for a password under `mode`.
-    public static func minimumLength(mode: Mode) -> Int {
+    static func minimumLength(mode: Mode) -> Int {
         mode.minimumPasswordLength
     }
 
     /// Returns the appropriate password `Mode` for the given wallet, derived from
     /// its `Origin`. (Wallets imported from a keystore use the keystore's own
     /// minimum-length rule; everything else uses the stricter app-side rule.)
-    public static func modeFrom(wallet: Wallet) -> WalletEncryptionPassword.Mode {
+    static func modeFrom(wallet: Wallet) -> WalletEncryptionPassword.Mode {
         wallet.passwordMode
     }
 
     /// Convenience — minimum password length for a specific wallet.
-    public static func minimumLengthForWallet(_ wallet: Wallet) -> Int {
+    static func minimumLengthForWallet(_ wallet: Wallet) -> Int {
         minimumLength(mode: wallet.passwordMode)
     }
 }
 
 // MARK: - Error
 
-extension WalletEncryptionPassword {
+public extension WalletEncryptionPassword {
     /// Failure modes related to wallet-encryption passwords.
-    public enum Error: Swift.Error {
+    enum Error: Swift.Error {
         /// The password and confirm-password fields did not match.
         case passwordsDoesNotMatch
 
@@ -122,10 +122,10 @@ extension WalletEncryptionPassword {
 
 // MARK: - Mode
 
-extension WalletEncryptionPassword {
+public extension WalletEncryptionPassword {
     /// Which length policy a password should be validated against.
     /// Different wallet origins have different minimum lengths.
-    public enum Mode: CaseIterable {
+    enum Mode: CaseIterable {
         /// Strict app-side policy used when generating a new wallet or restoring
         /// from a raw private key (8 chars min).
         case newOrRestorePrivateKey
@@ -137,9 +137,9 @@ extension WalletEncryptionPassword {
     }
 }
 
-extension WalletEncryptionPassword.Mode {
+public extension WalletEncryptionPassword.Mode {
     /// Minimum number of characters a password must have under this mode.
-    public var minimumPasswordLength: Int {
+    var minimumPasswordLength: Int {
         switch self {
         case .newOrRestorePrivateKey: 8
         case .restoreKeystore: Zesame.Keystore.minimumPasswordLength

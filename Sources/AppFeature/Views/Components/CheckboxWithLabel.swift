@@ -77,7 +77,7 @@ public final class CheckboxView: UIControl {
     private let checkLayer = CAShapeLayer()
 
     /// Programmatic-init path: hook up layers + apply initial appearance.
-    public override init(frame: CGRect) {
+    override public init(frame: CGRect) {
         super.init(frame: frame)
         setupLayers()
         updateAppearance(animated: false)
@@ -93,7 +93,7 @@ public final class CheckboxView: UIControl {
 
     /// Recompute layer frames + paths on every layout pass so corner radius and
     /// checkmark scale correctly track size changes.
-    public override func layoutSubviews() {
+    override public func layoutSubviews() {
         super.layoutSubviews()
         updateLayerFrames()
     }
@@ -101,7 +101,7 @@ public final class CheckboxView: UIControl {
     /// Toggles state on touch-down (no need to wait for touch-up — feels snappier),
     /// fires `.valueChanged` so reactive subscribers see the new value, and
     /// returns `true` to accept the touch sequence.
-    public override func beginTracking(_ touch: UITouch, with event: UIEvent?) -> Bool {
+    override public func beginTracking(_ touch: UITouch, with event: UIEvent?) -> Bool {
         super.beginTracking(touch, with: event)
         setOn(!on, animated: true)
         sendActions(for: .valueChanged)
@@ -224,7 +224,7 @@ public final class CheckboxWithLabel: UIControl {
     /// Tap anywhere on the row → toggle the underlying checkbox and emit a
     /// `.valueChanged` event. Mirrors `CheckboxView`'s own touch handling but
     /// at the compound-view level so the label area is also tappable.
-    public override func beginTracking(_ touch: UITouch, with event: UIEvent?) -> Bool {
+    override public func beginTracking(_ touch: UITouch, with event: UIEvent?) -> Bool {
         super.beginTracking(touch, with: event)
         checkbox.setOn(!checkbox.on, animated: true)
         checkbox.sendActions(for: .valueChanged)

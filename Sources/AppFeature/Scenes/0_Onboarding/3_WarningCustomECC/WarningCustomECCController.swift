@@ -6,9 +6,9 @@
 // Copyright (c) 2018-2026 Open Zesame (https://github.com/OpenZesame)
 //
 
+import SingleLineControllerController
 import SingleLineControllerCore
 import UIKit
-import SingleLineControllerController
 
 /// `SceneController` glue for the "we use a custom ECC implementation" warning screen.
 ///

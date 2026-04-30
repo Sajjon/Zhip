@@ -22,9 +22,9 @@
 // SOFTWARE.
 //
 
+@testable import AppFeature
 import Foundation
 import SingleLineControllerDIPrimitives
-@testable import AppFeature
 
 /// In-test `DateProvider` that returns a caller-controlled `Date` instead of
 /// the real wall clock, so timestamp-dependent logic (balance-last-updated,

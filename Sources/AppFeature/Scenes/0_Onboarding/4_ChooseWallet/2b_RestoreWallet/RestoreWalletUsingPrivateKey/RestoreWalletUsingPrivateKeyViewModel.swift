@@ -24,9 +24,9 @@
 
 import Combine
 import SingleLineControllerCombine
-import Zesame
-import Validation
 import SingleLineControllerController
+import Validation
+import Zesame
 
 /// Strict password mode — restoring from a raw private key means we're picking
 /// a *new* keystore password, so we enforce the new-wallet minimum length.
@@ -124,9 +124,9 @@ public final class RestoreWalletUsingPrivateKeyViewModel {
     }
 }
 
-extension RestoreWalletUsingPrivateKeyViewModel {
+public extension RestoreWalletUsingPrivateKeyViewModel {
     /// User-event publishers the view-model consumes.
-    public struct InputFromView {
+    struct InputFromView {
         /// Current private-key text.
         let privateKey: AnyPublisher<String, Never>
         /// `true` while the private-key field is the first responder.
@@ -144,7 +144,7 @@ extension RestoreWalletUsingPrivateKeyViewModel {
     }
 
     /// Reactive bindings the embedding view installs.
-    public struct Output {
+    struct Output {
         /// "Show"/"Hide" string for the toggle button — derived from secure-entry state.
         let togglePrivateKeyVisibilityButtonTitle: AnyPublisher<String, Never>
         /// Drives `privateKeyField.isSecureTextEntryBinder` — flips on each show-button tap.
@@ -164,7 +164,7 @@ extension RestoreWalletUsingPrivateKeyViewModel {
 
     /// Composes a `PrivateKeyValidator` with `EncryptionPasswordValidator`
     /// instances configured for the strict new-wallet password policy.
-    struct InputValidator {
+    internal struct InputValidator {
         private let privateKeyValidator = PrivateKeyValidator()
 
         /// Validates the hex-encoded private key string.

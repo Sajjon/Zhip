@@ -22,12 +22,12 @@
 // SOFTWARE.
 //
 
+@testable import AppFeature
 import Combine
 import Factory
+import SingleLineControllerDIPrimitives
 import XCTest
 import Zesame
-import SingleLineControllerDIPrimitives
-@testable import AppFeature
 
 /// Tests for `DefaultTransactionsUseCase`, which uses constructor DI (not
 /// `@Injected`) so tests instantiate it directly with mocked dependencies.

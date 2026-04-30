@@ -23,8 +23,8 @@
 //
 
 import SingleLineControllerCore
-import Zesame
 import Validation
+import Zesame
 
 /// Validates a Zilliqa address string (bech32 or hex), producing a typed `Address`.
 ///
@@ -51,10 +51,10 @@ public struct AddressValidator: InputValidator {
     }
 }
 
-extension AddressValidator {
+public extension AddressValidator {
     /// User-facing error enum. Each case maps to a localized string in
     /// `Errors.strings` via `errorMessage` below.
-public enum Error: InputError {
+    enum Error: InputError {
         /// Length mismatch — address is too short or too long.
         case incorrectLength(expectedLength: Int, butGot: Int)
         /// Address parses but its checksum digit doesn't validate.

@@ -1,7 +1,7 @@
-import Combine
-import XCTest
-import SingleLineControllerController
 @testable import AppFeature
+import Combine
+import SingleLineControllerController
+import XCTest
 
 final class EnsureThatYouAreNotBeingWatchedViewModelTests: XCTestCase {
     private var cancellables: Set<AnyCancellable> = []

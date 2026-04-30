@@ -59,37 +59,37 @@ public final class FloatingLabelTextField: SkyFloatingLabelTextField {
     // MARK: - Overridden methods
 
     /// Offset X so that label does not collide with leftView
-    public override func placeholderRect(forBounds bounds: CGRect) -> CGRect {
+    override public func placeholderRect(forBounds bounds: CGRect) -> CGRect {
         let superRect = super.placeholderRect(forBounds: bounds)
         return superRect.insetBy(dx: leftPaddingView.frame.width, dy: 0)
     }
 
     /// Half the field's overall height — yields a text area sized so the
     /// floating-label title fits in the upper half and the input in the lower.
-    public override func textHeight() -> CGFloat {
+    override public func textHeight() -> CGFloat {
         FloatingLabelTextField.textFieldHeight / 2
     }
 
     /// Half the field's overall height — see `textHeight()`.
-    public override func titleHeight() -> CGFloat {
+    override public func titleHeight() -> CGFloat {
         FloatingLabelTextField.textFieldHeight / 2
     }
 
     /// Re-apply font-resizing whenever the error message changes — see
     /// `updateFontResizing()` for the resizing logic.
-    public override var errorMessage: String? {
+    override public var errorMessage: String? {
         didSet { updateFontResizing() }
     }
 
     /// Pin the leading view to the precomputed left-padding rect so the
     /// status circle sits in the gutter rather than overlapping the text.
-    public override func leftViewRect(forBounds _: CGRect) -> CGRect {
+    override public func leftViewRect(forBounds _: CGRect) -> CGRect {
         leftPaddingView.frame
     }
 
     /// Force the right accessory view to fill the full field height (so a
     /// clear button is centred vertically, not aligned to the text baseline).
-    public override func rightViewRect(forBounds bounds: CGRect) -> CGRect {
+    override public func rightViewRect(forBounds bounds: CGRect) -> CGRect {
         var rightViewRect = super.rightViewRect(forBounds: bounds)
         rightViewRect.origin.y = 0
         var size = rightViewRect.size

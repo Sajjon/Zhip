@@ -1,6 +1,6 @@
+@testable import AppFeature
 import XCTest
 import Zesame
-@testable import AppFeature
 
 final class AddressValidatorTests: XCTestCase {
     private let sut = AddressValidator()

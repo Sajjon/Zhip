@@ -23,9 +23,9 @@
 //
 
 import Factory
+import SingleLineControllerNavigation
 import UIKit
 import Zesame
-import SingleLineControllerNavigation
 
 /// Outcome of the Receive sub-flow.
 public enum ReceiveCoordinatorNavigationStep {
@@ -42,7 +42,7 @@ public final class ReceiveCoordinator: BaseCoordinator<ReceiveCoordinatorNavigat
     @Injected(\.deepLinkGenerator) private var deepLinkGenerator: DeepLinkGenerator
 
     /// Begins at the receive screen.
-    public override func start(didStart _: Completion? = nil) {
+    override public func start(didStart _: Completion? = nil) {
         toFirst()
     }
 }

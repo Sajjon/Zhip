@@ -45,16 +45,16 @@ public struct Pincode: Equatable, Codable {
 
 // MARK: Minimum length
 
-extension Pincode {
+public extension Pincode {
     /// The enforced pincode length, in digits.
-    public static let length: Int = 4
+    static let length: Int = 4
 }
 
 // MARK: - Error
 
-extension Pincode {
+public extension Pincode {
     /// Construction failures surfaced from `Pincode.init(digits:)`.
-    public enum Error: Swift.Error {
+    enum Error: Swift.Error {
         /// Caller supplied more than `Pincode.length` digits.
         case pincodeTooLong
 

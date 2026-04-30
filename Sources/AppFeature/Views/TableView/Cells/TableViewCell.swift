@@ -23,8 +23,8 @@
 //
 
 import SingleLineControllerCore
-import UIKit
 import SingleLineControllerSceneViews
+import UIKit
 
 /// Base class for the project's table-view cells. Composes a horizontal
 /// `UIStackView` of [icon, label] inside `contentView` so subclasses get a
@@ -44,7 +44,7 @@ public class AbstractTableViewCell: UITableViewCell {
 
     /// Designated initialiser — runs the shared `setup()` then defers content
     /// to `configure(model:)`.
-    public override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
+    override public init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         setup()
     }
@@ -82,11 +82,11 @@ private extension AbstractTableViewCell {
 /// no extra logic beyond label/image styling, so the empty subclass is enough.
 public class TableViewCell<Model: CellModel>: AbstractTableViewCell, CellConfigurable {}
 
-extension CellConfigurable where Self: AbstractTableViewCell, Model: CellModel {
+public extension CellConfigurable where Self: AbstractTableViewCell, Model: CellModel {
     /// Default `configure(model:)` for any cell paired with a `CellModel` —
     /// applies the model's label style, image style, and accessory type.
     /// Subclasses can override to add their own behaviour after calling super.
-    public func configure(model: Model) {
+    func configure(model: Model) {
         customLabel.withStyle(model.labelStyle)
         customImageView.withStyle(model.imageViewStyle)
         accessoryType = model.accessoryType

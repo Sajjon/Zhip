@@ -22,8 +22,8 @@
 // SOFTWARE.
 //
 
-import XCTest
 @testable import AppFeature
+import XCTest
 
 /// Tests for `BalanceLastUpdatedFormatter`: a pure formatter with no
 /// dependencies, so each test is a one-liner.

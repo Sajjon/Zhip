@@ -1,8 +1,8 @@
 // MIT License — Copyright (c) 2018-2026 Open Zesame
 
 import Combine
-import XCTest
 @testable import SingleLineControllerCore
+import XCTest
 
 /// Tests `AbstractTarget` — the `@objc` target/action bridge that turns a
 /// UIKit selector callback into a Combine pulse on the captured subject.

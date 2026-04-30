@@ -22,10 +22,10 @@
 // SOFTWARE.
 //
 
-import UIKit
-import XCTest
-import Validation
 @testable import AppFeature
+import UIKit
+import Validation
+import XCTest
 
 /// Covers UIView extensions: `shake(...)` animation and the publisher binders
 /// not already exercised elsewhere.

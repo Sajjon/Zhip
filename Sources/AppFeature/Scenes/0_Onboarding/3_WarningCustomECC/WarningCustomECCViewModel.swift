@@ -62,7 +62,7 @@ public final class WarningCustomECCViewModel: BaseViewModel<
     /// - "did accept" → record acceptance + emit `.acceptRisks`.
     /// - For the dismissible variant: install a "Done" right bar-button that
     ///   emits `.dismiss`.
-    public override func transform(input: Input) -> Output {
+    override public func transform(input: Input) -> Output {
         func userDid(_ userAction: NavigationStep) {
             navigator.next(userAction)
         }
@@ -93,9 +93,9 @@ public final class WarningCustomECCViewModel: BaseViewModel<
     }
 }
 
-extension WarningCustomECCViewModel {
+public extension WarningCustomECCViewModel {
     /// User-event publishers the view-model consumes.
-    public struct InputFromView {
+    struct InputFromView {
         /// Fires once the user scrolls the textView near the bottom.
         let didScrollToBottom: AnyPublisher<Void, Never>
         /// Fires when the user taps the accept button.
@@ -103,7 +103,7 @@ extension WarningCustomECCViewModel {
     }
 
     /// Reactive bindings the view installs.
-    public struct Output {
+    struct Output {
         /// Drives `acceptTermsButton.isVisibleBinder`.
         let isAcceptButtonVisible: AnyPublisher<Bool, Never>
         /// Drives `acceptTermsButton.isEnabledBinder`.

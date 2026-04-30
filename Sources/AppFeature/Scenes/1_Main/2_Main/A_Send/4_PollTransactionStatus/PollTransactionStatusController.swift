@@ -22,8 +22,8 @@
 // SOFTWARE.
 //
 
-import UIKit
 import SingleLineControllerController
+import UIKit
 
 /// `SceneController` glue for the receipt-polling screen (step 4 of Send).
 public final class PollTransactionStatus: Scene<PollTransactionStatusView> {}

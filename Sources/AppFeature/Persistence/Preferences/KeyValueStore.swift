@@ -53,19 +53,19 @@ public struct KeyValueStore<KeyType: KeyConvertible>: KeyValueStoring {
 
 // MARK: - KeyValueStoring Methods
 
-extension KeyValueStore {
+public extension KeyValueStore {
     /// Forwards to the wrapped store's `save(value:for:)`.
-    public func save(value: Any, for key: String) {
+    func save(value: Any, for key: String) {
         _save(value, key)
     }
 
     /// Forwards to the wrapped store's `loadValue(for:)`.
-    public func loadValue(for key: String) -> Any? {
+    func loadValue(for key: String) -> Any? {
         _load(key)
     }
 
     /// Forwards to the wrapped store's `deleteValue(for:)`.
-    public func deleteValue(for key: String) {
+    func deleteValue(for key: String) {
         _delete(key)
     }
 }

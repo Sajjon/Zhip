@@ -29,6 +29,6 @@ import SingleLineControllerController
 public final class RestoreWallet: Scene<RestoreWalletView> {}
 
 /// Localized navigation title.
-extension RestoreWallet {
-    public static let title = String(localized: .RestoreWallet.title)
+public extension RestoreWallet {
+    static let title = String(localized: .RestoreWallet.title)
 }

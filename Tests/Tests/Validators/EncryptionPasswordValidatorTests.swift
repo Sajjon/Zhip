@@ -1,5 +1,5 @@
-import XCTest
 @testable import AppFeature
+import XCTest
 
 final class EncryptionPasswordValidatorTests: XCTestCase {
     func test_newWallet_mismatch_returnsPasswordsDoesNotMatch() {

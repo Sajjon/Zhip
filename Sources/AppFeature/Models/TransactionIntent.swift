@@ -39,7 +39,7 @@ public extension Address {
     /// The incoming string is `lowercased()` first because Zilliqa Ethereum-style
     /// addresses are case-insensitive but `Address(string:)` is strict — uppercasing
     /// would otherwise be ambiguous with EIP-55-style checksum addresses.
-    public init(from decoder: Decoder) throws {
+    init(from decoder: Decoder) throws {
         let container = try decoder.singleValueContainer()
         let addressString = try container.decode(String.self).lowercased()
         try self.init(string: addressString)
@@ -50,7 +50,7 @@ public extension Address {
     /// Uppercasing is the standard hex display form on Zilliqa for the legacy
     /// representation, so consumers (other wallets / explorers) get a familiar
     /// shape on the wire.
-    public func encode(to encoder: Encoder) throws {
+    func encode(to encoder: Encoder) throws {
         var container = encoder.singleValueContainer()
         try container.encode(asString.uppercased())
     }
@@ -76,7 +76,7 @@ public struct TransactionIntent: Codable, Equatable {
     }
 }
 
-extension TransactionIntent {
+public extension TransactionIntent {
     /// Parses a QR-code-payload string into a `TransactionIntent`.
     ///
     /// Two payload shapes are supported, in order of preference:
@@ -86,7 +86,7 @@ extension TransactionIntent {
     ///    Decoded as `TransactionIntent` (so the QR can carry both fields).
     ///
     /// Throws `Error.scannedStringNotAddressNorJson` if neither path succeeds.
-    public static func fromScannedQrCodeString(_ scannedString: String) throws -> TransactionIntent {
+    static func fromScannedQrCodeString(_ scannedString: String) throws -> TransactionIntent {
         do {
             return try TransactionIntent(to: Address(string: scannedString))
         } catch {
@@ -98,17 +98,17 @@ extension TransactionIntent {
     }
 
     /// Failure modes for `fromScannedQrCodeString(_:)`.
-    public enum Error: Swift.Error, Equatable {
+    enum Error: Swift.Error, Equatable {
         /// The scanned string was neither a valid address nor valid JSON for a `TransactionIntent`.
         case scannedStringNotAddressNorJson
     }
 }
 
-extension TransactionIntent {
+public extension TransactionIntent {
     /// Failable string-based init — accepts the inputs you'd have from URL query params
     /// or text fields. Returns `nil` when `recipientString` is not a parseable address.
     /// `amount` is best-effort: an unparsable amount becomes `nil` rather than failing.
-    public init?(to recipientString: String, amount: String?) {
+    init?(to recipientString: String, amount: String?) {
         guard let recipient = try? Address(string: recipientString) else { return nil }
         self.init(to: recipient, amount: Amount.fromQa(optionalString: amount))
     }
@@ -119,7 +119,7 @@ extension TransactionIntent {
     /// The recipient (`to`) is required — returns `nil` if it's missing.
     /// The amount is optional and looked up by the same `CodingKeys` name used for JSON,
     /// keeping URL params and JSON shapes in sync.
-    public init?(queryParameters params: [URLQueryItem]) {
+    init?(queryParameters params: [URLQueryItem]) {
         guard let addressFromParam = params.first(where: { $0.name == TransactionIntent.CodingKeys.to.stringValue })?
             .value
         else {
@@ -134,7 +134,7 @@ extension TransactionIntent {
     /// Sort order is by ascending key length — purely a stable ordering for tests/snapshots
     /// rather than an alphabetical sort, so shorter keys (e.g. `to`) appear before longer
     /// ones (e.g. `amount`).
-    public var queryItems: [URLQueryItem] {
+    var queryItems: [URLQueryItem] {
         dictionaryRepresentation.compactMap {
             URLQueryItem(name: $0.key, value: String(describing: $0.value).lowercased())
         }.sorted(by: { $0.name.count < $1.name.count })
@@ -143,23 +143,23 @@ extension TransactionIntent {
 
 // MARK: - Codable
 
-extension TransactionIntent {
+public extension TransactionIntent {
     /// JSON keys for the encoded form. Single source of truth — also used by the
     /// query-parameter init/getter to keep on-wire shapes consistent.
-    public enum CodingKeys: CodingKey {
+    enum CodingKeys: CodingKey {
         case to, amount
     }
 
     /// JSON decoder — both fields go through their own (synthesized for `Amount`,
     /// retroactive for `Address`) `Codable` conformances.
-    public init(from decoder: Decoder) throws {
+    init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         to = try container.decode(Address.self, forKey: .to)
         amount = try container.decodeIfPresent(Amount.self, forKey: .amount)
     }
 
     /// JSON encoder — omits `amount` from the output when `nil` (via `encodeIfPresent`).
-    public func encode(to encoder: Encoder) throws {
+    func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         try container.encode(to, forKey: .to)
         try container.encodeIfPresent(amount, forKey: .amount)

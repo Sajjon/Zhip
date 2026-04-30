@@ -44,7 +44,7 @@ public final class TitledValueView: UIStackView {
     fileprivate let valueTextView = UITextView()
 
     /// Crashes loudly if styling was never applied — see the type-level note.
-    public override func layoutSubviews() {
+    override public func layoutSubviews() {
         super.layoutSubviews()
         guard isSetup else { incorrectImplementation("you should call `withStyles` method after init") }
     }

@@ -24,9 +24,9 @@
 
 import Combine
 import SingleLineControllerCombine
-import UIKit
 import SingleLineControllerController
 import SingleLineControllerSceneViews
+import UIKit
 
 /// Wallet hub screen — shows balance with pull-to-refresh + send/receive CTAs.
 /// `PullToRefreshCapable` brings in the refresh control + its publishers.
@@ -60,7 +60,7 @@ public final class MainView: ScrollableStackViewOwner, PullToRefreshCapable {
         buttonsView,
     ], spacing: 8)
 
-    public override func setup() {
+    override public func setup() {
         setupSubviews()
     }
 }

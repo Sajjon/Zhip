@@ -22,9 +22,9 @@
 // SOFTWARE.
 //
 
+@testable import AppFeature
 import Factory
 import XCTest
-@testable import AppFeature
 
 /// Unit tests for `DefaultOnboardingUseCase`.
 ///

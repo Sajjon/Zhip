@@ -4,8 +4,8 @@ import Combine
 import Factory
 import Foundation
 import SingleLineControllerCombine
-import Zesame
 import SingleLineControllerDIPrimitives
+import Zesame
 
 /// Default implementation of the composite `TransactionsUseCase` and all five
 /// narrow protocols it composes.
@@ -112,7 +112,10 @@ extension DefaultTransactionsUseCase: TransactionsUseCase {
 
     /// Polls the network with the supplied `polling` schedule until the transaction
     /// identified by `txId` reaches consensus, then emits its `TransactionReceipt`.
-    public func receiptOfTransaction(byId txId: String, polling: Polling) -> AnyPublisher<TransactionReceipt, Swift.Error> {
+    public func receiptOfTransaction(
+        byId txId: String,
+        polling: Polling
+    ) -> AnyPublisher<TransactionReceipt, Swift.Error> {
         zilliqaService.hasNetworkReachedConsensusYetForTransactionWith(id: txId, polling: polling)
             .mapError { $0 as Swift.Error }
             .eraseToAnyPublisher()

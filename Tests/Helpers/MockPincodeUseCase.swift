@@ -22,8 +22,8 @@
 // SOFTWARE.
 //
 
-import Foundation
 @testable import AppFeature
+import Foundation
 
 /// Hand-written mock of `PincodeUseCase` for ViewModel tests.
 ///

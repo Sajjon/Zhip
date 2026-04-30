@@ -24,11 +24,11 @@
 
 import Combine
 import SingleLineControllerCombine
-import UIKit
-import Zesame
-import Validation
 import SingleLineControllerController
 import SingleLineControllerSceneViews
+import UIKit
+import Validation
+import Zesame
 
 /// Local typealias to avoid the long `RestoreWalletViewModel.InputFromView.Segment` mouthful.
 private typealias Segment = RestoreWalletViewModel.InputFromView.Segment
@@ -67,13 +67,13 @@ public final class RestoreWalletView: ScrollableStackViewOwner {
     ], spacing: 8)
 
     /// Override-hook from `ScrollableStackViewOwner` — wires styling.
-    public override func setup() {
+    override public func setup() {
         setupSubviews()
     }
 
     /// Custom scroll-view constraints that leave room above the scroll for
     /// the segmented control (which sits *outside* the scrollable stack).
-    public override func setupScrollViewConstraints() {
+    override public func setupScrollViewConstraints() {
         scrollView.bottomToSuperview()
         scrollView.leadingToSuperview()
         scrollView.trailingToSuperview()

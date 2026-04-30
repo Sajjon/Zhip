@@ -1,5 +1,5 @@
-import XCTest
 @testable import AppFeature
+import XCTest
 
 final class BundleVersionBuildTests: XCTestCase {
     func test_key_shortVersionString_formsCFBundleKey() {

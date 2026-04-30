@@ -61,7 +61,7 @@ private extension BaseScrollableStackViewOwner {
         let contentLayoutGuide = scrollView.contentLayoutGuide
         let frameLayoutGuide = scrollView.frameLayoutGuide
         let bottomToSafeArea = self is PullToRefreshCapable
-        let bottomAnchor = bottomToSafeArea ? safeAreaLayoutGuide.bottomAnchor : self.bottomAnchor
+        let bottomAnchor = bottomToSafeArea ? safeAreaLayoutGuide.bottomAnchor : bottomAnchor
 
         let heightAtLeastFrame = scrollViewContentView.heightAnchor.constraint(
             greaterThanOrEqualTo: frameLayoutGuide.heightAnchor

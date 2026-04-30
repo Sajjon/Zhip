@@ -24,9 +24,9 @@
 
 import Combine
 import SingleLineControllerCombine
-import UIKit
 import SingleLineControllerController
 import SingleLineControllerSceneViews
+import UIKit
 
 /// The "create new wallet" screen view — collects an encryption password (twice),
 /// requires the user to acknowledge they have backed it up, and exposes a continue button.
@@ -67,7 +67,7 @@ public final class CreateNewWalletView: ScrollableStackViewOwner {
 
     /// `ScrollableStackViewOwner` lifecycle hook — invoked once after the stack view is composed.
     /// Forwarded to `setupSubviews()` to apply per-subview styling and localized text.
-    public override func setup() {
+    override public func setup() {
         setupSubviews()
     }
 }

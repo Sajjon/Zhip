@@ -25,8 +25,8 @@
 import Factory
 import Foundation
 import KeychainSwift
-import Zesame
 import SingleLineControllerDIPrimitives
+import Zesame
 
 /// The Zilliqa network this build targets. Currently wired to `.mainnet`. When we
 /// add staging/testnet builds this will move into a build-configuration driven
@@ -42,25 +42,25 @@ extension KeyValueStore where KeyType == PreferencesKey {
 
 // MARK: - Services
 
-extension Container {
+public extension Container {
     /// The reactive façade over `Zesame` blockchain operations. Shared across every
     /// use case so they all talk to the same underlying service instance.
-    public var zilliqaService: Factory<ZilliqaServiceReactive> {
+    var zilliqaService: Factory<ZilliqaServiceReactive> {
         self { DefaultZilliqaService(network: network).combine }.singleton
     }
 
     /// The `UserDefaults`-backed key-value store for non-secret preferences.
-    public var preferences: Factory<Preferences> {
+    var preferences: Factory<Preferences> {
         self { KeyValueStore(UserDefaults.standard) }.singleton
     }
 
     /// The Keychain-backed secure store for wallet material and pincode.
-    public var securePersistence: Factory<SecurePersistence> {
+    var securePersistence: Factory<SecurePersistence> {
         self { KeyValueStore(KeychainSwift()) }.singleton
     }
 
     /// Deep-link URL builder for outbound sharing (e.g. receive links).
-    public var deepLinkGenerator: Factory<DeepLinkGenerator> {
+    var deepLinkGenerator: Factory<DeepLinkGenerator> {
         self { DefaultDeepLinkGenerator() }
     }
 
@@ -71,39 +71,39 @@ extension Container {
     /// Tests override via `Container.shared.deepLinkHandler.register { … }`
     /// to install a fresh handler per test (Factory's `register` shadows
     /// `.singleton`).
-    public var deepLinkHandler: Factory<DeepLinkHandler> {
+    var deepLinkHandler: Factory<DeepLinkHandler> {
         self { DeepLinkHandler() }.singleton
     }
 
     /// Plays bundled sound effects. Tests register a no-op so unit tests never
     /// produce real audio.
-    public var soundPlayer: Factory<SoundPlayer> {
+    var soundPlayer: Factory<SoundPlayer> {
         self { DefaultSoundPlayer() }.singleton
     }
 
     /// Abstracts `UIPasteboard.general`. Tests register a `MockPasteboard` so
     /// unit tests never mutate the real simulator pasteboard.
-    public var pasteboard: Factory<Pasteboard> {
+    var pasteboard: Factory<Pasteboard> {
         self { DefaultPasteboard() }.singleton
     }
 
     /// Abstracts `LAContext` biometric authentication. Tests register a mock
     /// so unit tests never trigger a real Face ID / Touch ID prompt.
-    public var biometricsAuthenticator: Factory<BiometricsAuthenticator> {
+    var biometricsAuthenticator: Factory<BiometricsAuthenticator> {
         self { LAContextBiometricsAuthenticator() }.singleton
     }
 
     /// QR code encoder/decoder. Stateless, so a fresh instance per resolve is
     /// fine. Tests can register a stub when they want to observe encode/decode
     /// calls without hitting `EFQRCode`.
-    public var qrCoder: Factory<QRCoding> {
+    var qrCoder: Factory<QRCoding> {
         self { QRCoder() }
     }
 
     /// Abstracts `UIApplication.shared.open(_:)`. Tests register a mock so
     /// unit tests never trigger a real OS-level URL open (which can hang the
     /// iOS simulator runloop).
-    public var urlOpener: Factory<UrlOpener> {
+    var urlOpener: Factory<UrlOpener> {
         self { DefaultUrlOpener() }.singleton
     }
 
@@ -111,7 +111,7 @@ extension Container {
     /// `ImmediateClock`, which ignores the requested delay and fires on the
     /// next main-queue cycle, so timer-driven flows run in milliseconds
     /// instead of seconds.
-    public var clock: Factory<Clock> {
+    var clock: Factory<Clock> {
         self { MainQueueClock() }.singleton
     }
 
@@ -120,7 +120,7 @@ extension Container {
     /// Tests register `ImmediateMainScheduler`, which invokes work
     /// synchronously so coordinator tests can assert on navigation side
     /// effects without pumping the runloop.
-    public var mainScheduler: Factory<MainScheduler> {
+    var mainScheduler: Factory<MainScheduler> {
         self { DispatchMainScheduler() }.singleton
     }
 
@@ -128,28 +128,28 @@ extension Container {
     /// WebKit-backed parsing which can block the main thread for seconds on CI
     /// simulators; tests register a stub that returns an empty string so view
     /// lifecycle completes immediately when modal presentation is synchronous.
-    public var htmlLoader: Factory<HtmlLoader> {
+    var htmlLoader: Factory<HtmlLoader> {
         self { DefaultHtmlLoader() }.singleton
     }
 
     /// Abstracts `UINotificationFeedbackGenerator`. Tests register a mock so
     /// unit tests never trigger real device vibrations.
-    public var hapticFeedback: Factory<HapticFeedback> {
+    var hapticFeedback: Factory<HapticFeedback> {
         self { DefaultHapticFeedback() }.singleton
     }
 
     /// Abstracts "what time is it now" so timestamp-dependent logic
     /// (balance-last-updated, relative date formatting) is testable with a
     /// fixed instant.
-    public var dateProvider: Factory<DateProvider> {
+    var dateProvider: Factory<DateProvider> {
         self { DefaultDateProvider() }.singleton
     }
 }
 
 // MARK: - Composite use cases (subsystems that remain monolithic)
 
-extension Container {
-    public var transactionsUseCase: Factory<TransactionsUseCase> {
+public extension Container {
+    var transactionsUseCase: Factory<TransactionsUseCase> {
         self {
             DefaultTransactionsUseCase(
                 zilliqaService: self.zilliqaService(),
@@ -160,7 +160,7 @@ extension Container {
         .singleton
     }
 
-    public var onboardingUseCase: Factory<OnboardingUseCase> {
+    var onboardingUseCase: Factory<OnboardingUseCase> {
         self {
             DefaultOnboardingUseCase(
                 zilliqaService: self.zilliqaService(),
@@ -171,7 +171,7 @@ extension Container {
         .singleton
     }
 
-    public var pincodeUseCase: Factory<PincodeUseCase> {
+    var pincodeUseCase: Factory<PincodeUseCase> {
         self {
             DefaultPincodeUseCase(
                 preferences: self.preferences(),
@@ -184,48 +184,48 @@ extension Container {
 
 // MARK: - Narrow wallet use cases
 
-extension Container {
-    public var createWalletUseCase: Factory<CreateWalletUseCase> {
+public extension Container {
+    var createWalletUseCase: Factory<CreateWalletUseCase> {
         self { DefaultCreateWalletUseCase() }
     }
 
-    public var restoreWalletUseCase: Factory<RestoreWalletUseCase> {
+    var restoreWalletUseCase: Factory<RestoreWalletUseCase> {
         self { DefaultRestoreWalletUseCase() }
     }
 
-    public var walletStorageUseCase: Factory<WalletStorageUseCase> {
+    var walletStorageUseCase: Factory<WalletStorageUseCase> {
         self { DefaultWalletStorageUseCase() }.singleton
     }
 
-    public var verifyEncryptionPasswordUseCase: Factory<VerifyEncryptionPasswordUseCase> {
+    var verifyEncryptionPasswordUseCase: Factory<VerifyEncryptionPasswordUseCase> {
         self { DefaultVerifyEncryptionPasswordUseCase() }
     }
 
-    public var extractKeyPairUseCase: Factory<ExtractKeyPairUseCase> {
+    var extractKeyPairUseCase: Factory<ExtractKeyPairUseCase> {
         self { DefaultExtractKeyPairUseCase() }
     }
 }
 
 // MARK: - Narrow transactions use cases
 
-extension Container {
-    public var balanceCacheUseCase: Factory<BalanceCacheUseCase> {
+public extension Container {
+    var balanceCacheUseCase: Factory<BalanceCacheUseCase> {
         self { self.transactionsUseCase() }
     }
 
-    public var gasPriceUseCase: Factory<GasPriceUseCase> {
+    var gasPriceUseCase: Factory<GasPriceUseCase> {
         self { self.transactionsUseCase() }
     }
 
-    public var fetchBalanceUseCase: Factory<FetchBalanceUseCase> {
+    var fetchBalanceUseCase: Factory<FetchBalanceUseCase> {
         self { self.transactionsUseCase() }
     }
 
-    public var sendTransactionUseCase: Factory<SendTransactionUseCase> {
+    var sendTransactionUseCase: Factory<SendTransactionUseCase> {
         self { self.transactionsUseCase() }
     }
 
-    public var transactionReceiptUseCase: Factory<TransactionReceiptUseCase> {
+    var transactionReceiptUseCase: Factory<TransactionReceiptUseCase> {
         self { self.transactionsUseCase() }
     }
 }

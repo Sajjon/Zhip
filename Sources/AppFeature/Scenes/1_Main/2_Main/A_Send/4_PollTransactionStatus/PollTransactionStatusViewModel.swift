@@ -26,11 +26,11 @@ import Combine
 import Factory
 import Foundation
 import SingleLineControllerCombine
+import SingleLineControllerController
 import SingleLineControllerCore
+import SingleLineControllerDIPrimitives
 import UIKit
 import Zesame
-import SingleLineControllerDIPrimitives
-import SingleLineControllerController
 
 // MARK: - User action and navigation steps
 
@@ -71,7 +71,7 @@ public final class PollTransactionStatusViewModel: BaseViewModel<
 
     /// Wires the polling pipeline, the three user actions (skip/copy/view), and
     /// the activity-indicator-driven button states.
-    public override func transform(input: Input) -> Output {
+    override public func transform(input: Input) -> Output {
         func userDid(_ userAction: NavigationStep) {
             navigator.next(userAction)
         }
@@ -129,14 +129,14 @@ public final class PollTransactionStatusViewModel: BaseViewModel<
     }
 }
 
-extension PollTransactionStatusViewModel {
-    public struct InputFromView {
+public extension PollTransactionStatusViewModel {
+    struct InputFromView {
         let copyTransactionIdTrigger: AnyPublisher<Void, Never>
         let skipWaitingOrDoneTrigger: AnyPublisher<Void, Never>
         let seeTxDetails: AnyPublisher<Void, Never>
     }
 
-    public struct Output {
+    struct Output {
         let skipWaitingOrDoneButtonTitle: AnyPublisher<String, Never>
         let isSeeTxDetailsEnabled: AnyPublisher<Bool, Never>
         let isSeeTxDetailsButtonLoading: AnyPublisher<Bool, Never>

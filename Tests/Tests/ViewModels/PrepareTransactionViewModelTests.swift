@@ -22,13 +22,13 @@
 // SOFTWARE.
 //
 
+@testable import AppFeature
 import Combine
 import Factory
+import SingleLineControllerController
+import Validation
 import XCTest
 import Zesame
-import Validation
-import SingleLineControllerController
-@testable import AppFeature
 
 // swiftlint:disable type_body_length
 

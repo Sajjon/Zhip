@@ -24,9 +24,9 @@
 
 import Combine
 import SingleLineControllerCombine
-import UIKit
 import SingleLineControllerController
 import SingleLineControllerSceneViews
+import UIKit
 
 /// Password-entry screen that decrypts the keystore to reveal the underlying
 /// `KeyPair` (private key + address). One field, one CTA.
@@ -47,7 +47,7 @@ public final class DecryptKeystoreToRevealKeyPairView: ScrollableStackViewOwner 
     ], spacing: 20)
 
     /// Override-hook from `ScrollableStackViewOwner` — wires styling.
-    public override func setup() {
+    override public func setup() {
         setupSubviews()
     }
 }

@@ -23,9 +23,9 @@
 //
 
 import Factory
+import SingleLineControllerNavigation
 import UIKit
 import Zesame
-import SingleLineControllerNavigation
 
 /// Source URL the "Star us on GitHub" + "Report issue" actions open.
 public let githubUrlString = "https://github.com/OpenZesame/Zhip"
@@ -59,7 +59,7 @@ public final class SettingsCoordinator: BaseCoordinator<SettingsCoordinatorNavig
     @Injected(\.onboardingUseCase) private var onboardingUseCase: OnboardingUseCase
 
     /// Begins by pushing the Settings hub.
-    public override func start(didStart _: Completion? = nil) {
+    override public func start(didStart _: Completion? = nil) {
         toSettings()
     }
 }

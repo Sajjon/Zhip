@@ -41,10 +41,10 @@ import UIKit
 
 // MARK: - Style
 
-extension UILabel {
+public extension UILabel {
     /// Description of how a `UILabel` should be styled. Every attribute is optional;
     /// `apply(style:)` substitutes project-wide defaults for any nil.
-    public struct Style: Mergeable {
+    struct Style: Mergeable {
         /// Initial text, if any.
         public var text: String?
         /// Foreground colour. Defaults to `.defaultText` (white) when nil.
@@ -84,11 +84,11 @@ extension UILabel {
 
 // MARK: Apply Style
 
-extension UILabel {
+public extension UILabel {
     /// Writes `style` to this label, substituting project-wide defaults for any
     /// nil attribute. Mutates the receiver — for the chainable form use
     /// `withStyle(_:customize:)`.
-    public func apply(style: Style) {
+    func apply(style: Style) {
         text = style.text
         font = style.font ?? UIFont.Label.body
         textColor = style.textColor ?? .defaultText
@@ -105,7 +105,7 @@ extension UILabel {
     /// `customize`. Also disables autoresizing-mask translation so the label
     /// is ready for Auto Layout. Returns `self` for fluent chaining.
     @discardableResult
-    public func withStyle(_ style: UILabel.Style, customize: ((UILabel.Style) -> UILabel.Style)? = nil) -> UILabel {
+    func withStyle(_ style: UILabel.Style, customize: ((UILabel.Style) -> UILabel.Style)? = nil) -> UILabel {
         translatesAutoresizingMaskIntoConstraints = false
         let style = customize?(style) ?? style
         apply(style: style)
@@ -119,10 +119,10 @@ extension UILabel {
 // field, return. They make declarative styling read top-to-bottom at call sites
 // like `.body.text("Hi").textColor(.red)`.
 
-extension UILabel.Style {
+public extension UILabel.Style {
     /// Returns a copy of this style with `text` replaced.
     @discardableResult
-    public func text(_ text: String?) -> UILabel.Style {
+    func text(_ text: String?) -> UILabel.Style {
         var style = self
         style.text = text
         return style
@@ -130,7 +130,7 @@ extension UILabel.Style {
 
     /// Returns a copy of this style with `font` replaced.
     @discardableResult
-    public func font(_ font: UIFont) -> UILabel.Style {
+    func font(_ font: UIFont) -> UILabel.Style {
         var style = self
         style.font = font
         return style
@@ -139,7 +139,7 @@ extension UILabel.Style {
     /// Returns a copy of this style with `numberOfLines` replaced.
     /// Use `0` to allow unlimited (multi-line) text.
     @discardableResult
-    public func numberOfLines(_ numberOfLines: Int) -> UILabel.Style {
+    func numberOfLines(_ numberOfLines: Int) -> UILabel.Style {
         var style = self
         style.numberOfLines = numberOfLines
         return style
@@ -147,7 +147,7 @@ extension UILabel.Style {
 
     /// Returns a copy of this style with `textAlignment` replaced.
     @discardableResult
-    public func textAlignment(_ textAlignment: NSTextAlignment) -> UILabel.Style {
+    func textAlignment(_ textAlignment: NSTextAlignment) -> UILabel.Style {
         var style = self
         style.textAlignment = textAlignment
         return style
@@ -155,7 +155,7 @@ extension UILabel.Style {
 
     /// Returns a copy of this style with `textColor` replaced.
     @discardableResult
-    public func textColor(_ textColor: UIColor) -> UILabel.Style {
+    func textColor(_ textColor: UIColor) -> UILabel.Style {
         var style = self
         style.textColor = textColor
         return style
@@ -164,7 +164,7 @@ extension UILabel.Style {
     /// Returns a copy of this style that auto-shrinks font size down to
     /// `minimumScaleFactor` to fit the available width.
     @discardableResult
-    public func minimumScaleFactor(_ minimumScaleFactor: CGFloat) -> UILabel.Style {
+    func minimumScaleFactor(_ minimumScaleFactor: CGFloat) -> UILabel.Style {
         var style = self
         style.adjustsFontSizeMinimumScaleFactor = minimumScaleFactor
         return style
@@ -177,16 +177,16 @@ extension UILabel.Style {
 // Adding a new label role means adding a preset here, not configuring fonts at
 // the call site.
 
-extension UILabel.Style {
+public extension UILabel.Style {
     /// Hero/welcome label — large impression-scale font, single line.
-    public static var impression: UILabel.Style {
+    static var impression: UILabel.Style {
         UILabel.Style(
             font: UIFont.Label.impression
         )
     }
 
     /// Scene header — large bold font, multi-line allowed.
-    public static var header: UILabel.Style {
+    static var header: UILabel.Style {
         UILabel.Style(
             font: UIFont.Label.header,
             numberOfLines: 0
@@ -194,14 +194,14 @@ extension UILabel.Style {
     }
 
     /// Title-weight label, single line.
-    public static var title: UILabel.Style {
+    static var title: UILabel.Style {
         UILabel.Style(
             font: UIFont.title
         )
     }
 
     /// Body copy — regular weight, multi-line.
-    public static var body: UILabel.Style {
+    static var body: UILabel.Style {
         UILabel.Style(
             font: UIFont.Label.body,
             numberOfLines: 0
@@ -209,7 +209,7 @@ extension UILabel.Style {
     }
 
     /// Checkbox label — same font as `.title`, multi-line for long copy.
-    public static var checkbox: UILabel.Style {
+    static var checkbox: UILabel.Style {
         UILabel.Style(
             font: UIFont.checkbox,
             numberOfLines: 0
@@ -219,12 +219,12 @@ extension UILabel.Style {
 
 // MARK: - Style + Merging
 
-extension UILabel.Style {
+public extension UILabel.Style {
     /// `Mergeable` conformance — combines two styles attribute-by-attribute via
     /// the inner `merge(_:)` helper, which forwards to `mergeAttribute(other:path:mode:)`.
     /// Note: `text` and `adjustsFontSizeMinimumScaleFactor` are intentionally
     /// not merged here — they're considered per-instance overrides only.
-    public func merged(other: UILabel.Style, mode: MergeMode) -> UILabel.Style {
+    func merged(other: UILabel.Style, mode: MergeMode) -> UILabel.Style {
         func merge<T>(_ attributePath: KeyPath<UILabel.Style, T?>) -> T? {
             mergeAttribute(other: other, path: attributePath, mode: mode)
         }

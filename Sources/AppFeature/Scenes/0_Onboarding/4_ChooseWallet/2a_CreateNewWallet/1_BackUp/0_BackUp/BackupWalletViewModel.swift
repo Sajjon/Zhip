@@ -25,11 +25,11 @@
 import Combine
 import Factory
 import SingleLineControllerCombine
+import SingleLineControllerController
 import SingleLineControllerCore
+import SingleLineControllerDIPrimitives
 import UIKit
 import Zesame
-import SingleLineControllerDIPrimitives
-import SingleLineControllerController
 
 // MARK: - BackupWalletUserAction
 
@@ -84,7 +84,7 @@ public final class BackupWalletViewModel: BaseViewModel<
     /// - Copy-keystore tap → pasteboard + toast.
     /// - Reveal taps → matching navigation steps.
     /// - Done tap *gated* on the "I've backed up" checkbox via `withLatestFrom`.
-    public override func transform(input: Input) -> Output {
+    override public func transform(input: Input) -> Output {
         func userDid(_ userAction: NavigationStep) {
             navigator.next(userAction)
         }
@@ -137,9 +137,9 @@ public final class BackupWalletViewModel: BaseViewModel<
     }
 }
 
-extension BackupWalletViewModel {
+public extension BackupWalletViewModel {
     /// User-event publishers the view-model consumes.
-    public struct InputFromView {
+    struct InputFromView {
         /// Fires when the user taps "Copy keystore" — view-model handles pasteboard + toast.
         let copyKeystoreToPasteboardTrigger: AnyPublisher<Void, Never>
         /// Fires when the user taps "Reveal keystore" — coordinator presents modal.
@@ -153,7 +153,7 @@ extension BackupWalletViewModel {
     }
 
     /// Reactive bindings the view installs.
-    public struct Output {
+    struct Output {
         /// Drives `haveSecurelyBackedUpViews.isVisibleBinder` (false in Settings mode).
         let isHaveSecurelyBackedUpViewsVisible: AnyPublisher<Bool, Never>
         /// Drives `doneButton.isEnabledBinder` — true once the checkbox is checked.

@@ -22,9 +22,9 @@
 // SOFTWARE.
 //
 
+@testable import AppFeature
 import Foundation
 import SingleLineControllerDIPrimitives
-@testable import AppFeature
 
 /// Test `Clock`: ignores the requested delay and fires on the next main-queue
 /// cycle so timer-driven flows run in milliseconds instead of seconds.

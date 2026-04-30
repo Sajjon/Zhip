@@ -22,15 +22,15 @@
 // SOFTWARE.
 //
 
-import UIKit
 import SingleLineControllerController
+import UIKit
 
 /// `SceneController` glue for the pincode chooser screen.
 public final class ChoosePincode: Scene<ChoosePincodeView> {}
 
 /// Localized navigation title.
-extension ChoosePincode {
-    public static let title = String(localized: .ChoosePincode.title)
+public extension ChoosePincode {
+    static let title = String(localized: .ChoosePincode.title)
 }
 
 /// Right "Skip" bar-button + suppress the back arrow — this is an opt-in

@@ -6,7 +6,6 @@ import UIKit
 // MARK: - sinkOnMain
 
 public extension Publisher where Failure == Never {
-
     /// Subscribes and dispatches each value through the supplied scheduling
     /// closure before invoking `receiveValue`.
     ///

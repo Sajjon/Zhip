@@ -25,9 +25,9 @@
 import Combine
 import Factory
 import SingleLineControllerCombine
+import SingleLineControllerNavigation
 import UIKit
 import Zesame
-import SingleLineControllerNavigation
 
 /// Outcome the main coordinator surfaces to its parent (`AppCoordinator`).
 public enum MainCoordinatorNavigationStep {
@@ -62,7 +62,7 @@ public final class MainCoordinator: BaseCoordinator<MainCoordinatorNavigationSte
     }
 
     /// Begins by pushing the Main hub.
-    public override func start(didStart: Completion? = nil) {
+    override public func start(didStart: Completion? = nil) {
         toMain(didStart: didStart)
     }
 }

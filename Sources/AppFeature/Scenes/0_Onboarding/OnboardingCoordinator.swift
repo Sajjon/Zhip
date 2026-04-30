@@ -23,9 +23,9 @@
 //
 
 import Factory
+import SingleLineControllerNavigation
 import UIKit
 import Zesame
-import SingleLineControllerNavigation
 
 /// Outcome the onboarding coordinator surfaces to its parent (`AppCoordinator`)
 /// when onboarding is complete.
@@ -51,7 +51,7 @@ public final class OnboardingCoordinator: BaseCoordinator<OnboardingCoordinatorN
 
     /// Always begins at the Welcome screen — even on subsequent launches that
     /// re-enter onboarding because a step is still missing.
-    public override func start(didStart _: Completion? = nil) {
+    override public func start(didStart _: Completion? = nil) {
         toWelcome()
     }
 }

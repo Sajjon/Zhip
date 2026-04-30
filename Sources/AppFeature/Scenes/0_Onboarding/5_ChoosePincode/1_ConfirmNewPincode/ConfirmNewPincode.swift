@@ -29,8 +29,8 @@ import SingleLineControllerController
 public final class ConfirmNewPincode: Scene<ConfirmNewPincodeView> {}
 
 /// Localized navigation title.
-extension ConfirmNewPincode {
-    public static let title = String(localized: .ConfirmNewPincode.title)
+public extension ConfirmNewPincode {
+    static let title = String(localized: .ConfirmNewPincode.title)
 }
 
 /// Right "Skip" bar-button — even at the confirm step the user can bail out.
