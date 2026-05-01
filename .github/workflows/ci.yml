@@ -17,6 +17,9 @@ env:
   SCHEME: Zhip
   PROJECT: Zhip.xcodeproj
   SIM_DEVICE: iPhone 17
+  # Keep in sync with justfile's sim_os default. The Validate / Build & test
+  # steps below interpolate $SIM_OS into the xcodebuild -destination string.
+  SIM_OS: "26.1"
 
 jobs:
   ci:
