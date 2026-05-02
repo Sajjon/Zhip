@@ -46,12 +46,9 @@ let package = Package(
         // Third-party SPM deps consumed by AppFeature. Versions mirror the
         // Zhip.xcodeproj's previous package references.
         .package(url: "https://github.com/OpenZesame/Zesame", from: "2.0.0"),
-        .package(url: "https://github.com/EFPrefix/EFQRCode", from: "6.1.0"),
         .package(url: "https://github.com/Skyscanner/SkyFloatingLabelTextField", from: "4.0.0"),
-        .package(url: "https://github.com/roberthein/TinyConstraints", from: "4.0.1"),
         .package(url: "https://github.com/yannickl/QRCodeReader.swift", from: "10.1.1"),
         .package(url: "https://github.com/evgenyneu/keychain-swift", from: "19.0.0"),
-        .package(url: "https://github.com/hackiftekhar/IQKeyboardManager", from: "6.5.6"),
         .package(url: "https://github.com/hmlongco/Factory", from: "2.4.0"),
     ],
     targets: [
@@ -91,12 +88,9 @@ let package = Package(
                 "Resources",
                 // Third-party SPM products
                 .product(name: "Zesame", package: "Zesame"),
-                .product(name: "EFQRCode", package: "EFQRCode"),
                 .product(name: "SkyFloatingLabelTextField", package: "SkyFloatingLabelTextField"),
-                .product(name: "TinyConstraints", package: "TinyConstraints"),
                 .product(name: "QRCodeReader", package: "QRCodeReader.swift"),
                 .product(name: "KeychainSwift", package: "keychain-swift"),
-                .product(name: "IQKeyboardManagerSwift", package: "IQKeyboardManager"),
                 .product(name: "Factory", package: "Factory"),
             ],
             resources: [

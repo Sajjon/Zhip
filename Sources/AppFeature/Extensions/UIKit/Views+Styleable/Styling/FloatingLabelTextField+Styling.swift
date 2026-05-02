@@ -22,7 +22,6 @@
 // SOFTWARE.
 //
 
-import TinyConstraints
 import UIKit
 
 // Same Style/Apply/Customizing/Presets shape as `UILabel+Styling.swift` —

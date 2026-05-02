@@ -25,7 +25,6 @@
 import Factory
 import NanoViewControllerCore
 import NanoViewControllerDIPrimitives
-import TinyConstraints
 import UIKit
 import Validation
 

@@ -22,7 +22,8 @@
 // SOFTWARE.
 //
 
-import EFQRCode
+import CoreImage
+import CoreImage.CIFilterBuiltins
 import UIKit
 
 /// Capability protocol for the Receive/Scan screens. Injected via Factory so
@@ -36,13 +37,17 @@ public protocol QRCoding: AnyObject {
     func decode(cgImage: CGImage) -> TransactionIntent?
 }
 
-/// A type capable of encoding and decoding Transaction to and from QR codes
+/// Encodes/decodes `TransactionIntent` to/from QR codes using only Apple-shipped
+/// CoreImage APIs (`CIQRCodeGenerator` for encoding, `CIDetector` for decoding).
+/// No third-party dependency.
 public final class QRCoder {}
 
 extension QRCoder: QRCoding {
-    /// Encodes `transaction` to JSON, then runs it through `EFQRCode.generate`
-    /// at the requested size. The on-the-wire payload is human-readable JSON so
-    /// other Zilliqa clients can interoperate.
+    /// Encodes `transaction` to JSON, then runs it through `CIQRCodeGenerator`,
+    /// scales the (tiny) generator output up to `size`, and re-tints it to
+    /// the brand teal/deep-blue palette so the result looks at home on the
+    /// Receive screen. The on-the-wire payload is human-readable JSON so other
+    /// Zilliqa clients can interoperate.
     public func encode(transaction: TransactionIntent, size: CGFloat) -> UIImage? {
         guard
             let transactionData = try? JSONEncoder().encode(transaction),
@@ -52,16 +57,26 @@ extension QRCoder: QRCoding {
         return generateImage(content: content, size: size)
     }
 
-    /// Inverse of `encode`. Pulls the first recognized QR string out of the
-    /// `cgImage`, treats it as UTF-8 JSON, and decodes a `TransactionIntent`.
+    /// Inverse of `encode`. Runs `CIDetector(.qr)` over `cgImage`, takes the
+    /// first recognized payload, treats it as UTF-8 JSON, and decodes a
+    /// `TransactionIntent`.
     public func decode(cgImage: CGImage) -> TransactionIntent? {
-        let scannedContentStrings = EFQRCode.recognize(cgImage)
-        guard
-            let scannedContentString = scannedContentStrings.first,
-            let jsonData = scannedContentString.data(using: .utf8),
-            let transaction = try? JSONDecoder().decode(TransactionIntent.self, from: jsonData)
-        else { return nil }
-        return transaction
+        let ciImage = CIImage(cgImage: cgImage)
+        let detector = CIDetector(
+            ofType: CIDetectorTypeQRCode,
+            context: nil,
+            options: [CIDetectorAccuracy: CIDetectorAccuracyHigh]
+        )
+        let features = detector?.features(in: ciImage) ?? []
+        for case let qr as CIQRCodeFeature in features {
+            guard
+                let scanned = qr.messageString,
+                let jsonData = scanned.data(using: .utf8),
+                let transaction = try? JSONDecoder().decode(TransactionIntent.self, from: jsonData)
+            else { continue }
+            return transaction
+        }
+        return nil
     }
 }
 
@@ -69,26 +84,39 @@ extension QRCoder: QRCoding {
 
 private extension QRCoding {
     /// Underlying image generator — always uses our brand teal/deep-blue color
-    /// pair so QR codes look at home in the Receive screen. The watermark
-    /// parameter is reserved for future use (we may stamp a Zilliqa logo).
+    /// pair so QR codes look at home in the Receive screen.
     func generateImage(
         content: String,
         size cgFloatSize: CGFloat,
         backgroundColor: UIColor = .teal,
-        foregroundColor: UIColor = .deepBlue,
-        watermarkImage: UIImage? = nil
+        foregroundColor: UIColor = .deepBlue
     ) -> UIImage? {
-        let intSize = Int(cgFloatSize)
-        let size = EFIntSize(width: intSize, height: intSize)
+        guard let payload = content.data(using: .utf8) else { return nil }
 
-        guard let cgImage = EFQRCode.generate(
-            for: content,
-            size: size,
-            backgroundColor: backgroundColor.cgColor,
-            foregroundColor: foregroundColor.cgColor,
-            watermark: watermarkImage?.cgImage
-        ) else { return nil }
+        let generator = CIFilter.qrCodeGenerator()
+        generator.message = payload
+        // Highest error-correction level so the code stays scannable even if the
+        // edges are clipped or stained — wallet addresses are useless if the
+        // user can't actually scan them.
+        generator.correctionLevel = "H"
+        guard let coreImage = generator.outputImage else { return nil }
 
+        // CIQRCodeGenerator outputs a tiny ~30×30 px image — scale up to the
+        // requested point size with nearest-neighbor scaling so the squares
+        // stay crisp (no blurry interpolation).
+        let scale = max(1, cgFloatSize / coreImage.extent.width)
+        let scaled = coreImage.transformed(by: CGAffineTransform(scaleX: scale, y: scale))
+
+        // Tint via CIFalseColor: input color 0 (black squares) → foreground,
+        // input color 1 (white background) → background.
+        let tint = CIFilter.falseColor()
+        tint.inputImage = scaled
+        tint.color0 = CIColor(cgColor: foregroundColor.cgColor)
+        tint.color1 = CIColor(cgColor: backgroundColor.cgColor)
+        guard let tinted = tint.outputImage else { return nil }
+
+        let context = CIContext()
+        guard let cgImage = context.createCGImage(tinted, from: tinted.extent) else { return nil }
         return UIImage(cgImage: cgImage)
     }
 }

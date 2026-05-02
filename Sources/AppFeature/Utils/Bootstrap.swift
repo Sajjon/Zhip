@@ -25,7 +25,6 @@
 import CoreText
 import Factory
 import Foundation
-import IQKeyboardManagerSwift
 import NanoViewControllerCore
 import OSLog
 import Resources
@@ -41,14 +40,15 @@ public let log = Logger(subsystem: Bundle.main.bundleIdentifier ?? "com.openzesa
 /// Order matters:
 /// 1. `registerFonts` so `UINavigationBar.appearance()` can reference our font.
 /// 2. `setupAppearance` so every view created later inherits the right styling.
-/// 3. `setupKeyboardHiding` (IQKeyboardManager).
-/// 4. `wipeStaleKeychainOnReinstallIfNeeded` — must run *before* anything reads
+/// 3. `wipeStaleKeychainOnReinstallIfNeeded` — must run *before* anything reads
 ///    the wallet, so the destructive reinstall path can't interleave with a
 ///    legitimate read elsewhere.
+///
+/// Tap-outside-to-dismiss-keyboard is wired by `AppDelegate` directly via a
+/// window-level `UITapGestureRecognizer` — no `bootstrap` step needed.
 public func bootstrap() {
     registerFonts()
     AppAppearance.setupDefault()
-    setupKeyboardHiding()
     wipeStaleKeychainOnReinstallIfNeeded()
 }
 
@@ -108,10 +108,4 @@ private func registerFonts() {
         }
         CTFontManagerRegisterFontsForURL(url as CFURL, .process, nil)
     }
-}
-
-/// Enables `IQKeyboardManager` so taps outside text fields dismiss the keyboard
-/// without per-screen `endEditing(_:)` plumbing.
-private func setupKeyboardHiding() {
-    IQKeyboardManager.shared.enable = true
 }

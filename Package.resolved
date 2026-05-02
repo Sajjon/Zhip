@@ -10,30 +10,12 @@
       }
     },
     {
-      "identity" : "efqrcode",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/EFPrefix/EFQRCode",
-      "state" : {
-        "revision" : "3a6c5012f1a0df404a92e55bb01b4b685ff5a2d1",
-        "version" : "6.2.2"
-      }
-    },
-    {
       "identity" : "factory",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/hmlongco/Factory",
       "state" : {
         "revision" : "ccc898f21992ebc130bc04cc197460a5ae230bcf",
         "version" : "2.5.3"
-      }
-    },
-    {
-      "identity" : "iqkeyboardmanager",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/hackiftekhar/IQKeyboardManager",
-      "state" : {
-        "revision" : "c00b1ae9fa1ad8af4465bb6ca901f6943fc98eba",
-        "version" : "6.5.16"
       }
     },
     {
@@ -106,24 +88,6 @@
       "state" : {
         "revision" : "2b59c0c741e9184ab057fd22950b491076d42e91",
         "version" : "603.0.0"
-      }
-    },
-    {
-      "identity" : "swift_qrcodejs",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/EFPrefix/swift_qrcodejs.git",
-      "state" : {
-        "revision" : "d1605333f7edac39b4518538ef4f2638fdd2e4d6",
-        "version" : "2.3.1"
-      }
-    },
-    {
-      "identity" : "tinyconstraints",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/roberthein/TinyConstraints",
-      "state" : {
-        "revision" : "3262e5c591d4ab6272255df2087a01bbebd138dc",
-        "version" : "4.0.2"
       }
     },
     {

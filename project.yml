@@ -37,24 +37,15 @@ packages:
   Zesame:
     url: https://github.com/OpenZesame/Zesame
     majorVersion: 2.0.0
-  EFQRCode:
-    url: https://github.com/EFPrefix/EFQRCode
-    majorVersion: 6.1.0
   SkyFloatingLabelTextField:
     url: https://github.com/Skyscanner/SkyFloatingLabelTextField
     majorVersion: 4.0.0
-  TinyConstraints:
-    url: https://github.com/roberthein/TinyConstraints
-    majorVersion: 4.0.1
   QRCodeReader:
     url: https://github.com/yannickl/QRCodeReader.swift
     majorVersion: 10.1.1
   KeychainSwift:
     url: https://github.com/evgenyneu/keychain-swift
     majorVersion: 19.0.0
-  IQKeyboardManager:
-    url: https://github.com/hackiftekhar/IQKeyboardManager
-    majorVersion: 6.5.6
   SnapshotTesting:
     url: https://github.com/pointfreeco/swift-snapshot-testing
     majorVersion: 1.17.0
@@ -105,18 +96,12 @@ targets:
       # Third-party SPM libs — names match the package products.
       - package: Zesame
         product: Zesame
-      - package: EFQRCode
-        product: EFQRCode
       - package: SkyFloatingLabelTextField
         product: SkyFloatingLabelTextField
-      - package: TinyConstraints
-        product: TinyConstraints
       - package: QRCodeReader
         product: QRCodeReader
       - package: KeychainSwift
         product: KeychainSwift
-      - package: IQKeyboardManager
-        product: IQKeyboardManagerSwift
       - package: Factory
         product: Factory
       # NanoViewController stack (sibling repo).

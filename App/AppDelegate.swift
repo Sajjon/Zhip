@@ -56,6 +56,7 @@ extension AppDelegate: UIApplicationDelegate {
             appCoordinator.start()
         }
         bootstrap()
+        installDismissKeyboardOnTapGesture()
         return true
     }
 
@@ -80,5 +81,23 @@ extension AppDelegate: UIApplicationDelegate {
 
     func applicationDidBecomeActive(_: UIApplication) {
         appCoordinator.appDidBecomeActive()
+    }
+}
+
+// MARK: - Dismiss-keyboard-on-tap
+
+private extension AppDelegate {
+    /// Installs a tap recognizer on the window that calls `endEditing(true)`
+    /// — i.e. tap anywhere outside the focused text field dismisses the
+    /// keyboard. Replaces the `IQKeyboardManager` dependency.
+    ///
+    /// `cancelsTouchesInView = false` is the magic bit: the recognizer
+    /// detects taps but doesn't swallow them, so buttons / table cells /
+    /// other tap targets still receive their hits.
+    func installDismissKeyboardOnTapGesture() {
+        guard let window else { return }
+        let tap = UITapGestureRecognizer(target: window, action: #selector(UIView.endEditing(_:)))
+        tap.cancelsTouchesInView = false
+        window.addGestureRecognizer(tap)
     }
 }

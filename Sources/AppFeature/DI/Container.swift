@@ -95,7 +95,7 @@ public extension Container {
 
     /// QR code encoder/decoder. Stateless, so a fresh instance per resolve is
     /// fine. Tests can register a stub when they want to observe encode/decode
-    /// calls without hitting `EFQRCode`.
+    /// calls without hitting CoreImage.
     var qrCoder: Factory<QRCoding> {
         self { QRCoder() }
     }

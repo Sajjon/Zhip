@@ -22,7 +22,6 @@
 // SOFTWARE.
 //
 
-import TinyConstraints
 import UIKit
 
 extension UIView {
