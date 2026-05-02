@@ -22,7 +22,7 @@
 // SOFTWARE.
 //
 
-import SingleLineControllerCore
+import NanoViewControllerCore
 import UIKit
 
 extension PincodeTextField {

@@ -25,7 +25,7 @@
 @testable import AppFeature
 import Combine
 import Factory
-import SingleLineControllerController
+import NanoViewControllerController
 import XCTest
 
 /// Tests for `CreateNewWalletViewModel`.

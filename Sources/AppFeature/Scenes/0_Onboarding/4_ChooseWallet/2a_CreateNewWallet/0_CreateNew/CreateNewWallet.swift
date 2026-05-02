@@ -23,7 +23,7 @@
 //
 
 import Foundation
-import SingleLineControllerController
+import NanoViewControllerController
 
 /// `SceneController` glue for the password-entry step of wallet creation.
 public final class CreateNewWallet: Scene<CreateNewWalletView> {}

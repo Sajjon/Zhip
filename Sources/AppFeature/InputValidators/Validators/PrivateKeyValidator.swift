@@ -23,7 +23,7 @@
 //
 
 import Foundation
-import SingleLineControllerCore
+import NanoViewControllerCore
 import Validation
 import Zesame
 

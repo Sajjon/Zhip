@@ -1,6 +1,6 @@
 @testable import AppFeature
 import Factory
-import SingleLineControllerController
+import NanoViewControllerController
 import UIKit
 import XCTest
 

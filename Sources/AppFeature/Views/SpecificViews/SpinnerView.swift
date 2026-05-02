@@ -22,8 +22,8 @@
 // SOFTWARE.
 //
 
-import SingleLineControllerCombine
-import SingleLineControllerCore
+import NanoViewControllerCombine
+import NanoViewControllerCore
 import UIKit
 
 /// Themed indeterminate-progress spinner. Replaces `UIActivityIndicatorView`

@@ -22,7 +22,7 @@
 // SOFTWARE.
 //
 
-import SingleLineControllerCore
+import NanoViewControllerCore
 import UIKit
 
 // Same Style/Apply/Customizing/Presets/Mergeable shape as `UILabel+Styling.swift`

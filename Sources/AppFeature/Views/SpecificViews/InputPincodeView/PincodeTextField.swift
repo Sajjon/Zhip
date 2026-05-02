@@ -23,8 +23,8 @@
 //
 
 import Combine
-import SingleLineControllerCombine
-import SingleLineControllerCore
+import NanoViewControllerCombine
+import NanoViewControllerCore
 import UIKit
 import Validation
 

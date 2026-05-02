@@ -1,5 +1,5 @@
 //
-import SingleLineControllerCore
+import NanoViewControllerCore
 
 // MIT License
 //

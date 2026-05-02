@@ -23,8 +23,8 @@
 //
 
 import Combine
-import SingleLineControllerCombine
-import SingleLineControllerController
+import NanoViewControllerCombine
+import NanoViewControllerController
 import Validation
 import Zesame
 

@@ -24,10 +24,10 @@
 
 import Combine
 import Foundation
-import SingleLineControllerCombine
-import SingleLineControllerController
-import SingleLineControllerCore
-import SingleLineControllerSceneViews
+import NanoViewControllerCombine
+import NanoViewControllerController
+import NanoViewControllerCore
+import NanoViewControllerSceneViews
 import UIKit
 import Zesame
 

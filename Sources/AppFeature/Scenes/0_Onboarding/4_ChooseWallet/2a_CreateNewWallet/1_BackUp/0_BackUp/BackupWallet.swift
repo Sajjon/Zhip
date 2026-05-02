@@ -23,7 +23,7 @@
 //
 
 import Foundation
-import SingleLineControllerController
+import NanoViewControllerController
 
 /// `SceneController` glue for the wallet-backup hub screen.
 public final class BackupWallet: Scene<BackupWalletView> {}

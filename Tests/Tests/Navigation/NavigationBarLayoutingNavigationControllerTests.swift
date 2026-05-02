@@ -1,5 +1,5 @@
 @testable import AppFeature
-import SingleLineControllerController
+import NanoViewControllerController
 import UIKit
 import XCTest
 

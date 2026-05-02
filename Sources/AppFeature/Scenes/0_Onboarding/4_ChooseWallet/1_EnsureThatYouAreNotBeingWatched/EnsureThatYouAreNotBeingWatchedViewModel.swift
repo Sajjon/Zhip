@@ -24,7 +24,7 @@
 
 import Combine
 import Foundation
-import SingleLineControllerController
+import NanoViewControllerController
 
 // MARK: - User action and navigation steps
 

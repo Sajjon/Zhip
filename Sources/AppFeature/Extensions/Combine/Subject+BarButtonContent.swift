@@ -2,7 +2,7 @@
 
 import Combine
 import Foundation
-import SingleLineControllerController
+import NanoViewControllerController
 
 /// Convenience for ViewModels driving the bar-button-content subjects on
 /// `InputFromController` (`leftBarButtonContentSubject`, `rightBarButtonContentSubject`).

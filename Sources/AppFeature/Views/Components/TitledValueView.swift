@@ -22,8 +22,8 @@
 // SOFTWARE.
 //
 
-import SingleLineControllerCombine
-import SingleLineControllerCore
+import NanoViewControllerCombine
+import NanoViewControllerCore
 import UIKit
 
 /// Compound "label + selectable value" component used to display read-only

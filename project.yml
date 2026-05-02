@@ -67,9 +67,14 @@ packages:
   Factory:
     url: https://github.com/hmlongco/Factory
     majorVersion: 2.4.0
-  # Local SPM root — provides every Sources/<TargetName>/ module declared in /Package.swift.
+  # Local SPM root — provides Validation, Resources, and AppFeature.
   Zhip:
     path: .
+  # Sibling repo containing the reactive-MVVM scaffolding (was the
+  # SingleLineController* modules — now NanoViewController*). Local-path
+  # dep until NanoViewController gets a tagged release.
+  NanoViewController:
+    path: ../NanoViewController
 
 targets:
   Zhip:
@@ -127,19 +132,20 @@ targets:
         product: FirebaseCrashlytics
       - package: Factory
         product: Factory
-      # Local SPM products — the SLC stack, Validation, Resources.
-      - package: Zhip
-        product: SingleLineControllerCore
-      - package: Zhip
-        product: SingleLineControllerCombine
-      - package: Zhip
-        product: SingleLineControllerNavigation
-      - package: Zhip
-        product: SingleLineControllerController
-      - package: Zhip
-        product: SingleLineControllerSceneViews
-      - package: Zhip
-        product: SingleLineControllerDIPrimitives
+      # NanoViewController stack (sibling repo).
+      - package: NanoViewController
+        product: NanoViewControllerCore
+      - package: NanoViewController
+        product: NanoViewControllerCombine
+      - package: NanoViewController
+        product: NanoViewControllerNavigation
+      - package: NanoViewController
+        product: NanoViewControllerController
+      - package: NanoViewController
+        product: NanoViewControllerSceneViews
+      - package: NanoViewController
+        product: NanoViewControllerDIPrimitives
+      # Local SPM products — Validation, Resources, AppFeature.
       - package: Zhip
         product: Validation
       - package: Zhip
@@ -178,8 +184,6 @@ targets:
         excludes:
           # Per-package SPM test bundles — those run via the package's own
           # scheme, not through ZhipTests.
-          - "SingleLineControllerCoreTests/**"
-          - "SingleLineControllerCombineTests/**"
           - "ValidationTests/**"
           - "Configurations/**"
     dependencies:

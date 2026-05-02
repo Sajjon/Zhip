@@ -1,14 +1,14 @@
 // MIT License — Copyright (c) 2018-2026 Open Zesame
 
 import Foundation
-import SingleLineControllerController
+import NanoViewControllerController
 
 /// The predefined library of navigation-bar buttons used across Zhip.
 ///
 /// Restricting screens to this small set keeps the navigation chrome consistent
 /// and means localised copy / system styling lives in exactly one place.
 ///
-/// `BarButtonContent` ships in the `SingleLineControllerController` package as
+/// `BarButtonContent` ships in the `NanoViewControllerController` package as
 /// the primitive; this enum is Zhip's typed catalog on top of it.
 public enum BarButton {
     /// Localised "Skip" text button — used in optional onboarding steps.

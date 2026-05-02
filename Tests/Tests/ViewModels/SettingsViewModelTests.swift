@@ -25,8 +25,8 @@
 @testable import AppFeature
 import Combine
 import Foundation
-import SingleLineControllerController
-import SingleLineControllerSceneViews
+import NanoViewControllerController
+import NanoViewControllerSceneViews
 import XCTest
 
 /// Tests for `SettingsViewModel`.

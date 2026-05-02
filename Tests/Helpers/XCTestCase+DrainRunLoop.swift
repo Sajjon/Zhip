@@ -23,7 +23,7 @@
 //
 
 import Foundation
-import SingleLineControllerDIPrimitives
+import NanoViewControllerDIPrimitives
 import XCTest
 
 extension XCTestCase {

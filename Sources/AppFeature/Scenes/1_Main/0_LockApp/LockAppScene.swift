@@ -22,7 +22,7 @@
 // SOFTWARE.
 //
 
-import SingleLineControllerController
+import NanoViewControllerController
 import UIKit
 
 /// Privacy-cover screen shown over the live Main UI when the app goes to the

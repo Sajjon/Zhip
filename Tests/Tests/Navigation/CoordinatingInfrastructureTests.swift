@@ -25,9 +25,9 @@
 @testable import AppFeature
 import Combine
 import Factory
-import SingleLineControllerController
-import SingleLineControllerCore
-import SingleLineControllerNavigation
+import NanoViewControllerController
+import NanoViewControllerCore
+import NanoViewControllerNavigation
 import UIKit
 import XCTest
 

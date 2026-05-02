@@ -22,9 +22,9 @@
 // SOFTWARE.
 //
 
-import SingleLineControllerCombine
-import SingleLineControllerController
-import SingleLineControllerCore
+import NanoViewControllerCombine
+import NanoViewControllerController
+import NanoViewControllerCore
 import UIKit
 
 /// First-run welcome screen: a parallax spaceship illustration with a

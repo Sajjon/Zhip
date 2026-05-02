@@ -22,7 +22,7 @@
 // SOFTWARE.
 //
 
-import SingleLineControllerCombine
+import NanoViewControllerCombine
 import SkyFloatingLabelTextField
 import UIKit
 import Validation

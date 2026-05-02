@@ -23,7 +23,7 @@
 //
 
 import Foundation
-import SingleLineControllerController
+import NanoViewControllerController
 
 /// `SceneController` glue for the review-transaction screen (step 2 of Send).
 /// Shows the prepared payment for the user to confirm before signing.

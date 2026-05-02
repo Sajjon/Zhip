@@ -23,9 +23,9 @@
 //
 
 import Combine
-import SingleLineControllerCombine
-import SingleLineControllerController
-import SingleLineControllerSceneViews
+import NanoViewControllerCombine
+import NanoViewControllerController
+import NanoViewControllerSceneViews
 import UIKit
 
 /// Wallet hub screen — shows balance with pull-to-refresh + send/receive CTAs.

@@ -22,8 +22,8 @@
 // SOFTWARE.
 //
 
-import SingleLineControllerCombine
-import SingleLineControllerCore
+import NanoViewControllerCombine
+import NanoViewControllerCore
 import UIKit
 
 /// `UIButton` subclass that overlays a spinner during async work, surfaced to

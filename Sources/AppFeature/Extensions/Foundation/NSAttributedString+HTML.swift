@@ -22,8 +22,8 @@
 // SOFTWARE.
 //
 
+import NanoViewControllerCore
 import Resources
-import SingleLineControllerCore
 import UIKit
 
 /// Loads an HTML file bundled with the app and returns it as a styled

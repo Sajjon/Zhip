@@ -22,7 +22,7 @@
 // SOFTWARE.
 //
 
-import SingleLineControllerCore
+import NanoViewControllerCore
 import UIKit
 
 /// Custom pull-to-refresh control that replaces UIKit's bundled spinner with

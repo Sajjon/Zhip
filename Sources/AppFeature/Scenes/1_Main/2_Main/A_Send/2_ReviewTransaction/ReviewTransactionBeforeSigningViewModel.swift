@@ -24,8 +24,8 @@
 
 import Combine
 import Foundation
-import SingleLineControllerCombine
-import SingleLineControllerController
+import NanoViewControllerCombine
+import NanoViewControllerController
 import Zesame
 
 /// Outcome of step 2 of Send.

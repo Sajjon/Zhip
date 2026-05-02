@@ -1,7 +1,7 @@
 // MIT License — Copyright (c) 2018-2026 Open Zesame
 
 import Combine
-import SingleLineControllerCombine
+import NanoViewControllerCombine
 import UIKit
 
 extension UITableView {

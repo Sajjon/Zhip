@@ -23,8 +23,8 @@
 //
 
 import Foundation
-import SingleLineControllerController
-import SingleLineControllerCore
+import NanoViewControllerController
+import NanoViewControllerCore
 
 /// `SceneController` glue for the crash-reporting opt-in screen.
 ///

@@ -22,8 +22,8 @@
 // SOFTWARE.
 //
 
-import SingleLineControllerController
-import SingleLineControllerNavigation
+import NanoViewControllerController
+import NanoViewControllerNavigation
 import UIKit
 
 extension Coordinating {

@@ -25,7 +25,7 @@
 @testable import AppFeature
 import Combine
 import Foundation
-import SingleLineControllerController
+import NanoViewControllerController
 
 /// Builds a fake `InputFromController` suitable for driving a ViewModel under test.
 ///

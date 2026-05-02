@@ -24,9 +24,9 @@
 
 import Combine
 import Factory
-import SingleLineControllerCombine
-import SingleLineControllerController
-import SingleLineControllerCore
+import NanoViewControllerCombine
+import NanoViewControllerController
+import NanoViewControllerCore
 import Validation
 import Zesame
 
@@ -103,7 +103,7 @@ public final class RestoreWalletViewModel: BaseViewModel<
         // Funnel any tracked use-case error through the keystore-error mapper
         // so the view can flip the keystore field red and force-redirect the
         // segment. Sources the projection from `ErrorTracker.compactMap`
-        // (the public hook in the SingleLineControllerCore package); the
+        // (the public hook in the NanoViewControllerCore package); the
         // legacy `asInputValidationErrors` shim was retired in the same move.
         let keystoreRestorationError: AnyPublisher<AnyValidation, Never> = errorTracker
             .compactMap { KeystoreValidator.Error(error: $0) }

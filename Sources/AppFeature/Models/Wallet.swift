@@ -22,7 +22,7 @@
 // SOFTWARE.
 //
 
-import SingleLineControllerCore
+import NanoViewControllerCore
 import Zesame
 
 /// App-side wrapper around `Zesame.Wallet` that additionally records *how* the wallet

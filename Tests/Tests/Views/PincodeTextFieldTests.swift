@@ -24,7 +24,7 @@
 
 @testable import AppFeature
 import Combine
-import SingleLineControllerCore
+import NanoViewControllerCore
 import UIKit
 import XCTest
 

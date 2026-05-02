@@ -23,7 +23,7 @@
 //
 
 import Combine
-import SingleLineControllerController
+import NanoViewControllerController
 
 // MARK: - ChooseWalletUserAction
 

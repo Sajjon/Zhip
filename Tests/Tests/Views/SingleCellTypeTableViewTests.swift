@@ -24,7 +24,7 @@
 
 @testable import AppFeature
 import Combine
-import SingleLineControllerSceneViews
+import NanoViewControllerSceneViews
 import UIKit
 import XCTest
 

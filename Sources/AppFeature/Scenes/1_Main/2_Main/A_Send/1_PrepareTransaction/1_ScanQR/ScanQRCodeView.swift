@@ -24,10 +24,10 @@
 
 import AVFoundation
 import Combine
+import NanoViewControllerCombine
+import NanoViewControllerController
+import NanoViewControllerCore
 import QRCodeReader
-import SingleLineControllerCombine
-import SingleLineControllerController
-import SingleLineControllerCore
 import UIKit
 
 /// QR-code scanner view backed by the third-party `QRCodeReader` library.

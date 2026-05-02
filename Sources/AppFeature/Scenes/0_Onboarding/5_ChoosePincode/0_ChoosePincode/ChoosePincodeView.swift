@@ -23,9 +23,9 @@
 //
 
 import Combine
-import SingleLineControllerCombine
-import SingleLineControllerController
-import SingleLineControllerSceneViews
+import NanoViewControllerCombine
+import NanoViewControllerController
+import NanoViewControllerSceneViews
 import UIKit
 
 /// Pincode chooser screen — N-digit pincode input + disclaimer + done CTA.

@@ -23,9 +23,9 @@
 //
 
 import Combine
-import SingleLineControllerCombine
-import SingleLineControllerController
-import SingleLineControllerSceneViews
+import NanoViewControllerCombine
+import NanoViewControllerController
+import NanoViewControllerSceneViews
 import UIKit
 
 /// Pincode-removal confirmation — single pincode input that auto-fires removal

@@ -1,5 +1,5 @@
 @testable import AppFeature
-import SingleLineControllerCombine
+import NanoViewControllerCombine
 import XCTest
 
 final class ArrayExtensionTests: XCTestCase {

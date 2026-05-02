@@ -22,7 +22,7 @@
 // SOFTWARE.
 //
 
-import SingleLineControllerController
+import NanoViewControllerController
 import UIKit
 
 /// `SceneController` glue for the Settings hub (table-view).

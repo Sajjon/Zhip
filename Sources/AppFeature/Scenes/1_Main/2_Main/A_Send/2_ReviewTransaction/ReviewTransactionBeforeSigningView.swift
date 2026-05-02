@@ -23,9 +23,9 @@
 //
 
 import Combine
-import SingleLineControllerCombine
-import SingleLineControllerController
-import SingleLineControllerSceneViews
+import NanoViewControllerCombine
+import NanoViewControllerController
+import NanoViewControllerSceneViews
 import UIKit
 
 /// Step 2 of Send — read-only summary of the prepared payment (recipient,

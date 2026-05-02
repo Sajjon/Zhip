@@ -24,9 +24,9 @@
 
 import Combine
 import Factory
-import SingleLineControllerCombine
-import SingleLineControllerController
-import SingleLineControllerSceneViews
+import NanoViewControllerCombine
+import NanoViewControllerController
+import NanoViewControllerSceneViews
 import UIKit
 import Zesame
 

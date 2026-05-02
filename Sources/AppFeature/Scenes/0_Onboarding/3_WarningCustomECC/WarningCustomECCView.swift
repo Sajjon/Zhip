@@ -8,9 +8,9 @@
 
 import Combine
 import Factory
-import SingleLineControllerCombine
-import SingleLineControllerController
-import SingleLineControllerSceneViews
+import NanoViewControllerCombine
+import NanoViewControllerController
+import NanoViewControllerSceneViews
 import UIKit
 
 /// Custom-ECC warning screen — identical layout to Terms but with a warning

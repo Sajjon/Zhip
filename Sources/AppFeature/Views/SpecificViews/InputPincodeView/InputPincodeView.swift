@@ -23,8 +23,8 @@
 //
 
 import Factory
-import SingleLineControllerCore
-import SingleLineControllerDIPrimitives
+import NanoViewControllerCore
+import NanoViewControllerDIPrimitives
 import TinyConstraints
 import UIKit
 import Validation

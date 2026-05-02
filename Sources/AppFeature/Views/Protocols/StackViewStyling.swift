@@ -22,8 +22,8 @@
 // SOFTWARE.
 //
 
-import SingleLineControllerController
-import SingleLineControllerSceneViews
+import NanoViewControllerController
+import NanoViewControllerSceneViews
 import UIKit
 
 /// Refines `ContentViewProvider` so a view can declare its layout as a
@@ -54,7 +54,7 @@ public extension ContentViewProvider where Self: StackViewStyling {
 ///
 /// Pre-extraction this typealias lived next to `BaseScrollableStackViewOwner`
 /// in `Sources/Views/SceneViews/`; that file moved to the
-/// `SingleLineControllerSceneViews` package, but `StackViewStyling` is
+/// `NanoViewControllerSceneViews` package, but `StackViewStyling` is
 /// Zhip-specific (refines the package's `ContentViewProvider` with Zhip's
 /// `UIStackView.Style`), so the typealias stays on the Zhip side too.
 public typealias ScrollableStackViewOwner = BaseScrollableStackViewOwner & StackViewStyling

@@ -25,7 +25,7 @@
 import Factory
 import Foundation
 import KeychainSwift
-import SingleLineControllerDIPrimitives
+import NanoViewControllerDIPrimitives
 import Zesame
 
 /// The Zilliqa network this build targets. Currently wired to `.mainnet`. When we

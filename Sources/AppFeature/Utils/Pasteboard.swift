@@ -1,7 +1,7 @@
 // MIT License — Copyright (c) 2018-2026 Open Zesame
 
 import Foundation
-import SingleLineControllerDIPrimitives
+import NanoViewControllerDIPrimitives
 
 /// Project-wide constants for sensitive pasteboard writes.
 /// Centralised so all sensitive copies share the same expiration window —
@@ -9,7 +9,7 @@ import SingleLineControllerDIPrimitives
 /// 30s or 90s is better.
 ///
 /// The `Pasteboard` protocol + `DefaultPasteboard` implementation live in the
-/// `SingleLineControllerDIPrimitives` package; this enum is Zhip-specific
+/// `NanoViewControllerDIPrimitives` package; this enum is Zhip-specific
 /// policy that consumers reference when calling `pasteboard.copy(_:expiringAfter:)`.
 public enum SensitivePasteboard {
     /// Expiration window applied to private-key, keystore, and similar

@@ -22,8 +22,8 @@
 // SOFTWARE.
 //
 
+import NanoViewControllerCore
 import Resources
-import SingleLineControllerCore
 import UIKit
 import WebKit
 

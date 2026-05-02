@@ -23,7 +23,7 @@
 //
 
 import Foundation
-import SingleLineControllerController
+import NanoViewControllerController
 
 /// `SceneController` glue for the password-gate that decrypts the keystore
 /// and reveals the underlying private key + address.

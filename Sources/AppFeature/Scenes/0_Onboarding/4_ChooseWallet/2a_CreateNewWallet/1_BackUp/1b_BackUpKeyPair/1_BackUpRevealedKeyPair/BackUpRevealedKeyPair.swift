@@ -23,7 +23,7 @@
 //
 
 import Foundation
-import SingleLineControllerController
+import NanoViewControllerController
 
 /// `SceneController` glue for the revealed-keypair display screen.
 public final class BackUpRevealedKeyPair: Scene<BackUpRevealedKeyPairView> {}

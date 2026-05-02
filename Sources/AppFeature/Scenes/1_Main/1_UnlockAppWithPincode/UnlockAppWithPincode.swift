@@ -23,7 +23,7 @@
 //
 
 import Foundation
-import SingleLineControllerController
+import NanoViewControllerController
 
 /// `SceneController` glue for the pincode-unlock screen.
 public final class UnlockAppWithPincode: Scene<UnlockAppWithPincodeView> {}

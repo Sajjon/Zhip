@@ -23,7 +23,7 @@
 //
 
 import Foundation
-import SingleLineControllerCore
+import NanoViewControllerCore
 
 /// Builds outgoing `zhip.app` HTTPS URLs that, when opened, re-enter the app via
 /// the deep-link handler. Exists behind a protocol so coordinators depend on the

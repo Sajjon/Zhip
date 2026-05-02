@@ -22,7 +22,7 @@
 // SOFTWARE.
 //
 
-import SingleLineControllerCore
+import NanoViewControllerCore
 import UIKit
 
 /// `UIButton` subclass that arranges an image **above** a label, instead of

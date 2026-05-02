@@ -23,7 +23,7 @@
 //
 
 import Factory
-import SingleLineControllerDIPrimitives
+import NanoViewControllerDIPrimitives
 import UIKit
 
 /// Resolves `baseUrlString` (optionally appending `path`), and asks the

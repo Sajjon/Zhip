@@ -24,7 +24,7 @@
 
 @testable import AppFeature
 import Foundation
-import SingleLineControllerDIPrimitives
+import NanoViewControllerDIPrimitives
 
 /// In-test `UrlOpener` that NEVER forwards to `UIApplication.shared.open(_:)`.
 /// Records every dispatched URL so tests can assert which external navigation

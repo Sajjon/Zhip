@@ -6,14 +6,14 @@ Zhip is an iOS Zilliqa wallet app built with UIKit + Combine using a custom MVVM
 
 The reactive layer is Apple's `Combine` framework throughout. There are no RxSwift/RxCocoa/RxDataSources dependencies — all streams are `AnyPublisher`, all subjects are `PassthroughSubject`/`CurrentValueSubject`, and subscription lifetime is managed by `Set<AnyCancellable>`.
 
-The reactive-MVVM scaffolding (`ViewModelType`, `Binder<T>`, `-->`, `Coordinating`/`BaseCoordinator`/`Navigator`, the DI primitives, the validation framework) lives in a single flat SPM package at the repo root (`/Package.swift`), with one library product per module:
+The reactive-MVVM scaffolding (`ViewModelType`, `Binder<T>`, `-->`, `Coordinating`/`BaseCoordinator`/`Navigator`, the DI primitives) lives in a **sibling repo** at `../NanoViewController/`, consumed by Zhip via a local-path SPM dep. Library products:
 
-- `SingleLineControllerCore` / `Combine` / `Navigation` / `Controller` / `SceneViews` / `DIPrimitives` — the SLC architecture itself.
-- `Validation` — sibling reactive-validation framework consumed by the SLC layer.
+- **NanoViewController** repo (sibling): `NanoViewControllerCore` / `Combine` / `Navigation` / `Controller` / `SceneViews` / `DIPrimitives` — the reactive-MVVM scaffolding (formerly the in-tree `SingleLineController*` modules).
+- `Validation` — reactive-validation framework, lives in this repo.
 - `Resources` — bundled fonts/html/audio (Bundle.module shim).
 - `AppFeature` — the entire Zhip app: Coordinators, Scenes, ViewModels, Views, Models, UseCases, Persistence, DI, Extensions. Consumed by the Zhip iOS-app target as a single SPM product; the iOS-app target itself is just `App/AppDelegate.swift` plus bundle resources.
 
-Sources for each SPM target live at `/Sources/<TargetName>/`. Per-feature extraction of `AppFeature` into smaller SPM modules is a possible future step.
+Zhip's own SPM targets live at `/Sources/<TargetName>/`. The NanoViewController sources live at `../NanoViewController/Sources/<TargetName>/`. Per-feature extraction of `AppFeature` into smaller SPM modules is a possible future step.
 
 ### Project generation
 
@@ -58,7 +58,7 @@ UI updated via `-->` operator binding outputs to Binders
 ## Key Protocols & Types
 
 ### `ViewModelType`
-**File**: `Sources/SingleLineControllerCore/ViewModelType.swift`
+**File**: `../NanoViewController/Sources/NanoViewControllerCore/ViewModelType.swift`
 
 ```swift
 protocol ViewModelType {
@@ -71,7 +71,7 @@ protocol ViewModelType {
 All ViewModels implement `transform`. It is the only public method — input in, output out.
 
 ### `InputType`
-**File**: `Sources/SingleLineControllerCore/InputType.swift`
+**File**: `../NanoViewController/Sources/NanoViewControllerCore/InputType.swift`
 
 ```swift
 protocol InputType {
@@ -88,7 +88,7 @@ Every ViewModel's `Input` has two channels:
 - `fromController` — lifecycle events and navigation subjects from `InputFromController`
 
 ### `ViewModelled`
-**File**: `Sources/SingleLineControllerController/ViewModelled.swift`
+**File**: `../NanoViewController/Sources/NanoViewControllerController/ViewModelled.swift`
 
 ```swift
 protocol ViewModelled: EmptyInitializable {
@@ -104,7 +104,7 @@ Views provide:
 - `populate(with:)` — binds ViewModel output streams back to UI controls, returns `[AnyCancellable]`
 
 ### `InputFromController`
-**File**: `Sources/SingleLineControllerController/InputFromController.swift`
+**File**: `../NanoViewController/Sources/NanoViewControllerController/InputFromController.swift`
 
 ```swift
 struct InputFromController {
@@ -135,7 +135,7 @@ AbstractViewModel<FromView, FromController, Output>  (has cancellables: Set<AnyC
 ---
 
 ## SceneController — The Orchestrator
-**File**: `Sources/SingleLineControllerController/SceneController.swift`
+**File**: `../NanoViewController/Sources/NanoViewControllerController/SceneController.swift`
 
 ```swift
 class SceneController<View: ContentView>: AbstractController
@@ -151,12 +151,12 @@ Key responsibility chain on init:
 `SceneController` is never overridden for logic — it's purely mechanical wiring.
 
 ### `TitledScene`
-**File**: `Sources/SingleLineControllerController/TitledScene.swift`
+**File**: `../NanoViewController/Sources/NanoViewControllerController/TitledScene.swift`
 
 Optional protocol on `SceneController` subclasses. When conformed, `SceneController` sets `title` automatically from `static var title: String`.
 
 ### Scene Typealias
-**File**: `Sources/SingleLineControllerController/Scene.swift`
+**File**: `../NanoViewController/Sources/NanoViewControllerController/Scene.swift`
 
 ```swift
 typealias Scene<View: ContentView> = SceneController<View> & TitledScene
@@ -168,7 +168,7 @@ Used throughout coordinators: `Scene<ChoosePincodeView>`, `Scene<SettingsView>`,
 ---
 
 ## The `-->` Binding Operator
-**File**: `Sources/SingleLineControllerCombine/Publisher+Operators.swift`
+**File**: `../NanoViewController/Sources/NanoViewControllerCombine/Publisher+Operators.swift`
 
 ```swift
 infix operator -->
@@ -230,7 +230,7 @@ Generic publisher/binder extensions live in `Sources/AppFeature/Extensions/UIKit
 
 ## Table Views
 
-`SingleCellTypeTableView<Header, Cell>` in `Sources/SingleLineControllerSceneViews/SingleCellTypeTableView.swift` is backed by `UITableViewDiffableDataSource`. Sections arrive as `AnyPublisher<[SectionSnapshot<Header, Cell.Model>], Never>` and item selection is exposed as `didSelectItem: AnyPublisher<IndexPath, Never>`.
+`SingleCellTypeTableView<Header, Cell>` in `../NanoViewController/Sources/NanoViewControllerSceneViews/SingleCellTypeTableView.swift` is backed by `UITableViewDiffableDataSource`. Sections arrive as `AnyPublisher<[SectionSnapshot<Header, Cell.Model>], Never>` and item selection is exposed as `didSelectItem: AnyPublisher<IndexPath, Never>`.
 
 Used by `SettingsView` and similar table-backed screens.
 
@@ -343,19 +343,19 @@ Full guide: [TESTING.md](./TESTING.md).
 
 | Concept | Path |
 |---------|------|
-| `ViewModelType` | `Sources/SingleLineControllerCore/ViewModelType.swift` |
-| `InputType` | `Sources/SingleLineControllerCore/InputType.swift` |
-| `ViewModelled` | `Sources/SingleLineControllerController/ViewModelled.swift` |
-| `AbstractViewModel` | `Sources/SingleLineControllerCore/AbstractViewModel.swift` |
+| `ViewModelType` | `../NanoViewController/Sources/NanoViewControllerCore/ViewModelType.swift` |
+| `InputType` | `../NanoViewController/Sources/NanoViewControllerCore/InputType.swift` |
+| `ViewModelled` | `../NanoViewController/Sources/NanoViewControllerController/ViewModelled.swift` |
+| `AbstractViewModel` | `../NanoViewController/Sources/NanoViewControllerCore/AbstractViewModel.swift` |
 | `BaseViewModel` | `Sources/AppFeature/ViewModel/BaseClasses/BaseViewModel.swift` |
-| `SceneController` | `Sources/SingleLineControllerController/SceneController.swift` |
-| `InputFromController` | `Sources/SingleLineControllerController/InputFromController.swift` |
-| `Scene` typealias | `Sources/SingleLineControllerController/Scene.swift` |
-| `Binder` + `-->` operator | `Sources/SingleLineControllerCombine/Binder.swift`, `Publisher+Operators.swift` |
-| Publisher helpers (`mapToVoid`, `filterNil`, `orEmpty`, `withLatestFrom`, etc.) | `Sources/SingleLineControllerCombine/Publisher+Extras.swift`, `Publisher+Helpers.swift` |
-| `ActivityIndicator` | `Sources/SingleLineControllerCore/ActivityIndicator.swift` |
+| `SceneController` | `../NanoViewController/Sources/NanoViewControllerController/SceneController.swift` |
+| `InputFromController` | `../NanoViewController/Sources/NanoViewControllerController/InputFromController.swift` |
+| `Scene` typealias | `../NanoViewController/Sources/NanoViewControllerController/Scene.swift` |
+| `Binder` + `-->` operator | `../NanoViewController/Sources/NanoViewControllerCombine/Binder.swift`, `Publisher+Operators.swift` |
+| Publisher helpers (`mapToVoid`, `filterNil`, `orEmpty`, `withLatestFrom`, etc.) | `../NanoViewController/Sources/NanoViewControllerCombine/Publisher+Extras.swift`, `Publisher+Helpers.swift` |
+| `ActivityIndicator` | `../NanoViewController/Sources/NanoViewControllerCore/ActivityIndicator.swift` |
 | `AnyValidation` | `Sources/Validation/AnyValidation/AnyValidation.swift` |
-| `SingleCellTypeTableView` | `Sources/SingleLineControllerSceneViews/SingleCellTypeTableView.swift` |
+| `SingleCellTypeTableView` | `../NanoViewController/Sources/NanoViewControllerSceneViews/SingleCellTypeTableView.swift` |
 | `Factory` + `Container` | `Sources/AppFeature/DI/Container.swift` |
 | Use case protocols | `Sources/AppFeature/UseCases/*.swift` |
 | `Default*UseCase` | `Sources/AppFeature/UseCases/Implementations/*.swift` |

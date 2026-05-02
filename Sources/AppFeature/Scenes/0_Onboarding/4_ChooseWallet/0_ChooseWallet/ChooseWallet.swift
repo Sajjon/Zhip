@@ -22,7 +22,7 @@
 // SOFTWARE.
 //
 
-import SingleLineControllerController
+import NanoViewControllerController
 import UIKit
 
 /// `SceneController` glue for the "create new vs restore existing" wallet

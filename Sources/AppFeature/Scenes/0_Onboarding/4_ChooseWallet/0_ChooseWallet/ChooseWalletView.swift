@@ -22,9 +22,9 @@
 // SOFTWARE.
 //
 
-import SingleLineControllerCombine
-import SingleLineControllerController
-import SingleLineControllerCore
+import NanoViewControllerCombine
+import NanoViewControllerController
+import NanoViewControllerCore
 import UIKit
 
 /// "Create new vs restore existing" wallet chooser. Mirrors `WelcomeView`'s

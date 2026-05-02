@@ -1,6 +1,6 @@
 // MIT License — Copyright (c) 2018-2026 Open Zesame
 
-import SingleLineControllerCore
+import NanoViewControllerCore
 
 /// A pure function from a raw `Input` to a typed `Validation<Output, Error>`.
 ///

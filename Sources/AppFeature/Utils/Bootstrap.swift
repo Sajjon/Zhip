@@ -28,8 +28,8 @@ import FirebaseAnalytics
 import FirebaseCore
 import Foundation
 import IQKeyboardManagerSwift
+import NanoViewControllerCore
 import Resources
-import SingleLineControllerCore
 import SwiftyBeaver
 import Zesame
 

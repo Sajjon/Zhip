@@ -24,7 +24,7 @@
 
 @testable import AppFeature
 import Combine
-import SingleLineControllerController
+import NanoViewControllerController
 import XCTest
 
 /// Tests for `ConfirmWalletRemovalViewModel`.

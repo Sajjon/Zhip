@@ -25,7 +25,7 @@
 @testable import AppFeature
 import Combine
 import Factory
-import SingleLineControllerDIPrimitives
+import NanoViewControllerDIPrimitives
 import XCTest
 import Zesame
 

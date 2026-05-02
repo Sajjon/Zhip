@@ -24,7 +24,7 @@
 
 @testable import AppFeature
 import Foundation
-import SingleLineControllerDIPrimitives
+import NanoViewControllerDIPrimitives
 
 /// Test `Clock`: ignores the requested delay and fires on the next main-queue
 /// cycle so timer-driven flows run in milliseconds instead of seconds.

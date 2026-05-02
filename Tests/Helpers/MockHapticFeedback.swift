@@ -23,7 +23,7 @@
 //
 
 @testable import AppFeature
-import SingleLineControllerDIPrimitives
+import NanoViewControllerDIPrimitives
 import UIKit
 
 /// In-test `HapticFeedback` that NEVER forwards to

@@ -22,8 +22,8 @@
 // SOFTWARE.
 //
 
-import SingleLineControllerCore
-import SingleLineControllerSceneViews
+import NanoViewControllerCore
+import NanoViewControllerSceneViews
 import UIKit
 
 /// Base class for the project's table-view cells. Composes a horizontal

@@ -23,7 +23,7 @@
 //
 
 import Combine
-import SingleLineControllerNavigation
+import NanoViewControllerNavigation
 import UIKit
 
 /// App-level dispatcher that turns inbound universal-link URLs into typed

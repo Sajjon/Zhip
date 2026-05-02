@@ -24,11 +24,11 @@
 
 import Combine
 import Factory
+import NanoViewControllerCombine
+import NanoViewControllerController
+import NanoViewControllerDIPrimitives
+import NanoViewControllerSceneViews
 import Resources
-import SingleLineControllerCombine
-import SingleLineControllerController
-import SingleLineControllerDIPrimitives
-import SingleLineControllerSceneViews
 import UIKit
 
 /// Step 4 of Send — celebratory "transaction broadcast" screen with a stars

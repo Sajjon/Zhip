@@ -1,7 +1,7 @@
 // MIT License — Copyright (c) 2018-2026 Open Zesame
 
 import Foundation
-import SingleLineControllerCore
+import NanoViewControllerCore
 
 /// Rule that accepts a string only if every character is a hex digit
 /// (`0-9`, `a-f`, `A-F`) or part of a leading `0x` prefix.

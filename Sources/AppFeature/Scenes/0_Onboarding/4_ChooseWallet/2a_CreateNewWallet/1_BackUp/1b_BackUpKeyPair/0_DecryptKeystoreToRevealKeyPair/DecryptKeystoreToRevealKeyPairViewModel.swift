@@ -24,9 +24,9 @@
 
 import Combine
 import Factory
-import SingleLineControllerCombine
-import SingleLineControllerController
-import SingleLineControllerCore
+import NanoViewControllerCombine
+import NanoViewControllerController
+import NanoViewControllerCore
 import Validation
 import Zesame
 

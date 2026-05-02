@@ -24,9 +24,9 @@
 
 import Combine
 import Foundation
-import SingleLineControllerCombine
-import SingleLineControllerController
-import SingleLineControllerCore
+import NanoViewControllerCombine
+import NanoViewControllerController
+import NanoViewControllerCore
 import Validation
 
 // MARK: - RemovePincodeUserAction

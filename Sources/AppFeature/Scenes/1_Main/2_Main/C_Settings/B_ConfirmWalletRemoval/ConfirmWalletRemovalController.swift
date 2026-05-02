@@ -22,7 +22,7 @@
 // SOFTWARE.
 //
 
-import SingleLineControllerController
+import NanoViewControllerController
 import UIKit
 
 /// `SceneController` glue for the wallet-removal confirmation modal — the last

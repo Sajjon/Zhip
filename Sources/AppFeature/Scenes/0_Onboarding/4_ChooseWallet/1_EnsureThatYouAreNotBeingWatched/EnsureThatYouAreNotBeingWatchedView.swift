@@ -22,9 +22,9 @@
 // SOFTWARE.
 //
 
-import SingleLineControllerCombine
-import SingleLineControllerController
-import SingleLineControllerSceneViews
+import NanoViewControllerCombine
+import NanoViewControllerController
+import NanoViewControllerSceneViews
 import UIKit
 
 /// "Make sure you're alone" privacy gate shown right before the user is asked

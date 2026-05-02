@@ -23,7 +23,7 @@
 //
 
 import AppFeature
-import SingleLineControllerController
+import NanoViewControllerController
 import UIKit
 
 @main

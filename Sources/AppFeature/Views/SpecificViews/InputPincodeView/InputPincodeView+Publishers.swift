@@ -15,7 +15,7 @@
 //
 
 import Combine
-import SingleLineControllerCombine
+import NanoViewControllerCombine
 import UIKit
 import Validation
 

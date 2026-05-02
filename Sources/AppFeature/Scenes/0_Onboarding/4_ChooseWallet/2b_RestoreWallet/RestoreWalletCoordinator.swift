@@ -22,7 +22,7 @@
 // SOFTWARE.
 //
 
-import SingleLineControllerNavigation
+import NanoViewControllerNavigation
 import UIKit
 import Zesame
 

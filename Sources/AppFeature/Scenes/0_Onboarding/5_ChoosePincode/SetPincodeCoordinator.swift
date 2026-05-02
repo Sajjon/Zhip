@@ -22,8 +22,8 @@
 // SOFTWARE.
 //
 
-import SingleLineControllerCore
-import SingleLineControllerNavigation
+import NanoViewControllerCore
+import NanoViewControllerNavigation
 import UIKit
 
 /// Outcome of the set-pincode sub-flow. Both the "user picked + confirmed a

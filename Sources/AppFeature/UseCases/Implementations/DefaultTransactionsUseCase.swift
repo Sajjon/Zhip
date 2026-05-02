@@ -3,8 +3,8 @@
 import Combine
 import Factory
 import Foundation
-import SingleLineControllerCombine
-import SingleLineControllerDIPrimitives
+import NanoViewControllerCombine
+import NanoViewControllerDIPrimitives
 import Zesame
 
 /// Default implementation of the composite `TransactionsUseCase` and all five

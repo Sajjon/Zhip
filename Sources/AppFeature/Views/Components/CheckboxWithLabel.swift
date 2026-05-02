@@ -23,7 +23,7 @@
 //
 
 import Combine
-import SingleLineControllerCombine
+import NanoViewControllerCombine
 import TinyConstraints
 import UIKit
 

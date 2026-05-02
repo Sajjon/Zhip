@@ -23,9 +23,9 @@
 //
 
 import Combine
-import SingleLineControllerCombine
-import SingleLineControllerController
-import SingleLineControllerSceneViews
+import NanoViewControllerCombine
+import NanoViewControllerController
+import NanoViewControllerSceneViews
 import UIKit
 
 /// The "create new wallet" screen view — collects an encryption password (twice),

@@ -22,7 +22,7 @@
 // SOFTWARE.
 //
 
-import SingleLineControllerCore
+import NanoViewControllerCore
 import UIKit
 
 /// Two-line centred-text footer used by `UITableView.setFooterLabel(text:height:)`

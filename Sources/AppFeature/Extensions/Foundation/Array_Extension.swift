@@ -23,7 +23,7 @@
 //
 
 import Foundation
-import SingleLineControllerCombine
+import NanoViewControllerCombine
 
 extension Array {
     /// Returns an array of `Void` values with the same count as `self`.

@@ -25,8 +25,8 @@
 @testable import AppFeature
 import Combine
 import Foundation
-import SingleLineControllerController
-import SingleLineControllerCore
+import NanoViewControllerController
+import NanoViewControllerCore
 
 extension ViewModelType where Input: InputType, Self.Input.FromController == InputFromController {
     func transform(inputFromView: Input.FromView) -> OutputVM {

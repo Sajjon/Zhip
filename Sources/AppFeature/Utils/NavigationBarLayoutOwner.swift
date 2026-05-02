@@ -1,11 +1,11 @@
 // MIT License — Copyright (c) 2018-2026 Open Zesame
 
-import SingleLineControllerController
+import NanoViewControllerController
 import UIKit
 
 /// Zhip-side brand-default factories for `NavigationBarLayout`.
 ///
-/// `NavigationBarLayout` ships in `SingleLineControllerController` as a
+/// `NavigationBarLayout` ships in `NanoViewControllerController` as a
 /// memberwise-only struct (every field required) — this file layers Zhip's
 /// brand defaults on top via `extension NavigationBarLayout` so call sites
 /// can read `.opaque` / `.translucent(...)` / `.hidden` / `.default` like

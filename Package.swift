@@ -9,20 +9,14 @@
 //
 // Library products:
 //
-//   SingleLineControllerCore           value types only; no UIKit
-//   SingleLineControllerCombine        Combine helpers + Binder + --> operator
-//   SingleLineControllerNavigation     Coordinator pattern + Navigator
-//   SingleLineControllerController     SceneController, BarButton plumbing, nav-bar layout
-//   SingleLineControllerSceneViews     AbstractSceneView + SingleCellTypeTableView
-//   SingleLineControllerDIPrimitives   protocol-only DI (Clock, MainScheduler, …)
 //   Validation                          reactive validation framework
 //   Resources                           bundled fonts/html/audio (Bundle.module)
 //   AppFeature                          everything else — the Zhip app itself
 //                                       (Coordinators, Scenes, Views, ViewModels,
 //                                       Models, UseCases, Persistence, ...).
 //
-// Future plan: re-extract `SingleLineController*` into a sibling repo. For
-// now flat single-package keeps cross-target wiring simple.
+// The reactive-MVVM scaffolding (formerly `SingleLineController*`) lives
+// in a sibling repo, consumed below as the `NanoViewController` package.
 
 import PackageDescription
 
@@ -37,13 +31,6 @@ let package = Package(
     // iOS 17 matches the Zhip iOS-app target's deployment target in project.yml.
     platforms: [.iOS(.v17), .macOS(.v13)],
     products: [
-        // SLC product surface (will be re-extracted to a sibling repo later).
-        .library(name: "SingleLineControllerCore", targets: ["SingleLineControllerCore"]),
-        .library(name: "SingleLineControllerCombine", targets: ["SingleLineControllerCombine"]),
-        .library(name: "SingleLineControllerNavigation", targets: ["SingleLineControllerNavigation"]),
-        .library(name: "SingleLineControllerController", targets: ["SingleLineControllerController"]),
-        .library(name: "SingleLineControllerSceneViews", targets: ["SingleLineControllerSceneViews"]),
-        .library(name: "SingleLineControllerDIPrimitives", targets: ["SingleLineControllerDIPrimitives"]),
         // Reactive validation framework.
         .library(name: "Validation", targets: ["Validation"]),
         // Bundled resources (fonts, html, audio) routed through Bundle.module.
@@ -52,6 +39,10 @@ let package = Package(
         .library(name: "AppFeature", targets: ["AppFeature"]),
     ],
     dependencies: [
+        // Sibling repo containing the reactive-MVVM scaffolding (was the
+        // `SingleLineController*` modules — see ../NanoViewController).
+        // Local-path dep until NanoViewController gets a tagged release.
+        .package(path: "../NanoViewController"),
         // Third-party SPM deps consumed by AppFeature. Versions mirror the
         // Zhip.xcodeproj's previous package references.
         .package(url: "https://github.com/OpenZesame/Zesame", from: "2.0.0"),
@@ -66,43 +57,13 @@ let package = Package(
         .package(url: "https://github.com/hmlongco/Factory", from: "2.4.0"),
     ],
     targets: [
-        // MARK: - SingleLineController
-
-        .target(name: "SingleLineControllerCore"),
-        .target(
-            name: "SingleLineControllerCombine",
-            dependencies: ["SingleLineControllerCore"]
-        ),
-        .target(
-            name: "SingleLineControllerNavigation",
-            dependencies: ["SingleLineControllerCore"]
-        ),
-        .target(
-            name: "SingleLineControllerController",
-            dependencies: [
-                "SingleLineControllerCore",
-                "SingleLineControllerCombine",
-                "SingleLineControllerNavigation",
-                "SingleLineControllerDIPrimitives",
-            ]
-        ),
-        .target(
-            name: "SingleLineControllerSceneViews",
-            dependencies: [
-                "SingleLineControllerCore",
-                "SingleLineControllerCombine",
-                "SingleLineControllerController",
-            ]
-        ),
-        .target(name: "SingleLineControllerDIPrimitives"),
-
         // MARK: - Validation
 
         .target(
             name: "Validation",
             dependencies: [
-                "SingleLineControllerCore",
-                "SingleLineControllerCombine",
+                .product(name: "NanoViewControllerCore", package: "NanoViewController"),
+                .product(name: "NanoViewControllerCombine", package: "NanoViewController"),
             ]
         ),
 
@@ -121,13 +82,13 @@ let package = Package(
         .target(
             name: "AppFeature",
             dependencies: [
-                // Local SLC stack
-                "SingleLineControllerCore",
-                "SingleLineControllerCombine",
-                "SingleLineControllerNavigation",
-                "SingleLineControllerController",
-                "SingleLineControllerSceneViews",
-                "SingleLineControllerDIPrimitives",
+                // NanoViewController stack (sibling repo).
+                .product(name: "NanoViewControllerCore", package: "NanoViewController"),
+                .product(name: "NanoViewControllerCombine", package: "NanoViewController"),
+                .product(name: "NanoViewControllerNavigation", package: "NanoViewController"),
+                .product(name: "NanoViewControllerController", package: "NanoViewController"),
+                .product(name: "NanoViewControllerSceneViews", package: "NanoViewController"),
+                .product(name: "NanoViewControllerDIPrimitives", package: "NanoViewController"),
                 "Validation",
                 "Resources",
                 // Third-party SPM products
@@ -156,14 +117,6 @@ let package = Package(
 
         // MARK: - Test targets
 
-        .testTarget(
-            name: "SingleLineControllerCoreTests",
-            dependencies: ["SingleLineControllerCore"]
-        ),
-        .testTarget(
-            name: "SingleLineControllerCombineTests",
-            dependencies: ["SingleLineControllerCombine"]
-        ),
         .testTarget(
             name: "ValidationTests",
             dependencies: ["Validation"]
