@@ -1,4 +1,4 @@
-[![codecov](https://codecov.io/gh/OpenZesame/Zhip/graph/badge.svg?token=QXYIVYRA0P)](https://codecov.io/gh/OpenZesame/Zhip)
+[![codecov](https://codecov.io/gh/Sajjon/Zhip/graph/badge.svg?token=BPAwuG4UMT)](https://codecov.io/gh/Sajjon/Zhip)
 
 # Unmaintained
 
