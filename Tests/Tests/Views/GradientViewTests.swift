@@ -1,9 +1,8 @@
+@testable import AppFeature
 import UIKit
 import XCTest
-@testable import Zhip
 
 final class GradientViewTests: XCTestCase {
-
     // MARK: - GradientPoint
 
     func test_draw_leftToRight() {

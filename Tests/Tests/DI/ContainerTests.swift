@@ -22,9 +22,9 @@
 // SOFTWARE.
 //
 
+@testable import AppFeature
 import Factory
 import XCTest
-@testable import Zhip
 
 /// Tests the Factory-compatible DI container: register, resolve, reset.
 ///
@@ -32,7 +32,6 @@ import XCTest
 /// registering a mock `Preferences` is side-effect-free — it doesn't try to open a
 /// network connection or touch the Keychain.
 final class ContainerTests: XCTestCase {
-
     override func tearDown() {
         Container.shared.manager.reset()
         super.tearDown()

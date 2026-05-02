@@ -1,8 +1,8 @@
+@testable import AppFeature
+import Validation
 import XCTest
-@testable import Zhip
 
 final class InputValidatorExtensionTests: XCTestCase {
-
     // MARK: - validate(input: nil) → .empty
 
     func test_validateNilInput_gasPrice_returnsEmpty() {

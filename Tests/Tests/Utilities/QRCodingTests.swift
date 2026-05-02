@@ -22,16 +22,15 @@
 // SOFTWARE.
 //
 
+@testable import AppFeature
 import UIKit
 import XCTest
 import Zesame
-@testable import Zhip
 
 /// Exercises `QRCoder`'s encode and decode paths. Decoding a blank image
 /// returns nil (no QR content); encoding a valid `TransactionIntent` returns
 /// an image.
 final class QRCodingTests: XCTestCase {
-
     private var sut: QRCoder!
 
     override func setUp() {

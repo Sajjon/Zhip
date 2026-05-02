@@ -22,9 +22,10 @@
 // SOFTWARE.
 //
 
+@testable import AppFeature
 import Combine
 import Foundation
-@testable import Zhip
+import SingleLineControllerController
 
 /// Builds a fake `InputFromController` suitable for driving a ViewModel under test.
 ///
@@ -32,7 +33,6 @@ import Foundation
 /// simulate lifecycle callbacks, then inspect the `leftBarButtonContentSubject` /
 /// `titleSubject` / `toastSubject` outputs the ViewModel pushed back.
 struct FakeInputFromController {
-
     /// Emits when the view controller would notify `viewDidLoad`.
     let viewDidLoadSubject = PassthroughSubject<Void, Never>()
 

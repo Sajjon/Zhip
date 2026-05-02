@@ -22,16 +22,15 @@
 // SOFTWARE.
 //
 
+@testable import AppFeature
 import Combine
 import Foundation
 import Zesame
-@testable import Zhip
 
 /// Hand-written mock conforming to every narrow transactions use-case protocol for
 /// ViewModel tests. Async methods read from seedable `*Result` properties; cache
 /// methods mutate in-memory storage and bump call counters.
 final class MockTransactionsUseCase: TransactionsUseCase {
-
     // MARK: - Cache state
 
     var cachedBalance: Amount?
@@ -93,7 +92,7 @@ final class MockTransactionsUseCase: TransactionsUseCase {
 
     func sendTransaction(
         for payment: Payment,
-        wallet _: Zhip.Wallet,
+        wallet _: AppFeature.Wallet,
         encryptionPassword _: String
     ) -> AnyPublisher<TransactionResponse, Swift.Error> {
         sendTransactionCallCount += 1
@@ -120,9 +119,9 @@ final class MockTransactionsUseCase: TransactionsUseCase {
     private func publisher<Output>(for result: Result<Output, Swift.Error>) -> AnyPublisher<Output, Swift.Error> {
         switch result {
         case let .success(value):
-            return Just(value).setFailureType(to: Swift.Error.self).eraseToAnyPublisher()
+            Just(value).setFailureType(to: Swift.Error.self).eraseToAnyPublisher()
         case let .failure(error):
-            return Fail(error: error).eraseToAnyPublisher()
+            Fail(error: error).eraseToAnyPublisher()
         }
     }
 }

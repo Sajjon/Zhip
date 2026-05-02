@@ -1,6 +1,6 @@
+@testable import AppFeature
 import XCTest
 import Zesame
-@testable import Zhip
 
 final class GasPriceValidatorTests: XCTestCase {
     private let sut = GasPriceValidator()

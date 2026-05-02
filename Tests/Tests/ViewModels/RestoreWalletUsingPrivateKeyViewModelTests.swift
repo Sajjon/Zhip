@@ -22,10 +22,10 @@
 // SOFTWARE.
 //
 
+@testable import AppFeature
 import Combine
 import XCTest
 import Zesame
-@testable import Zhip
 
 /// Tests for `RestoreWalletUsingPrivateKeyViewModel`.
 ///
@@ -34,7 +34,6 @@ import Zesame
 /// `keyRestoration` stream that only emits a non-nil value once every field
 /// is valid.
 final class RestoreWalletUsingPrivateKeyViewModelTests: XCTestCase {
-
     private var cancellables: Set<AnyCancellable> = []
     private var privateKey: CurrentValueSubject<String, Never>!
     private var isEditingPrivateKey: CurrentValueSubject<Bool, Never>!

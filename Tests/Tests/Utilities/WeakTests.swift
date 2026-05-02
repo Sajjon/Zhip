@@ -1,8 +1,7 @@
+@testable import AppFeature
 import XCTest
-@testable import Zhip
 
 final class WeakTests: XCTestCase {
-
     func test_weak_holdsValueWhileObjectLives() {
         let obj = DummyClass(value: 42)
         let sut = Weak(obj)
@@ -10,9 +9,9 @@ final class WeakTests: XCTestCase {
         XCTAssertEqual(sut.value?.value, 42)
     }
 
-    func test_weak_releasesWhenObjectDeallocates() {
+    func test_weak_releasesWhenObjectDeallocates() throws {
         var obj: DummyClass? = DummyClass(value: 1)
-        let sut = Weak(obj!)
+        let sut = try Weak(XCTUnwrap(obj))
         obj = nil
         XCTAssertNil(sut.value)
     }
@@ -20,5 +19,7 @@ final class WeakTests: XCTestCase {
 
 private final class DummyClass {
     let value: Int
-    init(value: Int) { self.value = value }
+    init(value: Int) {
+        self.value = value
+    }
 }

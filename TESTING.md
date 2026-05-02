@@ -11,8 +11,8 @@ or fresh dependency.
 - **Pattern**: strict Arrange-Act-Assert. One-line arrange / one-line act /
   one-line assert is the goal; more than five lines in any phase is a smell.
 - **DI**: every injectable dependency resolves from `Container.shared`
-  (`Sources/Application/DI/Container.swift`). Tests substitute fakes with
-  `Container.shared.<factory>.register { Mock() }` and `Container.shared.reset()`
+  (`Sources/AppFeature/DI/Container.swift`). Tests substitute fakes with
+  `Container.shared.<factory>.register { Mock() }` and `Container.shared.manager.reset()`
   in `tearDown`.
 - **Running locally**: `just test` (unit tests) or `just cov` (tests + coverage
   table). `just cov-detailed` highlights every uncovered line — read it when
@@ -64,7 +64,7 @@ the target. One-time setup:
    `Tests/Tests/ViewModels/` directories.
 4. In the dialog: uncheck "Copy items if needed", set Targets → only
    **ZhipTests**, click Add.
-5. Same story for `Sources/Application/DI/Container.swift` — add to the **Zhip**
+5. Same story for `Sources/AppFeature/DI/Container.swift` — add to the **Zhip**
    target (not ZhipTests).
 
 You can confirm everything is wired by running `just test`.
@@ -166,7 +166,7 @@ reacted correctly.
 
 ## Dependency-injection container (`Container`)
 
-The DI layer lives at `Sources/Application/DI/Container.swift`. It is
+The DI layer lives at `Sources/AppFeature/DI/Container.swift`. It is
 intentionally shaped like [hmlongco/Factory](https://github.com/hmlongco/Factory)
 so you can swap this in-repo implementation for the real SPM package with
 ~zero call-site churn:
@@ -178,7 +178,7 @@ let wallet = Container.shared.walletUseCase()
 // Test-time override
 Container.shared.walletUseCase.register { MyMockWalletUseCase() }
 // ...test code...
-Container.shared.reset()  // tearDown
+Container.shared.manager.reset()  // tearDown
 ```
 
 ### Registered dependencies
@@ -202,7 +202,7 @@ When you want to swap in the real SPM package:
 
 1. Add `https://github.com/hmlongco/Factory` as a Swift Package dependency of
    the Zhip target.
-2. Delete `Sources/Application/DI/Container.swift`.
+2. Delete `Sources/AppFeature/DI/Container.swift`.
 3. Replace the file with a set of `Container` extensions that use Factory's
    `@Injected` / `Factory` property wrappers. The registered types are
    unchanged, so call sites (`Container.shared.walletUseCase()`) continue to
@@ -212,38 +212,36 @@ When you want to swap in the real SPM package:
 
 ## Snapshot testing
 
-Snapshot testing is **not yet wired in**. To enable it:
+`swift-snapshot-testing` is wired in as a `ZhipTests` dependency
+(see `project.yml`). The first reference snapshot lives at:
 
-1. Add `https://github.com/pointfreeco/swift-snapshot-testing` as an SPM
-   dependency of the `ZhipTests` target (Xcode → File → Add Package
-   Dependencies…).
-2. Create `Tests/Tests/Snapshots/` and put one `*ViewTests.swift` per scene
-   view, using the `SnapshotTesting` API:
+```
+Tests/Tests/Snapshots/__Snapshots__/WelcomeViewSnapshotTests/test_welcomeView_iPhone17.1.png
+```
 
-   ```swift
-   import SnapshotTesting
-   import XCTest
-   @testable import Zhip
+`Tests/Tests/Snapshots/WelcomeViewSnapshotTests.swift` is the canonical
+template — copy + adapt it for new scenes. Reference images are
+device-/iOS-version-specific, so always use the same simulator that CI uses
+(see `justfile`'s `sim_device` / `sim_os`, currently iPhone 17 / iOS 26.1).
 
-   final class WelcomeViewTests: XCTestCase {
-       func test_welcomeView_rendersCorrectly() {
-           // Arrange
-           let view = WelcomeView()
-           view.frame = CGRect(x: 0, y: 0, width: 390, height: 844)
-           view.populate(with: .init()) // or mocked output
-           // Act + Assert
-           assertSnapshot(of: view, as: .image(precision: 0.99))
-       }
-   }
-   ```
+**Adding a new snapshot test:**
 
-3. Run the test once to record snapshots (`record = true`), then commit the
-   generated `__Snapshots__/` directory.
+1. Create `Tests/Tests/Snapshots/<Scene>SnapshotTests.swift` modelled on
+   `WelcomeViewSnapshotTests.swift`.
+2. Run `just gen` to regenerate the project, then run the new test once —
+   it fails with "No reference was found" and auto-records the PNG under
+   `__Snapshots__/<TestClass>/`.
+3. Inspect the recorded PNG visually, then commit it alongside the test file.
+4. Re-run the test to confirm it passes against the new baseline.
 
-Once set up, snapshot tests should cover every top-level view in
-`Sources/Scenes/`: Welcome, TermsOfService, AskForCrashReportingPermissions,
-WarningCustomECC, ChooseWallet, Main, Send, Receive, Settings, and the
-pincode / backup flows.
+**Re-recording an existing snapshot** (e.g. after an intentional UI change):
+delete the existing PNG and re-run the test, or wrap the test body in
+`withSnapshotTesting(record: .all) { … }` for a one-shot record.
+
+Snapshot coverage to target over time: every top-level view in
+`Sources/AppFeature/Scenes/` — Welcome (done), TermsOfService,
+AskForCrashReportingPermissions, WarningCustomECC, ChooseWallet, Main,
+Send, Receive, Settings, plus the pincode / backup flows.
 
 ---
 

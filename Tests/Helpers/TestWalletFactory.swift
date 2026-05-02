@@ -22,22 +22,21 @@
 // SOFTWARE.
 //
 
+@testable import AppFeature
 import Foundation
 import Zesame
-@testable import Zhip
 
 /// Produces Zhip `Wallet` fixtures for tests using deterministic, fast KDF
 /// parameters (iterations=1) so the expensive PBKDF2 derivation never dominates
 /// test runtime.
 enum TestWalletFactory {
-
     static let testPassword = "apabanan123"
 
     /// Builds a test `Wallet` from a known private key. Uses PBKDF2 with
     /// `iterations=1` so the keystore builds in <100ms. Crashes if construction
     /// fails, which can only happen if the hard-coded private key or KDF params
     /// are invalid — both are test-static and cannot fail at runtime.
-    static func makeWallet(origin: Zhip.Wallet.Origin = .generatedByThisApp) -> Zhip.Wallet {
+    static func makeWallet(origin: AppFeature.Wallet.Origin = .generatedByThisApp) -> AppFeature.Wallet {
         do {
             let privateKey = try PrivateKey(
                 rawRepresentation: Data(hex: "0E891B9DFF485000C7D1DC22ECF3A583CC50328684321D61947A86E57CF6C638")
@@ -49,7 +48,7 @@ enum TestWalletFactory {
                 kdf: .pbkdf2,
                 kdfParams: kdfParams
             )
-            return Zhip.Wallet(wallet: Zesame.Wallet(keystore: keystore), origin: origin)
+            return AppFeature.Wallet(wallet: Zesame.Wallet(keystore: keystore), origin: origin)
         } catch {
             fatalError("TestWalletFactory failed: \(error)")
         }

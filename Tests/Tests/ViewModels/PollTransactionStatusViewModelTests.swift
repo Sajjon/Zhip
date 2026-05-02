@@ -22,11 +22,12 @@
 // SOFTWARE.
 //
 
+@testable import AppFeature
 import Combine
 import Factory
+import SingleLineControllerController
 import XCTest
 import Zesame
-@testable import Zhip
 
 /// Tests for `PollTransactionStatusViewModel`.
 ///
@@ -34,7 +35,6 @@ import Zesame
 /// title and `.dismiss` action), the no-receipt branch (`.skip` action), and the
 /// see-tx-details branch that emits `.viewTransactionDetailsInBrowser`.
 final class PollTransactionStatusViewModelTests: XCTestCase {
-
     private var cancellables: Set<AnyCancellable> = []
     private var copyTrigger: PassthroughSubject<Void, Never>!
     private var skipTrigger: PassthroughSubject<Void, Never>!
@@ -51,9 +51,9 @@ final class PollTransactionStatusViewModelTests: XCTestCase {
         seeTxDetails = PassthroughSubject<Void, Never>()
         fakeController = FakeInputFromController()
         mockTransactions = MockTransactionsUseCase()
-        Container.shared.transactionReceiptUseCase.register { [unowned self] in self.mockTransactions }
+        Container.shared.transactionReceiptUseCase.register { [unowned self] in mockTransactions }
         mockPasteboard = MockPasteboard()
-        Container.shared.pasteboard.register { [unowned self] in self.mockPasteboard }
+        Container.shared.pasteboard.register { [unowned self] in mockPasteboard }
     }
 
     override func tearDown() {

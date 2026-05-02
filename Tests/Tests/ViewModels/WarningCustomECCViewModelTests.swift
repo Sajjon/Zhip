@@ -22,16 +22,16 @@
 // SOFTWARE.
 //
 
+@testable import AppFeature
 import Combine
+import SingleLineControllerController
 import XCTest
-@testable import Zhip
 
 /// Tests for `WarningCustomECCViewModel`.
 ///
 /// Verifies the ViewModel calls `didAcceptCustomECCWarning()` once and emits
 /// the `.acceptRisks` navigation step when the user accepts the warning.
 final class WarningCustomECCViewModelTests: XCTestCase {
-
     private var cancellables: Set<AnyCancellable> = []
     private var useCase: MockOnboardingUseCase!
     private var didScrollToBottom: PassthroughSubject<Void, Never>!

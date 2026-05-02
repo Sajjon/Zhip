@@ -22,16 +22,16 @@
 // SOFTWARE.
 //
 
+@testable import AppFeature
 import Combine
 import Factory
+import SingleLineControllerController
 import UIKit
 import XCTest
-@testable import Zhip
 
 /// Drives the `SetPincodeCoordinator` flow: ChoosePincode → ConfirmNewPincode
 /// on selection, or straight to `.setPincode` on skip from either stage.
 final class SetPincodeCoordinatorTests: XCTestCase {
-
     private var window: UIWindow!
     private var navigationController: NavigationBarLayoutingNavigationController!
     private var mockPincode: MockPincodeUseCase!
@@ -41,7 +41,7 @@ final class SetPincodeCoordinatorTests: XCTestCase {
     override func setUp() {
         super.setUp()
         mockPincode = MockPincodeUseCase()
-        Container.shared.pincodeUseCase.register { [unowned self] in self.mockPincode }
+        Container.shared.pincodeUseCase.register { [unowned self] in mockPincode }
         navigationController = NavigationBarLayoutingNavigationController()
         window = UIWindow(frame: .init(x: 0, y: 0, width: 320, height: 480))
         window.rootViewController = navigationController
@@ -87,19 +87,19 @@ final class SetPincodeCoordinatorTests: XCTestCase {
 
     func test_chosePincode_pushesConfirmNewPincode() throws {
         sut.start()
-        let choose = top(as: ChoosePincode.self)!
+        let choose = try XCTUnwrap(top(as: ChoosePincode.self))
 
-        choose.viewModel.navigator.next(.chosePincode(try makePincode()))
+        try choose.viewModel.navigator.next(.chosePincode(makePincode()))
         drainRunLoop()
 
         XCTAssertTrue(top(as: ConfirmNewPincode.self) != nil)
     }
 
-    func test_chooseSkip_bubblesSetPincode() {
+    func test_chooseSkip_bubblesSetPincode() throws {
         sut.start()
         var received: SetPincodeCoordinatorNavigationStep?
         sut.navigator.navigation.sink { received = $0 }.store(in: &cancellables)
-        let choose = top(as: ChoosePincode.self)!
+        let choose = try XCTUnwrap(top(as: ChoosePincode.self))
 
         choose.viewModel.navigator.next(.skip)
         drainRunLoop()
@@ -114,11 +114,11 @@ final class SetPincodeCoordinatorTests: XCTestCase {
 
     func test_confirmPincodeConfirm_bubblesSetPincode() throws {
         sut.start()
-        top(as: ChoosePincode.self)!.viewModel.navigator.next(.chosePincode(try makePincode()))
+        try top(as: ChoosePincode.self)?.viewModel.navigator.next(.chosePincode(makePincode()))
         drainRunLoop()
         var received: SetPincodeCoordinatorNavigationStep?
         sut.navigator.navigation.sink { received = $0 }.store(in: &cancellables)
-        let confirm = top(as: ConfirmNewPincode.self)!
+        let confirm = try XCTUnwrap(top(as: ConfirmNewPincode.self))
 
         confirm.viewModel.navigator.next(.confirmPincode)
         drainRunLoop()
@@ -130,11 +130,11 @@ final class SetPincodeCoordinatorTests: XCTestCase {
 
     func test_confirmPincodeSkip_bubblesSetPincodeAndCallsSkip() throws {
         sut.start()
-        top(as: ChoosePincode.self)!.viewModel.navigator.next(.chosePincode(try makePincode()))
+        try top(as: ChoosePincode.self)?.viewModel.navigator.next(.chosePincode(makePincode()))
         drainRunLoop()
         var received: SetPincodeCoordinatorNavigationStep?
         sut.navigator.navigation.sink { received = $0 }.store(in: &cancellables)
-        let confirm = top(as: ConfirmNewPincode.self)!
+        let confirm = try XCTUnwrap(top(as: ConfirmNewPincode.self))
 
         confirm.viewModel.navigator.next(.skip)
         drainRunLoop()

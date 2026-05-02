@@ -22,8 +22,9 @@
 // SOFTWARE.
 //
 
+@testable import AppFeature
 import Foundation
-@testable import Zhip
+import SingleLineControllerDIPrimitives
 
 /// In-test `DateProvider` that returns a caller-controlled `Date` instead of
 /// the real wall clock, so timestamp-dependent logic (balance-last-updated,
@@ -32,13 +33,12 @@ import Foundation
 /// Default `now` is the Unix epoch so tests that don't care about the specific
 /// instant still get a deterministic value.
 final class FixedDateProvider: DateProvider {
-
     /// The `Date` returned by `now()`. Mutate between calls to simulate time
     /// passing within a single test.
     var fixedNow: Date
 
     init(now: Date = Date(timeIntervalSince1970: 0)) {
-        self.fixedNow = now
+        fixedNow = now
     }
 
     func now() -> Date {

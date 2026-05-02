@@ -1,10 +1,9 @@
+@testable import AppFeature
 import Combine
 import UIKit
 import XCTest
-@testable import Zhip
 
 final class CheckboxWithLabelTests: XCTestCase {
-
     private var cancellables: Set<AnyCancellable> = []
 
     override func tearDown() {
@@ -52,7 +51,7 @@ final class CheckboxWithLabelTests: XCTestCase {
         XCTAssertTrue(sut.on)
     }
 
-    func test_checkboxView_initFromCoder_succeeds() {
+    func test_checkboxView_initFromCoder_succeeds() throws {
         let archiver = NSKeyedArchiver(requiringSecureCoding: false)
         let view = CheckboxView(frame: .zero)
         view.encode(with: archiver)
@@ -60,7 +59,7 @@ final class CheckboxWithLabelTests: XCTestCase {
 
         let unarchiver = try? NSKeyedUnarchiver(forReadingFrom: archiver.encodedData)
         unarchiver?.requiresSecureCoding = false
-        let decoded = CheckboxView(coder: unarchiver!)
+        let decoded = try CheckboxView(coder: XCTUnwrap(unarchiver))
         XCTAssertNotNil(decoded)
     }
 

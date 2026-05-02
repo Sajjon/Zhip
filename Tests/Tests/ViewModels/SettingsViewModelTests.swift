@@ -22,10 +22,12 @@
 // SOFTWARE.
 //
 
+@testable import AppFeature
 import Combine
 import Foundation
+import SingleLineControllerController
+import SingleLineControllerSceneViews
 import XCTest
-@testable import Zhip
 
 /// Tests for `SettingsViewModel`.
 ///
@@ -33,7 +35,6 @@ import XCTest
 /// branch in the first section, the footer text, close-settings navigation, and
 /// item-selection navigation to the step stored on the tapped cell.
 final class SettingsViewModelTests: XCTestCase {
-
     private var cancellables: Set<AnyCancellable> = []
     private var selectedIndexPath: PassthroughSubject<IndexPath, Never>!
     private var fakeController: FakeInputFromController!
@@ -65,7 +66,7 @@ final class SettingsViewModelTests: XCTestCase {
         fakeController.viewWillAppearSubject.send(())
 
         XCTAssertEqual(latest.count, 4)
-        XCTAssertEqual(latest.map { $0.items.count }, [1, 3, 3, 2])
+        XCTAssertEqual(latest.map(\.items.count), [1, 3, 3, 2])
     }
 
     func test_sections_withoutConfiguredPincode_firstItemIsSetPincode() {

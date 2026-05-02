@@ -22,10 +22,10 @@
 // SOFTWARE.
 //
 
+@testable import AppFeature
 import Foundation
 import UIKit
 import XCTest
-@testable import Zhip
 
 class StringFormattingTests: XCTestCase {
     func testFormatting() {

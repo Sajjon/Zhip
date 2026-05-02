@@ -22,14 +22,14 @@
 // SOFTWARE.
 //
 
+@testable import AppFeature
+import SingleLineControllerDIPrimitives
 import UIKit
-@testable import Zhip
 
 /// In-test `HapticFeedback` that NEVER forwards to
 /// `UINotificationFeedbackGenerator`. Records every requested feedback type so
 /// tests can assert which haptic fired.
 final class MockHapticFeedback: HapticFeedback {
-
     /// Every `FeedbackType` passed to `notify(_:)`, in call order.
     private(set) var notifications: [UINotificationFeedbackGenerator.FeedbackType] = []
 

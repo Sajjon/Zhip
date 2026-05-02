@@ -17,6 +17,9 @@ env:
   SCHEME: Zhip
   PROJECT: Zhip.xcodeproj
   SIM_DEVICE: iPhone 17
+  # Keep in sync with justfile's sim_os default. The Validate / Build & test
+  # steps below interpolate $SIM_OS into the xcodebuild -destination string.
+  SIM_OS: "26.1"
 
 jobs:
   ci:
@@ -53,18 +56,26 @@ jobs:
         run: swiftlint lint --strict --reporter github-actions-logging
 
       # ── 4. Test + coverage ────────────────────────────────────────────────────
-      - name: Cache SPM packages
-        uses: actions/cache@v4
-        with:
-          path: ~/Library/Developer/Xcode/DerivedData
-          key: spm-${{ runner.os }}-${{ hashFiles('**/Package.resolved') }}
-          restore-keys: spm-${{ runner.os }}-
-
       - name: Install xcresultparser
         run: brew install xcresultparser
 
       - name: Select Xcode 26.1.1
         run: sudo xcode-select -s /Applications/Xcode_26.1.1.app/Contents/Developer
+
+      # Cache only the SPM source packages, not the whole DerivedData tree.
+      # Caching DerivedData also caches Clang's ModuleCache.noindex (.pcm
+      # files), which is keyed on the toolchain's module.modulemap mtime —
+      # if the runner image pulls a slightly different Xcode bits between
+      # cache write and read, every .pcm becomes invalid and the build
+      # fails with "fatal error: could not build module 'Darwin'".
+      # SourcePackages/ is just downloaded source + Package.resolved, no
+      # compiled artifacts, so it survives toolchain drift.
+      - name: Cache SPM source packages
+        uses: actions/cache@v4
+        with:
+          path: ~/Library/Developer/Xcode/DerivedData/Zhip-*/SourcePackages
+          key: spm-${{ runner.os }}-xcode-26.1.1-${{ hashFiles('**/Package.resolved') }}
+          restore-keys: spm-${{ runner.os }}-xcode-26.1.1-
 
       - name: Runner info
         run: |
@@ -102,6 +113,14 @@ jobs:
 
       - name: Install xcpretty
         run: gem install xcpretty --no-document
+
+      # Zhip.xcodeproj is gitignored — XcodeGen reproduces it from
+      # project.yml. Must run before any xcodebuild step.
+      - name: Install XcodeGen
+        run: brew install xcodegen
+
+      - name: Generate Xcode project
+        run: xcodegen generate
 
       - name: Build & test with coverage
         run: |

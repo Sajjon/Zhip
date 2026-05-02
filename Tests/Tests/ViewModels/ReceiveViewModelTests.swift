@@ -22,10 +22,11 @@
 // SOFTWARE.
 //
 
+@testable import AppFeature
 import Combine
 import Factory
+import SingleLineControllerController
 import XCTest
-@testable import Zhip
 
 /// Tests for `ReceiveViewModel`.
 ///
@@ -33,7 +34,6 @@ import XCTest
 /// path (right bar → `.finish`). The wallet is preloaded via `MockWalletUseCase`'s
 /// `storedWallet`.
 final class ReceiveViewModelTests: XCTestCase {
-
     private var cancellables: Set<AnyCancellable> = []
     private var mockWallet: MockWalletUseCase!
     private var mockPasteboard: MockPasteboard!
@@ -47,9 +47,9 @@ final class ReceiveViewModelTests: XCTestCase {
         super.setUp()
         mockWallet = MockWalletUseCase()
         mockWallet.storedWallet = TestWalletFactory.makeWallet()
-        Container.shared.walletStorageUseCase.register { [unowned self] in self.mockWallet }
+        Container.shared.walletStorageUseCase.register { [unowned self] in mockWallet }
         mockPasteboard = MockPasteboard()
-        Container.shared.pasteboard.register { [unowned self] in self.mockPasteboard }
+        Container.shared.pasteboard.register { [unowned self] in mockPasteboard }
         amountSubject = PassthroughSubject<String, Never>()
         didEndEditing = PassthroughSubject<Void, Never>()
         copySubject = PassthroughSubject<Void, Never>()

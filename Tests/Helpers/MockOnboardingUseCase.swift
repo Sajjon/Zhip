@@ -22,8 +22,8 @@
 // SOFTWARE.
 //
 
+@testable import AppFeature
 import Foundation
-@testable import Zhip
 
 /// Hand-written mock of `OnboardingUseCase` for ViewModel tests.
 ///
@@ -31,7 +31,6 @@ import Foundation
 /// updates a corresponding `…Called` flag / count so tests can verify the ViewModel
 /// interacted with the use case.
 final class MockOnboardingUseCase: OnboardingUseCase {
-
     // MARK: - TermsOfService
 
     /// Value returned from `hasAcceptedTermsOfService`. Mutable so tests can seed.

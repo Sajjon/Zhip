@@ -1,18 +1,19 @@
+@testable import AppFeature
 import Combine
 import Factory
+import SingleLineControllerCombine
+import SingleLineControllerDIPrimitives
 import UIKit
 import XCTest
-@testable import Zhip
 
 final class InputPincodeViewTests: XCTestCase {
-
     private var cancellables: Set<AnyCancellable> = []
     private var mockHaptic: MockHapticFeedback!
 
     override func setUp() {
         super.setUp()
         mockHaptic = MockHapticFeedback()
-        Container.shared.hapticFeedback.register { [unowned self] in self.mockHaptic }
+        Container.shared.hapticFeedback.register { [unowned self] in mockHaptic }
     }
 
     override func tearDown() {
@@ -29,12 +30,12 @@ final class InputPincodeViewTests: XCTestCase {
 
     func test_validate_empty_doesNotCrash() {
         let sut = InputPincodeView()
-        sut.validate(.empty)
+        sut.applyValidation(.empty)
     }
 
     func test_validate_valid_clearsByDefault() {
         let sut = InputPincodeView()
-        sut.validate(.valid(withRemark: nil))
+        sut.applyValidation(.valid(withRemark: nil))
         XCTAssertTrue(sut.pinField.text?.isEmpty ?? true)
     }
 
@@ -42,14 +43,14 @@ final class InputPincodeViewTests: XCTestCase {
         let sut = InputPincodeView(isClearedOnValidInput: false)
         sut.pinField.text = "1234"
 
-        sut.validate(.valid(withRemark: nil))
+        sut.applyValidation(.valid(withRemark: nil))
 
         XCTAssertEqual(sut.pinField.text, "1234")
     }
 
     func test_validate_errorMessage_shakesAndClears() {
         let sut = InputPincodeView()
-        sut.validate(.errorMessage("bad pin"))
+        sut.applyValidation(.errorMessage("bad pin"))
         // Should not crash; shake animation completion clears asynchronously.
     }
 
@@ -79,7 +80,7 @@ final class InputPincodeViewTests: XCTestCase {
     func test_validate_valid_firesSuccessHaptic() {
         let sut = InputPincodeView()
 
-        sut.validate(.valid(withRemark: nil))
+        sut.applyValidation(.valid(withRemark: nil))
 
         XCTAssertEqual(mockHaptic.notifications, [.success])
     }
@@ -87,7 +88,7 @@ final class InputPincodeViewTests: XCTestCase {
     func test_validate_errorMessage_firesErrorHaptic() {
         let sut = InputPincodeView()
 
-        sut.validate(.errorMessage("bad pin"))
+        sut.applyValidation(.errorMessage("bad pin"))
 
         XCTAssertEqual(mockHaptic.notifications, [.error])
     }
@@ -95,7 +96,7 @@ final class InputPincodeViewTests: XCTestCase {
     func test_validate_empty_firesNoHaptic() {
         let sut = InputPincodeView()
 
-        sut.validate(.empty)
+        sut.applyValidation(.empty)
 
         XCTAssertTrue(mockHaptic.notifications.isEmpty)
     }

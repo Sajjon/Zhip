@@ -22,13 +22,12 @@
 // SOFTWARE.
 //
 
+@testable import AppFeature
 import XCTest
-@testable import Zhip
 
 /// Tests for `BalanceLastUpdatedFormatter`: a pure formatter with no
 /// dependencies, so each test is a one-liner.
 final class BalanceLastUpdatedFormatterTests: XCTestCase {
-
     private let sut = BalanceLastUpdatedFormatter()
 
     func test_nilDate_returnsFirstFetchString() {

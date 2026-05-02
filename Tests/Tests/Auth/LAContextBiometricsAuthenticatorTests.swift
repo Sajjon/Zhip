@@ -22,16 +22,15 @@
 // SOFTWARE.
 //
 
+@testable import AppFeature
 import Combine
 import XCTest
-@testable import Zhip
 
 /// Tests the production `LAContextBiometricsAuthenticator`. On the simulator
 /// `canEvaluatePolicy(.deviceOwnerAuthenticationWithBiometrics)` returns
 /// `false`, so the guard path fires and `authenticate()` resolves to `false`
 /// without ever triggering a real Face ID / Touch ID prompt.
 final class LAContextBiometricsAuthenticatorTests: XCTestCase {
-
     private var cancellables: Set<AnyCancellable> = []
 
     override func tearDown() {

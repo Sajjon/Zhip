@@ -1,8 +1,7 @@
+@testable import AppFeature
 import XCTest
-@testable import Zhip
 
 final class KeyValueStoreKeychainKeyTests: XCTestCase {
-
     private var store: SecurePersistence!
 
     override func setUp() {

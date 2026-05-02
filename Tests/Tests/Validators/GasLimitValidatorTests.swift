@@ -1,6 +1,6 @@
+@testable import AppFeature
 import XCTest
 import Zesame
-@testable import Zhip
 
 final class GasLimitValidatorTests: XCTestCase {
     private let sut = GasLimitValidator()
@@ -26,7 +26,8 @@ final class GasLimitValidatorTests: XCTestCase {
     }
 
     func test_validate_aboveMinimum_returnsValid() {
-        let amount = String(GasLimit.minimum.description.dropFirst(0)) // "1" prepended would fail parse for large value, keep simple
+        let amount = String(GasLimit.minimum.description
+            .dropFirst(0)) // "1" prepended would fail parse for large value, keep simple
         guard case .valid = sut.validate(input: amount) else {
             return XCTFail("expected valid")
         }

@@ -22,10 +22,12 @@
 // SOFTWARE.
 //
 
+@testable import AppFeature
 import Combine
+import SingleLineControllerController
 import UIKit
+import Validation
 import XCTest
-@testable import Zhip
 
 /// Drives `RestoreWalletView`'s `populate(with:)` to exercise the keystore
 /// error binder — which forces a segment switch to `.keystore` and runs the
@@ -33,7 +35,6 @@ import XCTest
 /// tests.
 @MainActor
 final class RestoreWalletViewTests: XCTestCase {
-
     private var cancellables: Set<AnyCancellable> = []
 
     override func tearDown() {

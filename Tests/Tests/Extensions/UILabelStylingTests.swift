@@ -1,10 +1,9 @@
+@testable import AppFeature
 import UIKit
 import XCTest
-@testable import Zhip
 
 @MainActor
 final class UILabelStylingTests: XCTestCase {
-
     // MARK: - apply
 
     func test_apply_appliesAllProvidedAttributes() {

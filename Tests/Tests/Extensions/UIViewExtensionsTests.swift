@@ -22,14 +22,14 @@
 // SOFTWARE.
 //
 
+@testable import AppFeature
 import UIKit
+import Validation
 import XCTest
-@testable import Zhip
 
 /// Covers UIView extensions: `shake(...)` animation and the publisher binders
 /// not already exercised elsewhere.
 final class UIViewExtensionsTests: XCTestCase {
-
     func test_shake_invokesCompletionCallback() {
         let view = UIView()
         let expectation = expectation(description: "done")

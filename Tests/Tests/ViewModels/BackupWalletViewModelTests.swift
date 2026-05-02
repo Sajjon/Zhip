@@ -22,11 +22,12 @@
 // SOFTWARE.
 //
 
+@testable import AppFeature
 import Combine
 import Factory
+import SingleLineControllerController
 import XCTest
 import Zesame
-@testable import Zhip
 
 /// Tests for `BackupWalletViewModel`.
 ///
@@ -35,7 +36,6 @@ import Zesame
 /// private key, done-after-understanding-risk), the keystore copy side effect,
 /// and the visibility flag driven by the mode.
 final class BackupWalletViewModelTests: XCTestCase {
-
     private var cancellables: Set<AnyCancellable> = []
     private var copyKeystore: PassthroughSubject<Void, Never>!
     private var revealKeystore: PassthroughSubject<Void, Never>!
@@ -43,7 +43,7 @@ final class BackupWalletViewModelTests: XCTestCase {
     private var isUnderstandsRisk: CurrentValueSubject<Bool, Never>!
     private var doneTrigger: PassthroughSubject<Void, Never>!
     private var fakeController: FakeInputFromController!
-    private var wallet: Zhip.Wallet!
+    private var wallet: AppFeature.Wallet!
     private var mockPasteboard: MockPasteboard!
 
     override func setUp() {
@@ -56,7 +56,7 @@ final class BackupWalletViewModelTests: XCTestCase {
         fakeController = FakeInputFromController()
         wallet = TestWalletFactory.makeWallet()
         mockPasteboard = MockPasteboard()
-        Container.shared.pasteboard.register { [unowned self] in self.mockPasteboard }
+        Container.shared.pasteboard.register { [unowned self] in mockPasteboard }
     }
 
     override func tearDown() {

@@ -22,23 +22,22 @@
 // SOFTWARE.
 //
 
+@testable import AppFeature
 import Combine
 import Factory
 import XCTest
 import Zesame
-@testable import Zhip
 
 /// Tests that `DefaultRestoreWalletUseCase` maps the `KeyRestoration` case to
 /// the correct `Wallet.Origin` and forwards to the injected service.
 final class DefaultRestoreWalletUseCaseTests: XCTestCase {
-
     private var cancellables: Set<AnyCancellable> = []
     private var mockService: MockZilliqaServiceReactive!
 
     override func setUp() {
         super.setUp()
         mockService = MockZilliqaServiceReactive()
-        Container.shared.zilliqaService.register { [unowned self] in self.mockService }
+        Container.shared.zilliqaService.register { [unowned self] in mockService }
     }
 
     override func tearDown() {
@@ -48,11 +47,11 @@ final class DefaultRestoreWalletUseCaseTests: XCTestCase {
         super.tearDown()
     }
 
-    func test_restoreFromKeystore_tagsOriginAsImportedKeystore() throws {
+    func test_restoreFromKeystore_tagsOriginAsImportedKeystore() {
         let wallet = TestWalletFactory.makeWallet()
         mockService.restoreWalletResult = .success(wallet.wallet)
         let sut = DefaultRestoreWalletUseCase()
-        var produced: Zhip.Wallet?
+        var produced: AppFeature.Wallet?
         let expectation = expectation(description: "value")
 
         sut.restoreWallet(from: .keystore(wallet.wallet.keystore, password: TestWalletFactory.testPassword))
@@ -74,7 +73,7 @@ final class DefaultRestoreWalletUseCaseTests: XCTestCase {
         let privateKey = try PrivateKey(
             rawRepresentation: Data(hex: "0E891B9DFF485000C7D1DC22ECF3A583CC50328684321D61947A86E57CF6C638")
         )
-        var produced: Zhip.Wallet?
+        var produced: AppFeature.Wallet?
         let expectation = expectation(description: "value")
 
         sut.restoreWallet(from: .privateKey(privateKey, encryptBy: "apabanan123", kdf: .pbkdf2))

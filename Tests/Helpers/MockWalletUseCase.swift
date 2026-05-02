@@ -22,10 +22,10 @@
 // SOFTWARE.
 //
 
+@testable import AppFeature
 import Combine
 import Foundation
 import Zesame
-@testable import Zhip
 
 /// Hand-written mock conforming to every narrow wallet use-case protocol for
 /// ViewModel tests.
@@ -33,17 +33,18 @@ import Zesame
 /// Each async method is backed by a `*Result` property tests can seed. Storage
 /// methods update a local `storedWallet` property and increment call counters.
 final class MockWalletUseCase: CreateWalletUseCase,
-                               RestoreWalletUseCase,
-                               WalletStorageUseCase,
-                               VerifyEncryptionPasswordUseCase,
-                               ExtractKeyPairUseCase {
-
+    RestoreWalletUseCase,
+    WalletStorageUseCase,
+    VerifyEncryptionPasswordUseCase,
+    ExtractKeyPairUseCase
+{
     // MARK: - State
 
-    var storedWallet: Zhip.Wallet?
+    var storedWallet: AppFeature.Wallet?
 
-    var createWalletResult: Result<Zhip.Wallet, Swift.Error> = .success(TestWalletFactory.makeWallet())
-    var restoreWalletResult: Result<Zhip.Wallet, Swift.Error> = .success(TestWalletFactory.makeWallet(origin: .importedKeystore))
+    var createWalletResult: Result<AppFeature.Wallet, Swift.Error> = .success(TestWalletFactory.makeWallet())
+    var restoreWalletResult: Result<AppFeature.Wallet, Swift.Error> = .success(TestWalletFactory
+        .makeWallet(origin: .importedKeystore))
     var verifyPasswordResult: Result<Bool, Swift.Error> = .success(true)
     var extractKeyPairResult: Result<KeyPair, Swift.Error>?
 
@@ -62,7 +63,7 @@ final class MockWalletUseCase: CreateWalletUseCase,
 
     // MARK: - CreateWalletUseCase
 
-    func createNewWallet(encryptionPassword: String) -> AnyPublisher<Zhip.Wallet, Swift.Error> {
+    func createNewWallet(encryptionPassword: String) -> AnyPublisher<AppFeature.Wallet, Swift.Error> {
         createNewWalletCallCount += 1
         lastCreateEncryptionPassword = encryptionPassword
         return publisher(for: createWalletResult)
@@ -70,7 +71,7 @@ final class MockWalletUseCase: CreateWalletUseCase,
 
     // MARK: - RestoreWalletUseCase
 
-    func restoreWallet(from restoration: KeyRestoration) -> AnyPublisher<Zhip.Wallet, Swift.Error> {
+    func restoreWallet(from restoration: KeyRestoration) -> AnyPublisher<AppFeature.Wallet, Swift.Error> {
         restoreWalletCallCount += 1
         lastRestoreInput = restoration
         return publisher(for: restoreWalletResult)
@@ -78,7 +79,7 @@ final class MockWalletUseCase: CreateWalletUseCase,
 
     // MARK: - WalletStorageUseCase
 
-    func save(wallet: Zhip.Wallet) {
+    func save(wallet: AppFeature.Wallet) {
         saveWalletCallCount += 1
         storedWallet = wallet
     }
@@ -88,9 +89,13 @@ final class MockWalletUseCase: CreateWalletUseCase,
         storedWallet = nil
     }
 
-    func loadWallet() -> Zhip.Wallet? { storedWallet }
+    func loadWallet() -> AppFeature.Wallet? {
+        storedWallet
+    }
 
-    var hasConfiguredWallet: Bool { storedWallet != nil }
+    var hasConfiguredWallet: Bool {
+        storedWallet != nil
+    }
 
     // MARK: - VerifyEncryptionPasswordUseCase
 
@@ -121,9 +126,9 @@ final class MockWalletUseCase: CreateWalletUseCase,
     private func publisher<Output>(for result: Result<Output, Swift.Error>) -> AnyPublisher<Output, Swift.Error> {
         switch result {
         case let .success(value):
-            return Just(value).setFailureType(to: Swift.Error.self).eraseToAnyPublisher()
+            Just(value).setFailureType(to: Swift.Error.self).eraseToAnyPublisher()
         case let .failure(error):
-            return Fail(error: error).eraseToAnyPublisher()
+            Fail(error: error).eraseToAnyPublisher()
         }
     }
 }

@@ -8,6 +8,9 @@
 build/
 DerivedData/
 
+## XcodeGen-generated project — `xcodegen generate` reproduces it from project.yml.
+/Zhip.xcodeproj/
+
 ## Various settings
 *.pbxuser
 !default.pbxuser
@@ -39,8 +42,10 @@ playground.xcworkspace
 # Add this line if you want to avoid checking in source code from Swift Package Manager dependencies.
 # Packages/
 # Package.pins
-# Package.resolved
+# Package.resolved is intentionally committed (lock file for reproducible builds).
 .build/
+# Per-machine SPM IDE state — Xcode regenerates this on first open.
+.swiftpm/
 
 # CocoaPods
 #

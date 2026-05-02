@@ -22,12 +22,11 @@
 // SOFTWARE.
 //
 
+@testable import AppFeature
 import XCTest
 import Zesame
-@testable import Zhip
 
 final class WalletEncryptionPasswordTests: XCTestCase {
-
     // MARK: - init
 
     func test_init_mismatchedConfirm_throwsPasswordsDoesNotMatch() {

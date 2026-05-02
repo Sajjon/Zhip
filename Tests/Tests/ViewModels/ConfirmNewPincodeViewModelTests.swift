@@ -22,16 +22,16 @@
 // SOFTWARE.
 //
 
+@testable import AppFeature
 import Combine
+import SingleLineControllerController
 import XCTest
-@testable import Zhip
 
 /// Tests for `ConfirmNewPincodeViewModel`.
 ///
 /// Covers the confirmation path (matching pincode → `.confirmPincode` + persist) and
 /// the skip path (right bar button → `.skip`).
 final class ConfirmNewPincodeViewModelTests: XCTestCase {
-
     private var cancellables: Set<AnyCancellable> = []
     private var pincodeInput: CurrentValueSubject<Pincode?, Never>!
     private var isBackedUpSubject: CurrentValueSubject<Bool, Never>!

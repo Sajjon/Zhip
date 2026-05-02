@@ -1,9 +1,10 @@
+@testable import AppFeature
+import Factory
+import SingleLineControllerController
 import UIKit
 import XCTest
-@testable import Zhip
 
 final class ToastTests: XCTestCase {
-
     func test_initWithDefaults_createsAutoDismissToast() {
         let sut = Toast("hello")
         _ = sut // non-optional, simply verify init doesn't crash
@@ -31,7 +32,7 @@ final class ToastTests: XCTestCase {
         window.makeKeyAndVisible()
 
         let sut = Toast("auto", dismissing: .after(duration: 0.05))
-        sut.present(using: host)
+        sut.present(using: host, clock: Container.shared.clock())
 
         // Pump the runloop so the queued `present(...)` call inside Toast
         // resolves before we observe `presentedViewController`.
@@ -58,7 +59,7 @@ final class ToastTests: XCTestCase {
         window.makeKeyAndVisible()
 
         let sut = Toast("manual", dismissing: .manual(dismissButtonTitle: "Close"))
-        sut.present(using: host)
+        sut.present(using: host, clock: Container.shared.clock())
 
         drainRunLoop()
 

@@ -22,10 +22,10 @@
 // SOFTWARE.
 //
 
+@testable import AppFeature
 import Combine
 import XCTest
 import Zesame
-@testable import Zhip
 
 /// Tests for `RestoreWalletUsingKeystoreViewModel`.
 ///
@@ -33,7 +33,6 @@ import Zesame
 /// only when a valid keystore JSON and matching password are supplied, and stays
 /// nil if either side is invalid or missing.
 final class RestoreWalletUsingKeystoreViewModelTests: XCTestCase {
-
     private var cancellables: Set<AnyCancellable> = []
     private var keystoreDidBeginEditing: PassthroughSubject<Void, Never>!
     private var isEditingKeystore: CurrentValueSubject<Bool, Never>!

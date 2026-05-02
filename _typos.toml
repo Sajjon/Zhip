@@ -1,11 +1,9 @@
 [files]
 extend-exclude = [
-	"Zhip.xcodeproj/project.pbxproj",
-	# Xcode scheme files contain UUIDs that trigger false positives
-	"Zhip.xcodeproj/xcshareddata/xcschemes/",
 	# xcstrings files contain translated strings that may look like typos
 	"Sources/Application/Localization/",
-	"Sources/Application/GoogleService-Info.plist",
+	# Firebase config — IDs contain hex chunks that trigger false positives
+	"App/GoogleService-Info.plist",
 ]
 
 [default.extend-identifiers]

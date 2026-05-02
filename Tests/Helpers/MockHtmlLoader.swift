@@ -22,8 +22,8 @@
 // SOFTWARE.
 //
 
+@testable import AppFeature
 import UIKit
-@testable import Zhip
 
 /// In-test `HtmlLoader` that NEVER invokes the WebKit-backed
 /// `NSAttributedString(data:options:…)` parser. Returns an empty attributed
@@ -32,7 +32,6 @@ import UIKit
 /// `UIView.setAnimationsEnabled(false)` (synchronous modal presentation) would
 /// time out `drainRunLoop()`.
 final class MockHtmlLoader: HtmlLoader {
-
     /// File names passed to `load(…)`, in call order.
     private(set) var loadInvocations: [String] = []
 

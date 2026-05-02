@@ -22,14 +22,13 @@
 // SOFTWARE.
 //
 
+@testable import AppFeature
 import KeychainSwift
 import XCTest
-@testable import Zhip
 
 /// Exercises `KeychainSwift`'s `KeyValueStoring` conformance against the real
 /// simulator keychain. Each test uses a namespaced key to avoid collisions.
 final class KeychainSwiftKeyValueStoringTests: XCTestCase {
-
     private var sut: KeychainSwift!
     private let stringKey = "zhip.tests.keychain.string"
     private let dataKey = "zhip.tests.keychain.data"

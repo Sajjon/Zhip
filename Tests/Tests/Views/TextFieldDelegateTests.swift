@@ -1,14 +1,17 @@
+@testable import AppFeature
 import UIKit
 import XCTest
-@testable import Zhip
 
 final class TextFieldDelegateTests: XCTestCase {
-
     func test_init_withTypeOfInput_setsLimitingCharacterSet() {
         let sut = TextFieldDelegate(type: .number, maxLength: 10)
         let textField = UITextField()
 
-        let result = sut.textField(textField, shouldChangeCharactersIn: NSRange(location: 0, length: 0), replacementString: "abc")
+        let result = sut.textField(
+            textField,
+            shouldChangeCharactersIn: NSRange(location: 0, length: 0),
+            replacementString: "abc"
+        )
 
         XCTAssertFalse(result)
     }
@@ -18,7 +21,11 @@ final class TextFieldDelegateTests: XCTestCase {
         let textField = UITextField()
         textField.text = "1234"
 
-        let result = sut.textField(textField, shouldChangeCharactersIn: NSRange(location: 3, length: 1), replacementString: "")
+        let result = sut.textField(
+            textField,
+            shouldChangeCharactersIn: NSRange(location: 3, length: 1),
+            replacementString: ""
+        )
 
         XCTAssertTrue(result)
     }
@@ -28,7 +35,11 @@ final class TextFieldDelegateTests: XCTestCase {
         let textField = UITextField()
         textField.text = ""
 
-        let result = sut.textField(textField, shouldChangeCharactersIn: NSRange(location: 0, length: 0), replacementString: "5")
+        let result = sut.textField(
+            textField,
+            shouldChangeCharactersIn: NSRange(location: 0, length: 0),
+            replacementString: "5"
+        )
 
         XCTAssertTrue(result)
     }
@@ -38,7 +49,11 @@ final class TextFieldDelegateTests: XCTestCase {
         let textField = UITextField()
         textField.text = ""
 
-        let result = sut.textField(textField, shouldChangeCharactersIn: NSRange(location: 0, length: 0), replacementString: "z")
+        let result = sut.textField(
+            textField,
+            shouldChangeCharactersIn: NSRange(location: 0, length: 0),
+            replacementString: "z"
+        )
 
         XCTAssertFalse(result)
     }
@@ -48,7 +63,11 @@ final class TextFieldDelegateTests: XCTestCase {
         let textField = UITextField()
         textField.text = "123"
 
-        let result = sut.textField(textField, shouldChangeCharactersIn: NSRange(location: 3, length: 0), replacementString: "4")
+        let result = sut.textField(
+            textField,
+            shouldChangeCharactersIn: NSRange(location: 3, length: 0),
+            replacementString: "4"
+        )
 
         XCTAssertFalse(result)
     }
@@ -58,7 +77,11 @@ final class TextFieldDelegateTests: XCTestCase {
         let textField = UITextField()
         textField.text = "123"
 
-        let result = sut.textField(textField, shouldChangeCharactersIn: NSRange(location: 3, length: 0), replacementString: "4")
+        let result = sut.textField(
+            textField,
+            shouldChangeCharactersIn: NSRange(location: 3, length: 0),
+            replacementString: "4"
+        )
 
         XCTAssertTrue(result)
     }
@@ -68,7 +91,11 @@ final class TextFieldDelegateTests: XCTestCase {
         let textField = UITextField()
         textField.text = String(repeating: "a", count: 1000)
 
-        let result = sut.textField(textField, shouldChangeCharactersIn: NSRange(location: 1000, length: 0), replacementString: "b")
+        let result = sut.textField(
+            textField,
+            shouldChangeCharactersIn: NSRange(location: 1000, length: 0),
+            replacementString: "b"
+        )
 
         XCTAssertTrue(result)
     }
@@ -77,7 +104,11 @@ final class TextFieldDelegateTests: XCTestCase {
         let sut = TextFieldDelegate(type: .password, maxLength: 50)
         let textField = UITextField()
 
-        let result = sut.textField(textField, shouldChangeCharactersIn: NSRange(location: 0, length: 0), replacementString: "!@#$%")
+        let result = sut.textField(
+            textField,
+            shouldChangeCharactersIn: NSRange(location: 0, length: 0),
+            replacementString: "!@#$%"
+        )
 
         XCTAssertTrue(result)
     }
@@ -87,10 +118,18 @@ final class TextFieldDelegateTests: XCTestCase {
         let textField = UITextField()
         textField.text = ""
 
-        XCTAssertFalse(sut.textField(textField, shouldChangeCharactersIn: NSRange(location: 0, length: 0), replacementString: "ab"))
+        XCTAssertFalse(sut.textField(
+            textField,
+            shouldChangeCharactersIn: NSRange(location: 0, length: 0),
+            replacementString: "ab"
+        ))
 
         sut.setTypeOfInput(.text)
 
-        XCTAssertTrue(sut.textField(textField, shouldChangeCharactersIn: NSRange(location: 0, length: 0), replacementString: "ab"))
+        XCTAssertTrue(sut.textField(
+            textField,
+            shouldChangeCharactersIn: NSRange(location: 0, length: 0),
+            replacementString: "ab"
+        ))
     }
 }

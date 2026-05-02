@@ -22,15 +22,14 @@
 // SOFTWARE.
 //
 
+@testable import AppFeature
 import Combine
 import Foundation
-@testable import Zhip
 
 /// In-test `BiometricsAuthenticator` that NEVER shows a real system prompt.
 /// Returns the pre-configured `result` on every call. Default is `false` so
 /// tests that merely cause `viewDidAppear` don't accidentally auto-unlock.
 final class MockBiometricsAuthenticator: BiometricsAuthenticator {
-
     var result: Bool
     private(set) var authenticateCallCount = 0
 

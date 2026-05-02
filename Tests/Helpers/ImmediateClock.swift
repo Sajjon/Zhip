@@ -22,8 +22,9 @@
 // SOFTWARE.
 //
 
+@testable import AppFeature
 import Foundation
-@testable import Zhip
+import SingleLineControllerDIPrimitives
 
 /// Test `Clock`: ignores the requested delay and fires on the next main-queue
 /// cycle so timer-driven flows run in milliseconds instead of seconds.
@@ -31,7 +32,6 @@ import Foundation
 /// Registered globally in `SilenceSideEffects`, so every test gets the fast
 /// path without per-file boilerplate.
 final class ImmediateClock: Clock {
-
     init() {}
 
     @discardableResult

@@ -1,10 +1,9 @@
+@testable import AppFeature
 import UIKit
 import XCTest
-@testable import Zhip
 
 @MainActor
 final class SpinnerViewTests: XCTestCase {
-
     func test_init_isHiddenAndNotAnimating() {
         let sut = SpinnerView()
         XCTAssertFalse(sut.isAnimating)

@@ -22,8 +22,8 @@
 // SOFTWARE.
 //
 
+@testable import AppFeature
 import XCTest
-@testable import Zhip
 
 enum EnumWithAssociatedValue {
     case foo(Int)

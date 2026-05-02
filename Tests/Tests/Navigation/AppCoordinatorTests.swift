@@ -22,11 +22,11 @@
 // SOFTWARE.
 //
 
+@testable import AppFeature
 import Combine
 import Factory
 import UIKit
 import XCTest
-@testable import Zhip
 
 /// Covers `AppCoordinator` routing behavior: the decision between onboarding
 /// and main on start, lock/unlock transitions around background/foreground
@@ -36,7 +36,6 @@ import XCTest
 /// callbacks, so the SUT is held as an instance var and we drain the run loop
 /// before tearDown to let those callbacks fire against a still-alive object.
 final class AppCoordinatorTests: XCTestCase {
-
     private var mockWallet: MockWalletUseCase!
     private var mockPincode: MockPincodeUseCase!
     private var mockTransactions: MockTransactionsUseCase!
@@ -55,10 +54,10 @@ final class AppCoordinatorTests: XCTestCase {
         rootControllers = []
         setRootCallCount = 0
         currentRoot = nil
-        Container.shared.walletStorageUseCase.register { [unowned self] in self.mockWallet }
-        Container.shared.pincodeUseCase.register { [unowned self] in self.mockPincode }
-        Container.shared.transactionsUseCase.register { [unowned self] in self.mockTransactions }
-        Container.shared.onboardingUseCase.register { [unowned self] in self.mockOnboarding }
+        Container.shared.walletStorageUseCase.register { [unowned self] in mockWallet }
+        Container.shared.pincodeUseCase.register { [unowned self] in mockPincode }
+        Container.shared.transactionsUseCase.register { [unowned self] in mockTransactions }
+        Container.shared.onboardingUseCase.register { [unowned self] in mockOnboarding }
     }
 
     override func tearDown() {
@@ -84,10 +83,12 @@ final class AppCoordinatorTests: XCTestCase {
             mockPincode.pincode = try? Pincode(digits: [Digit.zero, .one, .two, .three])
         }
         let nav = UINavigationController()
-        let handler = DeepLinkHandler()
+        // Override the singleton DeepLinkHandler so each test starts with a
+        // fresh buffer state. `Container.shared.manager.reset()` in tearDown
+        // restores the production registration.
+        Container.shared.deepLinkHandler.register { DeepLinkHandler() }
         sut = AppCoordinator(
             navigationController: nav,
-            deepLinkHandler: handler,
             isViewControllerRootOfWindow: { [weak self] vc in self?.currentRoot === vc },
             setRootViewControllerOfWindow: { [weak self] vc in
                 self?.setRootCallCount += 1
@@ -190,18 +191,18 @@ final class AppCoordinatorTests: XCTestCase {
 
     // MARK: - Deep link forwarding
 
-    func test_handleDeepLink_validSendUrl_returnsTrue() {
+    func test_handleDeepLink_validSendUrl_returnsTrue() throws {
         _ = makeCoordinator(hasWallet: true, hasPincode: false)
         sut.start()
-        let url = URL(string: "https://zhip.app/send?to=e3090a1309DfAC40352d03dEc6cCD9cAd213e76B")!
+        let url = try XCTUnwrap(URL(string: "https://zhip.app/send?to=e3090a1309DfAC40352d03dEc6cCD9cAd213e76B"))
 
         XCTAssertTrue(sut.handleDeepLink(url))
     }
 
-    func test_handleDeepLink_invalidUrl_returnsFalse() {
+    func test_handleDeepLink_invalidUrl_returnsFalse() throws {
         _ = makeCoordinator(hasWallet: true, hasPincode: false)
         sut.start()
-        let url = URL(string: "https://zhip.app/unknown")!
+        let url = try XCTUnwrap(URL(string: "https://zhip.app/unknown"))
 
         XCTAssertFalse(sut.handleDeepLink(url))
     }

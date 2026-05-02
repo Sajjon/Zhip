@@ -22,15 +22,15 @@
 // SOFTWARE.
 //
 
+@testable import AppFeature
 import Combine
+import SingleLineControllerSceneViews
 import UIKit
 import XCTest
-@testable import Zhip
 
 /// Drives `SingleCellTypeTableView` selection forwarding and data loading so
 /// its delegate/data-source methods and `CellDeselectionMode` branches run.
 final class SingleCellTypeTableViewTests: XCTestCase {
-
     private typealias Model = NavigatingCellModel<String>
     private typealias Cell = TableViewCell<Model>
     private typealias Table = SingleCellTypeTableView<String, Cell>

@@ -22,9 +22,9 @@
 // SOFTWARE.
 //
 
+@testable import AppFeature
 import XCTest
 import Zesame
-@testable import Zhip
 
 final class KeystoreValidatorTests: XCTestCase {
     private let sut = KeystoreValidator()
@@ -67,7 +67,9 @@ final class KeystoreValidatorTests: XCTestCase {
     func test_errorInit_fromIncorrectPasswordWalletImport_mapsToIncorrectPassword() {
         let error = KeystoreValidator.Error(walletImportError: .incorrectPassword)
 
-        if case .incorrectPassword = error {} else { XCTFail("expected .incorrectPassword, got \(String(describing: error))") }
+        if case .incorrectPassword = error {} else {
+            XCTFail("expected .incorrectPassword, got \(String(describing: error))")
+        }
     }
 
     func test_errorInit_fromZesameWalletImportError_mapsToIncorrectPassword() {
@@ -75,7 +77,9 @@ final class KeystoreValidatorTests: XCTestCase {
 
         let error = KeystoreValidator.Error(error: zesameError)
 
-        if case .incorrectPassword = error {} else { XCTFail("expected .incorrectPassword, got \(String(describing: error))") }
+        if case .incorrectPassword = error {} else {
+            XCTFail("expected .incorrectPassword, got \(String(describing: error))")
+        }
     }
 
     func test_errorInit_fromNonZesameError_returnsNil() {

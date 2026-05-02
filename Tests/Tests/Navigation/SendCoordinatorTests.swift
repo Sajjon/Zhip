@@ -22,18 +22,18 @@
 // SOFTWARE.
 //
 
+@testable import AppFeature
 import Combine
 import Factory
+import SingleLineControllerController
 import UIKit
 import XCTest
 import Zesame
-@testable import Zhip
 
 /// Covers `SendCoordinator` navigation branches: the chain from
 /// `PrepareTransaction` through `ScanQRCode` / `ReviewTransaction` /
 /// `SignTransaction` / `PollTransactionStatus`, plus the final `finish` bubble.
 final class SendCoordinatorTests: XCTestCase {
-
     private var window: UIWindow!
     private var navigationController: NavigationBarLayoutingNavigationController!
     private var mockTransactions: MockTransactionsUseCase!
@@ -47,8 +47,8 @@ final class SendCoordinatorTests: XCTestCase {
         mockTransactions = MockTransactionsUseCase()
         mockWallet = MockWalletUseCase()
         mockWallet.storedWallet = TestWalletFactory.makeWallet()
-        Container.shared.transactionsUseCase.register { [unowned self] in self.mockTransactions }
-        Container.shared.walletStorageUseCase.register { [unowned self] in self.mockWallet }
+        Container.shared.transactionsUseCase.register { [unowned self] in mockTransactions }
+        Container.shared.walletStorageUseCase.register { [unowned self] in mockWallet }
         deeplinkSubject = PassthroughSubject<TransactionIntent, Never>()
         navigationController = NavigationBarLayoutingNavigationController()
         window = UIWindow(frame: .init(x: 0, y: 0, width: 320, height: 480))
@@ -98,11 +98,11 @@ final class SendCoordinatorTests: XCTestCase {
 
     // MARK: - PrepareTransaction branches
 
-    func test_prepareTransactionCancel_bubblesFinish() {
+    func test_prepareTransactionCancel_bubblesFinish() throws {
         sut.start()
         var received: SendCoordinatorNavigationStep?
         sut.navigator.navigation.sink { received = $0 }.store(in: &cancellables)
-        let prepare = top(as: PrepareTransaction.self)!
+        let prepare = try XCTUnwrap(top(as: PrepareTransaction.self))
 
         prepare.viewModel.navigator.next(.cancel)
         drainRunLoop()
@@ -112,9 +112,9 @@ final class SendCoordinatorTests: XCTestCase {
         }
     }
 
-    func test_prepareTransactionScanQR_presentsScanQRCode() {
+    func test_prepareTransactionScanQR_presentsScanQRCode() throws {
         sut.start()
-        let prepare = top(as: PrepareTransaction.self)!
+        let prepare = try XCTUnwrap(top(as: PrepareTransaction.self))
 
         prepare.viewModel.navigator.next(.scanQRCode)
         drainRunLoop()
@@ -123,7 +123,7 @@ final class SendCoordinatorTests: XCTestCase {
 
     func test_prepareTransactionReviewPayment_pushesReviewTransaction() throws {
         sut.start()
-        let prepare = top(as: PrepareTransaction.self)!
+        let prepare = try XCTUnwrap(top(as: PrepareTransaction.self))
         let payment = try makePayment()
 
         prepare.viewModel.navigator.next(.reviewPayment(payment))
@@ -136,11 +136,11 @@ final class SendCoordinatorTests: XCTestCase {
 
     func test_reviewAcceptPayment_pushesSignTransaction() throws {
         sut.start()
-        let prepare = top(as: PrepareTransaction.self)!
+        let prepare = try XCTUnwrap(top(as: PrepareTransaction.self))
         let payment = try makePayment()
         prepare.viewModel.navigator.next(.reviewPayment(payment))
         drainRunLoop()
-        let review = top(as: ReviewTransactionBeforeSigning.self)!
+        let review = try XCTUnwrap(top(as: ReviewTransactionBeforeSigning.self))
 
         review.viewModel.navigator.next(.acceptPaymentProceedWithSigning(payment))
         drainRunLoop()
@@ -181,7 +181,7 @@ final class SendCoordinatorTests: XCTestCase {
     func test_signTransactionSign_pushesPollTransactionStatus() throws {
         let sign = try pushToSignTransaction()
 
-        sign.viewModel.navigator.next(.sign(try makeTransactionResponse()))
+        try sign.viewModel.navigator.next(.sign(makeTransactionResponse()))
         drainRunLoop()
 
         XCTAssertTrue(top(as: PollTransactionStatus.self) != nil)
@@ -191,7 +191,7 @@ final class SendCoordinatorTests: XCTestCase {
 
     private func pushToPoll() throws -> PollTransactionStatus {
         let sign = try pushToSignTransaction()
-        sign.viewModel.navigator.next(.sign(try makeTransactionResponse()))
+        try sign.viewModel.navigator.next(.sign(makeTransactionResponse()))
         drainRunLoop()
         return top(as: PollTransactionStatus.self)!
     }
@@ -204,7 +204,7 @@ final class SendCoordinatorTests: XCTestCase {
         poll.viewModel.navigator.next(.skip)
         drainRunLoop()
 
-        if case .finish(let fetch) = received { XCTAssertFalse(fetch) } else {
+        if case let .finish(fetch) = received { XCTAssertFalse(fetch) } else {
             XCTFail("expected .finish(false), got \(String(describing: received))")
         }
     }
@@ -217,7 +217,7 @@ final class SendCoordinatorTests: XCTestCase {
         poll.viewModel.navigator.next(.waitUntilTimeout)
         drainRunLoop()
 
-        if case .finish(let fetch) = received { XCTAssertFalse(fetch) } else {
+        if case let .finish(fetch) = received { XCTAssertFalse(fetch) } else {
             XCTFail("expected .finish(false), got \(String(describing: received))")
         }
     }
@@ -230,7 +230,7 @@ final class SendCoordinatorTests: XCTestCase {
         poll.viewModel.navigator.next(.dismiss)
         drainRunLoop()
 
-        if case .finish(let fetch) = received { XCTAssertTrue(fetch) } else {
+        if case let .finish(fetch) = received { XCTAssertTrue(fetch) } else {
             XCTFail("expected .finish(true), got \(String(describing: received))")
         }
     }
@@ -250,7 +250,7 @@ final class SendCoordinatorTests: XCTestCase {
     /// scene's state.
     func test_deeplinkedTransaction_whenNotOnPrepare_isFilteredOut() throws {
         sut.start()
-        let prepare = top(as: PrepareTransaction.self)!
+        let prepare = try XCTUnwrap(top(as: PrepareTransaction.self))
         let payment = try makePayment()
         prepare.viewModel.navigator.next(.reviewPayment(payment))
         drainRunLoop()
@@ -264,9 +264,9 @@ final class SendCoordinatorTests: XCTestCase {
 
     // MARK: - ScanQRCode result branches
 
-    func test_scanQRCode_cancel_dismissesWithoutCrashing() {
+    func test_scanQRCode_cancel_dismissesWithoutCrashing() throws {
         sut.start()
-        let prepare = top(as: PrepareTransaction.self)!
+        let prepare = try XCTUnwrap(top(as: PrepareTransaction.self))
         prepare.viewModel.navigator.next(.scanQRCode)
         drainRunLoop()
 
@@ -278,7 +278,7 @@ final class SendCoordinatorTests: XCTestCase {
 
     func test_scanQRCode_scannedTransaction_dismissesAndForwardsToSubject() throws {
         sut.start()
-        let prepare = top(as: PrepareTransaction.self)!
+        let prepare = try XCTUnwrap(top(as: PrepareTransaction.self))
         prepare.viewModel.navigator.next(.scanQRCode)
         drainRunLoop()
 

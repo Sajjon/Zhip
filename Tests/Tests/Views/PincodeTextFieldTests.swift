@@ -22,13 +22,13 @@
 // SOFTWARE.
 //
 
+@testable import AppFeature
 import Combine
+import SingleLineControllerCore
 import UIKit
 import XCTest
-@testable import Zhip
 
 final class PincodeTextFieldTests: XCTestCase {
-
     private var cancellables: Set<AnyCancellable> = []
 
     override func tearDown() {
@@ -149,19 +149,19 @@ final class PincodeTextFieldTests: XCTestCase {
     func test_validate_errorMessage_doesNotCrash() {
         let sut = PincodeTextField()
 
-        sut.validate(.errorMessage("oops"))
+        sut.applyValidation(.errorMessage("oops"))
     }
 
     func test_validate_valid_doesNotCrash() {
         let sut = PincodeTextField()
 
-        sut.validate(.valid(withRemark: nil))
+        sut.applyValidation(.valid(withRemark: nil))
     }
 
     func test_validate_empty_doesNotCrash() {
         let sut = PincodeTextField()
 
-        sut.validate(.empty)
+        sut.applyValidation(.empty)
     }
 
     func test_pincodePublisher_emitsNilWhenSettingShorterInput() {
@@ -175,7 +175,7 @@ final class PincodeTextFieldTests: XCTestCase {
         XCTAssertTrue(received.contains(where: { $0 == nil }))
     }
 
-    func test_pincodePublisher_emitsPincodeWhenFullLengthTyped() throws {
+    func test_pincodePublisher_emitsPincodeWhenFullLengthTyped() {
         let sut = PincodeTextField()
         var received: [Pincode?] = []
         sut.pincodePublisher.sink { received.append($0) }.store(in: &cancellables)
@@ -190,7 +190,6 @@ final class PincodeTextFieldTests: XCTestCase {
 // MARK: - String.isBackspace
 
 final class StringIsBackspaceTests: XCTestCase {
-
     func test_nonBackspaceString_isNotBackspace() {
         XCTAssertFalse("abc".isBackspace)
     }

@@ -22,18 +22,19 @@
 // SOFTWARE.
 //
 
+@testable import AppFeature
 import Foundation
-@testable import Zhip
 
 /// Hand-written mock of `PincodeUseCase` for ViewModel tests.
 ///
 /// Stored properties are mutable so tests can seed initial state. Each write method
 /// increments a `…CallCount` so tests can verify the ViewModel drove the use case.
 final class MockPincodeUseCase: PincodeUseCase {
-
     var pincode: Pincode?
 
-    var hasConfiguredPincode: Bool { pincode != nil }
+    var hasConfiguredPincode: Bool {
+        pincode != nil
+    }
 
     private(set) var userChosePincodeCallCount = 0
     private(set) var skipSettingUpPincodeCallCount = 0

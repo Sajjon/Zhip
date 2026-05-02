@@ -23,10 +23,10 @@
 //
 
 import Foundation
+import SingleLineControllerDIPrimitives
 import XCTest
 
 extension XCTestCase {
-
     /// Drains the main runloop until pending Combine
     /// `.receive(on: DispatchQueue.main)` and GCD main-queue work has run,
     /// then returns. Used by coordinator/use-case tests that fire a

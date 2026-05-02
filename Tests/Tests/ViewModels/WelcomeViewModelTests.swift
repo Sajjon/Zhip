@@ -22,9 +22,10 @@
 // SOFTWARE.
 //
 
+@testable import AppFeature
 import Combine
+import SingleLineControllerController
 import XCTest
-@testable import Zhip
 
 /// Tests for the (tiny) `WelcomeViewModel`.
 ///
@@ -32,7 +33,6 @@ import XCTest
 /// `startTrigger` to `navigator.next(.start)`. The test drives the input subject
 /// and asserts that the navigator emits the expected step.
 final class WelcomeViewModelTests: XCTestCase {
-
     private var cancellables: Set<AnyCancellable> = []
 
     override func tearDown() {

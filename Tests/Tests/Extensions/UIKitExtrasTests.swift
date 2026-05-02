@@ -1,10 +1,9 @@
+@testable import AppFeature
 import UIKit
 import XCTest
-@testable import Zhip
 
 @MainActor
 final class UIKitExtrasTests: XCTestCase {
-
     // MARK: - UITabBarItem convenience init
 
     func test_uiTabBarItem_titleOnlyInit_setsTitle() {
@@ -57,8 +56,8 @@ final class UIKitExtrasTests: XCTestCase {
 
     // MARK: - UserDefaults.deleteValue
 
-    func test_userDefaults_deleteValue_removesObject() {
-        let defaults = UserDefaults(suiteName: "UIKitExtrasTests_userDefaults")!
+    func test_userDefaults_deleteValue_removesObject() throws {
+        let defaults = try XCTUnwrap(UserDefaults(suiteName: "UIKitExtrasTests_userDefaults"))
         defaults.removePersistentDomain(forName: "UIKitExtrasTests_userDefaults")
         defaults.save(value: "stored", for: "testKey")
         XCTAssertNotNil(defaults.loadValue(for: "testKey"))
@@ -67,5 +66,4 @@ final class UIKitExtrasTests: XCTestCase {
 
         XCTAssertNil(defaults.loadValue(for: "testKey"))
     }
-
 }

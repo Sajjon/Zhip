@@ -22,9 +22,10 @@
 // SOFTWARE.
 //
 
+@testable import AppFeature
+import SingleLineControllerCore
 import UIKit
 import XCTest
-@testable import Zhip
 
 /// Smoke-tests for `UIView` subclasses that have no required dependencies.
 ///
@@ -35,7 +36,6 @@ import XCTest
 /// coverage of view code without committing reference images.
 @MainActor
 final class SimpleViewSmokeTests: XCTestCase {
-
     func test_welcomeView_initializes() {
         let view = WelcomeView()
         view.frame = CGRect(x: 0, y: 0, width: 375, height: 812)

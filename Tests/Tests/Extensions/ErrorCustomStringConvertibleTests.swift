@@ -22,13 +22,12 @@
 // SOFTWARE.
 //
 
+@testable import AppFeature
 import XCTest
-@testable import Zhip
 
 /// Exercises the default `description` provided for enum-based `Error` types
 /// conforming to `CustomStringConvertible` via mirror reflection.
 final class ErrorCustomStringConvertibleTests: XCTestCase {
-
     private enum SampleEnumError: Swift.Error, CustomStringConvertible {
         case invalid(reason: String)
         case missingArgument(String)

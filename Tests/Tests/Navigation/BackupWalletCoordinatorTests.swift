@@ -22,21 +22,21 @@
 // SOFTWARE.
 //
 
+@testable import AppFeature
 import Combine
 import Factory
+import SingleLineControllerController
 import UIKit
 import XCTest
 import Zesame
-@testable import Zhip
 
 /// Drives each `BackupWalletUserAction` branch of
 /// `BackupWalletCoordinator` so all four navigation handlers run.
 final class BackupWalletCoordinatorTests: XCTestCase {
-
     private var window: UIWindow!
     private var navigationController: NavigationBarLayoutingNavigationController!
     private var mockWallet: MockWalletUseCase!
-    private var walletSubject: CurrentValueSubject<Zhip.Wallet, Never>!
+    private var walletSubject: CurrentValueSubject<AppFeature.Wallet, Never>!
     private var cancellables: Set<AnyCancellable> = []
     private var sut: BackupWalletCoordinator!
 
@@ -45,8 +45,8 @@ final class BackupWalletCoordinatorTests: XCTestCase {
         mockWallet = MockWalletUseCase()
         let wallet = TestWalletFactory.makeWallet()
         mockWallet.storedWallet = wallet
-        walletSubject = CurrentValueSubject<Zhip.Wallet, Never>(wallet)
-        Container.shared.walletStorageUseCase.register { [unowned self] in self.mockWallet }
+        walletSubject = CurrentValueSubject<AppFeature.Wallet, Never>(wallet)
+        Container.shared.walletStorageUseCase.register { [unowned self] in mockWallet }
         navigationController = NavigationBarLayoutingNavigationController()
         window = UIWindow(frame: .init(x: 0, y: 0, width: 320, height: 480))
         window.rootViewController = navigationController
@@ -87,11 +87,11 @@ final class BackupWalletCoordinatorTests: XCTestCase {
 
     // MARK: - Navigation branches
 
-    func test_cancelOrDismiss_bubblesCancel() {
+    func test_cancelOrDismiss_bubblesCancel() throws {
         sut.start()
         var received: BackupWalletCoordinatorNavigationStep?
         sut.navigator.navigation.sink { received = $0 }.store(in: &cancellables)
-        let backup = top(as: BackupWallet.self)!
+        let backup = try XCTUnwrap(top(as: BackupWallet.self))
 
         backup.viewModel.navigator.next(.cancelOrDismiss)
         drainRunLoop()
@@ -101,11 +101,11 @@ final class BackupWalletCoordinatorTests: XCTestCase {
         }
     }
 
-    func test_backupWallet_bubblesBackUp() {
+    func test_backupWallet_bubblesBackUp() throws {
         sut.start()
         var received: BackupWalletCoordinatorNavigationStep?
         sut.navigator.navigation.sink { received = $0 }.store(in: &cancellables)
-        let backup = top(as: BackupWallet.self)!
+        let backup = try XCTUnwrap(top(as: BackupWallet.self))
 
         backup.viewModel.navigator.next(.backupWallet)
         drainRunLoop()
@@ -115,18 +115,18 @@ final class BackupWalletCoordinatorTests: XCTestCase {
         }
     }
 
-    func test_revealKeystore_presentsModalWithoutCrashing() {
+    func test_revealKeystore_presentsModalWithoutCrashing() throws {
         sut.start()
-        let backup = top(as: BackupWallet.self)!
+        let backup = try XCTUnwrap(top(as: BackupWallet.self))
 
         backup.viewModel.navigator.next(.revealKeystore)
         drainRunLoop()
         // Modal presented; presence on navigationController.presentedViewController proves path ran.
     }
 
-    func test_revealPrivateKey_startsDecryptKeystoreChildCoordinator() {
+    func test_revealPrivateKey_startsDecryptKeystoreChildCoordinator() throws {
         sut.start()
-        let backup = top(as: BackupWallet.self)!
+        let backup = try XCTUnwrap(top(as: BackupWallet.self))
 
         backup.viewModel.navigator.next(.revealPrivateKey)
         drainRunLoop()
@@ -153,7 +153,7 @@ final class BackupWalletCoordinatorTests: XCTestCase {
 
     func test_decryptKeystoreBackingUpKeyPair_dismissesChildCoordinator() throws {
         sut.start()
-        let backup = top(as: BackupWallet.self)!
+        let backup = try XCTUnwrap(top(as: BackupWallet.self))
         backup.viewModel.navigator.next(.revealPrivateKey)
         drainRunLoop()
         let decrypt = try firstChild(as: DecryptKeystoreCoordinator.self)
@@ -166,7 +166,7 @@ final class BackupWalletCoordinatorTests: XCTestCase {
 
     func test_decryptKeystoreDismiss_dismissesChildCoordinator() throws {
         sut.start()
-        let backup = top(as: BackupWallet.self)!
+        let backup = try XCTUnwrap(top(as: BackupWallet.self))
         backup.viewModel.navigator.next(.revealPrivateKey)
         drainRunLoop()
         let decrypt = try firstChild(as: DecryptKeystoreCoordinator.self)
@@ -177,9 +177,9 @@ final class BackupWalletCoordinatorTests: XCTestCase {
         XCTAssertFalse(sut.childCoordinators.contains { $0 is DecryptKeystoreCoordinator })
     }
 
-    func test_revealKeystoreFinished_dismissesModalScene() {
+    func test_revealKeystoreFinished_dismissesModalScene() throws {
         sut.start()
-        let backup = top(as: BackupWallet.self)!
+        let backup = try XCTUnwrap(top(as: BackupWallet.self))
         backup.viewModel.navigator.next(.revealKeystore)
         drainRunLoop()
         guard let presentedNav = navigationController.presentedViewController as? UINavigationController,

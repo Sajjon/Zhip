@@ -22,11 +22,12 @@
 // SOFTWARE.
 //
 
+@testable import AppFeature
 import Combine
 import Factory
+import SingleLineControllerController
 import XCTest
 import Zesame
-@testable import Zhip
 
 /// Tests for `MainViewModel`.
 ///
@@ -35,7 +36,6 @@ import Zesame
 /// cache-write loop driven by the `updateBalanceTrigger` and
 /// `pullToRefreshTrigger` inputs.
 final class MainViewModelTests: XCTestCase {
-
     private var cancellables: Set<AnyCancellable> = []
     private var updateBalanceTrigger: PassthroughSubject<Void, Never>!
     private var pullToRefresh: PassthroughSubject<Void, Never>!
@@ -55,8 +55,8 @@ final class MainViewModelTests: XCTestCase {
         mockTransactions = MockTransactionsUseCase()
         mockWallet = MockWalletUseCase()
         mockWallet.storedWallet = TestWalletFactory.makeWallet()
-        Container.shared.transactionsUseCase.register { [unowned self] in self.mockTransactions }
-        Container.shared.walletStorageUseCase.register { [unowned self] in self.mockWallet }
+        Container.shared.transactionsUseCase.register { [unowned self] in mockTransactions }
+        Container.shared.walletStorageUseCase.register { [unowned self] in mockWallet }
     }
 
     override func tearDown() {

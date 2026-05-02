@@ -22,9 +22,11 @@
 // SOFTWARE.
 //
 
+@testable import AppFeature
 import Combine
 import Foundation
-@testable import Zhip
+import SingleLineControllerController
+import SingleLineControllerCore
 
 extension ViewModelType where Input: InputType, Self.Input.FromController == InputFromController {
     func transform(inputFromView: Input.FromView) -> OutputVM {

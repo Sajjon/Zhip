@@ -23,10 +23,13 @@ excluded:
 
 line_length: 200
 
-# swiftformat with --wrapparameters before-first puts { on its own line for multiline
-# function signatures; allow this so both tools agree.
+# SwiftFormat's wrapMultilineStatementBraces puts { on its own line for multiline
+# function signatures, type-inheritance lists, and statement conditions (if/guard/while);
+# allow all of those so the two tools don't fight.
 opening_brace:
   ignore_multiline_function_signatures: true
+  ignore_multiline_type_headers: true
+  ignore_multiline_statement_conditions: true
 
 type_name:
   min_length: 3

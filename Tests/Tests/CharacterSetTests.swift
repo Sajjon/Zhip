@@ -22,11 +22,11 @@
 // SOFTWARE.
 //
 
+@testable import AppFeature
 import Foundation
 import UIKit
 import XCTest
 import Zesame
-@testable import Zhip
 
 class CharacterSetTests: XCTestCase {
     func testDecimalsWithSeparator() {

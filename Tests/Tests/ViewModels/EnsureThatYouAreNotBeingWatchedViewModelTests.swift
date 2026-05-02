@@ -1,9 +1,9 @@
+@testable import AppFeature
 import Combine
+import SingleLineControllerController
 import XCTest
-@testable import Zhip
 
 final class EnsureThatYouAreNotBeingWatchedViewModelTests: XCTestCase {
-
     private var cancellables: Set<AnyCancellable> = []
     private var understandTrigger: PassthroughSubject<Void, Never>!
     private var fakeController: FakeInputFromController!

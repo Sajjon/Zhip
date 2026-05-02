@@ -1,8 +1,7 @@
+@testable import AppFeature
 import XCTest
-@testable import Zhip
 
 final class EncodableDictionaryTests: XCTestCase {
-
     private struct SimpleEncodable: Encodable {
         let name: String
         let count: Int
@@ -25,7 +24,7 @@ final class EncodableDictionaryTests: XCTestCase {
     /// Forces the `encode(to:)` throw path by using an encoder that rejects the type.
     private struct ThrowingOnEncode: Encodable {
         struct BadError: Error {}
-        func encode(to encoder: Encoder) throws {
+        func encode(to _: Encoder) throws {
             throw BadError()
         }
     }

@@ -22,24 +22,23 @@
 // SOFTWARE.
 //
 
+@testable import AppFeature
 import Combine
 import Factory
 import XCTest
 import Zesame
-@testable import Zhip
 
 /// Tests that `DefaultCreateWalletUseCase` forwards to the injected
 /// `ZilliqaServiceReactive`, tags the resulting wallet with
 /// `.generatedByThisApp`, and propagates errors.
 final class DefaultCreateWalletUseCaseTests: XCTestCase {
-
     private var cancellables: Set<AnyCancellable> = []
     private var mockService: MockZilliqaServiceReactive!
 
     override func setUp() {
         super.setUp()
         mockService = MockZilliqaServiceReactive()
-        Container.shared.zilliqaService.register { [unowned self] in self.mockService }
+        Container.shared.zilliqaService.register { [unowned self] in mockService }
     }
 
     override func tearDown() {
@@ -68,7 +67,7 @@ final class DefaultCreateWalletUseCaseTests: XCTestCase {
         let zesameWallet = TestWalletFactory.makeWallet().wallet
         mockService.createNewWalletResult = .success(zesameWallet)
         let sut = DefaultCreateWalletUseCase()
-        var produced: Zhip.Wallet?
+        var produced: AppFeature.Wallet?
         let expectation = expectation(description: "value")
 
         sut.createNewWallet(encryptionPassword: "pw")

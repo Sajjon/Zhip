@@ -1,10 +1,9 @@
+@testable import AppFeature
 import UIKit
 import XCTest
-@testable import Zhip
 
 @MainActor
 final class AppAppearanceTests: XCTestCase {
-
     // MARK: - UINavigationBar.shadow getter
 
     func test_shadow_getterAlwaysReturnsFalse() {

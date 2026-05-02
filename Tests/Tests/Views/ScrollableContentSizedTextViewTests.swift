@@ -1,10 +1,9 @@
+@testable import AppFeature
 import UIKit
 import XCTest
-@testable import Zhip
 
 @MainActor
 final class ScrollableContentSizedTextViewTests: XCTestCase {
-
     func test_init_createsTextView() {
         let sut = ScrollableContentSizedTextView()
         XCTAssertNotNil(sut)

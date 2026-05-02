@@ -22,23 +22,23 @@
 // SOFTWARE.
 //
 
+@testable import AppFeature
 import Combine
 import Factory
+import SingleLineControllerController
 import UIKit
 import XCTest
 import Zesame
-@testable import Zhip
 
 /// Drives `DecryptKeystoreCoordinator` routing: start pushes
 /// `DecryptKeystoreToRevealKeyPair`; dismiss bubbles .dismiss; successful
 /// decryption pushes `BackUpRevealedKeyPair` which then bubbles
 /// .backingUpKeyPair on finish.
 final class DecryptKeystoreCoordinatorTests: XCTestCase {
-
     private var window: UIWindow!
     private var navigationController: NavigationBarLayoutingNavigationController!
     private var mockWallet: MockWalletUseCase!
-    private var walletSubject: CurrentValueSubject<Zhip.Wallet, Never>!
+    private var walletSubject: CurrentValueSubject<AppFeature.Wallet, Never>!
     private var cancellables: Set<AnyCancellable> = []
     private var sut: DecryptKeystoreCoordinator!
 
@@ -47,8 +47,8 @@ final class DecryptKeystoreCoordinatorTests: XCTestCase {
         mockWallet = MockWalletUseCase()
         let wallet = TestWalletFactory.makeWallet()
         mockWallet.storedWallet = wallet
-        walletSubject = CurrentValueSubject<Zhip.Wallet, Never>(wallet)
-        Container.shared.walletStorageUseCase.register { [unowned self] in self.mockWallet }
+        walletSubject = CurrentValueSubject<AppFeature.Wallet, Never>(wallet)
+        Container.shared.walletStorageUseCase.register { [unowned self] in mockWallet }
         navigationController = NavigationBarLayoutingNavigationController()
         window = UIWindow(frame: .init(x: 0, y: 0, width: 320, height: 480))
         window.rootViewController = navigationController
@@ -93,11 +93,11 @@ final class DecryptKeystoreCoordinatorTests: XCTestCase {
 
     // MARK: - DecryptKeystore branches
 
-    func test_decryptKeystoreDismiss_bubblesDismiss() {
+    func test_decryptKeystoreDismiss_bubblesDismiss() throws {
         sut.start()
         var received: DecryptKeystoreCoordinatorNavigationStep?
         sut.navigator.navigation.sink { received = $0 }.store(in: &cancellables)
-        let decrypt = top(as: DecryptKeystoreToRevealKeyPair.self)!
+        let decrypt = try XCTUnwrap(top(as: DecryptKeystoreToRevealKeyPair.self))
 
         decrypt.viewModel.navigator.next(.dismiss)
         drainRunLoop()
@@ -109,7 +109,7 @@ final class DecryptKeystoreCoordinatorTests: XCTestCase {
 
     func test_decryptKeystoreRevealing_pushesBackUpRevealedKeyPair() throws {
         sut.start()
-        let decrypt = top(as: DecryptKeystoreToRevealKeyPair.self)!
+        let decrypt = try XCTUnwrap(top(as: DecryptKeystoreToRevealKeyPair.self))
         let keyPair = try makeKeyPair()
 
         decrypt.viewModel.navigator.next(.decryptKeystoreReavealing(keyPair: keyPair))
@@ -132,12 +132,12 @@ final class DecryptKeystoreCoordinatorTests: XCTestCase {
 
     func test_backUpRevealedFinish_bubblesBackingUpKeyPair() throws {
         sut.start()
-        let decrypt = top(as: DecryptKeystoreToRevealKeyPair.self)!
-        decrypt.viewModel.navigator.next(.decryptKeystoreReavealing(keyPair: try makeKeyPair()))
+        let decrypt = try XCTUnwrap(top(as: DecryptKeystoreToRevealKeyPair.self))
+        try decrypt.viewModel.navigator.next(.decryptKeystoreReavealing(keyPair: makeKeyPair()))
         drainRunLoop()
         var received: DecryptKeystoreCoordinatorNavigationStep?
         sut.navigator.navigation.sink { received = $0 }.store(in: &cancellables)
-        let backUp = top(as: BackUpRevealedKeyPair.self)!
+        let backUp = try XCTUnwrap(top(as: BackUpRevealedKeyPair.self))
 
         backUp.viewModel.navigator.next(.finish)
         drainRunLoop()

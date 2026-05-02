@@ -1,6 +1,6 @@
+@testable import AppFeature
 import UIKit
 import XCTest
-@testable import Zhip
 
 private struct TestPair: Mergeable {
     var a: String?
@@ -15,7 +15,6 @@ private struct TestPair: Mergeable {
 }
 
 final class MergeableTests: XCTestCase {
-
     func test_mergeYieldingTo_picksOtherWhenSet() {
         let lhs = TestPair(a: "left", b: nil)
         let rhs = TestPair(a: "right", b: "rhsB")

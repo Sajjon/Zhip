@@ -1,10 +1,9 @@
+@testable import AppFeature
 import UIKit
 import XCTest
-@testable import Zhip
 
 @MainActor
 final class ImageAboveLabelButtonTests: XCTestCase {
-
     func test_init_createsButton() {
         let sut = ImageAboveLabelButton()
         XCTAssertFalse(sut.translatesAutoresizingMaskIntoConstraints)

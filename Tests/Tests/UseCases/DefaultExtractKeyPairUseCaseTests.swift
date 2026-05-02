@@ -22,23 +22,22 @@
 // SOFTWARE.
 //
 
+@testable import AppFeature
 import Combine
 import Factory
 import XCTest
 import Zesame
-@testable import Zhip
 
 /// Tests that `DefaultExtractKeyPairUseCase` forwards to the injected service
 /// and surfaces its `KeyPair` result.
 final class DefaultExtractKeyPairUseCaseTests: XCTestCase {
-
     private var cancellables: Set<AnyCancellable> = []
     private var mockService: MockZilliqaServiceReactive!
 
     override func setUp() {
         super.setUp()
         mockService = MockZilliqaServiceReactive()
-        Container.shared.zilliqaService.register { [unowned self] in self.mockService }
+        Container.shared.zilliqaService.register { [unowned self] in mockService }
     }
 
     override func tearDown() {

@@ -22,17 +22,17 @@
 // SOFTWARE.
 //
 
+@testable import AppFeature
 import Combine
 import Factory
+import SingleLineControllerController
 import UIKit
 import XCTest
 import Zesame
-@testable import Zhip
 
 /// Drives each branch of `ReceiveCoordinator`: start, `.finish` bubble, and
 /// `.requestTransaction` which triggers the share-sheet path.
 final class ReceiveCoordinatorTests: XCTestCase {
-
     private var window: UIWindow!
     private var navigationController: NavigationBarLayoutingNavigationController!
     private var mockWallet: MockWalletUseCase!
@@ -43,7 +43,7 @@ final class ReceiveCoordinatorTests: XCTestCase {
         super.setUp()
         mockWallet = MockWalletUseCase()
         mockWallet.storedWallet = TestWalletFactory.makeWallet()
-        Container.shared.walletStorageUseCase.register { [unowned self] in self.mockWallet }
+        Container.shared.walletStorageUseCase.register { [unowned self] in mockWallet }
         navigationController = NavigationBarLayoutingNavigationController()
         window = UIWindow(frame: .init(x: 0, y: 0, width: 320, height: 480))
         window.rootViewController = navigationController
@@ -80,11 +80,11 @@ final class ReceiveCoordinatorTests: XCTestCase {
 
     // MARK: - Branches
 
-    func test_finish_bubblesFinishNavigationStep() {
+    func test_finish_bubblesFinishNavigationStep() throws {
         sut.start()
         var received: ReceiveCoordinatorNavigationStep?
         sut.navigator.navigation.sink { received = $0 }.store(in: &cancellables)
-        let receive = top(as: Receive.self)!
+        let receive = try XCTUnwrap(top(as: Receive.self))
 
         receive.viewModel.navigator.next(.finish)
         drainRunLoop()
@@ -96,7 +96,7 @@ final class ReceiveCoordinatorTests: XCTestCase {
 
     func test_requestTransaction_presentsShareSheetWithoutCrashing() throws {
         sut.start()
-        let receive = top(as: Receive.self)!
+        let receive = try XCTUnwrap(top(as: Receive.self))
         let address = try Address(string: "e3090a1309DfAC40352d03dEc6cCD9cAd213e76B")
         let intent = TransactionIntent(to: address)
 

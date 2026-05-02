@@ -22,13 +22,12 @@
 // SOFTWARE.
 //
 
+@testable import AppFeature
 import Foundation
-@testable import Zhip
 
 /// Convenience factories to produce test-friendly `Preferences` and
 /// `SecurePersistence` instances backed by `InMemoryKeyValueStore`.
 enum TestStoreFactory {
-
     /// Builds an isolated `Preferences` backed by an empty in-memory store.
     static func makePreferences() -> Preferences {
         KeyValueStore(InMemoryKeyValueStore<PreferencesKey>())

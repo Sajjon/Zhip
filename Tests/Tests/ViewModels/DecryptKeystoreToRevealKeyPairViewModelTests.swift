@@ -22,11 +22,12 @@
 // SOFTWARE.
 //
 
+@testable import AppFeature
 import Combine
 import Factory
+import SingleLineControllerController
 import XCTest
 import Zesame
-@testable import Zhip
 
 /// Tests for `DecryptKeystoreToRevealKeyPairViewModel`.
 ///
@@ -35,14 +36,13 @@ import Zesame
 /// `ExtractKeyPairUseCase` and emits `.decryptKeystoreReavealing` with the
 /// derived key pair.
 final class DecryptKeystoreToRevealKeyPairViewModelTests: XCTestCase {
-
     private var cancellables: Set<AnyCancellable> = []
     private var encryptionPassword: CurrentValueSubject<String, Never>!
     private var isEditingEncryptionPassword: CurrentValueSubject<Bool, Never>!
     private var revealTrigger: PassthroughSubject<Void, Never>!
     private var fakeController: FakeInputFromController!
     private var mockWallet: MockWalletUseCase!
-    private var wallet: Zhip.Wallet!
+    private var wallet: AppFeature.Wallet!
 
     override func setUp() {
         super.setUp()
@@ -52,7 +52,7 @@ final class DecryptKeystoreToRevealKeyPairViewModelTests: XCTestCase {
         fakeController = FakeInputFromController()
         mockWallet = MockWalletUseCase()
         wallet = TestWalletFactory.makeWallet()
-        Container.shared.extractKeyPairUseCase.register { [unowned self] in self.mockWallet }
+        Container.shared.extractKeyPairUseCase.register { [unowned self] in mockWallet }
     }
 
     override func tearDown() {

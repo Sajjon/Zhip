@@ -22,16 +22,16 @@
 // SOFTWARE.
 //
 
+@testable import AppFeature
 import Combine
+import SingleLineControllerController
 import XCTest
-@testable import Zhip
 
 /// Tests for `ChoosePincodeViewModel`.
 ///
 /// Covers the "Done" path (forwards the pincode) and the "Skip" path
 /// (emits `.skip` from the nav bar right trigger).
 final class ChoosePincodeViewModelTests: XCTestCase {
-
     private var cancellables: Set<AnyCancellable> = []
     private var pincodeInput: CurrentValueSubject<Pincode?, Never>!
     private var doneTrigger: PassthroughSubject<Void, Never>!

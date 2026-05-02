@@ -1,5 +1,5 @@
+@testable import AppFeature
 import XCTest
-@testable import Zhip
 
 final class PrivateKeyValidatorTests: XCTestCase {
     private let sut = PrivateKeyValidator()

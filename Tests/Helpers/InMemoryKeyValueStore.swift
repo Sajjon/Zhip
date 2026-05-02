@@ -22,8 +22,8 @@
 // SOFTWARE.
 //
 
+@testable import AppFeature
 import Foundation
-@testable import Zhip
 
 /// In-memory backing for `KeyValueStoring`, used by tests to build mock
 /// `Preferences` / `SecurePersistence` instances without touching UserDefaults or
@@ -33,7 +33,6 @@ import Foundation
 /// `KeyValueStore(InMemoryKeyValueStore<KeychainKey>())` to get a drop-in replacement
 /// for the production stores.
 final class InMemoryKeyValueStore<KeyType: KeyConvertible>: KeyValueStoring {
-
     typealias Key = KeyType
 
     /// Backing dictionary keyed by the string form of `Key`.
@@ -60,5 +59,7 @@ final class InMemoryKeyValueStore<KeyType: KeyConvertible>: KeyValueStoring {
     }
 
     /// Direct access for test assertions (read-only snapshot).
-    var _allEntries: [String: Any] { storage }
+    var _allEntries: [String: Any] {
+        storage
+    }
 }

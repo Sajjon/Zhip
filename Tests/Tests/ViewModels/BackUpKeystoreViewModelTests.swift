@@ -22,22 +22,22 @@
 // SOFTWARE.
 //
 
+@testable import AppFeature
 import Combine
 import Factory
+import SingleLineControllerController
 import XCTest
 import Zesame
-@testable import Zhip
 
 /// Tests for `BackUpKeystoreViewModel`.
 ///
 /// Covers the keystore-as-JSON output, copy-to-pasteboard side effect with toast,
 /// and the right-bar-button → `.finished` navigation branch.
 final class BackUpKeystoreViewModelTests: XCTestCase {
-
     private var cancellables: Set<AnyCancellable> = []
     private var copyTrigger: PassthroughSubject<Void, Never>!
     private var fakeController: FakeInputFromController!
-    private var wallet: Zhip.Wallet!
+    private var wallet: AppFeature.Wallet!
     private var mockPasteboard: MockPasteboard!
 
     override func setUp() {
@@ -46,7 +46,7 @@ final class BackUpKeystoreViewModelTests: XCTestCase {
         fakeController = FakeInputFromController()
         wallet = TestWalletFactory.makeWallet()
         mockPasteboard = MockPasteboard()
-        Container.shared.pasteboard.register { [unowned self] in self.mockPasteboard }
+        Container.shared.pasteboard.register { [unowned self] in mockPasteboard }
     }
 
     override func tearDown() {
