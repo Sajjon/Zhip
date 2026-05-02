@@ -66,7 +66,7 @@ final class SettingsViewModelTests: XCTestCase {
         fakeController.viewWillAppearSubject.send(())
 
         XCTAssertEqual(latest.count, 4)
-        XCTAssertEqual(latest.map(\.items.count), [1, 3, 3, 2])
+        XCTAssertEqual(latest.map(\.items.count), [1, 3, 1, 2])
     }
 
     func test_sections_withoutConfiguredPincode_firstItemIsSetPincode() {

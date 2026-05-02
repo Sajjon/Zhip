@@ -43,31 +43,6 @@ final class MockOnboardingUseCase: OnboardingUseCase {
         didAcceptTermsOfServiceCallCount += 1
     }
 
-    // MARK: - Custom ECC Warning
-
-    /// Value returned from `hasAcceptedCustomECCWarning`. Mutable so tests can seed.
-    var hasAcceptedCustomECCWarning: Bool = false
-
-    /// Number of times `didAcceptCustomECCWarning()` was invoked.
-    private(set) var didAcceptCustomECCWarningCallCount = 0
-
-    func didAcceptCustomECCWarning() {
-        didAcceptCustomECCWarningCallCount += 1
-    }
-
-    // MARK: - Crash reporting
-
-    /// Value returned from `hasAnsweredCrashReportingQuestion`. Mutable so tests can seed.
-    var hasAnsweredCrashReportingQuestion: Bool = false
-
-    /// The `acceptsCrashReporting` value from the most recent invocation, or `nil`
-    /// if the method was never called.
-    private(set) var lastAnsweredCrashReportingValue: Bool?
-
-    func answeredCrashReportingQuestion(acceptsCrashReporting: Bool) {
-        lastAnsweredCrashReportingValue = acceptsCrashReporting
-    }
-
     // MARK: - Pincode prompt
 
     /// Value returned from `shouldPromptUserToChosePincode`. Mutable so tests can seed.

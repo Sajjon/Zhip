@@ -24,17 +24,17 @@
 
 import CoreText
 import Factory
-import FirebaseAnalytics
-import FirebaseCore
 import Foundation
 import IQKeyboardManagerSwift
 import NanoViewControllerCore
+import OSLog
 import Resources
-import SwiftyBeaver
 import Zesame
 
-/// The global logger used throughout the app.
-public let log = SwiftyBeaver.self
+/// The global logger used throughout the app. Backed by Apple's `Logger`
+/// (OSLog) — log lines are routed to the unified logging system and visible
+/// in Console.app + Instruments without any third-party setup.
+public let log = Logger(subsystem: Bundle.main.bundleIdentifier ?? "com.openzesame.zhip", category: "app")
 
 /// One-time app initialization run from the `AppDelegate`.
 ///
@@ -42,18 +42,14 @@ public let log = SwiftyBeaver.self
 /// 1. `registerFonts` so `UINavigationBar.appearance()` can reference our font.
 /// 2. `setupAppearance` so every view created later inherits the right styling.
 /// 3. `setupKeyboardHiding` (IQKeyboardManager).
-/// 4. `setupCrashReportingIfAllowed` — gated on the user's `hasAcceptedCrashReporting` preference.
-/// 5. `wipeStaleKeychainOnReinstallIfNeeded` — must run *before* anything reads
+/// 4. `wipeStaleKeychainOnReinstallIfNeeded` — must run *before* anything reads
 ///    the wallet, so the destructive reinstall path can't interleave with a
 ///    legitimate read elsewhere.
-/// 6. `setupLogging` — debug-only console destination.
 public func bootstrap() {
     registerFonts()
     AppAppearance.setupDefault()
     setupKeyboardHiding()
-    setupCrashReportingIfAllowed()
     wipeStaleKeychainOnReinstallIfNeeded()
-    setupLogging()
 }
 
 /// Reinstall-detection wipe.
@@ -114,42 +110,8 @@ private func registerFonts() {
     }
 }
 
-/// Toggles Firebase Analytics + crash reporting based on the user's
-/// `hasAcceptedCrashReporting` preference.
-///
-/// Called both at launch and after the user toggles the preference in Settings,
-/// so the function is idempotent — it tears down `FirebaseApp` when disabled
-/// and refuses to re-initialize when already configured.
-public func setupCrashReportingIfAllowed() {
-    guard Preferences.default.isTrue(.hasAcceptedCrashReporting) else {
-        Analytics.setAnalyticsCollectionEnabled(false)
-        FirebaseApp.app()?.delete { _ in
-            /* required completion handler */
-        }
-        return
-    }
-    guard FirebaseApp.app() == nil else {
-        // already configured, crash if called twice
-        return
-    }
-    // FirebaseConfiguration.shared.setLoggerLevel was removed in Firebase 9+.
-    // Logging verbosity is now controlled via the FIREBASE_LOG_LEVEL environment variable.
-    FirebaseApp.configure()
-    Analytics.setAnalyticsCollectionEnabled(true)
-}
-
 /// Enables `IQKeyboardManager` so taps outside text fields dismiss the keyboard
 /// without per-screen `endEditing(_:)` plumbing.
 private func setupKeyboardHiding() {
     IQKeyboardManager.shared.enable = true
-}
-
-/// Adds a verbose console destination to SwiftyBeaver — Debug builds only.
-/// Release builds ship without any log output.
-private func setupLogging() {
-    // only allow logging for Debug builds
-    guard isDebug else { return }
-    let console = ConsoleDestination()
-    console.minLevel = .verbose
-    log.addDestination(console)
 }

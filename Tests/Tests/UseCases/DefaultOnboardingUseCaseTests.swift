@@ -70,30 +70,6 @@ final class DefaultOnboardingUseCaseTests: XCTestCase {
         XCTAssertTrue(sut.hasAcceptedTermsOfService)
     }
 
-    // MARK: - Custom ECC Warning
-
-    func test_hasAcceptedCustomECCWarning_isFalse_initially() {
-        XCTAssertFalse(sut.hasAcceptedCustomECCWarning)
-    }
-
-    func test_didAcceptCustomECCWarning_flipsFlagToTrue() {
-        // Act
-        sut.didAcceptCustomECCWarning()
-
-        // Assert
-        XCTAssertTrue(sut.hasAcceptedCustomECCWarning)
-    }
-
-    // MARK: - Crash Reporting
-
-    func test_hasAnsweredCrashReportingQuestion_isFalse_initially() {
-        XCTAssertFalse(sut.hasAnsweredCrashReportingQuestion)
-    }
-
-    // Note: We don't exercise `answeredCrashReportingQuestion(...)` in a test
-    // because the Default implementation calls into Firebase during the side-effect
-    // path. See TESTING.md for why we deliberately don't fake Firebase.
-
     // MARK: - Pincode prompt
 
     func test_shouldPromptUserToChosePincode_isTrue_initially() {

@@ -101,33 +101,8 @@ final class OnboardingCoordinatorTests: XCTestCase {
         XCTAssertTrue(top(as: TermsOfService.self) != nil)
     }
 
-    func test_welcomeStart_whenTermsAcceptedNoAnalytics_pushesAnalytics() throws {
+    func test_welcomeStart_whenTermsAcceptedNoWallet_startsChooseWalletChild() throws {
         mockOnboarding.hasAcceptedTermsOfService = true
-        sut.start()
-        let welcome = try XCTUnwrap(top(as: Welcome.self))
-
-        welcome.viewModel.navigator.next(.start)
-        drainRunLoop()
-
-        XCTAssertTrue(top(as: AskForCrashReportingPermissions.self) != nil)
-    }
-
-    func test_welcomeStart_whenTermsAndAnalyticsDoneNoECC_pushesCustomECCWarning() throws {
-        mockOnboarding.hasAcceptedTermsOfService = true
-        mockOnboarding.hasAnsweredCrashReportingQuestion = true
-        sut.start()
-        let welcome = try XCTUnwrap(top(as: Welcome.self))
-
-        welcome.viewModel.navigator.next(.start)
-        drainRunLoop()
-
-        XCTAssertTrue(top(as: WarningCustomECC.self) != nil)
-    }
-
-    func test_welcomeStart_whenAllAcceptedNoWallet_startsChooseWalletChild() throws {
-        mockOnboarding.hasAcceptedTermsOfService = true
-        mockOnboarding.hasAnsweredCrashReportingQuestion = true
-        mockOnboarding.hasAcceptedCustomECCWarning = true
         sut.start()
         let welcome = try XCTUnwrap(top(as: Welcome.self))
 
@@ -137,10 +112,8 @@ final class OnboardingCoordinatorTests: XCTestCase {
         XCTAssertTrue(sut.childCoordinators.contains { $0 is ChooseWalletCoordinator })
     }
 
-    func test_welcomeStart_whenAllReadyAndWalletExistsAndPincodePrompted_startsSetPincode() throws {
+    func test_welcomeStart_whenTermsAcceptedAndWalletExistsAndPincodePrompted_startsSetPincode() throws {
         mockOnboarding.hasAcceptedTermsOfService = true
-        mockOnboarding.hasAnsweredCrashReportingQuestion = true
-        mockOnboarding.hasAcceptedCustomECCWarning = true
         mockWallet.storedWallet = TestWalletFactory.makeWallet()
         mockOnboarding.shouldPromptUserToChosePincode = true
         sut.start()
@@ -154,8 +127,6 @@ final class OnboardingCoordinatorTests: XCTestCase {
 
     func test_welcomeStart_whenEverythingDone_bubblesFinishOnboarding() throws {
         mockOnboarding.hasAcceptedTermsOfService = true
-        mockOnboarding.hasAnsweredCrashReportingQuestion = true
-        mockOnboarding.hasAcceptedCustomECCWarning = true
         mockWallet.storedWallet = TestWalletFactory.makeWallet()
         mockOnboarding.shouldPromptUserToChosePincode = false
         sut.start()
@@ -166,14 +137,14 @@ final class OnboardingCoordinatorTests: XCTestCase {
         welcome.viewModel.navigator.next(.start)
         drainRunLoop()
 
-        if case .finishOnboarding = received { } else {
+        if case .finishOnboarding = received {} else {
             XCTFail("expected .finishOnboarding, got \(String(describing: received))")
         }
     }
 
-    // MARK: - TermsOfService → Analytics
+    // MARK: - TermsOfService → ChooseWallet
 
-    func test_termsOfServiceAccept_pushesAnalytics() throws {
+    func test_termsOfServiceAccept_startsChooseWalletChild() throws {
         sut.start()
         let welcome = try XCTUnwrap(top(as: Welcome.self))
         welcome.viewModel.navigator.next(.start)
@@ -181,39 +152,6 @@ final class OnboardingCoordinatorTests: XCTestCase {
         let terms = try XCTUnwrap(top(as: TermsOfService.self))
 
         terms.viewModel.navigator.next(.acceptTermsOfService)
-        drainRunLoop()
-
-        XCTAssertTrue(top(as: AskForCrashReportingPermissions.self) != nil)
-    }
-
-    // MARK: - Analytics → CustomECCWarning
-
-    func test_analyticsAnswered_pushesCustomECCWarning() throws {
-        mockOnboarding.hasAcceptedTermsOfService = true
-        sut.start()
-        let welcome = try XCTUnwrap(top(as: Welcome.self))
-        welcome.viewModel.navigator.next(.start)
-        drainRunLoop()
-        let analytics = try XCTUnwrap(top(as: AskForCrashReportingPermissions.self))
-
-        analytics.viewModel.navigator.next(.answerQuestionAboutCrashReporting)
-        drainRunLoop()
-
-        XCTAssertTrue(top(as: WarningCustomECC.self) != nil)
-    }
-
-    // MARK: - CustomECCWarning → ChooseWallet child coordinator
-
-    func test_customECCWarningAccepted_startsChooseWalletChild() throws {
-        mockOnboarding.hasAcceptedTermsOfService = true
-        mockOnboarding.hasAnsweredCrashReportingQuestion = true
-        sut.start()
-        let welcome = try XCTUnwrap(top(as: Welcome.self))
-        welcome.viewModel.navigator.next(.start)
-        drainRunLoop()
-        let ecc = try XCTUnwrap(top(as: WarningCustomECC.self))
-
-        ecc.viewModel.navigator.next(.acceptRisks)
         drainRunLoop()
 
         XCTAssertTrue(sut.childCoordinators.contains { $0 is ChooseWalletCoordinator })
@@ -227,8 +165,6 @@ final class OnboardingCoordinatorTests: XCTestCase {
 
     func test_chooseWalletFinishChoosing_startsSetPincodeChild() throws {
         mockOnboarding.hasAcceptedTermsOfService = true
-        mockOnboarding.hasAnsweredCrashReportingQuestion = true
-        mockOnboarding.hasAcceptedCustomECCWarning = true
         mockOnboarding.shouldPromptUserToChosePincode = true
         sut.start()
         let welcome = try XCTUnwrap(top(as: Welcome.self))
@@ -246,8 +182,6 @@ final class OnboardingCoordinatorTests: XCTestCase {
 
     func test_setPincodeDone_bubblesFinishOnboarding() throws {
         mockOnboarding.hasAcceptedTermsOfService = true
-        mockOnboarding.hasAnsweredCrashReportingQuestion = true
-        mockOnboarding.hasAcceptedCustomECCWarning = true
         mockWallet.storedWallet = TestWalletFactory.makeWallet()
         mockOnboarding.shouldPromptUserToChosePincode = true
         sut.start()

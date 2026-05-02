@@ -46,9 +46,6 @@ packages:
   TinyConstraints:
     url: https://github.com/roberthein/TinyConstraints
     majorVersion: 4.0.1
-  SwiftyBeaver:
-    url: https://github.com/SwiftyBeaver/SwiftyBeaver
-    majorVersion: 1.9.5
   QRCodeReader:
     url: https://github.com/yannickl/QRCodeReader.swift
     majorVersion: 10.1.1
@@ -58,9 +55,6 @@ packages:
   IQKeyboardManager:
     url: https://github.com/hackiftekhar/IQKeyboardManager
     majorVersion: 6.5.6
-  Firebase:
-    url: https://github.com/firebase/firebase-ios-sdk
-    majorVersion: 11.0.0
   SnapshotTesting:
     url: https://github.com/pointfreeco/swift-snapshot-testing
     majorVersion: 1.17.0
@@ -99,7 +93,6 @@ targets:
       - path: App/Assets.xcassets
       - path: App/Base.lproj
       - path: App/Settings.bundle
-      - path: App/GoogleService-Info.plist
       # /Sources is consumed entirely via SPM products (declared below in
       # `dependencies`). Nothing under Sources/ is compiled directly into
       # the Zhip target anymore.
@@ -118,18 +111,12 @@ targets:
         product: SkyFloatingLabelTextField
       - package: TinyConstraints
         product: TinyConstraints
-      - package: SwiftyBeaver
-        product: SwiftyBeaver
       - package: QRCodeReader
         product: QRCodeReader
       - package: KeychainSwift
         product: KeychainSwift
       - package: IQKeyboardManager
         product: IQKeyboardManagerSwift
-      - package: Firebase
-        product: FirebaseAnalytics
-      - package: Firebase
-        product: FirebaseCrashlytics
       - package: Factory
         product: Factory
       # NanoViewController stack (sibling repo).
@@ -160,16 +147,6 @@ targets:
           else
             echo "warning: SwiftLint not installed, download from https://github.com/realm/SwiftLint"
           fi
-        runOnlyWhenInstalling: false
-        basedOnDependencyAnalysis: false
-    postBuildScripts:
-      - name: "📣 Crashlytics"
-        # Firebase's Crashlytics dSYM upload helper is fetched from the
-        # SourcePackages/checkouts dir at build time (see firebase-ios-sdk).
-        script: |
-          "${BUILD_DIR%Build/*}SourcePackages/checkouts/firebase-ios-sdk/Crashlytics/run"
-        inputFiles:
-          - $(SRCROOT)/App/GoogleService-Info.plist
         runOnlyWhenInstalling: false
         basedOnDependencyAnalysis: false
 

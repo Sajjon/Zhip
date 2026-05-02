@@ -50,20 +50,6 @@ final class SimpleViewSmokeTests: XCTestCase {
         XCTAssertNotNil(view.inputFromView)
     }
 
-    func test_askForCrashReportingPermissionsView_initializes() {
-        let view = AskForCrashReportingPermissionsView()
-        view.frame = CGRect(x: 0, y: 0, width: 375, height: 812)
-        view.layoutIfNeeded()
-        XCTAssertNotNil(view.inputFromView)
-    }
-
-    func test_warningCustomECCView_initializes() {
-        let view = WarningCustomECCView()
-        view.frame = CGRect(x: 0, y: 0, width: 375, height: 812)
-        view.layoutIfNeeded()
-        XCTAssertNotNil(view.inputFromView)
-    }
-
     func test_chooseWalletView_initializes() {
         let view = ChooseWalletView()
         view.frame = CGRect(x: 0, y: 0, width: 375, height: 812)

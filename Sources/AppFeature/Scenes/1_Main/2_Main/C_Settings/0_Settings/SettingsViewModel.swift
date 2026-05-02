@@ -51,10 +51,8 @@ public enum SettingsNavigation {
     case reportIssueOnGithub
     case acknowledgments
 
-    // Section 2 — Re-read onboarding scenes.
+    /// Section 2 — Re-read onboarding scenes.
     case readTermsOfService
-    case readCustomECCWarning
-    case changeAnalyticsPermissions
 
     // Section 3 — Wallet management (destructive at the bottom).
     case backupWallet
@@ -169,16 +167,6 @@ private extension SettingsViewModel {
                 to: .readTermsOfService,
                 titled: String(localized: .Settings.termsOfService),
                 icon: UIImage(resource: .document)
-            ),
-            .whenSelectedNavigate(
-                to: .changeAnalyticsPermissions,
-                titled: String(localized: .Settings.crashReportingPermissions),
-                icon: UIImage(resource: .analyticsSmall)
-            ),
-            .whenSelectedNavigate(
-                to: .readCustomECCWarning,
-                titled: String(localized: .Settings.readCustomECCWarning),
-                icon: UIImage(resource: .ECC)
             ),
         ]
 

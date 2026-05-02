@@ -168,18 +168,6 @@ final class SettingsCoordinatorTests: XCTestCase {
         fire(.readTermsOfService, on: scene)
     }
 
-    func test_changeAnalyticsPermissions_presentsModalWithoutCrashing() {
-        let scene = startAndGetScene()
-
-        fire(.changeAnalyticsPermissions, on: scene)
-    }
-
-    func test_readCustomECCWarning_presentsModalWithoutCrashing() {
-        let scene = startAndGetScene()
-
-        fire(.readCustomECCWarning, on: scene)
-    }
-
     // MARK: - Section 3 (wallet)
 
     func test_backupWallet_presentsModalCoordinatorWithoutCrashing() {

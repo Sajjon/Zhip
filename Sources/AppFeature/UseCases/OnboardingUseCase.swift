@@ -35,25 +35,6 @@ public protocol TermsOfServiceAcceptanceUseCase: AnyObject {
     func didAcceptTermsOfService()
 }
 
-/// Tracks whether the user has read and accepted the custom ECC warning.
-public protocol CustomECCWarningAcceptanceUseCase: AnyObject {
-    /// `true` once the user has acknowledged the custom ECC warning.
-    var hasAcceptedCustomECCWarning: Bool { get }
-
-    /// Records that the user has acknowledged the custom ECC warning.
-    func didAcceptCustomECCWarning()
-}
-
-/// Tracks whether the user has answered the crash-reporting opt-in prompt.
-public protocol CrashReportingPermissionsUseCase: AnyObject {
-    /// `true` once the user has answered the crash-reporting prompt at least once.
-    var hasAnsweredCrashReportingQuestion: Bool { get }
-
-    /// Records the user's answer (`true` for opt-in) and configures crash reporting
-    /// accordingly.
-    func answeredCrashReportingQuestion(acceptsCrashReporting: Bool)
-}
-
 /// Computes whether the user should be prompted to choose an app pincode.
 public protocol PincodePromptUseCase: AnyObject {
     /// `true` if the app should prompt the user to set up a pincode during onboarding.
@@ -64,7 +45,4 @@ public protocol PincodePromptUseCase: AnyObject {
 
 /// Composite onboarding protocol retained for backwards compatibility with existing
 /// call sites. Prefer the narrow protocols above in new code.
-public protocol OnboardingUseCase: TermsOfServiceAcceptanceUseCase,
-    CustomECCWarningAcceptanceUseCase,
-    CrashReportingPermissionsUseCase,
-    PincodePromptUseCase {}
+public protocol OnboardingUseCase: TermsOfServiceAcceptanceUseCase, PincodePromptUseCase {}

@@ -25,12 +25,12 @@
 import Foundation
 import Zesame
 
-/// Default implementation of the composite `OnboardingUseCase` and all four
+/// Default implementation of the composite `OnboardingUseCase` and the two
 /// narrow onboarding protocols it composes.
 ///
-/// State is split across two stores: user-visible flags (terms, ECC warning,
-/// crash reporting answers) live in `preferences` (UserDefaults); sensitive
-/// pincode existence is inferred from `securePersistence` (Keychain).
+/// State is split across two stores: the user-visible terms-of-service flag
+/// lives in `preferences` (UserDefaults); pincode existence is inferred from
+/// `securePersistence` (Keychain).
 public final class DefaultOnboardingUseCase {
     /// Non-secret key-value store (backed by `UserDefaults` in production).
     private let preferences: Preferences
@@ -58,32 +58,9 @@ extension DefaultOnboardingUseCase: OnboardingUseCase {
         preferences.isTrue(.hasAcceptedTermsOfService)
     }
 
-    /// `true` once the user has answered the crash-reporting prompt at least once.
-    public var hasAnsweredCrashReportingQuestion: Bool {
-        preferences.isTrue(.hasAnsweredCrashReportingQuestion)
-    }
-
     /// Records that the user has accepted the Terms of Service.
     public func didAcceptTermsOfService() {
         preferences.save(value: true, for: .hasAcceptedTermsOfService)
-    }
-
-    /// `true` once the user has acknowledged the custom ECC warning.
-    public var hasAcceptedCustomECCWarning: Bool {
-        preferences.isTrue(.hasAcceptedCustomECCWarning)
-    }
-
-    /// Records that the user has acknowledged the custom ECC warning.
-    public func didAcceptCustomECCWarning() {
-        preferences.save(value: true, for: .hasAcceptedCustomECCWarning)
-    }
-
-    /// Persists the crash-reporting answer (both the "has answered" flag and the
-    /// `acceptsCrashReporting` value itself) and configures Firebase accordingly.
-    public func answeredCrashReportingQuestion(acceptsCrashReporting: Bool) {
-        preferences.save(value: true, for: .hasAnsweredCrashReportingQuestion)
-        preferences.save(value: acceptsCrashReporting, for: .hasAcceptedCrashReporting)
-        setupCrashReportingIfAllowed()
     }
 
     /// `true` if onboarding should prompt the user to set up a pincode. `false`

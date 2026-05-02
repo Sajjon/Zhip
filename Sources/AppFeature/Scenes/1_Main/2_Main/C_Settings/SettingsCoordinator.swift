@@ -39,13 +39,12 @@ public enum SettingsCoordinatorNavigationStep {
     case closeSettings
 }
 
-/// Coordinator owning the Settings hub and its 11+ secondary actions.
+/// Coordinator owning the Settings hub and its secondary actions.
 ///
 /// The hub itself is a single table-view scene (`Settings`); each row routes
 /// to either:
 /// - an external URL (GitHub, system Settings),
-/// - a re-presentation of an onboarding scene in `.dismissable` mode (Terms,
-///   crash-reporting, ECC warning),
+/// - a re-presentation of the Terms scene in `.dismissable` mode,
 /// - a sub-coordinator (set/remove pincode, backup wallet),
 /// - or a confirm-and-destroy modal (remove wallet).
 public final class SettingsCoordinator: BaseCoordinator<SettingsCoordinatorNavigationStep> {
@@ -55,7 +54,7 @@ public final class SettingsCoordinator: BaseCoordinator<SettingsCoordinatorNavig
     @Injected(\.walletStorageUseCase) private var walletStorageUseCase: WalletStorageUseCase
     /// Forwarded to the pincode sub-flows + used to delete the pincode on wallet remove.
     @Injected(\.pincodeUseCase) private var pincodeUseCase: PincodeUseCase
-    /// Forwarded to the re-presented onboarding scenes (Terms, crash-reporting, ECC).
+    /// Forwarded to the re-presented Terms scene.
     @Injected(\.onboardingUseCase) private var onboardingUseCase: OnboardingUseCase
 
     /// Begins by pushing the Settings hub.
@@ -67,10 +66,8 @@ public final class SettingsCoordinator: BaseCoordinator<SettingsCoordinatorNavig
 // MARK: - Navigate
 
 private extension SettingsCoordinator {
-    /// Pushes the Settings hub. Big switch routes each row tap to its handler.
-    /// (cyclomatic_complexity disabled because the switch *is* the navigation
-    /// table and splitting it would only fragment the discoverable router.)
-    func toSettings() { // swiftlint:disable:this cyclomatic_complexity
+    /// Pushes the Settings hub. The switch routes each row tap to its handler.
+    func toSettings() {
         let viewModel = SettingsViewModel(useCase: pincodeUseCase)
 
         push(scene: Settings.self, viewModel: viewModel) { [weak self] userIntendsTo in
@@ -87,8 +84,6 @@ private extension SettingsCoordinator {
             case .acknowledgments: toAcknowledgments()
             // Section 2
             case .readTermsOfService: toReadTermsOfService()
-            case .changeAnalyticsPermissions: toChangeAnalyticsPermissions()
-            case .readCustomECCWarning: toReadCustomECCWarning()
             // Section 3
             case .backupWallet: toBackupWallet()
             case .removeWallet: toConfirmWalletRemoval()
@@ -137,18 +132,6 @@ private extension SettingsCoordinator {
         openUrl(string: UIApplication.openSettingsURLString)
     }
 
-    /// Re-presents the crash-reporting onboarding scene in dismissable mode.
-    func toChangeAnalyticsPermissions() {
-        let viewModel = AskForCrashReportingPermissionsViewModel(useCase: onboardingUseCase, isDismissible: true)
-        let scene = AskForCrashReportingPermissions(viewModel: viewModel, navigationBarLayout: .opaque)
-
-        modallyPresent(scene: scene) { userDid, dismissScene in
-            switch userDid {
-            case .answerQuestionAboutCrashReporting, .dismiss: dismissScene(true, nil)
-            }
-        }
-    }
-
     /// Re-presents the Terms scene in dismissable mode.
     func toReadTermsOfService() {
         let viewModel = TermsOfServiceViewModel(useCase: onboardingUseCase, isDismissible: true)
@@ -156,22 +139,6 @@ private extension SettingsCoordinator {
         modallyPresent(scene: termsOfService) { userDid, dismissScene in
             switch userDid {
             case .acceptTermsOfService, .dismiss: dismissScene(true, nil)
-            }
-        }
-    }
-
-    /// Re-presents the ECC warning scene in dismissable mode.
-    func toReadCustomECCWarning() {
-        let viewModel = WarningCustomECCViewModel(
-            useCase: onboardingUseCase,
-            isDismissible: true
-        )
-
-        let scene = WarningCustomECC(viewModel: viewModel, navigationBarLayout: .opaque)
-
-        modallyPresent(scene: scene) { userDid, dismissScene in
-            switch userDid {
-            case .acceptRisks, .dismiss: dismissScene(true, nil)
             }
         }
     }
