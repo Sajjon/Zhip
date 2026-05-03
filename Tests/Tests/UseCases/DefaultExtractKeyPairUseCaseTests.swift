@@ -52,7 +52,7 @@ final class DefaultExtractKeyPairUseCaseTests: XCTestCase {
         let privateKey = try PrivateKey(
             rawRepresentation: Data(hex: "0E891B9DFF485000C7D1DC22ECF3A583CC50328684321D61947A86E57CF6C638")
         )
-        let keyPair = try KeyPair(private: privateKey)
+        let keyPair = KeyPair(private: privateKey)
         mockService.extractKeyPairResult = .success(keyPair)
         let keystore = TestWalletFactory.makeWallet().wallet.keystore
         let sut = DefaultExtractKeyPairUseCase()
@@ -75,7 +75,7 @@ final class DefaultExtractKeyPairUseCaseTests: XCTestCase {
         let privateKey = try PrivateKey(
             rawRepresentation: Data(hex: "0E891B9DFF485000C7D1DC22ECF3A583CC50328684321D61947A86E57CF6C638")
         )
-        let keyPair = try KeyPair(private: privateKey)
+        let keyPair = KeyPair(private: privateKey)
         mockService.extractKeyPairResult = .success(keyPair)
         let wallet = TestWalletFactory.makeWallet()
         let sut = DefaultExtractKeyPairUseCase()

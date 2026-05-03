@@ -135,6 +135,11 @@ private extension MainView {
 
 /// Shared helper that wires the three-layer aurora parallax into `effectView`.
 /// Used by both `MainView` and `LockAppScene` so the visual effect is identical.
+///
+/// `@MainActor` because `effectView` is a `UIView` (main-actor-isolated under
+/// the iOS 26 SDK) and we mutate `backgroundColor` /
+/// `translatesAutoresizingMaskIntoConstraints` plus call `addMotionEffect(...)`.
+@MainActor
 public func addAuroraImagesWithMotionEffect(to effectView: UIView) {
     effectView.backgroundColor = .clear
     effectView.translatesAutoresizingMaskIntoConstraints = false

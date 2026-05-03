@@ -31,7 +31,19 @@ import Foundation
 /// `KeyValueStore<PreferencesKey>` (aka `Preferences`) or
 /// `KeyValueStore<KeychainKey>` (aka `SecurePersistence`) without leaking the
 /// backend's identity into call sites or test doubles.
-public struct KeyValueStore<KeyType: KeyConvertible>: KeyValueStoring {
+/// `@unchecked Sendable` because the type's only stored state is three
+/// closure thunks over a thread-safe backing store: `UserDefaults` is
+/// documented atomic for primitive get/set, and `KeychainSwift` ultimately
+/// dispatches to the Security framework which serialises access through
+/// `SecItem*`. The closures aren't marked `@Sendable` themselves — the
+/// captured `Concrete` value isn't `Sendable`-conforming — but the
+/// invariant that `KeyValueStore` only holds value-semantic state plus
+/// thread-safe backends is the `@unchecked` claim, audited here.
+///
+/// Removal plan: add `Sendable` conformances on `UserDefaults+KeyValueStoring`
+/// and `KeyChainSwift+KeyValueStoring` (and their extension methods), then
+/// constrain `Concrete: Sendable` in `init` and drop the `@unchecked`.
+public struct KeyValueStore<KeyType: KeyConvertible>: KeyValueStoring, @unchecked Sendable {
     /// The strongly-typed key the wrapped store accepts.
     public typealias Key = KeyType
 

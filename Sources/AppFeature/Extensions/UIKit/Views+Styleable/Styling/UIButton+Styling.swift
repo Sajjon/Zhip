@@ -58,6 +58,12 @@ public extension UIView {
 
         /// Applies this rounding to `view`, also setting `masksToBounds` so the
         /// rounded corners actually clip the contents.
+        ///
+        /// `@MainActor` because `view.layer` is `@MainActor`-isolated under the
+        /// iOS 26 SDK. All call sites are already main-actor (UI styling only
+        /// happens during view setup or `populate(with:)`), so this is a
+        /// no-op annotation that just makes the isolation explicit.
+        @MainActor
         public func apply(to view: UIView, maskToBounds: Bool = true) {
             switch self {
             case let .static(radius):
@@ -228,6 +234,12 @@ private struct ResolvedPalette {
     /// `setBackgroundColor(_:for:)` API used to dim the background image
     /// automatically on press; Configuration does *not* — without an
     /// explicit branch, taps would have no visual feedback.
+    ///
+    /// `@MainActor` because the returned closure mutates `button.configuration`
+    /// — which is `@MainActor`-isolated under the iOS 26 SDK. UIKit only
+    /// ever invokes `configurationUpdateHandler` on the main actor, so this
+    /// is the correct isolation contract.
+    @MainActor
     func makeUpdateHandler() -> (UIButton) -> Void {
         { button in
             guard var c = button.configuration else { return }

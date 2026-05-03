@@ -42,7 +42,7 @@ final class RestoreWalletCoordinatorTests: XCTestCase {
     override func setUp() {
         super.setUp()
         navigationController = NavigationBarLayoutingNavigationController()
-        window = UIWindow(frame: .init(x: 0, y: 0, width: 320, height: 480))
+        window = TestWindowFactory.make(frame: .init(x: 0, y: 0, width: 320, height: 480))
         window.rootViewController = navigationController
         window.makeKeyAndVisible()
         sut = RestoreWalletCoordinator(navigationController: navigationController)

@@ -54,14 +54,37 @@ public final class LAContextBiometricsAuthenticator: BiometricsAuthenticator {
                     promise(.success(false))
                     return
                 }
+                // `evaluatePolicy`'s reply closure is `@Sendable` (LAContext
+                // can dispatch off-main). Combine's `Future.promise` type
+                // `(Result<Bool, Never>) -> Void` is not marked `Sendable`,
+                // so capturing it directly triggers a Swift 6 warning. Box
+                // it through `SendablePromise` (one well-documented
+                // `@unchecked` site) so the capture is type-safe.
+                let box = SendablePromise(promise)
                 context.evaluatePolicy(
                     .deviceOwnerAuthenticationWithBiometrics,
                     localizedReason: reasonString
                 ) { didAuth, _ in
-                    promise(.success(didAuth))
+                    box.value(.success(didAuth))
                 }
             }
         }
         .eraseToAnyPublisher()
     }
+}
+
+/// Sendable box for a Combine `Future.promise`. The underlying closure type
+/// `(Result<T, E>) -> Void` is not `Sendable` (`Result` itself is, but
+/// closures are nominally non-Sendable until proven otherwise).
+///
+/// `@unchecked Sendable` is safe here because:
+///   * `Future`'s promise is documented to be safe to call from any thread
+///     — Combine forwards through an internal `os_unfair_lock`.
+///   * `value` is `let`-bound and never reassigned after init.
+///
+/// Concentrated as a private helper so the unchecked-Sendable claim has
+/// exactly one site.
+private struct SendablePromise<T>: @unchecked Sendable {
+    let value: (Result<T, Never>) -> Void
+    init(_ value: @escaping (Result<T, Never>) -> Void) { self.value = value }
 }

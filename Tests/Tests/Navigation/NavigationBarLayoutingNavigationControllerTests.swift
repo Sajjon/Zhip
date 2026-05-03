@@ -21,7 +21,7 @@ final class NavigationBarLayoutingNavigationControllerTests: XCTestCase {
     func test_present_appliesLayoutFromPresentedOwner() {
         let owner = FakeOwner()
         let nav = NavigationBarLayoutingNavigationController()
-        let window = UIWindow(frame: .init(x: 0, y: 0, width: 320, height: 480))
+        let window = TestWindowFactory.make(frame: .init(x: 0, y: 0, width: 320, height: 480))
         window.rootViewController = nav
         window.makeKeyAndVisible()
 
@@ -86,7 +86,7 @@ final class NavigationBarLayoutingNavigationControllerTests: XCTestCase {
 
     func test_viewWillAppear_setsInteractivePopDelegate() {
         let nav = NavigationBarLayoutingNavigationController(rootViewController: FakeOwner())
-        let window = UIWindow(frame: .init(x: 0, y: 0, width: 320, height: 480))
+        let window = TestWindowFactory.make(frame: .init(x: 0, y: 0, width: 320, height: 480))
         window.rootViewController = nav
         window.makeKeyAndVisible()
 

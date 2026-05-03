@@ -46,7 +46,7 @@ final class ReceiveCoordinatorTests: XCTestCase {
         mockWallet.storedWallet = TestWalletFactory.makeWallet()
         Container.shared.walletStorageUseCase.register { [unowned self] in mainActorOnly { mockWallet } }
         navigationController = NavigationBarLayoutingNavigationController()
-        window = UIWindow(frame: .init(x: 0, y: 0, width: 320, height: 480))
+        window = TestWindowFactory.make(frame: .init(x: 0, y: 0, width: 320, height: 480))
         window.rootViewController = navigationController
         window.makeKeyAndVisible()
         sut = ReceiveCoordinator(navigationController: navigationController)

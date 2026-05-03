@@ -153,7 +153,7 @@ private extension Wallet.Origin {
     /// Maps wallet provenance to the corresponding password policy.
     /// Kept `private` so the only public entry point is
     /// `WalletEncryptionPassword.modeFrom(wallet:)`.
-    public var passwordMode: WalletEncryptionPassword.Mode {
+    var passwordMode: WalletEncryptionPassword.Mode {
         switch self {
         case .generatedByThisApp, .importedPrivateKey: .newOrRestorePrivateKey
         case .importedKeystore: .restoreKeystore
@@ -166,7 +166,7 @@ private extension Wallet.Origin {
 private extension Wallet {
     /// Convenience: skip straight from a `Wallet` to its password mode without
     /// going through `wallet.origin.passwordMode` at every call site.
-    public var passwordMode: WalletEncryptionPassword.Mode {
+    var passwordMode: WalletEncryptionPassword.Mode {
         origin.passwordMode
     }
 }

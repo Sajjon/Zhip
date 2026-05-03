@@ -85,6 +85,10 @@ extension Address: @retroactive @unchecked Sendable {}
 /// `BigInt`. Safe across actors.
 extension Amount: @retroactive @unchecked Sendable {}
 
+/// Denomination enum (`.zil`, `.li`, `.qa`). Immutable enum case. Safe
+/// across actors.
+extension Unit: @retroactive @unchecked Sendable {}
+
 /// Public/private key pair. Both keys are immutable byte-string wrappers.
 /// Safe across actors.
 extension KeyPair: @retroactive @unchecked Sendable {}

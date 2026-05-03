@@ -27,7 +27,7 @@ final class ToastTests: XCTestCase {
     }
 
     func test_presentAutoDismissing_presentsAnAlert() {
-        let window = UIWindow(frame: .init(x: 0, y: 0, width: 320, height: 480))
+        let window = TestWindowFactory.make(frame: .init(x: 0, y: 0, width: 320, height: 480))
         let host = UIViewController()
         window.rootViewController = host
         window.makeKeyAndVisible()
@@ -54,7 +54,7 @@ final class ToastTests: XCTestCase {
     }
 
     func test_presentManualDismiss_addsDismissAction() throws {
-        let window = UIWindow(frame: .init(x: 0, y: 0, width: 320, height: 480))
+        let window = TestWindowFactory.make(frame: .init(x: 0, y: 0, width: 320, height: 480))
         let host = UIViewController()
         window.rootViewController = host
         window.makeKeyAndVisible()

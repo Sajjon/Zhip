@@ -170,7 +170,7 @@ private extension Amount {
     /// Best-effort parse of a Qa-denominated amount string into an `Amount`.
     /// Returns `nil` for both "no input" and "unparsable input" — callers
     /// here treat both as "no pre-filled amount".
-    public static func fromQa(optionalString: String?) -> Amount? {
+    static func fromQa(optionalString: String?) -> Amount? {
         guard let qaAmountString = optionalString else { return nil }
         return try? Amount(qa: qaAmountString)
     }

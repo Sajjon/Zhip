@@ -153,6 +153,11 @@ public protocol GradientViewProvider {
 public extension GradientViewProvider where Self: GradientView {
     /// The view's backing layer, force-cast to the concrete `GradientViewType`.
     /// Force-cast is safe because `layerClass` overrides the layer creation.
+    ///
+    /// `@MainActor` because `UIView.layer` is `@MainActor`-isolated under
+    /// the iOS 26 SDK; all sites read this from `setup()` / `populate(with:)`
+    /// which are already main-actor.
+    @MainActor
     var gradientLayer: Self.GradientViewType {
         // swiftlint:disable:next force_cast
         layer as! Self.GradientViewType
