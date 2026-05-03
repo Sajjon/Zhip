@@ -56,10 +56,10 @@ packages:
   Zhip:
     path: .
   # Sibling repo containing the reactive-MVVM scaffolding (was the
-  # SingleLineController* modules — now NanoViewController*). Local-path
-  # dep until NanoViewController gets a tagged release.
+  # SingleLineController* modules — now NanoViewController*).
   NanoViewController:
-    path: ../NanoViewController
+    url: https://github.com/Sajjon/NanoViewController
+    exactVersion: 0.1.0
 
 targets:
   Zhip:
