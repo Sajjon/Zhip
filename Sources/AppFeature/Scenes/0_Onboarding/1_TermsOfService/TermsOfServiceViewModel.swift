@@ -31,7 +31,7 @@ import NanoViewControllerController
 // MARK: TermsOfServiceNavigation
 
 /// Outcomes the Terms of Service screen surfaces to its parent coordinator.
-public enum TermsOfServiceNavigation {
+public enum TermsOfServiceNavigation: Sendable {
     /// User scrolled to the bottom and tapped "Accept".
     case acceptTermsOfService
     /// User tapped the right bar-button "Done" — only available in the

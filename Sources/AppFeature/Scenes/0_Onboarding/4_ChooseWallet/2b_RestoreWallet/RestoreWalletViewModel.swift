@@ -31,7 +31,7 @@ import Validation
 import Zesame
 
 /// Navigation from RestoreWallet
-public enum RestoreWalletNavigation {
+public enum RestoreWalletNavigation: Sendable {
     /// User entered valid restore material + password and the use case
     /// successfully decrypted/derived the `Wallet`.
     case restoreWallet(Wallet)

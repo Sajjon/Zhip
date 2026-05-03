@@ -39,7 +39,7 @@ public typealias SettingsItem = NavigatingCellModel<SettingsViewModel.Navigation
 
 /// Every navigation step the Settings hub can emit. Grouped by the section
 /// they live in for readability.
-public enum SettingsNavigation {
+public enum SettingsNavigation: Sendable {
     /// Navigation Bar — right "Done" tap.
     case closeSettings
 

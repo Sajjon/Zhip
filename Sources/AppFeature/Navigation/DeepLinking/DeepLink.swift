@@ -28,7 +28,7 @@ import Foundation
 ///
 /// New deep-link types should be added as new cases here, with a matching entry
 /// in `DeepLink.Path` and parsing logic in the URL initializer below.
-public enum DeepLink {
+public enum DeepLink: Sendable {
     /// `https://zhip.app/send?to=...&amount=...` — pre-fills the Send screen.
     case send(TransactionIntent)
 }
