@@ -42,6 +42,11 @@ INFOPLIST_KEY_NSCameraUsageDescription = Scan QR Code
 INFOPLIST_KEY_NSFaceIDUsageDescription = Unlock app easily with FaceId/TouchId
 INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen
 INFOPLIST_KEY_UIStatusBarStyle = UIStatusBarStyleLightContent
+// Force dark mode app-wide. The brand visual language (deep-blue gradient
+// hero, white nav text, teal CTAs) is designed for a dark background; with
+// no override, iOS 26 defaults to system-light and the gradient renders
+// against a pale system background instead of the intended dark canvas.
+INFOPLIST_KEY_UIUserInterfaceStyle = Dark
 INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = UIInterfaceOrientationPortrait
 INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight
 INFOPLIST_KEY_UIViewControllerBasedStatusBarAppearance = NO
