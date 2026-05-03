@@ -27,6 +27,7 @@ import XCTest
 
 /// Exercises `findNestedEnumOfType(_:in:recursiveTriesLeft:)`, a reflection
 /// helper used to extract nested enum case names for `Error` descriptions.
+@MainActor
 final class EnumReflectionTests: XCTestCase {
     enum Outer {
         case wrapping(Inner)

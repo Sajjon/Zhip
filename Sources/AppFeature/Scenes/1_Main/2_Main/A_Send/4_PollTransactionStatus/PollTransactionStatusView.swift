@@ -28,6 +28,7 @@ import NanoViewControllerCombine
 import NanoViewControllerController
 import NanoViewControllerDIPrimitives
 import NanoViewControllerSceneViews
+import NanoViewControllerCore
 import Resources
 import UIKit
 

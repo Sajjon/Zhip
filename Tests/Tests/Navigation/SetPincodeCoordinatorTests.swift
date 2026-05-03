@@ -31,6 +31,7 @@ import XCTest
 
 /// Drives the `SetPincodeCoordinator` flow: ChoosePincode → ConfirmNewPincode
 /// on selection, or straight to `.setPincode` on skip from either stage.
+@MainActor
 final class SetPincodeCoordinatorTests: XCTestCase {
     private var window: UIWindow!
     private var navigationController: NavigationBarLayoutingNavigationController!
@@ -41,7 +42,7 @@ final class SetPincodeCoordinatorTests: XCTestCase {
     override func setUp() {
         super.setUp()
         mockPincode = MockPincodeUseCase()
-        Container.shared.pincodeUseCase.register { [unowned self] in mockPincode }
+        Container.shared.pincodeUseCase.register { [unowned self] in MainActor.assumeIsolated { mockPincode } }
         navigationController = NavigationBarLayoutingNavigationController()
         window = UIWindow(frame: .init(x: 0, y: 0, width: 320, height: 480))
         window.rootViewController = navigationController

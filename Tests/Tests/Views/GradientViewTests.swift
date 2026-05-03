@@ -2,6 +2,7 @@
 import UIKit
 import XCTest
 
+@MainActor
 final class GradientViewTests: XCTestCase {
     // MARK: - GradientPoint
 

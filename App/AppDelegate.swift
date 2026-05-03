@@ -23,81 +23,38 @@
 //
 
 import AppFeature
-import NanoViewControllerController
 import UIKit
 
+/// Minimal app-level shell. Process bootstrapping (font registration, appearance
+/// setup, reinstall-keychain wipe) lives in `AppFeature.bootstrap()`; window
+/// + coordinator + lifecycle live on `SceneDelegate`. `AppDelegate` only:
+///
+/// 1. Calls `bootstrap()` once at process launch.
+/// 2. Vends a `UISceneConfiguration` pointing the system at `SceneDelegate`.
 @main
-class AppDelegate: UIResponder {
-    lazy var window: UIWindow? = .default
-
-    fileprivate lazy var appCoordinator: AppCoordinator = {
-        let navigationController = NavigationBarLayoutingNavigationController()
-
-        window?.rootViewController = navigationController
-
-        return AppCoordinator(
-            navigationController: navigationController,
-            isViewControllerRootOfWindow: { [weak window] in
-                window?.rootViewController == $0
-            },
-            setRootViewControllerOfWindow: { [weak window] in
-                window?.rootViewController = $0
-            }
-        )
-    }()
-}
-
-extension AppDelegate: UIApplicationDelegate {
+final class AppDelegate: UIResponder, UIApplicationDelegate {
     func application(
         _: UIApplication,
         didFinishLaunchingWithOptions _: [UIApplication.LaunchOptionsKey: Any]?
     ) -> Bool {
-        defer {
-            appCoordinator.start()
-        }
         bootstrap()
-        installDismissKeyboardOnTapGesture()
         return true
     }
 
+    /// Returned for every new scene the system spins up. We only use the
+    /// `UIWindowSceneSessionRoleApplication` role (regular foreground UI
+    /// scene) — declining external-display + CarPlay roles by simply not
+    /// vending a config for them.
     func application(
         _: UIApplication,
-        continue userActivity: NSUserActivity,
-        restorationHandler _: @escaping ([UIUserActivityRestoring]?) -> Void
-    ) -> Bool {
-        guard
-            userActivity.activityType == NSUserActivityTypeBrowsingWeb,
-            let incomingURL = userActivity.webpageURL
-        else {
-            return false
-        }
-
-        return appCoordinator.handleDeepLink(incomingURL)
-    }
-
-    func applicationWillResignActive(_: UIApplication) {
-        appCoordinator.appWillResignActive()
-    }
-
-    func applicationDidBecomeActive(_: UIApplication) {
-        appCoordinator.appDidBecomeActive()
-    }
-}
-
-// MARK: - Dismiss-keyboard-on-tap
-
-private extension AppDelegate {
-    /// Installs a tap recognizer on the window that calls `endEditing(true)`
-    /// — i.e. tap anywhere outside the focused text field dismisses the
-    /// keyboard. Replaces the `IQKeyboardManager` dependency.
-    ///
-    /// `cancelsTouchesInView = false` is the magic bit: the recognizer
-    /// detects taps but doesn't swallow them, so buttons / table cells /
-    /// other tap targets still receive their hits.
-    func installDismissKeyboardOnTapGesture() {
-        guard let window else { return }
-        let tap = UITapGestureRecognizer(target: window, action: #selector(UIView.endEditing(_:)))
-        tap.cancelsTouchesInView = false
-        window.addGestureRecognizer(tap)
+        configurationForConnecting connectingSceneSession: UISceneSession,
+        options _: UIScene.ConnectionOptions
+    ) -> UISceneConfiguration {
+        let config = UISceneConfiguration(
+            name: "Default Configuration",
+            sessionRole: connectingSceneSession.role
+        )
+        config.delegateClass = SceneDelegate.self
+        return config
     }
 }

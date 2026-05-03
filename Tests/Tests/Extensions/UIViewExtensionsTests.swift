@@ -29,6 +29,7 @@ import XCTest
 
 /// Covers UIView extensions: `shake(...)` animation and the publisher binders
 /// not already exercised elsewhere.
+@MainActor
 final class UIViewExtensionsTests: XCTestCase {
     func test_shake_invokesCompletionCallback() {
         let view = UIView()

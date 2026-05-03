@@ -26,6 +26,7 @@ import Combine
 import NanoViewControllerCombine
 import NanoViewControllerController
 import NanoViewControllerSceneViews
+import NanoViewControllerCore
 import UIKit
 
 /// Keystore-reveal screen — pretty-printed JSON in a non-editable text view

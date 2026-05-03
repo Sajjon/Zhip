@@ -32,6 +32,7 @@ import Zesame
 /// Verifies the placeholder publishers, that `keyRestoration` becomes non-nil
 /// only when a valid keystore JSON and matching password are supplied, and stays
 /// nil if either side is invalid or missing.
+@MainActor
 final class RestoreWalletUsingKeystoreViewModelTests: XCTestCase {
     private var cancellables: Set<AnyCancellable> = []
     private var keystoreDidBeginEditing: PassthroughSubject<Void, Never>!

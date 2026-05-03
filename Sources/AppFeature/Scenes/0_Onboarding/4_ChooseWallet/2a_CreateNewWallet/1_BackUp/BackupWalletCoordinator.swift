@@ -32,7 +32,7 @@ import UIKit
 import Zesame
 
 /// Outcomes the backup sub-flow surfaces to its parent.
-public enum BackupWalletCoordinatorNavigationStep {
+public enum BackupWalletCoordinatorNavigationStep: Sendable {
     /// User confirmed they have backed up their wallet.
     case backUp
     /// User cancelled out of the backup flow (only available in `.cancellable` mode).

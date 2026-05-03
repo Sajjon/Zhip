@@ -30,6 +30,7 @@ import Zesame
 
 /// Tests that `DefaultVerifyEncryptionPasswordUseCase` forwards the password
 /// and keystore to the injected service and propagates its boolean result.
+@MainActor
 final class DefaultVerifyEncryptionPasswordUseCaseTests: XCTestCase {
     private var cancellables: Set<AnyCancellable> = []
     private var mockService: MockZilliqaServiceReactive!
@@ -37,7 +38,7 @@ final class DefaultVerifyEncryptionPasswordUseCaseTests: XCTestCase {
     override func setUp() {
         super.setUp()
         mockService = MockZilliqaServiceReactive()
-        Container.shared.zilliqaService.register { [unowned self] in mockService }
+        Container.shared.zilliqaService.register { [unowned self] in MainActor.assumeIsolated { mockService } }
     }
 
     override func tearDown() {

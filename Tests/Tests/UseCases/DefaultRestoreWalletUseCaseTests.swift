@@ -30,6 +30,7 @@ import Zesame
 
 /// Tests that `DefaultRestoreWalletUseCase` maps the `KeyRestoration` case to
 /// the correct `Wallet.Origin` and forwards to the injected service.
+@MainActor
 final class DefaultRestoreWalletUseCaseTests: XCTestCase {
     private var cancellables: Set<AnyCancellable> = []
     private var mockService: MockZilliqaServiceReactive!
@@ -37,7 +38,7 @@ final class DefaultRestoreWalletUseCaseTests: XCTestCase {
     override func setUp() {
         super.setUp()
         mockService = MockZilliqaServiceReactive()
-        Container.shared.zilliqaService.register { [unowned self] in mockService }
+        Container.shared.zilliqaService.register { [unowned self] in MainActor.assumeIsolated { mockService } }
     }
 
     override func tearDown() {

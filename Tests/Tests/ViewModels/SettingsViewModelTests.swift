@@ -34,6 +34,7 @@ import XCTest
 /// Covers the lazy sections-on-viewWillAppear population, the pincode-vs-no-pincode
 /// branch in the first section, the footer text, close-settings navigation, and
 /// item-selection navigation to the step stored on the tapped cell.
+@MainActor
 final class SettingsViewModelTests: XCTestCase {
     private var cancellables: Set<AnyCancellable> = []
     private var selectedIndexPath: PassthroughSubject<IndexPath, Never>!

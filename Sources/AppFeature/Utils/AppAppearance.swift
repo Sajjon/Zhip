@@ -29,6 +29,7 @@ import UIKit
 /// Called once from `bootstrap()` at launch. UIKit's `UIAppearance` proxy is
 /// global and only affects views created *after* the configuration runs, so
 /// this must execute before the first window is built.
+@MainActor
 public enum AppAppearance {
     /// Applies the app's default navigation/bar-button appearance.
     static func setupDefault() {
@@ -37,6 +38,7 @@ public enum AppAppearance {
 }
 
 /// Top-level entry point that fans out to bar-button + navigation-bar setup.
+@MainActor
 private func setupAppearance() {
     setupNavigationBarAppearance()
     setupBarButtonItemAppearance()
@@ -44,6 +46,7 @@ private func setupAppearance() {
 
 /// Configures the global `UIBarButtonItem.appearance()` proxy and replaces
 /// the default chevron used as the navigation back-button.
+@MainActor
 public func setupBarButtonItemAppearance() {
     UINavigationBar.appearance().backIndicatorImage = UIImage()
     UINavigationBar.appearance().backIndicatorTransitionMaskImage = UIImage()
@@ -54,6 +57,7 @@ public func setupBarButtonItemAppearance() {
 /// Substitutes a custom chevron PNG for the system back-button.
 /// Uses `stretchableImage(withLeftCapWidth:topCapHeight:)` so the asset
 /// scales gracefully if iOS resizes it for different bar metrics.
+@MainActor
 private func replaceBackBarButtonImage() {
     let backImage = UIImage(resource: .chevronLeft)
     let stretched = backImage.stretchableImage(withLeftCapWidth: 15, topCapHeight: 30)
@@ -166,6 +170,7 @@ extension UINavigationBar {
 /// the app starts with our brand colors, opaque background, and clear shadow.
 /// Per-screen overrides happen via `NavigationBarLayoutOwner` in
 /// `NavigationBarLayout.swift`.
+@MainActor
 private func setupNavigationBarAppearance() {
     let navBarAppearance = UINavigationBarAppearance()
     navBarAppearance.configureWithOpaqueBackground()
@@ -190,6 +195,9 @@ public extension UIControl.State {
 }
 
 /// The subset of `UINavigationBar`/`UITabBar` appearance properties we tweak.
+/// `@MainActor` because the conforming UIKit bar types are themselves
+/// `@MainActor` under the iOS 26 SDK.
+@MainActor
 public protocol BarAppearance {
     /// Tint color applied to bar-button items, back chevron, etc.
     var tintColor: UIColor! { get set }
@@ -202,6 +210,9 @@ public protocol BarAppearance {
 }
 
 /// Bar types that carry attributed title text (e.g. `UINavigationBar`).
+/// `@MainActor` because the conforming UIKit bar types are themselves
+/// `@MainActor` under the iOS 26 SDK.
+@MainActor
 public protocol BarTextAppearance {
     /// Backing dictionary consumed by UIKit's appearance API.
     var titleTextAttributes: [NSAttributedString.Key: Any]? { get set }

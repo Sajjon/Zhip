@@ -33,6 +33,7 @@ import Zesame
 /// Drives `CreateNewWalletCoordinator` routing:
 /// EnsureThatYouAreNotBeingWatched → CreateNewWallet → BackupWallet
 /// (via the child coordinator chain).
+@MainActor
 final class CreateNewWalletCoordinatorTests: XCTestCase {
     private var window: UIWindow!
     private var navigationController: NavigationBarLayoutingNavigationController!
@@ -48,8 +49,8 @@ final class CreateNewWalletCoordinatorTests: XCTestCase {
         // `hasConfirmedNewWalletBackup` flag write doesn't leak into real
         // UserDefaults during the test.
         preferences = TestStoreFactory.makePreferences()
-        Container.shared.walletStorageUseCase.register { [unowned self] in mockWallet }
-        Container.shared.preferences.register { [unowned self] in preferences }
+        Container.shared.walletStorageUseCase.register { [unowned self] in MainActor.assumeIsolated { mockWallet } }
+        Container.shared.preferences.register { [unowned self] in MainActor.assumeIsolated { preferences } }
         navigationController = NavigationBarLayoutingNavigationController()
         window = UIWindow(frame: .init(x: 0, y: 0, width: 320, height: 480))
         window.rootViewController = navigationController

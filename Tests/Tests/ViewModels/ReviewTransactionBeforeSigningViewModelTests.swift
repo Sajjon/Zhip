@@ -34,6 +34,7 @@ import Zesame
 /// `Payment`, the proceed-button gate on the "I have reviewed" checkbox, and
 /// that confirming the transaction emits `.acceptPaymentProceedWithSigning`
 /// carrying the payment.
+@MainActor
 final class ReviewTransactionBeforeSigningViewModelTests: XCTestCase {
     private var cancellables: Set<AnyCancellable> = []
     private var hasReviewed: CurrentValueSubject<Bool, Never>!

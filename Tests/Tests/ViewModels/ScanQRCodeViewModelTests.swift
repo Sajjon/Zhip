@@ -32,6 +32,7 @@ import XCTest
 /// The VM parses scanned strings into `TransactionIntent` (plain address, JSON, or
 /// `zilliqa://` deep-links) and emits `.scanQRContainingTransaction` on success. It
 /// also honors a toast + cancel path on failure/left-bar-button taps.
+@MainActor
 final class ScanQRCodeViewModelTests: XCTestCase {
     private var cancellables: Set<AnyCancellable> = []
     private var scannedSubject: PassthroughSubject<String?, Never>!

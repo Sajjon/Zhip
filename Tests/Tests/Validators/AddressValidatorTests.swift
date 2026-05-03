@@ -2,6 +2,7 @@
 import XCTest
 import Zesame
 
+@MainActor
 final class AddressValidatorTests: XCTestCase {
     private let sut = AddressValidator()
 

@@ -26,6 +26,7 @@ import Combine
 import NanoViewControllerCombine
 import NanoViewControllerController
 import NanoViewControllerSceneViews
+import NanoViewControllerCore
 import UIKit
 
 /// Step 2 of Send — read-only summary of the prepared payment (recipient,

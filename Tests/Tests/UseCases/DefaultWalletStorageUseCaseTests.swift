@@ -30,6 +30,7 @@ import XCTest
 /// Tests that `DefaultWalletStorageUseCase` forwards each operation to the
 /// injected `SecurePersistence` (here an in-memory store from
 /// `TestStoreFactory`).
+@MainActor
 final class DefaultWalletStorageUseCaseTests: XCTestCase {
     override func setUp() {
         super.setUp()

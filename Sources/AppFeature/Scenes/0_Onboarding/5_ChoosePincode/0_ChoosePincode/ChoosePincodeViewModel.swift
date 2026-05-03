@@ -25,10 +25,12 @@
 import Combine
 import Foundation
 import NanoViewControllerCombine
+import NanoViewControllerCore
 import NanoViewControllerController
+@preconcurrency import Zesame
 
 /// Outcomes of the pincode chooser screen.
-public enum ChoosePincodeUserAction {
+public enum ChoosePincodeUserAction: @unchecked Sendable {
     /// User completed a full pincode and tapped done — coordinator advances to confirm step.
     case chosePincode(Pincode)
     /// User tapped the right-bar "Skip" button.

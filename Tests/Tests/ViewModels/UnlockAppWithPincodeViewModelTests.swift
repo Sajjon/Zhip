@@ -36,6 +36,7 @@ import XCTest
 /// `viewDidAppear` branch through the injected `BiometricsAuthenticator`
 /// protocol (real `LAContext` is replaced with a mock so no system prompt
 /// fires in tests).
+@MainActor
 final class UnlockAppWithPincodeViewModelTests: XCTestCase {
     private var cancellables: Set<AnyCancellable> = []
     private var pincodeSubject: CurrentValueSubject<Pincode?, Never>!
@@ -52,8 +53,8 @@ final class UnlockAppWithPincodeViewModelTests: XCTestCase {
         mockPincode = MockPincodeUseCase()
         mockPincode.pincode = existingPincode
         mockBiometrics = MockBiometricsAuthenticator()
-        Container.shared.pincodeUseCase.register { [unowned self] in mockPincode }
-        Container.shared.biometricsAuthenticator.register { [unowned self] in mockBiometrics }
+        Container.shared.pincodeUseCase.register { [unowned self] in MainActor.assumeIsolated { mockPincode } }
+        Container.shared.biometricsAuthenticator.register { [unowned self] in MainActor.assumeIsolated { mockBiometrics } }
     }
 
     override func tearDown() {

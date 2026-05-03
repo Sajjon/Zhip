@@ -3,6 +3,7 @@ import NanoViewControllerController
 import UIKit
 import XCTest
 
+@MainActor
 final class BarButtonContentTests: XCTestCase {
     func test_initWithTitle_storesTextTypeAndPlainStyle() {
         let sut = BarButtonContent(title: "Cancel")

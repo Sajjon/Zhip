@@ -29,7 +29,7 @@ import Zesame
 
 /// Outcome the onboarding coordinator surfaces to its parent (`AppCoordinator`)
 /// when onboarding is complete.
-public enum OnboardingCoordinatorNavigationStep {
+public enum OnboardingCoordinatorNavigationStep: Sendable {
     /// All required onboarding steps have been satisfied; `AppCoordinator`
     /// should transition to the `MainCoordinator`.
     case finishOnboarding

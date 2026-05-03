@@ -26,6 +26,7 @@ import Combine
 import NanoViewControllerCombine
 import NanoViewControllerController
 import NanoViewControllerSceneViews
+import NanoViewControllerCore
 import UIKit
 
 /// Sub-view of the RestoreWallet screen for the "I have a raw private key,

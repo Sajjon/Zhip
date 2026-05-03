@@ -33,7 +33,7 @@ import Validation
 // MARK: - UnlockAppWithPincodeUserAction
 
 /// Outcome of the unlock screen — the only thing the user can do here is unlock.
-public enum UnlockAppWithPincodeUserAction {
+public enum UnlockAppWithPincodeUserAction: Sendable {
     /// Either pincode-match or successful biometrics unlocked the app.
     case unlockApp
 }

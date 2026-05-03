@@ -32,6 +32,7 @@ import Zesame
 
 /// Drives each branch of `ReceiveCoordinator`: start, `.finish` bubble, and
 /// `.requestTransaction` which triggers the share-sheet path.
+@MainActor
 final class ReceiveCoordinatorTests: XCTestCase {
     private var window: UIWindow!
     private var navigationController: NavigationBarLayoutingNavigationController!
@@ -43,7 +44,7 @@ final class ReceiveCoordinatorTests: XCTestCase {
         super.setUp()
         mockWallet = MockWalletUseCase()
         mockWallet.storedWallet = TestWalletFactory.makeWallet()
-        Container.shared.walletStorageUseCase.register { [unowned self] in mockWallet }
+        Container.shared.walletStorageUseCase.register { [unowned self] in MainActor.assumeIsolated { mockWallet } }
         navigationController = NavigationBarLayoutingNavigationController()
         window = UIWindow(frame: .init(x: 0, y: 0, width: 320, height: 480))
         window.rootViewController = navigationController

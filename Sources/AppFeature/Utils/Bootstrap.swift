@@ -46,6 +46,10 @@ public let log = Logger(subsystem: Bundle.main.bundleIdentifier ?? "com.openzesa
 ///
 /// Tap-outside-to-dismiss-keyboard is wired by `AppDelegate` directly via a
 /// window-level `UITapGestureRecognizer` — no `bootstrap` step needed.
+///
+/// `@MainActor` because `AppAppearance.setupDefault()` mutates UIKit
+/// appearance proxies which are now SDK-level main-actor isolated.
+@MainActor
 public func bootstrap() {
     registerFonts()
     AppAppearance.setupDefault()

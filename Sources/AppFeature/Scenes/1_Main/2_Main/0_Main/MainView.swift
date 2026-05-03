@@ -26,6 +26,7 @@ import Combine
 import NanoViewControllerCombine
 import NanoViewControllerController
 import NanoViewControllerSceneViews
+import NanoViewControllerCore
 import UIKit
 
 /// Wallet hub screen — shows balance with pull-to-refresh + send/receive CTAs.

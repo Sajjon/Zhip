@@ -33,6 +33,7 @@ import XCTest
 /// Drives each `SettingsCoordinator` navigation branch so every case in
 /// `toSettings`'s big switch is exercised. Modal presentations run against a
 /// real `UIWindow` so the presentation path doesn't silently no-op.
+@MainActor
 final class SettingsCoordinatorTests: XCTestCase {
     private var window: UIWindow!
     private var navigationController: NavigationBarLayoutingNavigationController!
@@ -52,11 +53,11 @@ final class SettingsCoordinatorTests: XCTestCase {
         mockPincode = MockPincodeUseCase()
         mockOnboarding = MockOnboardingUseCase()
         mockUrlOpener = MockUrlOpener()
-        Container.shared.transactionsUseCase.register { [unowned self] in mockTransactions }
-        Container.shared.walletStorageUseCase.register { [unowned self] in mockWallet }
-        Container.shared.pincodeUseCase.register { [unowned self] in mockPincode }
-        Container.shared.onboardingUseCase.register { [unowned self] in mockOnboarding }
-        Container.shared.urlOpener.register { [unowned self] in mockUrlOpener }
+        Container.shared.transactionsUseCase.register { [unowned self] in MainActor.assumeIsolated { mockTransactions } }
+        Container.shared.walletStorageUseCase.register { [unowned self] in MainActor.assumeIsolated { mockWallet } }
+        Container.shared.pincodeUseCase.register { [unowned self] in MainActor.assumeIsolated { mockPincode } }
+        Container.shared.onboardingUseCase.register { [unowned self] in MainActor.assumeIsolated { mockOnboarding } }
+        Container.shared.urlOpener.register { [unowned self] in MainActor.assumeIsolated { mockUrlOpener } }
         navigationController = NavigationBarLayoutingNavigationController()
         window = UIWindow(frame: .init(x: 0, y: 0, width: 320, height: 480))
         window.rootViewController = navigationController

@@ -25,11 +25,12 @@
 import Combine
 import Foundation
 import NanoViewControllerController
+import NanoViewControllerCore
 
 // MARK: - User action and navigation steps
 
 /// The single navigation step the welcome scene can emit.
-public enum WelcomeUserAction {
+public enum WelcomeUserAction: Sendable {
     /// The user tapped "Get Started", signalling intent to begin onboarding.
     case /* user intends to */ start
 }

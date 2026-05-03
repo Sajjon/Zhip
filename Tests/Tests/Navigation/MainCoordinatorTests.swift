@@ -33,6 +33,7 @@ import Zesame
 /// Tests for `MainCoordinator` — instantiates the coordinator with a real
 /// `UINavigationController`, drives `start()`, and verifies the initial scene
 /// is pushed.
+@MainActor
 final class MainCoordinatorTests: XCTestCase {
     private var window: UIWindow!
     private var navigationController: NavigationBarLayoutingNavigationController!
@@ -49,8 +50,12 @@ final class MainCoordinatorTests: XCTestCase {
         mockTransactions = MockTransactionsUseCase()
         mockWallet = MockWalletUseCase()
         mockWallet.storedWallet = TestWalletFactory.makeWallet()
-        Container.shared.transactionsUseCase.register { [unowned self] in mockTransactions }
-        Container.shared.walletStorageUseCase.register { [unowned self] in mockWallet }
+        Container.shared.transactionsUseCase.register { [unowned self] in
+            MainActor.assumeIsolated { mockTransactions }
+        }
+        Container.shared.walletStorageUseCase.register { [unowned self] in
+            MainActor.assumeIsolated { mockWallet }
+        }
         window = UIWindow(frame: .init(x: 0, y: 0, width: 320, height: 480))
         window.rootViewController = navigationController
         window.makeKeyAndVisible()

@@ -31,6 +31,7 @@ import XCTest
 ///
 /// Covers the confirmation path (matching pincode → `.confirmPincode` + persist) and
 /// the skip path (right bar button → `.skip`).
+@MainActor
 final class ConfirmNewPincodeViewModelTests: XCTestCase {
     private var cancellables: Set<AnyCancellable> = []
     private var pincodeInput: CurrentValueSubject<Pincode?, Never>!

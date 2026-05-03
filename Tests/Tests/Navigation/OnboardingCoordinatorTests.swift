@@ -32,6 +32,7 @@ import XCTest
 /// Covers `OnboardingCoordinator` state-machine routing. Each resumable-state
 /// combo is seeded via `MockOnboardingUseCase`/`MockWalletUseCase` so every
 /// branch in `toNextStep()` runs.
+@MainActor
 final class OnboardingCoordinatorTests: XCTestCase {
     private var window: UIWindow!
     private var navigationController: NavigationBarLayoutingNavigationController!
@@ -48,10 +49,10 @@ final class OnboardingCoordinatorTests: XCTestCase {
         mockWallet = MockWalletUseCase()
         mockPincode = MockPincodeUseCase()
         mockOnboarding = MockOnboardingUseCase()
-        Container.shared.transactionsUseCase.register { [unowned self] in mockTransactions }
-        Container.shared.walletStorageUseCase.register { [unowned self] in mockWallet }
-        Container.shared.pincodeUseCase.register { [unowned self] in mockPincode }
-        Container.shared.onboardingUseCase.register { [unowned self] in mockOnboarding }
+        Container.shared.transactionsUseCase.register { [unowned self] in MainActor.assumeIsolated { mockTransactions } }
+        Container.shared.walletStorageUseCase.register { [unowned self] in MainActor.assumeIsolated { mockWallet } }
+        Container.shared.pincodeUseCase.register { [unowned self] in MainActor.assumeIsolated { mockPincode } }
+        Container.shared.onboardingUseCase.register { [unowned self] in MainActor.assumeIsolated { mockOnboarding } }
         navigationController = NavigationBarLayoutingNavigationController()
         window = UIWindow(frame: .init(x: 0, y: 0, width: 320, height: 480))
         window.rootViewController = navigationController

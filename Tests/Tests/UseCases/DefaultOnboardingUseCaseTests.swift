@@ -32,6 +32,7 @@ import XCTest
 /// case (it only uses `Preferences` + `SecurePersistence`), so the test uses the
 /// real `Container.shared.zilliqaService()` — which is fine because nothing in these
 /// tests triggers network calls.
+@MainActor
 final class DefaultOnboardingUseCaseTests: XCTestCase {
     private var preferences: Preferences!
     private var secureStore: SecurePersistence!

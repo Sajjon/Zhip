@@ -30,6 +30,7 @@ import Zesame
 /// Exercises `QRCoder`'s encode and decode paths. Decoding a blank image
 /// returns nil (no QR content); encoding a valid `TransactionIntent` returns
 /// an image.
+@MainActor
 final class QRCodingTests: XCTestCase {
     private var sut: QRCoder!
 

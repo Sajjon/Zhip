@@ -26,6 +26,7 @@
 import XCTest
 import Zesame
 
+@MainActor
 final class KeystoreValidatorTests: XCTestCase {
     private let sut = KeystoreValidator()
 

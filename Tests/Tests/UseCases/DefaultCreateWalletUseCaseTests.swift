@@ -31,6 +31,7 @@ import Zesame
 /// Tests that `DefaultCreateWalletUseCase` forwards to the injected
 /// `ZilliqaServiceReactive`, tags the resulting wallet with
 /// `.generatedByThisApp`, and propagates errors.
+@MainActor
 final class DefaultCreateWalletUseCaseTests: XCTestCase {
     private var cancellables: Set<AnyCancellable> = []
     private var mockService: MockZilliqaServiceReactive!
@@ -38,7 +39,7 @@ final class DefaultCreateWalletUseCaseTests: XCTestCase {
     override func setUp() {
         super.setUp()
         mockService = MockZilliqaServiceReactive()
-        Container.shared.zilliqaService.register { [unowned self] in mockService }
+        Container.shared.zilliqaService.register { [unowned self] in MainActor.assumeIsolated { mockService } }
     }
 
     override func tearDown() {

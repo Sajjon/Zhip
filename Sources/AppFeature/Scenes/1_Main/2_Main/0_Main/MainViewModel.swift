@@ -33,7 +33,7 @@ import Zesame
 // MARK: - MainUserAction
 
 /// Outcomes of the wallet hub.
-public enum MainUserAction {
+public enum MainUserAction: Sendable {
     /// User tapped the Send CTA.
     case send
     /// User tapped the Receive CTA.

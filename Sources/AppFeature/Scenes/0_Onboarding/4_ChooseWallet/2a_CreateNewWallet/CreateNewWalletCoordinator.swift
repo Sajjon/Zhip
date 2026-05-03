@@ -26,11 +26,11 @@ import Combine
 import Factory
 import NanoViewControllerNavigation
 import UIKit
-import Zesame
+ import Zesame
 
 /// Outcomes the create-new-wallet sub-flow surfaces to its parent
 /// (`ChooseWalletCoordinator`).
-public enum CreateNewWalletCoordinatorNavigationStep {
+public enum CreateNewWalletCoordinatorNavigationStep: @unchecked Sendable {
     /// User completed all three steps (privacy gate → password → backup) and
     /// produced a `Wallet` ready to persist.
     case create(wallet: Wallet)

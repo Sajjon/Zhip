@@ -39,6 +39,7 @@ import Zesame
 /// branch that auto-populates fields, the maxAmount trigger that derives
 /// amount from balance minus fees, formatted outputs, and the
 /// `isReviewButtonEnabled` gate.
+@MainActor
 final class PrepareTransactionViewModelTests: XCTestCase {
     private var cancellables: Set<AnyCancellable> = []
 
@@ -86,8 +87,8 @@ final class PrepareTransactionViewModelTests: XCTestCase {
         mockTransactions.cachedBalance = (try? Amount(zil: 1000))
         mockWallet = MockWalletUseCase()
         mockWallet.storedWallet = TestWalletFactory.makeWallet()
-        Container.shared.transactionsUseCase.register { [unowned self] in mockTransactions }
-        Container.shared.walletStorageUseCase.register { [unowned self] in mockWallet }
+        Container.shared.transactionsUseCase.register { [unowned self] in MainActor.assumeIsolated { mockTransactions } }
+        Container.shared.walletStorageUseCase.register { [unowned self] in MainActor.assumeIsolated { mockWallet } }
     }
 
     override func tearDown() {

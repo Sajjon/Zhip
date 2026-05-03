@@ -2,6 +2,7 @@
 import XCTest
 import Zesame
 
+@MainActor
 final class SufficientFundsValidatorTests: XCTestCase {
     func test_validate_missingAmount_returnsEmpty() {
         let sut = SufficientFundsValidator()

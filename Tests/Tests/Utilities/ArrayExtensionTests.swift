@@ -2,6 +2,7 @@
 import NanoViewControllerCombine
 import XCTest
 
+@MainActor
 final class ArrayExtensionTests: XCTestCase {
     func test_mapToVoid_emptyArray_returnsEmpty() {
         let result: [Void] = [Int]().mapToVoid()

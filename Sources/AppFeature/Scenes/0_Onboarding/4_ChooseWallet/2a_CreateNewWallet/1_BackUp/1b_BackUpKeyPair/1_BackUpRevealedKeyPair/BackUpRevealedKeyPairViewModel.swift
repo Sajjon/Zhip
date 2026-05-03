@@ -25,13 +25,14 @@
 import Combine
 import Factory
 import NanoViewControllerCombine
+import NanoViewControllerCore
 import NanoViewControllerController
 import NanoViewControllerDIPrimitives
 import UIKit
 import Zesame
 
 /// Outcome of the revealed-keypair display screen.
-public enum BackUpRevealedKeyPairUserAction {
+public enum BackUpRevealedKeyPairUserAction: Sendable {
     /// User tapped the right "Done" bar-button.
     case finish
 }
@@ -79,20 +80,26 @@ public final class BackUpRevealedKeyPairViewModel: BaseViewModel<
             // Mac, or other apps to harvest. The user can paste it into a
             // password manager within that window.
             input.fromView.copyPrivateKeyTrigger.withLatestFrom(privateKey) { $1 }
-                .sink { [pasteboard] in
-                    pasteboard.copy($0, expiringAfter: SensitivePasteboard.expirationSeconds)
-                    input.fromController.toastSubject
-                        .send(Toast(String(localized: .BackUpRevealedKeyPair.copiedPrivateKey)))
+                .sink { [pasteboard] privateKeyText in
+                    // pasteboard.copy + Toast init are @MainActor — hop
+                    // explicitly because the Combine sink closure is @Sendable.
+                    MainActor.assumeIsolated {
+                        pasteboard.copy(privateKeyText, expiringAfter: SensitivePasteboard.expirationSeconds)
+                        input.fromController.toastSubject
+                            .send(Toast(String(localized: .BackUpRevealedKeyPair.copiedPrivateKey)))
+                    }
                 },
 
             // Public key isn't sensitive but pair the same expiration for
             // consistency on this screen — anything copied here is in the
             // "I'm-actively-handling-keys" mental mode.
             input.fromView.copyPublicKeyTrigger.withLatestFrom(publicKeyUncompressed) { $1 }
-                .sink { [pasteboard] in
-                    pasteboard.copy($0, expiringAfter: SensitivePasteboard.expirationSeconds)
-                    input.fromController.toastSubject
-                        .send(Toast(String(localized: .BackUpRevealedKeyPair.copiedPublicKey)))
+                .sink { [pasteboard] publicKeyText in
+                    MainActor.assumeIsolated {
+                        pasteboard.copy(publicKeyText, expiringAfter: SensitivePasteboard.expirationSeconds)
+                        input.fromController.toastSubject
+                            .send(Toast(String(localized: .BackUpRevealedKeyPair.copiedPublicKey)))
+                    }
                 },
         ].forEach { $0.store(in: &cancellables) }
 

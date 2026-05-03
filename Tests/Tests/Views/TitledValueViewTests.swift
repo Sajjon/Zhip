@@ -29,6 +29,7 @@ import XCTest
 
 /// Exercises `TitledValueView`'s `setValue`, `titled`, and `titleBinder` APIs
 /// after configuration via `withStyles`.
+@MainActor
 final class TitledValueViewTests: XCTestCase {
     private func makeView() -> TitledValueView {
         let view = TitledValueView()

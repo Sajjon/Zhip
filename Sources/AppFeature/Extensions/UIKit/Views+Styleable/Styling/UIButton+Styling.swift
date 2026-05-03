@@ -129,39 +129,58 @@ public extension UIButton {
 }
 
 public extension UIButton {
-    /// Writes `style` to this button, substituting project-wide defaults for
-    /// any nil attribute. Includes the per-state colour set (normal/disabled/selected).
+    /// Writes `style` to this button by building a `UIButton.Configuration`
+    /// (iOS 15+ button styling API) plus a `configurationUpdateHandler` that
+    /// swaps colours per state (normal/disabled/selected). Substitutes
+    /// project-wide defaults for any nil attribute.
+    ///
+    /// Why `Configuration` instead of the legacy `setTitle` /
+    /// `setBackgroundColor` per-state API: from iOS 15 on, Configuration is
+    /// the only path that composes correctly with content insets, image
+    /// padding, and (on iOS 26+) the Liquid Glass material system. Mixing
+    /// legacy setters with Configuration produces undefined render order.
     func apply(style: Style) {
         translatesAutoresizingMaskIntoConstraints = false
         if let height = style.height {
             self.height(height)
         }
-        if let titleNormal = style.titleNormal {
-            setTitle(titleNormal, for: .normal)
-        }
-        if let imageNormal = style.imageNormal {
-            setImage(imageNormal, for: .normal)
-        }
         set(\.tintColor, ifNotNil: style.tintColor)
-        setTitleColor(style.textColorNormal ?? .defaultText, for: .normal)
-        setTitleColor(style.textColorDisabled ?? .silverGrey, for: .disabled)
-        titleLabel?.font = style.font ?? UIFont.button
-        let colorNormal = style.colorNormal ?? .teal
-        let colorDisabled = style.colorDisabled ?? .asphaltGrey
-        // .selected falls back to .normal — most buttons don't distinguish a
-        // selected state, so re-using .normal looks correct.
-        let colorSelected = style.colorSelected ?? colorNormal
-        setBackgroundColor(colorNormal, for: .normal)
-        setBackgroundColor(colorDisabled, for: .disabled)
-        setBackgroundColor(colorSelected, for: .selected)
-        isEnabled = style.isEnabled ?? true
-        if let borderNormal = style.borderNormal {
-            addBorder(borderNormal)
-        }
 
-        if let cornerRounding = style.cornerRounding {
-            cornerRounding.apply(to: self)
+        let palette = ResolvedPalette(style: style)
+        configuration = makeConfiguration(style: style, palette: palette)
+        configurationUpdateHandler = palette.makeUpdateHandler()
+
+        isEnabled = style.isEnabled ?? true
+    }
+
+    /// Builds the initial `UIButton.Configuration` from `style`. Decoration-
+    /// free `.plain()` base; fill/stroke/corner/image/title layered in
+    /// explicitly so we don't fight system defaults.
+    private func makeConfiguration(style: Style, palette: ResolvedPalette) -> UIButton.Configuration {
+        var configuration = UIButton.Configuration.plain()
+        configuration.image = style.imageNormal
+        if let title = style.titleNormal {
+            // attributedTitle (rather than `title` + a transformer) makes the
+            // font/color baseline obvious; the update handler mutates the
+            // foregroundColor per state.
+            var container = AttributeContainer()
+            container.font = palette.font
+            container.foregroundColor = palette.textColorNormal
+            configuration.attributedTitle = AttributedString(title, attributes: container)
         }
+        if case let .static(radius) = style.cornerRounding {
+            configuration.background.cornerRadius = radius
+            // `.fixed` keeps the literal radius (overriding the capsule /
+            // dynamic curve Configuration applies to bordered/filled styles
+            // by default).
+            configuration.cornerStyle = .fixed
+        }
+        if let border = style.borderNormal {
+            configuration.background.strokeColor = UIColor(cgColor: border.color)
+            configuration.background.strokeWidth = border.width
+        }
+        configuration.background.backgroundColor = palette.colorNormal
+        return configuration
     }
 
     /// Apply `style` and return `self`. Generic over `B: UIButton` so concrete
@@ -175,6 +194,56 @@ public extension UIButton {
         apply(style: style)
         guard let button = self as? B else { incorrectImplementation("Bad cast") }
         return button
+    }
+}
+
+/// Per-state colour palette resolved from a `UIButton.Style`. Captured by
+/// the configurationUpdateHandler so each state-change reads from a
+/// pre-resolved value bag instead of re-reading the mutable `Style`.
+private struct ResolvedPalette {
+    let textColorNormal: UIColor
+    let textColorDisabled: UIColor
+    let colorNormal: UIColor
+    let colorDisabled: UIColor
+    let colorSelected: UIColor
+    let font: UIFont
+
+    init(style: UIButton.Style) {
+        textColorNormal = style.textColorNormal ?? .defaultText
+        textColorDisabled = style.textColorDisabled ?? .silverGrey
+        colorNormal = style.colorNormal ?? .teal
+        colorDisabled = style.colorDisabled ?? .asphaltGrey
+        // .selected falls back to .normal — most buttons don't distinguish a
+        // selected state, so re-using .normal looks correct.
+        colorSelected = style.colorSelected ?? (style.colorNormal ?? .teal)
+        font = style.font ?? UIFont.button
+    }
+
+    /// Returns a `configurationUpdateHandler` closure that swaps background
+    /// + title colours per state. Configuration's built-in disabled tint
+    /// doesn't honour our explicit `colorDisabled`/`textColorDisabled`, so
+    /// we override via the standard handler hook.
+    func makeUpdateHandler() -> (UIButton) -> Void {
+        { button in
+            guard var c = button.configuration else { return }
+            switch button.state {
+            case .disabled:
+                c.background.backgroundColor = colorDisabled
+                if var attr = c.attributedTitle {
+                    attr.foregroundColor = textColorDisabled
+                    c.attributedTitle = attr
+                }
+            case .selected:
+                c.background.backgroundColor = colorSelected
+            default:
+                c.background.backgroundColor = colorNormal
+                if var attr = c.attributedTitle {
+                    attr.foregroundColor = textColorNormal
+                    c.attributedTitle = attr
+                }
+            }
+            button.configuration = c
+        }
     }
 }
 

@@ -24,11 +24,12 @@
 
 import Combine
 import NanoViewControllerController
+import NanoViewControllerCore
 
 // MARK: - ChooseWalletUserAction
 
 /// Outcomes the chooser screen surfaces to `ChooseWalletCoordinator`.
-public enum ChooseWalletUserAction {
+public enum ChooseWalletUserAction: Sendable {
     /// User tapped "Create new wallet" — coordinator presents the create flow.
     case createNewWallet
     /// User tapped "Restore wallet" — coordinator presents the restore flow.

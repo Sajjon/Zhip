@@ -35,7 +35,7 @@ import Zesame
 // MARK: - User action and navigation steps
 
 /// Outcomes of step 4 of Send.
-public enum PollTransactionStatusUserAction {
+public enum PollTransactionStatusUserAction: Sendable {
     /// User tapped Skip — close before the receipt resolves.
     case skip
     /// Receipt resolved (or user tapped done) — close + trigger balance refetch.
@@ -101,9 +101,13 @@ public final class PollTransactionStatusViewModel: BaseViewModel<
             input.fromView.copyTransactionIdTrigger
                 .sink { [weak self, pasteboard] in
                     guard let self else { return }
-                    pasteboard.copy(transactionId)
-                    input.fromController.toastSubject
-                        .send(Toast(String(localized: .PollTransaction.copiedTransactionId)))
+                    // pasteboard.copy + Toast init are @MainActor — the
+                    // Combine sink closure is @Sendable so we hop explicitly.
+                    MainActor.assumeIsolated {
+                        pasteboard.copy(self.transactionId)
+                        input.fromController.toastSubject
+                            .send(Toast(String(localized: .PollTransaction.copiedTransactionId)))
+                    }
                 },
 
             input.fromView.skipWaitingOrDoneTrigger.withLatestFrom(hasReceivedReceipt) { $1 }

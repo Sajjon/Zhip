@@ -29,7 +29,7 @@ import NanoViewControllerCombine
 import NanoViewControllerController
 import NanoViewControllerCore
 import Validation
-import Zesame
+@preconcurrency import Zesame
 
 /// The encryption-password policy used for *all* password inputs on this screen.
 ///
@@ -44,7 +44,7 @@ private let encryptionPasswordMode: WalletEncryptionPassword.Mode = .newOrRestor
 ///
 /// Emitted to the parent coordinator (`CreateNewWalletCoordinator`) via the
 /// `BaseViewModel.navigator` stepper so the coordinator can advance or dismiss the flow.
-public enum CreateNewWalletUserAction {
+public enum CreateNewWalletUserAction: Sendable {
     /// User confirmed a valid password and a fresh `Wallet` was successfully generated.
     /// - Parameter Wallet: The newly created wallet, ready to be persisted by the coordinator.
     case createWallet(Wallet)

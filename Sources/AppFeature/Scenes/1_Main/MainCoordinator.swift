@@ -30,7 +30,7 @@ import UIKit
 import Zesame
 
 /// Outcome the main coordinator surfaces to its parent (`AppCoordinator`).
-public enum MainCoordinatorNavigationStep {
+public enum MainCoordinatorNavigationStep: Sendable {
     /// User confirmed wallet removal in Settings — `AppCoordinator` should
     /// transition back to onboarding.
     case removeWallet

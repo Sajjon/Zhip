@@ -30,6 +30,7 @@ import Zesame
 
 /// Tests that `DefaultExtractKeyPairUseCase` forwards to the injected service
 /// and surfaces its `KeyPair` result.
+@MainActor
 final class DefaultExtractKeyPairUseCaseTests: XCTestCase {
     private var cancellables: Set<AnyCancellable> = []
     private var mockService: MockZilliqaServiceReactive!
@@ -37,7 +38,7 @@ final class DefaultExtractKeyPairUseCaseTests: XCTestCase {
     override func setUp() {
         super.setUp()
         mockService = MockZilliqaServiceReactive()
-        Container.shared.zilliqaService.register { [unowned self] in mockService }
+        Container.shared.zilliqaService.register { [unowned self] in MainActor.assumeIsolated { mockService } }
     }
 
     override func tearDown() {

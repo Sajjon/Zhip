@@ -25,12 +25,14 @@
 import Combine
 import Foundation
 import NanoViewControllerCombine
+import NanoViewControllerCore
 import NanoViewControllerController
+@preconcurrency import Zesame
 
 // MARK: - User action and navigation steps
 
 /// Outcomes of the QR-scan modal.
-public enum ScanQRCodeUserAction {
+public enum ScanQRCodeUserAction: Sendable {
     /// User tapped Cancel.
     case cancel
     /// QR code scanned and successfully decoded into a `TransactionIntent`.

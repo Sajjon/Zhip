@@ -30,7 +30,7 @@ import UIKit
 /// pincode" path and the "user explicitly skipped" path collapse to this single
 /// step — the coordinator records the skip-flag itself so the parent doesn't
 /// have to differentiate.
-public enum SetPincodeCoordinatorNavigationStep {
+public enum SetPincodeCoordinatorNavigationStep: Sendable {
     /// Either a pincode was set (and persisted by `ConfirmNewPincodeViewModel`)
     /// or the user skipped (and the skip flag was recorded by `skipPincode()`).
     case setPincode

@@ -31,6 +31,7 @@ import XCTest
 /// observer (`ZhipTestsBundle`) keeps unit tests silent by always resolving the
 /// `Container.shared.soundPlayer` factory to a `MockSoundPlayer` — never the real
 /// `DefaultSoundPlayer` that drives `AVAudioPlayer`.
+@MainActor
 final class SoundPlayerTests: XCTestCase {
     // MARK: - MockSoundPlayer
 

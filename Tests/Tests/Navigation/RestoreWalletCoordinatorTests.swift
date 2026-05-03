@@ -32,6 +32,7 @@ import Zesame
 
 /// Drives `RestoreWalletCoordinator` routing: EnsureThatYouAreNotBeingWatched
 /// → RestoreWallet → finishedRestoring / cancel bubble.
+@MainActor
 final class RestoreWalletCoordinatorTests: XCTestCase {
     private var window: UIWindow!
     private var navigationController: NavigationBarLayoutingNavigationController!

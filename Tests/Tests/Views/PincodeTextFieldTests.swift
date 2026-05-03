@@ -28,6 +28,7 @@ import NanoViewControllerCore
 import UIKit
 import XCTest
 
+@MainActor
 final class PincodeTextFieldTests: XCTestCase {
     private var cancellables: Set<AnyCancellable> = []
 
@@ -189,6 +190,7 @@ final class PincodeTextFieldTests: XCTestCase {
 
 // MARK: - String.isBackspace
 
+@MainActor
 final class StringIsBackspaceTests: XCTestCase {
     func test_nonBackspaceString_isNotBackspace() {
         XCTAssertFalse("abc".isBackspace)

@@ -33,6 +33,7 @@ import Zesame
 /// Covers `SendCoordinator` navigation branches: the chain from
 /// `PrepareTransaction` through `ScanQRCode` / `ReviewTransaction` /
 /// `SignTransaction` / `PollTransactionStatus`, plus the final `finish` bubble.
+@MainActor
 final class SendCoordinatorTests: XCTestCase {
     private var window: UIWindow!
     private var navigationController: NavigationBarLayoutingNavigationController!
@@ -47,8 +48,8 @@ final class SendCoordinatorTests: XCTestCase {
         mockTransactions = MockTransactionsUseCase()
         mockWallet = MockWalletUseCase()
         mockWallet.storedWallet = TestWalletFactory.makeWallet()
-        Container.shared.transactionsUseCase.register { [unowned self] in mockTransactions }
-        Container.shared.walletStorageUseCase.register { [unowned self] in mockWallet }
+        Container.shared.transactionsUseCase.register { [unowned self] in MainActor.assumeIsolated { mockTransactions } }
+        Container.shared.walletStorageUseCase.register { [unowned self] in MainActor.assumeIsolated { mockWallet } }
         deeplinkSubject = PassthroughSubject<TransactionIntent, Never>()
         navigationController = NavigationBarLayoutingNavigationController()
         window = UIWindow(frame: .init(x: 0, y: 0, width: 320, height: 480))

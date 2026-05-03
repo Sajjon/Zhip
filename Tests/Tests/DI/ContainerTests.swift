@@ -31,6 +31,7 @@ import XCTest
 /// We exercise the container exclusively through the `preferences` factory because
 /// registering a mock `Preferences` is side-effect-free — it doesn't try to open a
 /// network connection or touch the Keychain.
+@MainActor
 final class ContainerTests: XCTestCase {
     override func tearDown() {
         Container.shared.manager.reset()

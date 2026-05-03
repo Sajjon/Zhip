@@ -27,6 +27,7 @@ import XCTest
 
 /// Exercises the default `description` provided for enum-based `Error` types
 /// conforming to `CustomStringConvertible` via mirror reflection.
+@MainActor
 final class ErrorCustomStringConvertibleTests: XCTestCase {
     private enum SampleEnumError: Swift.Error, CustomStringConvertible {
         case invalid(reason: String)

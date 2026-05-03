@@ -34,6 +34,7 @@ import Zesame
 /// `DecryptKeystoreToRevealKeyPair`; dismiss bubbles .dismiss; successful
 /// decryption pushes `BackUpRevealedKeyPair` which then bubbles
 /// .backingUpKeyPair on finish.
+@MainActor
 final class DecryptKeystoreCoordinatorTests: XCTestCase {
     private var window: UIWindow!
     private var navigationController: NavigationBarLayoutingNavigationController!
@@ -48,7 +49,7 @@ final class DecryptKeystoreCoordinatorTests: XCTestCase {
         let wallet = TestWalletFactory.makeWallet()
         mockWallet.storedWallet = wallet
         walletSubject = CurrentValueSubject<AppFeature.Wallet, Never>(wallet)
-        Container.shared.walletStorageUseCase.register { [unowned self] in mockWallet }
+        Container.shared.walletStorageUseCase.register { [unowned self] in MainActor.assumeIsolated { mockWallet } }
         navigationController = NavigationBarLayoutingNavigationController()
         window = UIWindow(frame: .init(x: 0, y: 0, width: 320, height: 480))
         window.rootViewController = navigationController

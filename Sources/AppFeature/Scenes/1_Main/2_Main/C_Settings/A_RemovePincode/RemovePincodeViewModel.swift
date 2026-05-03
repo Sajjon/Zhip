@@ -32,7 +32,7 @@ import Validation
 // MARK: - RemovePincodeUserAction
 
 /// Outcomes of the pincode-removal modal.
-public enum RemovePincodeUserAction {
+public enum RemovePincodeUserAction: Sendable {
     /// User tapped Cancel — close without removing.
     case cancelPincodeRemoval
     /// Entered pincode matched — pincode deleted, modal closes.

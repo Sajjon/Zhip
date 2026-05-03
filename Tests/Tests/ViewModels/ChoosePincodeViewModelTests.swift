@@ -31,6 +31,7 @@ import XCTest
 ///
 /// Covers the "Done" path (forwards the pincode) and the "Skip" path
 /// (emits `.skip` from the nav bar right trigger).
+@MainActor
 final class ChoosePincodeViewModelTests: XCTestCase {
     private var cancellables: Set<AnyCancellable> = []
     private var pincodeInput: CurrentValueSubject<Pincode?, Never>!

@@ -3,6 +3,7 @@ import Combine
 import UIKit
 import XCTest
 
+@MainActor
 final class CheckboxWithLabelTests: XCTestCase {
     private var cancellables: Set<AnyCancellable> = []
 

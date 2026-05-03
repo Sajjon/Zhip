@@ -29,10 +29,10 @@ import NanoViewControllerCombine
 import NanoViewControllerController
 import NanoViewControllerCore
 import Validation
-import Zesame
+ import Zesame
 
 /// Outcome of step 3 of Send.
-public enum SignTransactionUserAction {
+public enum SignTransactionUserAction: @unchecked Sendable {
     /// Transaction successfully signed + broadcast — carries the network response.
     case sign(TransactionResponse)
     /// Wallet was unavailable when the screen tried to load it (e.g. user

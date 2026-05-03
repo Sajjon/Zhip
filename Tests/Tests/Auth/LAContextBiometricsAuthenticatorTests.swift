@@ -30,6 +30,7 @@ import XCTest
 /// `canEvaluatePolicy(.deviceOwnerAuthenticationWithBiometrics)` returns
 /// `false`, so the guard path fires and `authenticate()` resolves to `false`
 /// without ever triggering a real Face ID / Touch ID prompt.
+@MainActor
 final class LAContextBiometricsAuthenticatorTests: XCTestCase {
     private var cancellables: Set<AnyCancellable> = []
 

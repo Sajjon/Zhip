@@ -4,6 +4,7 @@ import NanoViewControllerController
 import UIKit
 import XCTest
 
+@MainActor
 final class ToastTests: XCTestCase {
     func test_initWithDefaults_createsAutoDismissToast() {
         let sut = Toast("hello")

@@ -31,6 +31,7 @@ import XCTest
 
 /// Covers `ChooseWalletCoordinator` routing: `.createNewWallet` /
 /// `.restoreWallet` branches, each presenting a child modal coordinator.
+@MainActor
 final class ChooseWalletCoordinatorTests: XCTestCase {
     private var window: UIWindow!
     private var navigationController: NavigationBarLayoutingNavigationController!
@@ -41,7 +42,9 @@ final class ChooseWalletCoordinatorTests: XCTestCase {
     override func setUp() {
         super.setUp()
         mockWallet = MockWalletUseCase()
-        Container.shared.walletStorageUseCase.register { [unowned self] in mockWallet }
+        Container.shared.walletStorageUseCase.register { [unowned self] in
+            MainActor.assumeIsolated { mockWallet }
+        }
         navigationController = NavigationBarLayoutingNavigationController()
         window = UIWindow(frame: .init(x: 0, y: 0, width: 320, height: 480))
         window.rootViewController = navigationController

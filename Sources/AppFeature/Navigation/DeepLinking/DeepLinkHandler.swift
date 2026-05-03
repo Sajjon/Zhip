@@ -31,6 +31,7 @@ import UIKit
 ///
 /// Buffers a single deep link while the app is locked behind PIN, then replays
 /// it once `appIsUnlockedEmitBufferedDeeplinks()` is called from the unlock flow.
+@MainActor
 public final class DeepLinkHandler {
     /// Stepper that surfaces parsed deep links.
     private let navigator: Navigator<DeepLink>

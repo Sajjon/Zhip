@@ -34,6 +34,7 @@ import Zesame
 /// Verifies the password-validation gate on the sign button, that signing
 /// triggers `SendTransactionUseCase` with the supplied payment, and that the
 /// resulting `TransactionResponse` is propagated as `.sign`.
+@MainActor
 final class SignTransactionViewModelTests: XCTestCase {
     private var cancellables: Set<AnyCancellable> = []
     private var encryptionPassword: CurrentValueSubject<String, Never>!
@@ -61,9 +62,9 @@ final class SignTransactionViewModelTests: XCTestCase {
             gasPrice: GasPrice(li: 1_000_000)
         )
 
-        Container.shared.sendTransactionUseCase.register { [unowned self] in mockTransactions }
-        Container.shared.walletStorageUseCase.register { [unowned self] in mockWallet }
-        Container.shared.verifyEncryptionPasswordUseCase.register { [unowned self] in mockWallet }
+        Container.shared.sendTransactionUseCase.register { [unowned self] in MainActor.assumeIsolated { mockTransactions } }
+        Container.shared.walletStorageUseCase.register { [unowned self] in MainActor.assumeIsolated { mockWallet } }
+        Container.shared.verifyEncryptionPasswordUseCase.register { [unowned self] in MainActor.assumeIsolated { mockWallet } }
     }
 
     override func tearDown() {

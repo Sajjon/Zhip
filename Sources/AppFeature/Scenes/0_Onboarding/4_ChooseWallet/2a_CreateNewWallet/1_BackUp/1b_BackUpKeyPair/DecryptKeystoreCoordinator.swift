@@ -32,7 +32,7 @@ import UIKit
 import Zesame
 
 /// Outcomes the decrypt-keystore sub-flow surfaces to its parent.
-public enum DecryptKeystoreCoordinatorNavigationStep {
+public enum DecryptKeystoreCoordinatorNavigationStep: Sendable {
     /// User entered the password and finished viewing the revealed key pair.
     case backingUpKeyPair
     /// User dismissed without revealing.

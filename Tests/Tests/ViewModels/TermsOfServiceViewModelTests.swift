@@ -32,6 +32,7 @@ import XCTest
 /// We inject a hand-rolled `MockOnboardingUseCase` so we can verify the ViewModel
 /// calls `didAcceptTermsOfService()` exactly once when the user accepts, and emits
 /// the right `.acceptTermsOfService` / `.dismiss` navigation steps.
+@MainActor
 final class TermsOfServiceViewModelTests: XCTestCase {
     private var cancellables: Set<AnyCancellable> = []
     private var useCase: MockOnboardingUseCase!

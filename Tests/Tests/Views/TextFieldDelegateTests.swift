@@ -2,6 +2,7 @@
 import UIKit
 import XCTest
 
+@MainActor
 final class TextFieldDelegateTests: XCTestCase {
     func test_init_withTypeOfInput_setsLimitingCharacterSet() {
         let sut = TextFieldDelegate(type: .number, maxLength: 10)

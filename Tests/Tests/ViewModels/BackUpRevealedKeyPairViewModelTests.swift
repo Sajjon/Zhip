@@ -34,6 +34,7 @@ import Zesame
 /// Verifies the hex-formatted private and public key outputs, the two
 /// copy-to-pasteboard side effects with toasts, and the right-bar-button →
 /// `.finish` navigation branch.
+@MainActor
 final class BackUpRevealedKeyPairViewModelTests: XCTestCase {
     private var cancellables: Set<AnyCancellable> = []
     private var copyPrivateKey: PassthroughSubject<Void, Never>!
@@ -52,7 +53,7 @@ final class BackUpRevealedKeyPairViewModelTests: XCTestCase {
         )
         keyPair = KeyPair(private: privateKey)
         mockPasteboard = MockPasteboard()
-        Container.shared.pasteboard.register { [unowned self] in mockPasteboard }
+        Container.shared.pasteboard.register { [unowned self] in MainActor.assumeIsolated { mockPasteboard } }
     }
 
     override func tearDown() {

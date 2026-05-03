@@ -26,6 +26,7 @@
 import XCTest
 import Zesame
 
+@MainActor
 final class WalletEncryptionPasswordTests: XCTestCase {
     // MARK: - init
 

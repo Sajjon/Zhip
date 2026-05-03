@@ -25,13 +25,14 @@
 import Combine
 import Foundation
 import NanoViewControllerCombine
+import NanoViewControllerCore
 import NanoViewControllerController
 import Validation
 
 // MARK: - ConfirmNewPincodeUserAction
 
 /// Outcomes of the confirmation step.
-public enum ConfirmNewPincodeUserAction {
+public enum ConfirmNewPincodeUserAction: Sendable {
     /// User retyped a matching pincode and tapped confirm — pincode persisted by the use case.
     case confirmPincode
     /// User tapped the right-bar "Skip" button.

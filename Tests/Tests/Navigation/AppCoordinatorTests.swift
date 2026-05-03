@@ -35,6 +35,7 @@ import XCTest
 /// `AppCoordinator` uses `[unowned self]` inside async `.replace` transition
 /// callbacks, so the SUT is held as an instance var and we drain the run loop
 /// before tearDown to let those callbacks fire against a still-alive object.
+@MainActor
 final class AppCoordinatorTests: XCTestCase {
     private var mockWallet: MockWalletUseCase!
     private var mockPincode: MockPincodeUseCase!
@@ -54,10 +55,10 @@ final class AppCoordinatorTests: XCTestCase {
         rootControllers = []
         setRootCallCount = 0
         currentRoot = nil
-        Container.shared.walletStorageUseCase.register { [unowned self] in mockWallet }
-        Container.shared.pincodeUseCase.register { [unowned self] in mockPincode }
-        Container.shared.transactionsUseCase.register { [unowned self] in mockTransactions }
-        Container.shared.onboardingUseCase.register { [unowned self] in mockOnboarding }
+        Container.shared.walletStorageUseCase.register { [unowned self] in MainActor.assumeIsolated { mockWallet } }
+        Container.shared.pincodeUseCase.register { [unowned self] in MainActor.assumeIsolated { mockPincode } }
+        Container.shared.transactionsUseCase.register { [unowned self] in MainActor.assumeIsolated { mockTransactions } }
+        Container.shared.onboardingUseCase.register { [unowned self] in MainActor.assumeIsolated { mockOnboarding } }
     }
 
     override func tearDown() {
@@ -86,7 +87,7 @@ final class AppCoordinatorTests: XCTestCase {
         // Override the singleton DeepLinkHandler so each test starts with a
         // fresh buffer state. `Container.shared.manager.reset()` in tearDown
         // restores the production registration.
-        Container.shared.deepLinkHandler.register { DeepLinkHandler() }
+        Container.shared.deepLinkHandler.register { MainActor.assumeIsolated { DeepLinkHandler() } }
         sut = AppCoordinator(
             navigationController: nav,
             isViewControllerRootOfWindow: { [weak self] vc in self?.currentRoot === vc },

@@ -31,6 +31,7 @@ import Zesame
 
 /// Tests for `DefaultTransactionsUseCase`, which uses constructor DI (not
 /// `@Injected`) so tests instantiate it directly with mocked dependencies.
+@MainActor
 final class DefaultTransactionsUseCaseTests: XCTestCase {
     private var cancellables: Set<AnyCancellable> = []
     private var mockService: MockZilliqaServiceReactive!

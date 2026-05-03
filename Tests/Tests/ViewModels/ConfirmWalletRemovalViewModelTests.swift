@@ -31,6 +31,7 @@ import XCTest
 ///
 /// Verifies the cancel-vs-confirm navigation branches and that the confirm
 /// button is gated on the "I've backed up my wallet" checkbox.
+@MainActor
 final class ConfirmWalletRemovalViewModelTests: XCTestCase {
     private var cancellables: Set<AnyCancellable> = []
     private var confirmTrigger: PassthroughSubject<Void, Never>!

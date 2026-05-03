@@ -35,6 +35,7 @@ import Zesame
 /// button wiring), the three user-intent branches (reveal keystore, reveal
 /// private key, done-after-understanding-risk), the keystore copy side effect,
 /// and the visibility flag driven by the mode.
+@MainActor
 final class BackupWalletViewModelTests: XCTestCase {
     private var cancellables: Set<AnyCancellable> = []
     private var copyKeystore: PassthroughSubject<Void, Never>!
@@ -56,7 +57,7 @@ final class BackupWalletViewModelTests: XCTestCase {
         fakeController = FakeInputFromController()
         wallet = TestWalletFactory.makeWallet()
         mockPasteboard = MockPasteboard()
-        Container.shared.pasteboard.register { [unowned self] in mockPasteboard }
+        Container.shared.pasteboard.register { [unowned self] in MainActor.assumeIsolated { mockPasteboard } }
     }
 
     override func tearDown() {

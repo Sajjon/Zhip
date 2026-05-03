@@ -34,6 +34,7 @@ import Zesame
 /// Covers the segment-controlled headerLabel, the `isRestoreButtonEnabled` gating on
 /// a non-nil key restoration, and the restore path which calls the use case and
 /// emits `.restoreWallet`.
+@MainActor
 final class RestoreWalletViewModelTests: XCTestCase {
     private var cancellables: Set<AnyCancellable> = []
     private var segmentSubject: CurrentValueSubject<RestoreWalletViewModel.InputFromView.Segment, Never>!
@@ -51,7 +52,7 @@ final class RestoreWalletViewModelTests: XCTestCase {
         restoreTrigger = PassthroughSubject<Void, Never>()
         fakeController = FakeInputFromController()
         mockWallet = MockWalletUseCase()
-        Container.shared.restoreWalletUseCase.register { [unowned self] in mockWallet }
+        Container.shared.restoreWalletUseCase.register { [unowned self] in MainActor.assumeIsolated { mockWallet } }
     }
 
     override func tearDown() {

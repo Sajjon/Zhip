@@ -32,6 +32,7 @@ import XCTest
 /// The ViewModel has no dependencies and one responsibility: forward the
 /// `startTrigger` to `navigator.next(.start)`. The test drives the input subject
 /// and asserts that the navigator emits the expected step.
+@MainActor
 final class WelcomeViewModelTests: XCTestCase {
     private var cancellables: Set<AnyCancellable> = []
 

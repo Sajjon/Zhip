@@ -25,13 +25,14 @@
 import Combine
 import Factory
 import NanoViewControllerCombine
+import NanoViewControllerCore
 import NanoViewControllerController
 import NanoViewControllerDIPrimitives
 import UIKit
 import Zesame
 
 /// Outcome of the keystore-reveal modal.
-public enum BackUpKeystoreUserAction {
+public enum BackUpKeystoreUserAction: Sendable {
     /// User tapped the right "Done" bar-button.
     case finished
 }
@@ -73,10 +74,14 @@ public final class BackUpKeystoreViewModel: BaseViewModel<
             // 60s pasteboard expiration (encrypted but still worth limiting
             // residency).
             input.fromView.copyTrigger.withLatestFrom(keystore)
-                .sink { [pasteboard] in
-                    pasteboard.copy($0, expiringAfter: SensitivePasteboard.expirationSeconds)
-                    let toast = Toast(String(localized: .BackUpKeystore.copiedKeystore))
-                    input.fromController.toastSubject.send(toast)
+                .sink { [pasteboard] keystoreText in
+                    // pasteboard.copy + Toast init are @MainActor — hop
+                    // explicitly because the Combine sink closure is @Sendable.
+                    MainActor.assumeIsolated {
+                        pasteboard.copy(keystoreText, expiringAfter: SensitivePasteboard.expirationSeconds)
+                        let toast = Toast(String(localized: .BackUpKeystore.copiedKeystore))
+                        input.fromController.toastSubject.send(toast)
+                    }
                 },
         ].forEach { $0.store(in: &cancellables) }
 

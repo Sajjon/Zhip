@@ -33,6 +33,7 @@ import Zesame
 /// password), the show/hide private-key secure-text-entry toggle, and the
 /// `keyRestoration` stream that only emits a non-nil value once every field
 /// is valid.
+@MainActor
 final class RestoreWalletUsingPrivateKeyViewModelTests: XCTestCase {
     private var cancellables: Set<AnyCancellable> = []
     private var privateKey: CurrentValueSubject<String, Never>!

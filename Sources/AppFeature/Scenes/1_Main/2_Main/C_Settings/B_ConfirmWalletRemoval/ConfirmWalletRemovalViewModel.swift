@@ -26,11 +26,12 @@ import Combine
 import Foundation
 import NanoViewControllerCombine
 import NanoViewControllerController
+import NanoViewControllerCore
 
 // MARK: - User action and navigation steps
 
 /// Outcomes of the wallet-removal confirmation modal.
-public enum ConfirmWalletRemovalUserAction {
+public enum ConfirmWalletRemovalUserAction: Sendable {
     /// User tapped Cancel — close without removing.
     case cancel
     /// User checked the box and tapped Confirm — coordinator will wipe + finish.

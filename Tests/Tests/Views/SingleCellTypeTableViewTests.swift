@@ -30,6 +30,7 @@ import XCTest
 
 /// Drives `SingleCellTypeTableView` selection forwarding and data loading so
 /// its delegate/data-source methods and `CellDeselectionMode` branches run.
+@MainActor
 final class SingleCellTypeTableViewTests: XCTestCase {
     private typealias Model = NavigatingCellModel<String>
     private typealias Cell = TableViewCell<Model>

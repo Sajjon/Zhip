@@ -31,7 +31,7 @@ import Zesame
 public let githubUrlString = "https://github.com/OpenZesame/Zhip"
 
 /// Outcomes the Settings sub-flow surfaces to its parent (`MainCoordinator`).
-public enum SettingsCoordinatorNavigationStep {
+public enum SettingsCoordinatorNavigationStep: Sendable {
     /// User confirmed wallet removal — `MainCoordinator` should bubble this
     /// up to `AppCoordinator` to swap back to onboarding.
     case removeWallet

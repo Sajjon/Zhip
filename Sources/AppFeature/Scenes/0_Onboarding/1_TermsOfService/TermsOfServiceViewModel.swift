@@ -25,6 +25,7 @@
 import Combine
 import Foundation
 import NanoViewControllerCombine
+import NanoViewControllerCore
 import NanoViewControllerController
 
 // MARK: TermsOfServiceNavigation

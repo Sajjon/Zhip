@@ -23,7 +23,7 @@ options:
   generateEmptyDirectories: false
   defaultConfig: Release
   deploymentTarget:
-    iOS: "17.0"
+    iOS: "26.0"
   groupSortPosition: top
 
 # Configurations are shared via xcconfig files at the project + target level.
@@ -77,9 +77,11 @@ targets:
         # Manual signing matches base_shared.xcconfig.
         CODE_SIGN_STYLE: Manual
     sources:
-      # The tiny App/ shell — AppDelegate.swift only. Everything else
-      # (Info.plist gen, asset catalog, fonts/etc.) ships as resources.
+      # The tiny App/ shell — AppDelegate (UISceneConfiguration vendor) +
+      # SceneDelegate (window + AppCoordinator + lifecycle). Everything
+      # else (Info.plist gen, asset catalog, fonts/etc.) ships as resources.
       - path: App/AppDelegate.swift
+      - path: App/SceneDelegate.swift
       # Bundle resources — XcodeGen sees these as Resources by file type.
       - path: App/Assets.xcassets
       - path: App/Base.lproj

@@ -34,7 +34,7 @@ import Zesame
 // MARK: - BackupWalletUserAction
 
 /// Outcomes the backup hub surfaces to its parent coordinator.
-public enum BackupWalletUserAction {
+public enum BackupWalletUserAction: Sendable {
     /// User dismissed (Settings mode) or cancelled (post-create mode).
     case cancelOrDismiss
     /// User confirmed they have backed up the wallet (only post-create).
@@ -111,8 +111,14 @@ public final class BackupWalletViewModel: BaseViewModel<
             // indefinitely (Universal Clipboard sync, clipboard managers, …).
             input.fromView.copyKeystoreToPasteboardTrigger.withLatestFrom(wallet.map(\.keystoreAsJSON)) { $1 }
                 .sink { [pasteboard] (keystoreText: String) in
-                    pasteboard.copy(keystoreText, expiringAfter: SensitivePasteboard.expirationSeconds)
-                    input.fromController.toastSubject.send(Toast(String(localized: .BackupWallet.copiedKeystore)))
+                    // pasteboard.copy is @MainActor (wraps UIPasteboard) — the
+                    // Combine sink closure is @Sendable so we hop explicitly.
+                    // Combine delivers values on the main runloop in
+                    // SceneController so the assumption holds.
+                    MainActor.assumeIsolated {
+                        pasteboard.copy(keystoreText, expiringAfter: SensitivePasteboard.expirationSeconds)
+                        input.fromController.toastSubject.send(Toast(String(localized: .BackupWallet.copiedKeystore)))
+                    }
                 },
 
             input.fromView.revealKeystoreTrigger

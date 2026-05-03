@@ -25,6 +25,7 @@
 import NanoViewControllerCombine
 import NanoViewControllerController
 import NanoViewControllerSceneViews
+import NanoViewControllerCore
 import UIKit
 
 /// "Make sure you're alone" privacy gate shown right before the user is asked

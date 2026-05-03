@@ -29,12 +29,12 @@ import NanoViewControllerCombine
 import NanoViewControllerController
 import NanoViewControllerCore
 import Validation
-import Zesame
+ import Zesame
 
 // MARK: - PrepareTransactionUserAction
 
 /// Outcomes of step 1 of Send.
-public enum PrepareTransactionUserAction {
+public enum PrepareTransactionUserAction: @unchecked Sendable {
     /// User tapped the right-bar Cancel.
     case cancel
     /// User submitted a fully-validated payment for review (advances to step 2).

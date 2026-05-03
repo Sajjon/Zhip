@@ -125,7 +125,7 @@ public extension WalletEncryptionPassword {
 public extension WalletEncryptionPassword {
     /// Which length policy a password should be validated against.
     /// Different wallet origins have different minimum lengths.
-    enum Mode: CaseIterable {
+    enum Mode: CaseIterable, Sendable {
         /// Strict app-side policy used when generating a new wallet or restoring
         /// from a raw private key (8 chars min).
         case newOrRestorePrivateKey

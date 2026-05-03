@@ -1,4 +1,4 @@
-// swift-tools-version: 5.9
+// swift-tools-version: 6.2
 //
 // Zhip — root SPM package.
 //
@@ -25,11 +25,12 @@ let package = Package(
     // Required by SPM when any target ships localized resources (.xcstrings etc.).
     // The Resources/AppFeature targets host the .xcstrings catalogs.
     defaultLocalization: "en",
-    // macOS 13 listed alongside iOS so `swift build` / `swift test` on a
+    // macOS 14 listed alongside iOS so `swift build` / `swift test` on a
     // macOS host can exercise the Combine APIs. The actual app is iOS-only;
     // the macOS minimum exists only for the package's own host-side runs.
-    // iOS 17 matches the Zhip iOS-app target's deployment target in project.yml.
-    platforms: [.iOS(.v17), .macOS(.v13)],
+    // iOS 26 matches NanoViewController's `@MainActor` isolation model
+    // (UIView/UIViewController are SDK-level @MainActor in iOS 26).
+    platforms: [.iOS(.v26), .macOS(.v14)],
     products: [
         // Reactive validation framework.
         .library(name: "Validation", targets: ["Validation"]),
@@ -39,10 +40,10 @@ let package = Package(
         .library(name: "AppFeature", targets: ["AppFeature"]),
     ],
     dependencies: [
-        // Sibling repo containing the reactive-MVVM scaffolding (was the
-        // `SingleLineController*` modules — see ../NanoViewController).
-        // Local-path dep until NanoViewController gets a tagged release.
-        .package(path: "../NanoViewController"),
+        // Reactive-MVVM scaffolding extracted from this repo (was the
+        // `SingleLineController*` modules). Pinned to the first tagged
+        // release; bump as new tags ship.
+        .package(url: "https://github.com/Sajjon/NanoViewController", exact: "0.1.0"),
         // Third-party SPM deps consumed by AppFeature. Versions mirror the
         // Zhip.xcodeproj's previous package references.
         .package(url: "https://github.com/OpenZesame/Zesame", from: "2.0.0"),

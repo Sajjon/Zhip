@@ -35,6 +35,7 @@ import Zesame
 /// reveal button, and the decryption flow that reaches into
 /// `ExtractKeyPairUseCase` and emits `.decryptKeystoreReavealing` with the
 /// derived key pair.
+@MainActor
 final class DecryptKeystoreToRevealKeyPairViewModelTests: XCTestCase {
     private var cancellables: Set<AnyCancellable> = []
     private var encryptionPassword: CurrentValueSubject<String, Never>!
@@ -52,7 +53,7 @@ final class DecryptKeystoreToRevealKeyPairViewModelTests: XCTestCase {
         fakeController = FakeInputFromController()
         mockWallet = MockWalletUseCase()
         wallet = TestWalletFactory.makeWallet()
-        Container.shared.extractKeyPairUseCase.register { [unowned self] in mockWallet }
+        Container.shared.extractKeyPairUseCase.register { [unowned self] in MainActor.assumeIsolated { mockWallet } }
     }
 
     override func tearDown() {

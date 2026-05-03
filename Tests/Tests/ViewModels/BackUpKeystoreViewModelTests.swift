@@ -33,6 +33,7 @@ import Zesame
 ///
 /// Covers the keystore-as-JSON output, copy-to-pasteboard side effect with toast,
 /// and the right-bar-button → `.finished` navigation branch.
+@MainActor
 final class BackUpKeystoreViewModelTests: XCTestCase {
     private var cancellables: Set<AnyCancellable> = []
     private var copyTrigger: PassthroughSubject<Void, Never>!
@@ -46,7 +47,7 @@ final class BackUpKeystoreViewModelTests: XCTestCase {
         fakeController = FakeInputFromController()
         wallet = TestWalletFactory.makeWallet()
         mockPasteboard = MockPasteboard()
-        Container.shared.pasteboard.register { [unowned self] in mockPasteboard }
+        Container.shared.pasteboard.register { [unowned self] in MainActor.assumeIsolated { mockPasteboard } }
     }
 
     override func tearDown() {

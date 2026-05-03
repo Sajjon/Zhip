@@ -33,6 +33,7 @@ import XCTest
 /// Drives the three gating signals (new password, confirmed password, checkbox)
 /// through `CurrentValueSubject`s and asserts the continue-button enabled state
 /// and the `.createWallet` / `.cancel` navigation steps.
+@MainActor
 final class CreateNewWalletViewModelTests: XCTestCase {
     private var cancellables: Set<AnyCancellable> = []
     private var newPassword: CurrentValueSubject<String, Never>!
@@ -54,7 +55,7 @@ final class CreateNewWalletViewModelTests: XCTestCase {
         createTrigger = PassthroughSubject<Void, Never>()
         fakeController = FakeInputFromController()
         mockWallet = MockWalletUseCase()
-        Container.shared.createWalletUseCase.register { [unowned self] in mockWallet }
+        Container.shared.createWalletUseCase.register { [unowned self] in MainActor.assumeIsolated { mockWallet } }
     }
 
     override func tearDown() {

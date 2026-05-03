@@ -10,7 +10,7 @@ import Foundation
 ///
 /// `FloatingLabelTextField.validationBinder` consumes this type to drive its
 /// teal/red/grey color states.
-public enum AnyValidation {
+public enum AnyValidation: Sendable {
     /// Field validates; an optional `withRemark` string can be displayed in mellow yellow.
     case valid(withRemark: String?)
     /// Field is empty (or "untouched" — neutral grey state, no error).

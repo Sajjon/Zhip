@@ -25,11 +25,12 @@
 import Combine
 import Foundation
 import NanoViewControllerController
+import NanoViewControllerCore
 
 // MARK: - User action and navigation steps
 
 /// Outcomes the privacy-gate screen surfaces to its parent coordinator.
-public enum EnsureThatYouAreNotBeingWatchedUserAction {
+public enum EnsureThatYouAreNotBeingWatchedUserAction: Sendable {
     /// User tapped "I understand" — proceed to wallet creation.
     case understand
     /// User tapped the cancel "X" — abort and return to chooser.

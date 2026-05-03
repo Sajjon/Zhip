@@ -26,7 +26,7 @@ import Combine
 import NanoViewControllerCombine
 import NanoViewControllerController
 import NanoViewControllerCore
-import NanoViewControllerSceneViews
+@preconcurrency import NanoViewControllerSceneViews
 import UIKit
 
 // MARK: - SettingsView

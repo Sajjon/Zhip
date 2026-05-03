@@ -30,6 +30,7 @@ import XCTest
 /// Each test follows Arrange-Act-Assert with one-line arrange/act/assert where
 /// possible.  The underlying `SecurePersistence` and `Preferences` are in-memory
 /// so tests are fully hermetic.
+@MainActor
 final class DefaultPincodeUseCaseTests: XCTestCase {
     private var preferences: Preferences!
     private var secureStore: SecurePersistence!

@@ -28,6 +28,7 @@ import Foundation
 import NanoViewControllerCombine
 import NanoViewControllerController
 import NanoViewControllerSceneViews
+import NanoViewControllerCore
 import UIKit
 import WebKit
 

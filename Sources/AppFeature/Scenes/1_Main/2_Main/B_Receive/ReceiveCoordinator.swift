@@ -28,7 +28,7 @@ import UIKit
 import Zesame
 
 /// Outcome of the Receive sub-flow.
-public enum ReceiveCoordinatorNavigationStep {
+public enum ReceiveCoordinatorNavigationStep: Sendable {
     /// User dismissed — `MainCoordinator` closes the modal.
     case finish
 }

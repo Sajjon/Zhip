@@ -1,6 +1,7 @@
 @testable import AppFeature
 import XCTest
 
+@MainActor
 final class EncodableDictionaryTests: XCTestCase {
     private struct SimpleEncodable: Encodable {
         let name: String
