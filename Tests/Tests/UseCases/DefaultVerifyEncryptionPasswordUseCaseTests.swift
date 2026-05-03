@@ -38,7 +38,7 @@ final class DefaultVerifyEncryptionPasswordUseCaseTests: XCTestCase {
     override func setUp() {
         super.setUp()
         mockService = MockZilliqaServiceReactive()
-        Container.shared.zilliqaService.register { [unowned self] in MainActor.assumeIsolated { mockService } }
+        Container.shared.zilliqaService.register { [unowned self] in mainActorOnly { mockService } }
     }
 
     override func tearDown() {

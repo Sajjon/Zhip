@@ -53,8 +53,8 @@ final class UnlockAppWithPincodeViewModelTests: XCTestCase {
         mockPincode = MockPincodeUseCase()
         mockPincode.pincode = existingPincode
         mockBiometrics = MockBiometricsAuthenticator()
-        Container.shared.pincodeUseCase.register { [unowned self] in MainActor.assumeIsolated { mockPincode } }
-        Container.shared.biometricsAuthenticator.register { [unowned self] in MainActor.assumeIsolated { mockBiometrics } }
+        Container.shared.pincodeUseCase.register { [unowned self] in mainActorOnly { mockPincode } }
+        Container.shared.biometricsAuthenticator.register { [unowned self] in mainActorOnly { mockBiometrics } }
     }
 
     override func tearDown() {

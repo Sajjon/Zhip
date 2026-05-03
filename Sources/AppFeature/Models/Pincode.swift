@@ -29,7 +29,7 @@ import Foundation
 /// The pincode has **no cryptographic role** — the wallet's private key is
 /// protected by the user's `WalletEncryptionPassword`, not by this pincode. The
 /// pincode only gates re-entry into the already-authenticated app session.
-public struct Pincode: Equatable, Codable {
+public struct Pincode: Equatable, Codable, Sendable {
     /// The raw digits making up the pincode, in order. Guaranteed to be exactly
     /// `Pincode.length` digits once successfully constructed.
     public let digits: [Digit]

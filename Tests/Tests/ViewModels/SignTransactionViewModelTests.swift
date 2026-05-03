@@ -62,9 +62,9 @@ final class SignTransactionViewModelTests: XCTestCase {
             gasPrice: GasPrice(li: 1_000_000)
         )
 
-        Container.shared.sendTransactionUseCase.register { [unowned self] in MainActor.assumeIsolated { mockTransactions } }
-        Container.shared.walletStorageUseCase.register { [unowned self] in MainActor.assumeIsolated { mockWallet } }
-        Container.shared.verifyEncryptionPasswordUseCase.register { [unowned self] in MainActor.assumeIsolated { mockWallet } }
+        Container.shared.sendTransactionUseCase.register { [unowned self] in mainActorOnly { mockTransactions } }
+        Container.shared.walletStorageUseCase.register { [unowned self] in mainActorOnly { mockWallet } }
+        Container.shared.verifyEncryptionPasswordUseCase.register { [unowned self] in mainActorOnly { mockWallet } }
     }
 
     override func tearDown() {

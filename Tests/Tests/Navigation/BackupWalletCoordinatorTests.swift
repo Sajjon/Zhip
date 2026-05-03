@@ -47,7 +47,7 @@ final class BackupWalletCoordinatorTests: XCTestCase {
         let wallet = TestWalletFactory.makeWallet()
         mockWallet.storedWallet = wallet
         walletSubject = CurrentValueSubject<AppFeature.Wallet, Never>(wallet)
-        Container.shared.walletStorageUseCase.register { [unowned self] in MainActor.assumeIsolated { mockWallet } }
+        Container.shared.walletStorageUseCase.register { [unowned self] in mainActorOnly { mockWallet } }
         navigationController = NavigationBarLayoutingNavigationController()
         window = UIWindow(frame: .init(x: 0, y: 0, width: 320, height: 480))
         window.rootViewController = navigationController

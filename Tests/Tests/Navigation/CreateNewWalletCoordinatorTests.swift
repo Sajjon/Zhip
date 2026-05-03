@@ -49,8 +49,8 @@ final class CreateNewWalletCoordinatorTests: XCTestCase {
         // `hasConfirmedNewWalletBackup` flag write doesn't leak into real
         // UserDefaults during the test.
         preferences = TestStoreFactory.makePreferences()
-        Container.shared.walletStorageUseCase.register { [unowned self] in MainActor.assumeIsolated { mockWallet } }
-        Container.shared.preferences.register { [unowned self] in MainActor.assumeIsolated { preferences } }
+        Container.shared.walletStorageUseCase.register { [unowned self] in mainActorOnly { mockWallet } }
+        Container.shared.preferences.register { [unowned self] in mainActorOnly { preferences } }
         navigationController = NavigationBarLayoutingNavigationController()
         window = UIWindow(frame: .init(x: 0, y: 0, width: 320, height: 480))
         window.rootViewController = navigationController

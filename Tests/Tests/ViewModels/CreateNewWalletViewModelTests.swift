@@ -55,7 +55,7 @@ final class CreateNewWalletViewModelTests: XCTestCase {
         createTrigger = PassthroughSubject<Void, Never>()
         fakeController = FakeInputFromController()
         mockWallet = MockWalletUseCase()
-        Container.shared.createWalletUseCase.register { [unowned self] in MainActor.assumeIsolated { mockWallet } }
+        Container.shared.createWalletUseCase.register { [unowned self] in mainActorOnly { mockWallet } }
     }
 
     override func tearDown() {

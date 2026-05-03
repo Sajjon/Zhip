@@ -27,7 +27,7 @@ import Foundation
 import NanoViewControllerCombine
 import NanoViewControllerCore
 import NanoViewControllerController
-@preconcurrency import Zesame
+import Zesame
 
 // MARK: - User action and navigation steps
 

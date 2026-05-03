@@ -55,10 +55,10 @@ final class AppCoordinatorTests: XCTestCase {
         rootControllers = []
         setRootCallCount = 0
         currentRoot = nil
-        Container.shared.walletStorageUseCase.register { [unowned self] in MainActor.assumeIsolated { mockWallet } }
-        Container.shared.pincodeUseCase.register { [unowned self] in MainActor.assumeIsolated { mockPincode } }
-        Container.shared.transactionsUseCase.register { [unowned self] in MainActor.assumeIsolated { mockTransactions } }
-        Container.shared.onboardingUseCase.register { [unowned self] in MainActor.assumeIsolated { mockOnboarding } }
+        Container.shared.walletStorageUseCase.register { [unowned self] in mainActorOnly { mockWallet } }
+        Container.shared.pincodeUseCase.register { [unowned self] in mainActorOnly { mockPincode } }
+        Container.shared.transactionsUseCase.register { [unowned self] in mainActorOnly { mockTransactions } }
+        Container.shared.onboardingUseCase.register { [unowned self] in mainActorOnly { mockOnboarding } }
     }
 
     override func tearDown() {
@@ -87,7 +87,7 @@ final class AppCoordinatorTests: XCTestCase {
         // Override the singleton DeepLinkHandler so each test starts with a
         // fresh buffer state. `Container.shared.manager.reset()` in tearDown
         // restores the production registration.
-        Container.shared.deepLinkHandler.register { MainActor.assumeIsolated { DeepLinkHandler() } }
+        Container.shared.deepLinkHandler.register { mainActorOnly { DeepLinkHandler() } }
         sut = AppCoordinator(
             navigationController: nav,
             isViewControllerRootOfWindow: { [weak self] vc in self?.currentRoot === vc },

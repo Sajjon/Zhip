@@ -82,16 +82,26 @@ final class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         handle(userActivity: userActivity)
     }
 
-    /// Maps to the previous AppDelegate `applicationWillResignActive` — the
-    /// AppCoordinator uses this to install the privacy-cover lock screen
-    /// before the system snapshots the app for the multitasking carousel.
-    func sceneWillResignActive(_: UIScene) {
+    /// Installs the privacy-cover lock screen when the scene is genuinely
+    /// going to background.
+    ///
+    /// `sceneDidEnterBackground` (not `sceneWillResignActive`) is the right
+    /// hook on iOS 13+: `WillResignActive` also fires on transient
+    /// interruptions like Control Center swipes, incoming-call banners, and
+    /// FaceID prompts, which would cause the lock cover to flash during
+    /// regular use. `DidEnterBackground` only fires when the app is
+    /// actually backgrounded — matching the pre-iOS-13 behaviour of
+    /// `applicationDidEnterBackground`.
+    func sceneDidEnterBackground(_: UIScene) {
         appCoordinator.appWillResignActive()
     }
 
-    /// Inverse of `sceneWillResignActive` — coordinator dismisses the lock
-    /// screen (or transitions to pincode entry if one is configured).
-    func sceneDidBecomeActive(_: UIScene) {
+    /// Inverse of `sceneDidEnterBackground` — coordinator dismisses the
+    /// lock screen (or transitions to pincode entry if one is configured).
+    /// `sceneWillEnterForeground` rather than `sceneDidBecomeActive` so the
+    /// unlock transition starts before the user sees the (possibly stale)
+    /// last-frame snapshot the system shows during the foreground animation.
+    func sceneWillEnterForeground(_: UIScene) {
         appCoordinator.appDidBecomeActive()
     }
 }

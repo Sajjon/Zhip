@@ -58,13 +58,13 @@ final class ZhipTestsBundle: NSObject, XCTestObservation {
 
     private static func registerSilentSideEffects() {
         Container.shared.soundPlayer.register { MockSoundPlayer() }
-        Container.shared.pasteboard.register { MainActor.assumeIsolated { MockPasteboard() } }
+        Container.shared.pasteboard.register { mainActorOnly { MockPasteboard() } }
         Container.shared.biometricsAuthenticator.register { MockBiometricsAuthenticator() }
-        Container.shared.urlOpener.register { MainActor.assumeIsolated { MockUrlOpener() } }
-        Container.shared.clock.register { MainActor.assumeIsolated { ImmediateClock() } }
-        Container.shared.mainScheduler.register { MainActor.assumeIsolated { ImmediateMainScheduler() } }
+        Container.shared.urlOpener.register { mainActorOnly { MockUrlOpener() } }
+        Container.shared.clock.register { mainActorOnly { ImmediateClock() } }
+        Container.shared.mainScheduler.register { mainActorOnly { ImmediateMainScheduler() } }
         Container.shared.htmlLoader.register { MockHtmlLoader() }
-        Container.shared.hapticFeedback.register { MainActor.assumeIsolated { MockHapticFeedback() } }
+        Container.shared.hapticFeedback.register { mainActorOnly { MockHapticFeedback() } }
         Container.shared.dateProvider.register { FixedDateProvider() }
     }
 }

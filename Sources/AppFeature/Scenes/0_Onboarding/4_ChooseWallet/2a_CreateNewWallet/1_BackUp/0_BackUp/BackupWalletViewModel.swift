@@ -115,7 +115,7 @@ public final class BackupWalletViewModel: BaseViewModel<
                     // Combine sink closure is @Sendable so we hop explicitly.
                     // Combine delivers values on the main runloop in
                     // SceneController so the assumption holds.
-                    MainActor.assumeIsolated {
+                    mainActorOnly {
                         pasteboard.copy(keystoreText, expiringAfter: SensitivePasteboard.expirationSeconds)
                         input.fromController.toastSubject.send(Toast(String(localized: .BackupWallet.copiedKeystore)))
                     }

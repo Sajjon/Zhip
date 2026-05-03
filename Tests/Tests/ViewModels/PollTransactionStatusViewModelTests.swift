@@ -52,9 +52,9 @@ final class PollTransactionStatusViewModelTests: XCTestCase {
         seeTxDetails = PassthroughSubject<Void, Never>()
         fakeController = FakeInputFromController()
         mockTransactions = MockTransactionsUseCase()
-        Container.shared.transactionReceiptUseCase.register { [unowned self] in MainActor.assumeIsolated { mockTransactions } }
+        Container.shared.transactionReceiptUseCase.register { [unowned self] in mainActorOnly { mockTransactions } }
         mockPasteboard = MockPasteboard()
-        Container.shared.pasteboard.register { [unowned self] in MainActor.assumeIsolated { mockPasteboard } }
+        Container.shared.pasteboard.register { [unowned self] in mainActorOnly { mockPasteboard } }
     }
 
     override func tearDown() {

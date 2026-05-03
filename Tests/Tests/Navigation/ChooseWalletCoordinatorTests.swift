@@ -43,7 +43,7 @@ final class ChooseWalletCoordinatorTests: XCTestCase {
         super.setUp()
         mockWallet = MockWalletUseCase()
         Container.shared.walletStorageUseCase.register { [unowned self] in
-            MainActor.assumeIsolated { mockWallet }
+            mainActorOnly { mockWallet }
         }
         navigationController = NavigationBarLayoutingNavigationController()
         window = UIWindow(frame: .init(x: 0, y: 0, width: 320, height: 480))

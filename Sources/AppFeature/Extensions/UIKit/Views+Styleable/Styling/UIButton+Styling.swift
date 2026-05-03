@@ -223,6 +223,11 @@ private struct ResolvedPalette {
     /// + title colours per state. Configuration's built-in disabled tint
     /// doesn't honour our explicit `colorDisabled`/`textColorDisabled`, so
     /// we override via the standard handler hook.
+    ///
+    /// `.highlighted` is handled explicitly because the legacy
+    /// `setBackgroundColor(_:for:)` API used to dim the background image
+    /// automatically on press; Configuration does *not* — without an
+    /// explicit branch, taps would have no visual feedback.
     func makeUpdateHandler() -> (UIButton) -> Void {
         { button in
             guard var c = button.configuration else { return }
@@ -235,6 +240,15 @@ private struct ResolvedPalette {
                 }
             case .selected:
                 c.background.backgroundColor = colorSelected
+            case .highlighted:
+                // 0.85 alpha matches UIKit's historical highlight darkening
+                // — visible enough to register the touch, subtle enough not
+                // to flash on quick taps.
+                c.background.backgroundColor = colorNormal.withAlphaComponent(0.85)
+                if var attr = c.attributedTitle {
+                    attr.foregroundColor = textColorNormal
+                    c.attributedTitle = attr
+                }
             default:
                 c.background.backgroundColor = colorNormal
                 if var attr = c.attributedTitle {

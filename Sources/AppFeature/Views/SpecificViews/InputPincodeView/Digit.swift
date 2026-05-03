@@ -27,7 +27,7 @@ import Foundation
 /// A single decimal digit (0-9) used by `Pincode` and related input controls.
 ///
 /// Backed by `Int` so `Digit(rawValue:)` accepts the corresponding integer literal.
-public enum Digit: Int, Codable, Equatable {
+public enum Digit: Int, Codable, Equatable, Sendable {
     case zero = 0
     case one
     case two

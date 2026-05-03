@@ -28,7 +28,7 @@ import UIKit
 
 /// Outcomes the restore-wallet sub-flow surfaces to its parent
 /// (`ChooseWalletCoordinator`).
-public enum RestoreWalletCoordinatorNavigationStep: @unchecked Sendable {
+public enum RestoreWalletCoordinatorNavigationStep: Sendable {
     /// User entered valid restore material (keystore or private key) + password
     /// and the use case successfully decrypted/derived the `Wallet`.
     case finishedRestoring(wallet: Wallet)

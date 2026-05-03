@@ -53,7 +53,7 @@ final class DecryptKeystoreToRevealKeyPairViewModelTests: XCTestCase {
         fakeController = FakeInputFromController()
         mockWallet = MockWalletUseCase()
         wallet = TestWalletFactory.makeWallet()
-        Container.shared.extractKeyPairUseCase.register { [unowned self] in MainActor.assumeIsolated { mockWallet } }
+        Container.shared.extractKeyPairUseCase.register { [unowned self] in mainActorOnly { mockWallet } }
     }
 
     override func tearDown() {

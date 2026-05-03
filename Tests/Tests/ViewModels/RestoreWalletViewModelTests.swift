@@ -52,7 +52,7 @@ final class RestoreWalletViewModelTests: XCTestCase {
         restoreTrigger = PassthroughSubject<Void, Never>()
         fakeController = FakeInputFromController()
         mockWallet = MockWalletUseCase()
-        Container.shared.restoreWalletUseCase.register { [unowned self] in MainActor.assumeIsolated { mockWallet } }
+        Container.shared.restoreWalletUseCase.register { [unowned self] in mainActorOnly { mockWallet } }
     }
 
     override func tearDown() {

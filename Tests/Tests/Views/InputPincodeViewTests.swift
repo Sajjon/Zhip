@@ -14,7 +14,7 @@ final class InputPincodeViewTests: XCTestCase {
     override func setUp() {
         super.setUp()
         mockHaptic = MockHapticFeedback()
-        Container.shared.hapticFeedback.register { [unowned self] in MainActor.assumeIsolated { mockHaptic } }
+        Container.shared.hapticFeedback.register { [unowned self] in mainActorOnly { mockHaptic } }
     }
 
     override func tearDown() {

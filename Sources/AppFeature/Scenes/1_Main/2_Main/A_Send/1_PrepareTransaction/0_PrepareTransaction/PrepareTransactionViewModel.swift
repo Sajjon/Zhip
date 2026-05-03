@@ -34,7 +34,7 @@ import Validation
 // MARK: - PrepareTransactionUserAction
 
 /// Outcomes of step 1 of Send.
-public enum PrepareTransactionUserAction: @unchecked Sendable {
+public enum PrepareTransactionUserAction: Sendable {
     /// User tapped the right-bar Cancel.
     case cancel
     /// User submitted a fully-validated payment for review (advances to step 2).

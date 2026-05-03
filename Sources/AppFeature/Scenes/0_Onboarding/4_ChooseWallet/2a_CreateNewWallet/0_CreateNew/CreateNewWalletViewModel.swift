@@ -29,7 +29,7 @@ import NanoViewControllerCombine
 import NanoViewControllerController
 import NanoViewControllerCore
 import Validation
-@preconcurrency import Zesame
+import Zesame
 
 /// The encryption-password policy used for *all* password inputs on this screen.
 ///

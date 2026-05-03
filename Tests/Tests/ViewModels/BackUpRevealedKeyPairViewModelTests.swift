@@ -53,7 +53,7 @@ final class BackUpRevealedKeyPairViewModelTests: XCTestCase {
         )
         keyPair = KeyPair(private: privateKey)
         mockPasteboard = MockPasteboard()
-        Container.shared.pasteboard.register { [unowned self] in MainActor.assumeIsolated { mockPasteboard } }
+        Container.shared.pasteboard.register { [unowned self] in mainActorOnly { mockPasteboard } }
     }
 
     override func tearDown() {

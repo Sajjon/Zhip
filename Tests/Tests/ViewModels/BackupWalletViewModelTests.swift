@@ -57,7 +57,7 @@ final class BackupWalletViewModelTests: XCTestCase {
         fakeController = FakeInputFromController()
         wallet = TestWalletFactory.makeWallet()
         mockPasteboard = MockPasteboard()
-        Container.shared.pasteboard.register { [unowned self] in MainActor.assumeIsolated { mockPasteboard } }
+        Container.shared.pasteboard.register { [unowned self] in mainActorOnly { mockPasteboard } }
     }
 
     override func tearDown() {

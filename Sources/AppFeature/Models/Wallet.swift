@@ -32,7 +32,7 @@ import Zesame
 /// keystores have their own minimum-length rule (`Zesame.Keystore.minimumPasswordLength`)
 /// while wallets generated locally or imported via private key follow this app's
 /// stricter `.newOrRestorePrivateKey` policy. See `WalletEncryptionPassword.Mode`.
-public struct Wallet: Codable {
+public struct Wallet: Codable, Sendable {
     /// The underlying Zesame wallet (private key + keystore + address).
     public let wallet: Zesame.Wallet
 
@@ -46,7 +46,7 @@ public struct Wallet: Codable {
     /// Encoded as a raw `Int` so the persisted value is stable across enum-case
     /// reordering — never reorder existing cases or change their raw values without
     /// a migration, since old keychain entries would deserialize to the wrong case.
-    public enum Origin: Int, Codable {
+    public enum Origin: Int, Codable, Sendable {
         /// Wallet was generated fresh on this device (no external input).
         case generatedByThisApp
         /// Wallet was restored from a raw private-key string the user pasted in.

@@ -77,7 +77,7 @@ public final class BackUpKeystoreViewModel: BaseViewModel<
                 .sink { [pasteboard] keystoreText in
                     // pasteboard.copy + Toast init are @MainActor — hop
                     // explicitly because the Combine sink closure is @Sendable.
-                    MainActor.assumeIsolated {
+                    mainActorOnly {
                         pasteboard.copy(keystoreText, expiringAfter: SensitivePasteboard.expirationSeconds)
                         let toast = Toast(String(localized: .BackUpKeystore.copiedKeystore))
                         input.fromController.toastSubject.send(toast)

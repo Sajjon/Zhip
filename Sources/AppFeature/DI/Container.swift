@@ -32,9 +32,9 @@ import Zesame
 /// add staging/testnet builds this will move into a build-configuration driven
 /// registration on `Container.shared.zilliqaService`.
 ///
-/// `nonisolated(unsafe)` because `Zesame.Network` predates Sendable adoption
-/// but the value is an immutable enum case — safe to read from any actor.
-nonisolated(unsafe) let network: Network = .mainnet
+/// `Network` gains `Sendable` retroactively in `Concurrency/Sendable+Zesame.swift`,
+/// so this `let`-bound global needs no concurrency escape hatch.
+let network: Network = .mainnet
 
 extension KeyValueStore where KeyType == PreferencesKey {
     /// The app-wide default `Preferences` store, backed by `UserDefaults.standard`.
@@ -75,7 +75,7 @@ public extension Container {
     /// to install a fresh handler per test (Factory's `register` shadows
     /// `.singleton`).
     var deepLinkHandler: Factory<DeepLinkHandler> {
-        self { MainActor.assumeIsolated { DeepLinkHandler() } }.singleton
+        self { mainActorOnly { DeepLinkHandler() } }.singleton
     }
 
     /// Plays bundled sound effects. Tests register a no-op so unit tests never
@@ -91,7 +91,7 @@ public extension Container {
         // Factory's resolver is `@Sendable` so we hop via `assumeIsolated`.
         // Container singletons are always resolved from the main thread in
         // this app, so the assumption holds.
-        self { MainActor.assumeIsolated { DefaultPasteboard() } }.singleton
+        self { mainActorOnly { DefaultPasteboard() } }.singleton
     }
 
     /// Abstracts `LAContext` biometric authentication. Tests register a mock
@@ -113,7 +113,7 @@ public extension Container {
     var urlOpener: Factory<UrlOpener> {
         // See `pasteboard` above for why `assumeIsolated` — DefaultUrlOpener
         // wraps UIApplication and is therefore main-actor-isolated.
-        self { MainActor.assumeIsolated { DefaultUrlOpener() } }.singleton
+        self { mainActorOnly { DefaultUrlOpener() } }.singleton
     }
 
     /// Abstracts delayed main-queue dispatch (`asyncAfter`). Tests register
@@ -121,7 +121,7 @@ public extension Container {
     /// next main-queue cycle, so timer-driven flows run in milliseconds
     /// instead of seconds.
     var clock: Factory<Clock> {
-        self { MainActor.assumeIsolated { MainQueueClock() } }.singleton
+        self { mainActorOnly { MainQueueClock() } }.singleton
     }
 
     /// Abstracts immediate main-thread scheduling (the Combine
@@ -130,7 +130,7 @@ public extension Container {
     /// synchronously so coordinator tests can assert on navigation side
     /// effects without pumping the runloop.
     var mainScheduler: Factory<MainScheduler> {
-        self { MainActor.assumeIsolated { DispatchMainScheduler() } }.singleton
+        self { mainActorOnly { DispatchMainScheduler() } }.singleton
     }
 
     /// Loads bundled HTML files into attributed strings. Production uses
@@ -146,7 +146,7 @@ public extension Container {
     var hapticFeedback: Factory<HapticFeedback> {
         // See `pasteboard` above — DefaultHapticFeedback wraps a
         // UINotificationFeedbackGenerator and is main-actor-isolated.
-        self { MainActor.assumeIsolated { DefaultHapticFeedback() } }.singleton
+        self { mainActorOnly { DefaultHapticFeedback() } }.singleton
     }
 
     /// Abstracts "what time is it now" so timestamp-dependent logic

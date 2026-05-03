@@ -28,7 +28,7 @@ import NanoViewControllerCombine
 import NanoViewControllerController
 import NanoViewControllerCore
 import Validation
-@preconcurrency import Zesame
+import Zesame
 
 /// Outcomes of the decrypt-to-reveal screen.
 public enum DecryptKeystoreToRevealKeyPairUserAction: Sendable {

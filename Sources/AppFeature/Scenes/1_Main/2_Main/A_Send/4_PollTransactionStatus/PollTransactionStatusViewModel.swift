@@ -103,7 +103,7 @@ public final class PollTransactionStatusViewModel: BaseViewModel<
                     guard let self else { return }
                     // pasteboard.copy + Toast init are @MainActor — the
                     // Combine sink closure is @Sendable so we hop explicitly.
-                    MainActor.assumeIsolated {
+                    mainActorOnly {
                         pasteboard.copy(self.transactionId)
                         input.fromController.toastSubject
                             .send(Toast(String(localized: .PollTransaction.copiedTransactionId)))

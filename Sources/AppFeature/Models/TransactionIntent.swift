@@ -61,7 +61,7 @@ public extension Address {
 ///
 /// Used as the data shape for QR codes, deep links, and pre-filled send-screen state.
 /// Distinct from `Zesame.Transaction` (which is a fully-formed signed payload).
-public struct TransactionIntent: Codable, Equatable {
+public struct TransactionIntent: Codable, Equatable, Sendable {
     /// Destination address of the would-be transaction.
     public let to: Address
 

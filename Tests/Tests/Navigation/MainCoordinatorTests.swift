@@ -51,10 +51,10 @@ final class MainCoordinatorTests: XCTestCase {
         mockWallet = MockWalletUseCase()
         mockWallet.storedWallet = TestWalletFactory.makeWallet()
         Container.shared.transactionsUseCase.register { [unowned self] in
-            MainActor.assumeIsolated { mockTransactions }
+            mainActorOnly { mockTransactions }
         }
         Container.shared.walletStorageUseCase.register { [unowned self] in
-            MainActor.assumeIsolated { mockWallet }
+            mainActorOnly { mockWallet }
         }
         window = UIWindow(frame: .init(x: 0, y: 0, width: 320, height: 480))
         window.rootViewController = navigationController

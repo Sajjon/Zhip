@@ -212,7 +212,7 @@ private extension AppCoordinator {
         // Hop back to the main actor explicitly so the @MainActor-isolated
         // `deepLinkHandler` access type-checks under Swift 6 concurrency.
         clock.schedule(after: delayInSeconds) { [weak self] in
-            MainActor.assumeIsolated {
+            mainActorOnly {
                 self?.deepLinkHandler.appIsUnlockedEmitBufferedDeeplinks()
             }
         }

@@ -35,7 +35,7 @@ import Validation
 // MARK: - ReceiveUserAction
 
 /// Outcomes of the Receive screen.
-public enum ReceiveUserAction: @unchecked Sendable {
+public enum ReceiveUserAction: Sendable {
     /// User tapped the right "Done" bar-button.
     case finish
     /// User tapped "Request payment" — coordinator opens the share sheet.
@@ -106,7 +106,7 @@ public final class ReceiveViewModel: BaseViewModel<
                 .sink { [pasteboard] address in
                     // pasteboard.copy + Toast init are @MainActor — the
                     // Combine sink closure is @Sendable so we hop explicitly.
-                    MainActor.assumeIsolated {
+                    mainActorOnly {
                         pasteboard.copy(address)
                         input.fromController.toastSubject.send(Toast(String(localized: .Receive.copiedAddress)))
                     }

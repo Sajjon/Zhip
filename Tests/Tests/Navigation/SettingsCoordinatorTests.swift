@@ -53,11 +53,11 @@ final class SettingsCoordinatorTests: XCTestCase {
         mockPincode = MockPincodeUseCase()
         mockOnboarding = MockOnboardingUseCase()
         mockUrlOpener = MockUrlOpener()
-        Container.shared.transactionsUseCase.register { [unowned self] in MainActor.assumeIsolated { mockTransactions } }
-        Container.shared.walletStorageUseCase.register { [unowned self] in MainActor.assumeIsolated { mockWallet } }
-        Container.shared.pincodeUseCase.register { [unowned self] in MainActor.assumeIsolated { mockPincode } }
-        Container.shared.onboardingUseCase.register { [unowned self] in MainActor.assumeIsolated { mockOnboarding } }
-        Container.shared.urlOpener.register { [unowned self] in MainActor.assumeIsolated { mockUrlOpener } }
+        Container.shared.transactionsUseCase.register { [unowned self] in mainActorOnly { mockTransactions } }
+        Container.shared.walletStorageUseCase.register { [unowned self] in mainActorOnly { mockWallet } }
+        Container.shared.pincodeUseCase.register { [unowned self] in mainActorOnly { mockPincode } }
+        Container.shared.onboardingUseCase.register { [unowned self] in mainActorOnly { mockOnboarding } }
+        Container.shared.urlOpener.register { [unowned self] in mainActorOnly { mockUrlOpener } }
         navigationController = NavigationBarLayoutingNavigationController()
         window = UIWindow(frame: .init(x: 0, y: 0, width: 320, height: 480))
         window.rootViewController = navigationController

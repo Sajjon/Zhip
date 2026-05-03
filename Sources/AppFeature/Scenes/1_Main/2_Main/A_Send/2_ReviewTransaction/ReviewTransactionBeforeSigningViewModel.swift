@@ -30,7 +30,7 @@ import NanoViewControllerController
  import Zesame
 
 /// Outcome of step 2 of Send.
-public enum ReviewTransactionBeforeSigningUserAction: @unchecked Sendable {
+public enum ReviewTransactionBeforeSigningUserAction: Sendable {
     /// User checked "I have reviewed" and tapped accept; payment forwarded to signing.
     case acceptPaymentProceedWithSigning(Payment)
 }

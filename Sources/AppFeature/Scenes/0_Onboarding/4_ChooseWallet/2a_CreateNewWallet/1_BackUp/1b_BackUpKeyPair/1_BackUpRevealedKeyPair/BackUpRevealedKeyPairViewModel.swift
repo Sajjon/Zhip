@@ -83,7 +83,7 @@ public final class BackUpRevealedKeyPairViewModel: BaseViewModel<
                 .sink { [pasteboard] privateKeyText in
                     // pasteboard.copy + Toast init are @MainActor — hop
                     // explicitly because the Combine sink closure is @Sendable.
-                    MainActor.assumeIsolated {
+                    mainActorOnly {
                         pasteboard.copy(privateKeyText, expiringAfter: SensitivePasteboard.expirationSeconds)
                         input.fromController.toastSubject
                             .send(Toast(String(localized: .BackUpRevealedKeyPair.copiedPrivateKey)))
@@ -95,7 +95,7 @@ public final class BackUpRevealedKeyPairViewModel: BaseViewModel<
             // "I'm-actively-handling-keys" mental mode.
             input.fromView.copyPublicKeyTrigger.withLatestFrom(publicKeyUncompressed) { $1 }
                 .sink { [pasteboard] publicKeyText in
-                    MainActor.assumeIsolated {
+                    mainActorOnly {
                         pasteboard.copy(publicKeyText, expiringAfter: SensitivePasteboard.expirationSeconds)
                         input.fromController.toastSubject
                             .send(Toast(String(localized: .BackUpRevealedKeyPair.copiedPublicKey)))
