@@ -50,8 +50,6 @@ public final class DefaultRestoreWalletUseCase: RestoreWalletUseCase {
         return zilliqaService.restoreWallet(from: restoration)
             .map { Wallet(wallet: $0, origin: origin) }
             .mapError { $0 as Swift.Error }
-            // Hop to main — see DefaultCreateWalletUseCase for full rationale.
-            .receive(on: DispatchQueue.main)
             .eraseToAnyPublisher()
     }
 }

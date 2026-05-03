@@ -1,5 +1,5 @@
 {
-  "originHash" : "635bbca2511364fcf07b4c7cab24491ce58cfad733f898b5351024a592fec52b",
+  "originHash" : "9367765c2ae57eec89d2d3c7a6f90e6aa84de33d747c6afe0acd6bc6c3d8399a",
   "pins" : [
     {
       "identity" : "bigint",
@@ -114,8 +114,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/OpenZesame/Zesame",
       "state" : {
-        "revision" : "d61e96aa83020979b6c5c2b55e7957f8bf0a8ebf",
-        "version" : "2.0.0"
+        "revision" : "4d04997ee1ed331cdc6572ad956d7ca9b3b58c40",
+        "version" : "2.1.0"
       }
     }
   ],

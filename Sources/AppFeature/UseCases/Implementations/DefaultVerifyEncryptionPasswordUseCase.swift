@@ -40,8 +40,6 @@ public final class DefaultVerifyEncryptionPasswordUseCase: VerifyEncryptionPassw
     public func verify(password: String, forKeystore keystore: Keystore) -> AnyPublisher<Bool, Swift.Error> {
         zilliqaService.verifyThat(encryptionPassword: password, canDecryptKeystore: keystore)
             .mapError { $0 as Swift.Error }
-            // Hop to main — see DefaultCreateWalletUseCase for full rationale.
-            .receive(on: DispatchQueue.main)
             .eraseToAnyPublisher()
     }
 }

@@ -36,7 +36,7 @@ configs:
 packages:
   Zesame:
     url: https://github.com/OpenZesame/Zesame
-    majorVersion: 2.0.0
+    majorVersion: 2.1.0
   SkyFloatingLabelTextField:
     url: https://github.com/Skyscanner/SkyFloatingLabelTextField
     majorVersion: 4.0.0

@@ -46,16 +46,6 @@ public final class DefaultCreateWalletUseCase: CreateWalletUseCase {
         zilliqaService.createNewWallet(encryptionPassword: encryptionPassword, kdf: .default)
             .map { Wallet(wallet: $0, origin: .generatedByThisApp) }
             .mapError { $0 as Swift.Error }
-            // `Zesame.CombineWrapper.callAsync` resumes its `Task { … }` on the
-            // cooperative thread pool (it doesn't preserve caller actor
-            // isolation). Without an explicit hop, every downstream `.sink`
-            // closure in our `@MainActor`-isolated `BaseViewModel.transform`
-            // would run off-main and trap on the iOS 26 isolation check the
-            // moment it touched a MainActor-isolated symbol (the local
-            // `userDid` nested function, or any UIKit binding). Receiving on
-            // `DispatchQueue.main` here is the architectural seam that makes
-            // every consumer of this use case main-thread-safe by default.
-            .receive(on: DispatchQueue.main)
             .eraseToAnyPublisher()
     }
 }

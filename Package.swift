@@ -46,7 +46,7 @@ let package = Package(
         .package(url: "https://github.com/Sajjon/NanoViewController", exact: "0.1.2"),
         // Third-party SPM deps consumed by AppFeature. Versions mirror the
         // Zhip.xcodeproj's previous package references.
-        .package(url: "https://github.com/OpenZesame/Zesame", from: "2.0.0"),
+        .package(url: "https://github.com/OpenZesame/Zesame", from: "2.1.0"),
         .package(url: "https://github.com/Skyscanner/SkyFloatingLabelTextField", from: "4.0.0"),
         .package(url: "https://github.com/yannickl/QRCodeReader.swift", from: "10.1.1"),
         .package(url: "https://github.com/evgenyneu/keychain-swift", from: "19.0.0"),
