@@ -37,7 +37,14 @@ public protocol CellModel {
 
 /// Cell model that, when tapped, navigates to a typed `Destination` value.
 /// Used in Settings to wrap each row's `SettingsNavigation` step.
-public struct NavigatingCellModel<Destination> {
+public struct NavigatingCellModel<Destination>: @unchecked Sendable {
+    // `@unchecked Sendable` because `UITableViewCell.AccessoryType` (UIKit
+    // enum) and `UIImage?` are not declared `Sendable` upstream, but both
+    // are immutable value types in practice. The cell model itself is
+    // built once on `viewWillAppear` (main actor) and only read across
+    // the publisher boundary into a diffable data source — never mutated
+    // post-construction. Removal plan: drop `@unchecked` once UIKit's
+    // value-type enums and `UIImage` gain native `Sendable` conformance.
     /// The navigation step the row emits when tapped.
     public let destination: Destination
     /// Trailing accessory — defaults to `.disclosureIndicator`.

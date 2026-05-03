@@ -78,6 +78,8 @@ extension DefaultTransactionsUseCase: TransactionsUseCase {
         zilliqaService.getMinimumGasPrice(alsoUpdateLocallyCachedMinimum: true)
             .map(\.amount)
             .mapError { $0 as Swift.Error }
+            // Hop to main — see DefaultCreateWalletUseCase for full rationale.
+            .receive(on: DispatchQueue.main)
             .eraseToAnyPublisher()
     }
 
@@ -85,6 +87,7 @@ extension DefaultTransactionsUseCase: TransactionsUseCase {
     public func getBalance(for address: LegacyAddress) -> AnyPublisher<BalanceResponse, Swift.Error> {
         zilliqaService.getBalance(for: address)
             .mapError { $0 as Swift.Error }
+            .receive(on: DispatchQueue.main)
             .eraseToAnyPublisher()
     }
 
@@ -107,6 +110,7 @@ extension DefaultTransactionsUseCase: TransactionsUseCase {
                 .mapError { $0 as Swift.Error }
                 .eraseToAnyPublisher()
             }
+            .receive(on: DispatchQueue.main)
             .eraseToAnyPublisher()
     }
 
@@ -118,6 +122,7 @@ extension DefaultTransactionsUseCase: TransactionsUseCase {
     ) -> AnyPublisher<TransactionReceipt, Swift.Error> {
         zilliqaService.hasNetworkReachedConsensusYetForTransactionWith(id: txId, polling: polling)
             .mapError { $0 as Swift.Error }
+            .receive(on: DispatchQueue.main)
             .eraseToAnyPublisher()
     }
 }

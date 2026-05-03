@@ -22,7 +22,20 @@
 // SOFTWARE.
 //
 
+import NanoViewControllerSceneViews
 import Zesame
+
+// MARK: - Retroactive Sendable for NanoViewController types
+
+/// `SectionModel<Section, Item>` is a value-type wrapper over `Section` and
+/// `[Item]`; trivially `Sendable` in practice. Swift requires
+/// `@unchecked Sendable` for retroactive conformance to a generic struct
+/// declared in another module — even when the storage is provably safe.
+///
+/// Removal plan: file as a follow-up to NVC to add native conditional
+/// `Sendable` conformance (`extension SectionModel: Sendable where Section:
+/// Sendable, Item: Sendable {}` in NVC's own source), then drop this.
+extension SectionModel: @retroactive @unchecked Sendable {}
 
 // MARK: - Retroactive @unchecked Sendable for Zesame value types
 //

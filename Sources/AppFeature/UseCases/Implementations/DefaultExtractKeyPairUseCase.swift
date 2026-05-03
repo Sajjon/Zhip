@@ -43,6 +43,10 @@ public final class DefaultExtractKeyPairUseCase: ExtractKeyPairUseCase {
     ) -> AnyPublisher<KeyPair, Swift.Error> {
         zilliqaService.extractKeyPairFrom(keystore: keystore, encryptedBy: password)
             .mapError { $0 as Swift.Error }
+            // See DefaultCreateWalletUseCase for the rationale on the main-
+            // thread hop here — Zesame's `CombineWrapper` doesn't preserve
+            // caller isolation, every downstream consumer is `@MainActor`.
+            .receive(on: DispatchQueue.main)
             .eraseToAnyPublisher()
     }
 }
