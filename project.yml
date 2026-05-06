@@ -36,7 +36,7 @@ configs:
 packages:
   Zesame:
     url: https://github.com/OpenZesame/Zesame
-    majorVersion: 2.1.0
+    majorVersion: 2.1.1
   SkyFloatingLabelTextField:
     url: https://github.com/Skyscanner/SkyFloatingLabelTextField
     majorVersion: 4.0.0
@@ -59,7 +59,7 @@ packages:
   # SingleLineController* modules — now NanoViewController*).
   NanoViewController:
     url: https://github.com/Sajjon/NanoViewController
-    exactVersion: 0.1.3
+    exactVersion: 0.1.4
 
 targets:
   Zhip:
