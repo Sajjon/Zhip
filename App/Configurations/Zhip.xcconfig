@@ -32,7 +32,7 @@ ENABLE_TESTABILITY = YES
 CODE_SIGN_IDENTITY[config=Debug] = iPhone Developer
 CODE_SIGN_IDENTITY[config=Release] = iPhone Distribution
 DEVELOPMENT_TEAM = S33QJG3B86
-PROVISIONING_PROFILE_SPECIFIER[config=Debug] = match Development com.openzesame.zhip
+PROVISIONING_PROFILE_SPECIFIER[config=Debug] = Zhip iOS Dev Cert
 PROVISIONING_PROFILE_SPECIFIER[config=Release] = match AppStore com.openzesame.zhip
 
 // Info.plist keys — all set via INFOPLIST_KEY_* build settings.
