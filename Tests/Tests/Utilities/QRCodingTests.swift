@@ -68,4 +68,5 @@ final class QRCodingTests: XCTestCase {
 
         XCTAssertNotNil(image)
     }
+
 }
