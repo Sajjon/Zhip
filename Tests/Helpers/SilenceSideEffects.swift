@@ -1,7 +1,7 @@
 //
 // MIT License
 //
-// Copyright (c) 2018-2026 Open Zesame (https://github.com/OpenZesame)
+// Copyright (c) 2018-2026 Alexander Cyon (https://github.com/sajjon)
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -25,7 +25,7 @@
 @testable import AppFeature
 import Factory
 import Foundation
-import SingleLineControllerDIPrimitives
+import NanoViewControllerDIPrimitives
 import UIKit
 import XCTest
 
@@ -58,13 +58,13 @@ final class ZhipTestsBundle: NSObject, XCTestObservation {
 
     private static func registerSilentSideEffects() {
         Container.shared.soundPlayer.register { MockSoundPlayer() }
-        Container.shared.pasteboard.register { MockPasteboard() }
+        Container.shared.pasteboard.register { mainActorOnly { MockPasteboard() } }
         Container.shared.biometricsAuthenticator.register { MockBiometricsAuthenticator() }
-        Container.shared.urlOpener.register { MockUrlOpener() }
-        Container.shared.clock.register { ImmediateClock() }
-        Container.shared.mainScheduler.register { ImmediateMainScheduler() }
+        Container.shared.urlOpener.register { mainActorOnly { MockUrlOpener() } }
+        Container.shared.clock.register { mainActorOnly { ImmediateClock() } }
+        Container.shared.mainScheduler.register { mainActorOnly { ImmediateMainScheduler() } }
         Container.shared.htmlLoader.register { MockHtmlLoader() }
-        Container.shared.hapticFeedback.register { MockHapticFeedback() }
+        Container.shared.hapticFeedback.register { mainActorOnly { MockHapticFeedback() } }
         Container.shared.dateProvider.register { FixedDateProvider() }
     }
 }

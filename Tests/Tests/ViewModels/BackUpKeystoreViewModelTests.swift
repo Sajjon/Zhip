@@ -1,7 +1,7 @@
 //
 // MIT License
 //
-// Copyright (c) 2018-2026 Open Zesame (https://github.com/OpenZesame)
+// Copyright (c) 2018-2026 Alexander Cyon (https://github.com/sajjon)
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -25,7 +25,7 @@
 @testable import AppFeature
 import Combine
 import Factory
-import SingleLineControllerController
+import NanoViewControllerController
 import XCTest
 import Zesame
 
@@ -33,6 +33,7 @@ import Zesame
 ///
 /// Covers the keystore-as-JSON output, copy-to-pasteboard side effect with toast,
 /// and the right-bar-button → `.finished` navigation branch.
+@MainActor
 final class BackUpKeystoreViewModelTests: XCTestCase {
     private var cancellables: Set<AnyCancellable> = []
     private var copyTrigger: PassthroughSubject<Void, Never>!
@@ -46,7 +47,7 @@ final class BackUpKeystoreViewModelTests: XCTestCase {
         fakeController = FakeInputFromController()
         wallet = TestWalletFactory.makeWallet()
         mockPasteboard = MockPasteboard()
-        Container.shared.pasteboard.register { [unowned self] in mockPasteboard }
+        Container.shared.pasteboard.register { [unowned self] in mainActorOnly { mockPasteboard } }
     }
 
     override func tearDown() {

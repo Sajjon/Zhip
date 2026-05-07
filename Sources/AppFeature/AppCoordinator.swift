@@ -1,7 +1,7 @@
 //
 // MIT License
 //
-// Copyright (c) 2018-2026 Open Zesame (https://github.com/OpenZesame)
+// Copyright (c) 2018-2026 Alexander Cyon (https://github.com/sajjon)
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -24,15 +24,15 @@
 
 import Combine
 import Factory
-import SingleLineControllerCombine
-import SingleLineControllerDIPrimitives
-import SingleLineControllerNavigation
+import NanoViewControllerCombine
+import NanoViewControllerDIPrimitives
+import NanoViewControllerNavigation
 import UIKit
 import Zesame
 
 /// Navigation steps the app-level coordinator itself can emit. Empty because
 /// `AppCoordinator` is the root — it has nowhere "above" to report back to.
-public enum AppCoordinatorNavigationStep {}
+public enum AppCoordinatorNavigationStep: Sendable {}
 
 /// Root coordinator owning the app's top-level flow: deciding between onboarding
 /// and the main wallet experience on launch, and the lock/unlock transitions when
@@ -207,8 +207,14 @@ private extension AppCoordinator {
     }
 
     func appIsUnlockedEmitBufferedDeeplinks(delayInSeconds: TimeInterval = 0.2) {
+        // `clock.schedule(after:_:)` takes a @Sendable closure but the
+        // production clock fires on the main thread (MainQueueClock).
+        // Hop back to the main actor explicitly so the @MainActor-isolated
+        // `deepLinkHandler` access type-checks under Swift 6 concurrency.
         clock.schedule(after: delayInSeconds) { [weak self] in
-            self?.deepLinkHandler.appIsUnlockedEmitBufferedDeeplinks()
+            mainActorOnly {
+                self?.deepLinkHandler.appIsUnlockedEmitBufferedDeeplinks()
+            }
         }
     }
 }

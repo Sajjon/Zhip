@@ -1,7 +1,7 @@
 //
 // MIT License
 //
-// Copyright (c) 2018-2026 Open Zesame (https://github.com/OpenZesame)
+// Copyright (c) 2018-2026 Alexander Cyon (https://github.com/sajjon)
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -25,9 +25,9 @@
 import Combine
 import Factory
 import Foundation
-import SingleLineControllerCombine
-import SingleLineControllerController
-import SingleLineControllerCore
+import NanoViewControllerCombine
+import NanoViewControllerController
+import NanoViewControllerCore
 import Validation
 import Zesame
 
@@ -44,7 +44,7 @@ private let encryptionPasswordMode: WalletEncryptionPassword.Mode = .newOrRestor
 ///
 /// Emitted to the parent coordinator (`CreateNewWalletCoordinator`) via the
 /// `BaseViewModel.navigator` stepper so the coordinator can advance or dismiss the flow.
-public enum CreateNewWalletUserAction {
+public enum CreateNewWalletUserAction: Sendable {
     /// User confirmed a valid password and a fresh `Wallet` was successfully generated.
     /// - Parameter Wallet: The newly created wallet, ready to be persisted by the coordinator.
     case createWallet(Wallet)

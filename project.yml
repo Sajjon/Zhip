@@ -23,7 +23,7 @@ options:
   generateEmptyDirectories: false
   defaultConfig: Release
   deploymentTarget:
-    iOS: "17.0"
+    iOS: "26.0"
   groupSortPosition: top
 
 # Configurations are shared via xcconfig files at the project + target level.
@@ -36,40 +36,30 @@ configs:
 packages:
   Zesame:
     url: https://github.com/OpenZesame/Zesame
-    majorVersion: 2.0.0
-  EFQRCode:
-    url: https://github.com/EFPrefix/EFQRCode
-    majorVersion: 6.1.0
+    majorVersion: 2.1.1
   SkyFloatingLabelTextField:
     url: https://github.com/Skyscanner/SkyFloatingLabelTextField
     majorVersion: 4.0.0
-  TinyConstraints:
-    url: https://github.com/roberthein/TinyConstraints
-    majorVersion: 4.0.1
-  SwiftyBeaver:
-    url: https://github.com/SwiftyBeaver/SwiftyBeaver
-    majorVersion: 1.9.5
   QRCodeReader:
     url: https://github.com/yannickl/QRCodeReader.swift
     majorVersion: 10.1.1
   KeychainSwift:
     url: https://github.com/evgenyneu/keychain-swift
     majorVersion: 19.0.0
-  IQKeyboardManager:
-    url: https://github.com/hackiftekhar/IQKeyboardManager
-    majorVersion: 6.5.6
-  Firebase:
-    url: https://github.com/firebase/firebase-ios-sdk
-    majorVersion: 11.0.0
   SnapshotTesting:
     url: https://github.com/pointfreeco/swift-snapshot-testing
     majorVersion: 1.17.0
   Factory:
     url: https://github.com/hmlongco/Factory
     majorVersion: 2.4.0
-  # Local SPM root — provides every Sources/<TargetName>/ module declared in /Package.swift.
+  # Local SPM root — provides Validation, Resources, and AppFeature.
   Zhip:
     path: .
+  # Sibling repo containing the reactive-MVVM scaffolding (was the
+  # SingleLineController* modules — now NanoViewController*).
+  NanoViewController:
+    url: https://github.com/Sajjon/NanoViewController
+    exactVersion: 0.1.4
 
 targets:
   Zhip:
@@ -87,14 +77,15 @@ targets:
         # Manual signing matches base_shared.xcconfig.
         CODE_SIGN_STYLE: Manual
     sources:
-      # The tiny App/ shell — AppDelegate.swift only. Everything else
-      # (Info.plist gen, asset catalog, fonts/etc.) ships as resources.
+      # The tiny App/ shell — AppDelegate (UISceneConfiguration vendor) +
+      # SceneDelegate (window + AppCoordinator + lifecycle). Everything
+      # else (Info.plist gen, asset catalog, fonts/etc.) ships as resources.
       - path: App/AppDelegate.swift
+      - path: App/SceneDelegate.swift
       # Bundle resources — XcodeGen sees these as Resources by file type.
       - path: App/Assets.xcassets
       - path: App/Base.lproj
       - path: App/Settings.bundle
-      - path: App/GoogleService-Info.plist
       # /Sources is consumed entirely via SPM products (declared below in
       # `dependencies`). Nothing under Sources/ is compiled directly into
       # the Zhip target anymore.
@@ -107,39 +98,28 @@ targets:
       # Third-party SPM libs — names match the package products.
       - package: Zesame
         product: Zesame
-      - package: EFQRCode
-        product: EFQRCode
       - package: SkyFloatingLabelTextField
         product: SkyFloatingLabelTextField
-      - package: TinyConstraints
-        product: TinyConstraints
-      - package: SwiftyBeaver
-        product: SwiftyBeaver
       - package: QRCodeReader
         product: QRCodeReader
       - package: KeychainSwift
         product: KeychainSwift
-      - package: IQKeyboardManager
-        product: IQKeyboardManagerSwift
-      - package: Firebase
-        product: FirebaseAnalytics
-      - package: Firebase
-        product: FirebaseCrashlytics
       - package: Factory
         product: Factory
-      # Local SPM products — the SLC stack, Validation, Resources.
-      - package: Zhip
-        product: SingleLineControllerCore
-      - package: Zhip
-        product: SingleLineControllerCombine
-      - package: Zhip
-        product: SingleLineControllerNavigation
-      - package: Zhip
-        product: SingleLineControllerController
-      - package: Zhip
-        product: SingleLineControllerSceneViews
-      - package: Zhip
-        product: SingleLineControllerDIPrimitives
+      # NanoViewController stack (sibling repo).
+      - package: NanoViewController
+        product: NanoViewControllerCore
+      - package: NanoViewController
+        product: NanoViewControllerCombine
+      - package: NanoViewController
+        product: NanoViewControllerNavigation
+      - package: NanoViewController
+        product: NanoViewControllerController
+      - package: NanoViewController
+        product: NanoViewControllerSceneViews
+      - package: NanoViewController
+        product: NanoViewControllerDIPrimitives
+      # Local SPM products — Validation, Resources, AppFeature.
       - package: Zhip
         product: Validation
       - package: Zhip
@@ -156,16 +136,6 @@ targets:
           fi
         runOnlyWhenInstalling: false
         basedOnDependencyAnalysis: false
-    postBuildScripts:
-      - name: "📣 Crashlytics"
-        # Firebase's Crashlytics dSYM upload helper is fetched from the
-        # SourcePackages/checkouts dir at build time (see firebase-ios-sdk).
-        script: |
-          "${BUILD_DIR%Build/*}SourcePackages/checkouts/firebase-ios-sdk/Crashlytics/run"
-        inputFiles:
-          - $(SRCROOT)/App/GoogleService-Info.plist
-        runOnlyWhenInstalling: false
-        basedOnDependencyAnalysis: false
 
   ZhipTests:
     type: bundle.unit-test
@@ -178,8 +148,6 @@ targets:
         excludes:
           # Per-package SPM test bundles — those run via the package's own
           # scheme, not through ZhipTests.
-          - "SingleLineControllerCoreTests/**"
-          - "SingleLineControllerCombineTests/**"
           - "ValidationTests/**"
           - "Configurations/**"
     dependencies:

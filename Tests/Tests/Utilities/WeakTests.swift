@@ -1,6 +1,7 @@
 @testable import AppFeature
 import XCTest
 
+@MainActor
 final class WeakTests: XCTestCase {
     func test_weak_holdsValueWhileObjectLives() {
         let obj = DummyClass(value: 42)

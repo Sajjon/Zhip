@@ -1,7 +1,7 @@
 //
 // MIT License
 //
-// Copyright (c) 2018-2026 Open Zesame (https://github.com/OpenZesame)
+// Copyright (c) 2018-2026 Alexander Cyon (https://github.com/sajjon)
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -25,7 +25,7 @@
 @testable import AppFeature
 import Combine
 import Factory
-import SingleLineControllerController
+import NanoViewControllerController
 import XCTest
 import Zesame
 
@@ -35,6 +35,7 @@ import Zesame
 /// button wiring), the three user-intent branches (reveal keystore, reveal
 /// private key, done-after-understanding-risk), the keystore copy side effect,
 /// and the visibility flag driven by the mode.
+@MainActor
 final class BackupWalletViewModelTests: XCTestCase {
     private var cancellables: Set<AnyCancellable> = []
     private var copyKeystore: PassthroughSubject<Void, Never>!
@@ -56,7 +57,7 @@ final class BackupWalletViewModelTests: XCTestCase {
         fakeController = FakeInputFromController()
         wallet = TestWalletFactory.makeWallet()
         mockPasteboard = MockPasteboard()
-        Container.shared.pasteboard.register { [unowned self] in mockPasteboard }
+        Container.shared.pasteboard.register { [unowned self] in mainActorOnly { mockPasteboard } }
     }
 
     override func tearDown() {

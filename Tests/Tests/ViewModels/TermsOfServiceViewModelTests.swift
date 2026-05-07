@@ -1,7 +1,7 @@
 //
 // MIT License
 //
-// Copyright (c) 2018-2026 Open Zesame (https://github.com/OpenZesame)
+// Copyright (c) 2018-2026 Alexander Cyon (https://github.com/sajjon)
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -24,7 +24,7 @@
 
 @testable import AppFeature
 import Combine
-import SingleLineControllerController
+import NanoViewControllerController
 import XCTest
 
 /// Tests for `TermsOfServiceViewModel`.
@@ -32,6 +32,7 @@ import XCTest
 /// We inject a hand-rolled `MockOnboardingUseCase` so we can verify the ViewModel
 /// calls `didAcceptTermsOfService()` exactly once when the user accepts, and emits
 /// the right `.acceptTermsOfService` / `.dismiss` navigation steps.
+@MainActor
 final class TermsOfServiceViewModelTests: XCTestCase {
     private var cancellables: Set<AnyCancellable> = []
     private var useCase: MockOnboardingUseCase!

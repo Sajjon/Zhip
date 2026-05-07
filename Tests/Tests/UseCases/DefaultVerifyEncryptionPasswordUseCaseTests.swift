@@ -1,7 +1,7 @@
 //
 // MIT License
 //
-// Copyright (c) 2018-2026 Open Zesame (https://github.com/OpenZesame)
+// Copyright (c) 2018-2026 Alexander Cyon (https://github.com/sajjon)
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -30,6 +30,7 @@ import Zesame
 
 /// Tests that `DefaultVerifyEncryptionPasswordUseCase` forwards the password
 /// and keystore to the injected service and propagates its boolean result.
+@MainActor
 final class DefaultVerifyEncryptionPasswordUseCaseTests: XCTestCase {
     private var cancellables: Set<AnyCancellable> = []
     private var mockService: MockZilliqaServiceReactive!
@@ -37,7 +38,7 @@ final class DefaultVerifyEncryptionPasswordUseCaseTests: XCTestCase {
     override func setUp() {
         super.setUp()
         mockService = MockZilliqaServiceReactive()
-        Container.shared.zilliqaService.register { [unowned self] in mockService }
+        Container.shared.zilliqaService.register { [unowned self] in mainActorOnly { mockService } }
     }
 
     override func tearDown() {

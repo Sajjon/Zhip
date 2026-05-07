@@ -1,7 +1,7 @@
 //
 // MIT License
 //
-// Copyright (c) 2018-2026 Open Zesame (https://github.com/OpenZesame)
+// Copyright (c) 2018-2026 Alexander Cyon (https://github.com/sajjon)
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -23,7 +23,7 @@
 //
 
 import Combine
-import SingleLineControllerNavigation
+import NanoViewControllerNavigation
 import UIKit
 
 /// App-level dispatcher that turns inbound universal-link URLs into typed
@@ -31,6 +31,7 @@ import UIKit
 ///
 /// Buffers a single deep link while the app is locked behind PIN, then replays
 /// it once `appIsUnlockedEmitBufferedDeeplinks()` is called from the unlock flow.
+@MainActor
 public final class DeepLinkHandler {
     /// Stepper that surfaces parsed deep links.
     private let navigator: Navigator<DeepLink>

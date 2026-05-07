@@ -1,6 +1,6 @@
 // MIT License — Copyright (c) 2018-2026 Open Zesame
 
-import SingleLineControllerController
+import NanoViewControllerController
 import UIKit
 
 /// Zhip-side refinement of the package's `RightBarButtonContentMaking` —

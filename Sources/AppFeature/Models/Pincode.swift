@@ -1,7 +1,7 @@
 //
 // MIT License
 //
-// Copyright (c) 2018-2026 Open Zesame (https://github.com/OpenZesame)
+// Copyright (c) 2018-2026 Alexander Cyon (https://github.com/sajjon)
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -29,7 +29,7 @@ import Foundation
 /// The pincode has **no cryptographic role** — the wallet's private key is
 /// protected by the user's `WalletEncryptionPassword`, not by this pincode. The
 /// pincode only gates re-entry into the already-authenticated app session.
-public struct Pincode: Equatable, Codable {
+public struct Pincode: Equatable, Codable, Sendable {
     /// The raw digits making up the pincode, in order. Guaranteed to be exactly
     /// `Pincode.length` digits once successfully constructed.
     public let digits: [Digit]

@@ -1,6 +1,7 @@
 @testable import AppFeature
 import XCTest
 
+@MainActor
 final class KeyValueStoreKeychainKeyTests: XCTestCase {
     private var store: SecurePersistence!
 

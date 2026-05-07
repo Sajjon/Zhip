@@ -1,7 +1,7 @@
 //
 // MIT License
 //
-// Copyright (c) 2018-2026 Open Zesame (https://github.com/OpenZesame)
+// Copyright (c) 2018-2026 Alexander Cyon (https://github.com/sajjon)
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -25,7 +25,7 @@
 @testable import AppFeature
 import Combine
 import Factory
-import SingleLineControllerController
+import NanoViewControllerController
 import Validation
 import XCTest
 
@@ -36,6 +36,7 @@ import XCTest
 /// `viewDidAppear` branch through the injected `BiometricsAuthenticator`
 /// protocol (real `LAContext` is replaced with a mock so no system prompt
 /// fires in tests).
+@MainActor
 final class UnlockAppWithPincodeViewModelTests: XCTestCase {
     private var cancellables: Set<AnyCancellable> = []
     private var pincodeSubject: CurrentValueSubject<Pincode?, Never>!
@@ -52,8 +53,8 @@ final class UnlockAppWithPincodeViewModelTests: XCTestCase {
         mockPincode = MockPincodeUseCase()
         mockPincode.pincode = existingPincode
         mockBiometrics = MockBiometricsAuthenticator()
-        Container.shared.pincodeUseCase.register { [unowned self] in mockPincode }
-        Container.shared.biometricsAuthenticator.register { [unowned self] in mockBiometrics }
+        Container.shared.pincodeUseCase.register { [unowned self] in mainActorOnly { mockPincode } }
+        Container.shared.biometricsAuthenticator.register { [unowned self] in mainActorOnly { mockBiometrics } }
     }
 
     override func tearDown() {

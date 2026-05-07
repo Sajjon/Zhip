@@ -1,7 +1,7 @@
 //
 // MIT License
 //
-// Copyright (c) 2018-2026 Open Zesame (https://github.com/OpenZesame)
+// Copyright (c) 2018-2026 Alexander Cyon (https://github.com/sajjon)
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -32,6 +32,7 @@ import XCTest
 /// case (it only uses `Preferences` + `SecurePersistence`), so the test uses the
 /// real `Container.shared.zilliqaService()` — which is fine because nothing in these
 /// tests triggers network calls.
+@MainActor
 final class DefaultOnboardingUseCaseTests: XCTestCase {
     private var preferences: Preferences!
     private var secureStore: SecurePersistence!
@@ -69,30 +70,6 @@ final class DefaultOnboardingUseCaseTests: XCTestCase {
         // Assert
         XCTAssertTrue(sut.hasAcceptedTermsOfService)
     }
-
-    // MARK: - Custom ECC Warning
-
-    func test_hasAcceptedCustomECCWarning_isFalse_initially() {
-        XCTAssertFalse(sut.hasAcceptedCustomECCWarning)
-    }
-
-    func test_didAcceptCustomECCWarning_flipsFlagToTrue() {
-        // Act
-        sut.didAcceptCustomECCWarning()
-
-        // Assert
-        XCTAssertTrue(sut.hasAcceptedCustomECCWarning)
-    }
-
-    // MARK: - Crash Reporting
-
-    func test_hasAnsweredCrashReportingQuestion_isFalse_initially() {
-        XCTAssertFalse(sut.hasAnsweredCrashReportingQuestion)
-    }
-
-    // Note: We don't exercise `answeredCrashReportingQuestion(...)` in a test
-    // because the Default implementation calls into Firebase during the side-effect
-    // path. See TESTING.md for why we deliberately don't fake Firebase.
 
     // MARK: - Pincode prompt
 

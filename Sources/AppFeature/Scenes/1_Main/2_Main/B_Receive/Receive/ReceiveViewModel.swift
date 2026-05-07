@@ -1,7 +1,7 @@
 //
 // MIT License
 //
-// Copyright (c) 2018-2026 Open Zesame (https://github.com/OpenZesame)
+// Copyright (c) 2018-2026 Alexander Cyon (https://github.com/sajjon)
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -24,17 +24,18 @@
 
 import Combine
 import Factory
-import SingleLineControllerCombine
-import SingleLineControllerController
-import SingleLineControllerDIPrimitives
+import NanoViewControllerCombine
+import NanoViewControllerCore
+import NanoViewControllerController
+import NanoViewControllerDIPrimitives
 import UIKit
 import Validation
-import Zesame
+ import Zesame
 
 // MARK: - ReceiveUserAction
 
 /// Outcomes of the Receive screen.
-public enum ReceiveUserAction {
+public enum ReceiveUserAction: Sendable {
     /// User tapped the right "Done" bar-button.
     case finish
     /// User tapped "Request payment" — coordinator opens the share sheet.
@@ -102,9 +103,13 @@ public final class ReceiveViewModel: BaseViewModel<
                 .sink { userDid(.finish) },
 
             input.fromView.copyMyAddressTrigger.withLatestFrom(receivingAddress)
-                .sink { [pasteboard] in
-                    pasteboard.copy($0)
-                    input.fromController.toastSubject.send(Toast(String(localized: .Receive.copiedAddress)))
+                .sink { [pasteboard] address in
+                    // pasteboard.copy + Toast init are @MainActor — the
+                    // Combine sink closure is @Sendable so we hop explicitly.
+                    mainActorOnly {
+                        pasteboard.copy(address)
+                        input.fromController.toastSubject.send(Toast(String(localized: .Receive.copiedAddress)))
+                    }
                 },
 
             input.fromView.shareTrigger.withLatestFrom(transactionToReceive)

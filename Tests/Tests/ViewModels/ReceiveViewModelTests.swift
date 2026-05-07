@@ -1,7 +1,7 @@
 //
 // MIT License
 //
-// Copyright (c) 2018-2026 Open Zesame (https://github.com/OpenZesame)
+// Copyright (c) 2018-2026 Alexander Cyon (https://github.com/sajjon)
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -25,7 +25,7 @@
 @testable import AppFeature
 import Combine
 import Factory
-import SingleLineControllerController
+import NanoViewControllerController
 import XCTest
 
 /// Tests for `ReceiveViewModel`.
@@ -33,6 +33,7 @@ import XCTest
 /// Exercises the share path (share trigger → `.requestTransaction`) and the finish
 /// path (right bar → `.finish`). The wallet is preloaded via `MockWalletUseCase`'s
 /// `storedWallet`.
+@MainActor
 final class ReceiveViewModelTests: XCTestCase {
     private var cancellables: Set<AnyCancellable> = []
     private var mockWallet: MockWalletUseCase!
@@ -47,9 +48,9 @@ final class ReceiveViewModelTests: XCTestCase {
         super.setUp()
         mockWallet = MockWalletUseCase()
         mockWallet.storedWallet = TestWalletFactory.makeWallet()
-        Container.shared.walletStorageUseCase.register { [unowned self] in mockWallet }
+        Container.shared.walletStorageUseCase.register { [unowned self] in mainActorOnly { mockWallet } }
         mockPasteboard = MockPasteboard()
-        Container.shared.pasteboard.register { [unowned self] in mockPasteboard }
+        Container.shared.pasteboard.register { [unowned self] in mainActorOnly { mockPasteboard } }
         amountSubject = PassthroughSubject<String, Never>()
         didEndEditing = PassthroughSubject<Void, Never>()
         copySubject = PassthroughSubject<Void, Never>()

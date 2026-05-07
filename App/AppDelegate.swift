@@ -1,7 +1,7 @@
 //
 // MIT License
 //
-// Copyright (c) 2018-2026 Open Zesame (https://github.com/OpenZesame)
+// Copyright (c) 2018-2026 Alexander Cyon (https://github.com/sajjon)
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -23,62 +23,38 @@
 //
 
 import AppFeature
-import SingleLineControllerController
 import UIKit
 
+/// Minimal app-level shell. Process bootstrapping (font registration, appearance
+/// setup, reinstall-keychain wipe) lives in `AppFeature.bootstrap()`; window
+/// + coordinator + lifecycle live on `SceneDelegate`. `AppDelegate` only:
+///
+/// 1. Calls `bootstrap()` once at process launch.
+/// 2. Vends a `UISceneConfiguration` pointing the system at `SceneDelegate`.
 @main
-class AppDelegate: UIResponder {
-    lazy var window: UIWindow? = .default
-
-    fileprivate lazy var appCoordinator: AppCoordinator = {
-        let navigationController = NavigationBarLayoutingNavigationController()
-
-        window?.rootViewController = navigationController
-
-        return AppCoordinator(
-            navigationController: navigationController,
-            isViewControllerRootOfWindow: { [weak window] in
-                window?.rootViewController == $0
-            },
-            setRootViewControllerOfWindow: { [weak window] in
-                window?.rootViewController = $0
-            }
-        )
-    }()
-}
-
-extension AppDelegate: UIApplicationDelegate {
+final class AppDelegate: UIResponder, UIApplicationDelegate {
     func application(
         _: UIApplication,
         didFinishLaunchingWithOptions _: [UIApplication.LaunchOptionsKey: Any]?
     ) -> Bool {
-        defer {
-            appCoordinator.start()
-        }
         bootstrap()
         return true
     }
 
+    /// Returned for every new scene the system spins up. We only use the
+    /// `UIWindowSceneSessionRoleApplication` role (regular foreground UI
+    /// scene) — declining external-display + CarPlay roles by simply not
+    /// vending a config for them.
     func application(
         _: UIApplication,
-        continue userActivity: NSUserActivity,
-        restorationHandler _: @escaping ([UIUserActivityRestoring]?) -> Void
-    ) -> Bool {
-        guard
-            userActivity.activityType == NSUserActivityTypeBrowsingWeb,
-            let incomingURL = userActivity.webpageURL
-        else {
-            return false
-        }
-
-        return appCoordinator.handleDeepLink(incomingURL)
-    }
-
-    func applicationWillResignActive(_: UIApplication) {
-        appCoordinator.appWillResignActive()
-    }
-
-    func applicationDidBecomeActive(_: UIApplication) {
-        appCoordinator.appDidBecomeActive()
+        configurationForConnecting connectingSceneSession: UISceneSession,
+        options _: UIScene.ConnectionOptions
+    ) -> UISceneConfiguration {
+        let config = UISceneConfiguration(
+            name: "Default Configuration",
+            sessionRole: connectingSceneSession.role
+        )
+        config.delegateClass = SceneDelegate.self
+        return config
     }
 }

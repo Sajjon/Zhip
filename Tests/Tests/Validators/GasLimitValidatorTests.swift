@@ -2,6 +2,7 @@
 import XCTest
 import Zesame
 
+@MainActor
 final class GasLimitValidatorTests: XCTestCase {
     private let sut = GasLimitValidator()
 

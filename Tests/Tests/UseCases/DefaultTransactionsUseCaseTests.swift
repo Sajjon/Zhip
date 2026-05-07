@@ -1,7 +1,7 @@
 //
 // MIT License
 //
-// Copyright (c) 2018-2026 Open Zesame (https://github.com/OpenZesame)
+// Copyright (c) 2018-2026 Alexander Cyon (https://github.com/sajjon)
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -25,12 +25,13 @@
 @testable import AppFeature
 import Combine
 import Factory
-import SingleLineControllerDIPrimitives
+import NanoViewControllerDIPrimitives
 import XCTest
 import Zesame
 
 /// Tests for `DefaultTransactionsUseCase`, which uses constructor DI (not
 /// `@Injected`) so tests instantiate it directly with mocked dependencies.
+@MainActor
 final class DefaultTransactionsUseCaseTests: XCTestCase {
     private var cancellables: Set<AnyCancellable> = []
     private var mockService: MockZilliqaServiceReactive!

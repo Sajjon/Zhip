@@ -1,7 +1,7 @@
 //
 // MIT License
 //
-// Copyright (c) 2018-2026 Open Zesame (https://github.com/OpenZesame)
+// Copyright (c) 2018-2026 Alexander Cyon (https://github.com/sajjon)
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -27,6 +27,7 @@ import XCTest
 
 /// Exercises the default `description` provided for enum-based `Error` types
 /// conforming to `CustomStringConvertible` via mirror reflection.
+@MainActor
 final class ErrorCustomStringConvertibleTests: XCTestCase {
     private enum SampleEnumError: Swift.Error, CustomStringConvertible {
         case invalid(reason: String)

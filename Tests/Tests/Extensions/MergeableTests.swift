@@ -14,6 +14,7 @@ private struct TestPair: Mergeable {
     }
 }
 
+@MainActor
 final class MergeableTests: XCTestCase {
     func test_mergeYieldingTo_picksOtherWhenSet() {
         let lhs = TestPair(a: "left", b: nil)

@@ -1,7 +1,7 @@
 //
 // MIT License
 //
-// Copyright (c) 2018-2026 Open Zesame (https://github.com/OpenZesame)
+// Copyright (c) 2018-2026 Alexander Cyon (https://github.com/sajjon)
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -24,10 +24,10 @@
 
 import Combine
 import Foundation
-import SingleLineControllerCombine
-import SingleLineControllerController
-import SingleLineControllerCore
-import SingleLineControllerSceneViews
+import NanoViewControllerCombine
+import NanoViewControllerController
+import NanoViewControllerCore
+import NanoViewControllerSceneViews
 import UIKit
 import Zesame
 
@@ -39,7 +39,7 @@ public typealias SettingsItem = NavigatingCellModel<SettingsViewModel.Navigation
 
 /// Every navigation step the Settings hub can emit. Grouped by the section
 /// they live in for readability.
-public enum SettingsNavigation {
+public enum SettingsNavigation: Sendable {
     /// Navigation Bar — right "Done" tap.
     case closeSettings
 
@@ -51,10 +51,8 @@ public enum SettingsNavigation {
     case reportIssueOnGithub
     case acknowledgments
 
-    // Section 2 — Re-read onboarding scenes.
+    /// Section 2 — Re-read onboarding scenes.
     case readTermsOfService
-    case readCustomECCWarning
-    case changeAnalyticsPermissions
 
     // Section 3 — Wallet management (destructive at the bottom).
     case backupWallet
@@ -169,16 +167,6 @@ private extension SettingsViewModel {
                 to: .readTermsOfService,
                 titled: String(localized: .Settings.termsOfService),
                 icon: UIImage(resource: .document)
-            ),
-            .whenSelectedNavigate(
-                to: .changeAnalyticsPermissions,
-                titled: String(localized: .Settings.crashReportingPermissions),
-                icon: UIImage(resource: .analyticsSmall)
-            ),
-            .whenSelectedNavigate(
-                to: .readCustomECCWarning,
-                titled: String(localized: .Settings.readCustomECCWarning),
-                icon: UIImage(resource: .ECC)
             ),
         ]
 

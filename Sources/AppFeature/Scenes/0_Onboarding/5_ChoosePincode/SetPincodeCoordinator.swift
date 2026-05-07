@@ -1,7 +1,7 @@
 //
 // MIT License
 //
-// Copyright (c) 2018-2026 Open Zesame (https://github.com/OpenZesame)
+// Copyright (c) 2018-2026 Alexander Cyon (https://github.com/sajjon)
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -22,15 +22,15 @@
 // SOFTWARE.
 //
 
-import SingleLineControllerCore
-import SingleLineControllerNavigation
+import NanoViewControllerCore
+import NanoViewControllerNavigation
 import UIKit
 
 /// Outcome of the set-pincode sub-flow. Both the "user picked + confirmed a
 /// pincode" path and the "user explicitly skipped" path collapse to this single
 /// step — the coordinator records the skip-flag itself so the parent doesn't
 /// have to differentiate.
-public enum SetPincodeCoordinatorNavigationStep {
+public enum SetPincodeCoordinatorNavigationStep: Sendable {
     /// Either a pincode was set (and persisted by `ConfirmNewPincodeViewModel`)
     /// or the user skipped (and the skip flag was recorded by `skipPincode()`).
     case setPincode

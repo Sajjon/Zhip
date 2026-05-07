@@ -1,7 +1,7 @@
 //
 // MIT License
 //
-// Copyright (c) 2018-2026 Open Zesame (https://github.com/OpenZesame)
+// Copyright (c) 2018-2026 Alexander Cyon (https://github.com/sajjon)
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -24,12 +24,13 @@
 
 import Combine
 import Foundation
-import SingleLineControllerController
+import NanoViewControllerController
+import NanoViewControllerCore
 
 // MARK: - User action and navigation steps
 
 /// The single navigation step the welcome scene can emit.
-public enum WelcomeUserAction {
+public enum WelcomeUserAction: Sendable {
     /// The user tapped "Get Started", signalling intent to begin onboarding.
     case /* user intends to */ start
 }

@@ -1,7 +1,7 @@
 //
 // MIT License
 //
-// Copyright (c) 2018-2026 Open Zesame (https://github.com/OpenZesame)
+// Copyright (c) 2018-2026 Alexander Cyon (https://github.com/sajjon)
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -30,6 +30,7 @@ import Zesame
 /// Exercises `QRCoder`'s encode and decode paths. Decoding a blank image
 /// returns nil (no QR content); encoding a valid `TransactionIntent` returns
 /// an image.
+@MainActor
 final class QRCodingTests: XCTestCase {
     private var sut: QRCoder!
 
@@ -67,4 +68,5 @@ final class QRCodingTests: XCTestCase {
 
         XCTAssertNotNil(image)
     }
+
 }

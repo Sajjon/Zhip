@@ -1,7 +1,7 @@
 //
 // MIT License
 //
-// Copyright (c) 2018-2026 Open Zesame (https://github.com/OpenZesame)
+// Copyright (c) 2018-2026 Alexander Cyon (https://github.com/sajjon)
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -22,7 +22,7 @@
 // SOFTWARE.
 //
 
-import SingleLineControllerCore
+import NanoViewControllerCore
 import UIKit
 
 /// Pair of unit-square points describing a gradient's start and end.
@@ -153,6 +153,11 @@ public protocol GradientViewProvider {
 public extension GradientViewProvider where Self: GradientView {
     /// The view's backing layer, force-cast to the concrete `GradientViewType`.
     /// Force-cast is safe because `layerClass` overrides the layer creation.
+    ///
+    /// `@MainActor` because `UIView.layer` is `@MainActor`-isolated under
+    /// the iOS 26 SDK; all sites read this from `setup()` / `populate(with:)`
+    /// which are already main-actor.
+    @MainActor
     var gradientLayer: Self.GradientViewType {
         // swiftlint:disable:next force_cast
         layer as! Self.GradientViewType

@@ -1,7 +1,7 @@
 //
 // MIT License
 //
-// Copyright (c) 2018-2026 Open Zesame (https://github.com/OpenZesame)
+// Copyright (c) 2018-2026 Alexander Cyon (https://github.com/sajjon)
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -22,13 +22,13 @@
 // SOFTWARE.
 //
 
-import SingleLineControllerNavigation
+import NanoViewControllerNavigation
 import UIKit
-import Zesame
+ import Zesame
 
 /// Outcomes the restore-wallet sub-flow surfaces to its parent
 /// (`ChooseWalletCoordinator`).
-public enum RestoreWalletCoordinatorNavigationStep {
+public enum RestoreWalletCoordinatorNavigationStep: Sendable {
     /// User entered valid restore material (keystore or private key) + password
     /// and the use case successfully decrypted/derived the `Wallet`.
     case finishedRestoring(wallet: Wallet)

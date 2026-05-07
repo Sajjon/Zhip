@@ -3,7 +3,7 @@
 //  Zhip
 //
 //  Created by Alexander Cyon on 2021-05-30.
-// Copyright (c) 2018-2026 Open Zesame (https://github.com/OpenZesame)
+// Copyright (c) 2018-2026 Alexander Cyon (https://github.com/sajjon)
 //
 
 import Validation

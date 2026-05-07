@@ -1,8 +1,8 @@
 // MIT License — Copyright (c) 2018-2026 Open Zesame
 
 import Combine
-import SingleLineControllerCombine
-import SingleLineControllerCore
+import NanoViewControllerCombine
+import NanoViewControllerCore
 
 /// Carrier for "what is the validation, and is the user currently editing the field?".
 ///
@@ -66,7 +66,7 @@ public extension Publisher where Output == EditingValidation, Failure == Never {
     /// Convenience that pulls tracked errors directly from an `ErrorTracker`
     /// (typically the one shared with `ActivityIndicator` for a use-case call).
     /// Uses the public `ErrorTracker.compactMap` hook (defined in the
-    /// `SingleLineControllerCore` package) instead of the old `asInputErrors`
+    /// `NanoViewControllerCore` package) instead of the old `asInputErrors`
     /// shim — same semantics, just sourced from the package now.
     func eagerValidLazyErrorTurnedToEmptyOnEdit(
         directlyDisplayErrorsTrackedBy errorTracker: ErrorTracker,

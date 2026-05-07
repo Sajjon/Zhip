@@ -1,7 +1,7 @@
 //
 // MIT License
 //
-// Copyright (c) 2018-2026 Open Zesame (https://github.com/OpenZesame)
+// Copyright (c) 2018-2026 Alexander Cyon (https://github.com/sajjon)
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -23,7 +23,7 @@
 //
 
 import Factory
-import SingleLineControllerDIPrimitives
+import NanoViewControllerDIPrimitives
 import UIKit
 
 /// Resolves `baseUrlString` (optionally appending `path`), and asks the
@@ -34,7 +34,13 @@ import UIKit
 /// opener — the real call dispatches a workspace round-trip that never
 /// completes within unit-test timeouts.
 ///
+/// `@MainActor` because the injected `UrlOpener` ultimately wraps
+/// `UIApplication.shared.open` which is itself main-actor-isolated under
+/// the iOS 26 SDK / Swift 6 concurrency rules. Callers (coordinator
+/// methods) are already main-actor so this propagates cleanly.
+///
 /// Logs and silently returns if URL construction fails.
+@MainActor
 public func openUrl(string baseUrlString: String, relative path: String? = nil) {
     func createUrl() -> URL? {
         guard let baseUrl = URL(string: baseUrlString) else { return nil }

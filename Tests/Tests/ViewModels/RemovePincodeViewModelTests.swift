@@ -1,7 +1,7 @@
 //
 // MIT License
 //
-// Copyright (c) 2018-2026 Open Zesame (https://github.com/OpenZesame)
+// Copyright (c) 2018-2026 Alexander Cyon (https://github.com/sajjon)
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -24,7 +24,7 @@
 
 @testable import AppFeature
 import Combine
-import SingleLineControllerController
+import NanoViewControllerController
 import XCTest
 
 /// Tests for `RemovePincodeViewModel`.
@@ -32,6 +32,7 @@ import XCTest
 /// Covers the cancel path (left bar button → `.cancelPincodeRemoval`) and the
 /// correct-pincode path (entering the existing pin → `.removePincode` and use case
 /// cleanup).
+@MainActor
 final class RemovePincodeViewModelTests: XCTestCase {
     private var cancellables: Set<AnyCancellable> = []
     private var pincodeInput: CurrentValueSubject<Pincode?, Never>!

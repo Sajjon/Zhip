@@ -1,9 +1,9 @@
 // MIT License — Copyright (c) 2018-2026 Open Zesame
 
 import Foundation
-import SingleLineControllerController
-import SingleLineControllerCore
-import SingleLineControllerNavigation
+import NanoViewControllerController
+import NanoViewControllerCore
+import NanoViewControllerNavigation
 
 /// Concrete base class used by every ViewModel in the app.
 ///

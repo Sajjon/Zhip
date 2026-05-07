@@ -1,8 +1,9 @@
 @testable import AppFeature
 import Combine
-import SingleLineControllerController
+import NanoViewControllerController
 import XCTest
 
+@MainActor
 final class ChooseWalletViewModelTests: XCTestCase {
     private var cancellables: Set<AnyCancellable> = []
     private var createNewTrigger: PassthroughSubject<Void, Never>!

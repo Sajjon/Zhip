@@ -1,7 +1,7 @@
 //
 // MIT License
 //
-// Copyright (c) 2018-2026 Open Zesame (https://github.com/OpenZesame)
+// Copyright (c) 2018-2026 Alexander Cyon (https://github.com/sajjon)
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -32,6 +32,7 @@ import Zesame
 /// Verifies the placeholder publishers, that `keyRestoration` becomes non-nil
 /// only when a valid keystore JSON and matching password are supplied, and stays
 /// nil if either side is invalid or missing.
+@MainActor
 final class RestoreWalletUsingKeystoreViewModelTests: XCTestCase {
     private var cancellables: Set<AnyCancellable> = []
     private var keystoreDidBeginEditing: PassthroughSubject<Void, Never>!

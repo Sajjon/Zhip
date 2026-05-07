@@ -1,7 +1,7 @@
 //
 // MIT License
 //
-// Copyright (c) 2018-2026 Open Zesame (https://github.com/OpenZesame)
+// Copyright (c) 2018-2026 Alexander Cyon (https://github.com/sajjon)
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -24,11 +24,12 @@
 
 import Combine
 import Factory
+import NanoViewControllerCombine
+import NanoViewControllerController
+import NanoViewControllerDIPrimitives
+import NanoViewControllerSceneViews
+import NanoViewControllerCore
 import Resources
-import SingleLineControllerCombine
-import SingleLineControllerController
-import SingleLineControllerDIPrimitives
-import SingleLineControllerSceneViews
 import UIKit
 
 /// Step 4 of Send — celebratory "transaction broadcast" screen with a stars

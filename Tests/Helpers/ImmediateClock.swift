@@ -1,7 +1,7 @@
 //
 // MIT License
 //
-// Copyright (c) 2018-2026 Open Zesame (https://github.com/OpenZesame)
+// Copyright (c) 2018-2026 Alexander Cyon (https://github.com/sajjon)
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -24,13 +24,14 @@
 
 @testable import AppFeature
 import Foundation
-import SingleLineControllerDIPrimitives
+import NanoViewControllerDIPrimitives
 
-/// Test `Clock`: ignores the requested delay and fires on the next main-queue
-/// cycle so timer-driven flows run in milliseconds instead of seconds.
+/// Test `Clock`: ignores the requested delay and fires synchronously on the
+/// main actor so timer-driven flows run in milliseconds instead of seconds.
 ///
 /// Registered globally in `SilenceSideEffects`, so every test gets the fast
 /// path without per-file boilerplate.
+@MainActor
 final class ImmediateClock: Clock {
     init() {}
 
@@ -38,9 +39,8 @@ final class ImmediateClock: Clock {
     func schedule(
         after _: TimeInterval,
         execute block: @escaping () -> Void
-    ) -> DispatchWorkItem {
-        let item = DispatchWorkItem(block: block)
-        DispatchQueue.main.async(execute: item)
-        return item
+    ) -> Task<Void, Never> {
+        block()
+        return Task { /* already fired synchronously */ }
     }
 }

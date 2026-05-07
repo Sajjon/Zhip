@@ -1,7 +1,7 @@
 //
 // MIT License
 //
-// Copyright (c) 2018-2026 Open Zesame (https://github.com/OpenZesame)
+// Copyright (c) 2018-2026 Alexander Cyon (https://github.com/sajjon)
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -24,13 +24,13 @@
 
 import Combine
 import Factory
-import SingleLineControllerCombine
-import SingleLineControllerNavigation
+import NanoViewControllerCombine
+import NanoViewControllerNavigation
 import UIKit
 import Zesame
 
 /// Outcome the main coordinator surfaces to its parent (`AppCoordinator`).
-public enum MainCoordinatorNavigationStep {
+public enum MainCoordinatorNavigationStep: Sendable {
     /// User confirmed wallet removal in Settings — `AppCoordinator` should
     /// transition back to onboarding.
     case removeWallet

@@ -1,7 +1,7 @@
 //
 // MIT License
 //
-// Copyright (c) 2018-2026 Open Zesame (https://github.com/OpenZesame)
+// Copyright (c) 2018-2026 Alexander Cyon (https://github.com/sajjon)
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -35,6 +35,7 @@ import XCTest
 /// `AppCoordinator` uses `[unowned self]` inside async `.replace` transition
 /// callbacks, so the SUT is held as an instance var and we drain the run loop
 /// before tearDown to let those callbacks fire against a still-alive object.
+@MainActor
 final class AppCoordinatorTests: XCTestCase {
     private var mockWallet: MockWalletUseCase!
     private var mockPincode: MockPincodeUseCase!
@@ -54,10 +55,10 @@ final class AppCoordinatorTests: XCTestCase {
         rootControllers = []
         setRootCallCount = 0
         currentRoot = nil
-        Container.shared.walletStorageUseCase.register { [unowned self] in mockWallet }
-        Container.shared.pincodeUseCase.register { [unowned self] in mockPincode }
-        Container.shared.transactionsUseCase.register { [unowned self] in mockTransactions }
-        Container.shared.onboardingUseCase.register { [unowned self] in mockOnboarding }
+        Container.shared.walletStorageUseCase.register { [unowned self] in mainActorOnly { mockWallet } }
+        Container.shared.pincodeUseCase.register { [unowned self] in mainActorOnly { mockPincode } }
+        Container.shared.transactionsUseCase.register { [unowned self] in mainActorOnly { mockTransactions } }
+        Container.shared.onboardingUseCase.register { [unowned self] in mainActorOnly { mockOnboarding } }
     }
 
     override func tearDown() {
@@ -86,7 +87,7 @@ final class AppCoordinatorTests: XCTestCase {
         // Override the singleton DeepLinkHandler so each test starts with a
         // fresh buffer state. `Container.shared.manager.reset()` in tearDown
         // restores the production registration.
-        Container.shared.deepLinkHandler.register { DeepLinkHandler() }
+        Container.shared.deepLinkHandler.register { mainActorOnly { DeepLinkHandler() } }
         sut = AppCoordinator(
             navigationController: nav,
             isViewControllerRootOfWindow: { [weak self] vc in self?.currentRoot === vc },

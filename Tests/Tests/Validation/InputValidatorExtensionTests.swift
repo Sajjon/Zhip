@@ -2,6 +2,7 @@
 import Validation
 import XCTest
 
+@MainActor
 final class InputValidatorExtensionTests: XCTestCase {
     // MARK: - validate(input: nil) → .empty
 

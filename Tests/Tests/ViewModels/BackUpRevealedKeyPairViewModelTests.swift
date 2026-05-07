@@ -1,7 +1,7 @@
 //
 // MIT License
 //
-// Copyright (c) 2018-2026 Open Zesame (https://github.com/OpenZesame)
+// Copyright (c) 2018-2026 Alexander Cyon (https://github.com/sajjon)
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -25,7 +25,7 @@
 @testable import AppFeature
 import Combine
 import Factory
-import SingleLineControllerController
+import NanoViewControllerController
 import XCTest
 import Zesame
 
@@ -34,6 +34,7 @@ import Zesame
 /// Verifies the hex-formatted private and public key outputs, the two
 /// copy-to-pasteboard side effects with toasts, and the right-bar-button →
 /// `.finish` navigation branch.
+@MainActor
 final class BackUpRevealedKeyPairViewModelTests: XCTestCase {
     private var cancellables: Set<AnyCancellable> = []
     private var copyPrivateKey: PassthroughSubject<Void, Never>!
@@ -52,7 +53,7 @@ final class BackUpRevealedKeyPairViewModelTests: XCTestCase {
         )
         keyPair = KeyPair(private: privateKey)
         mockPasteboard = MockPasteboard()
-        Container.shared.pasteboard.register { [unowned self] in mockPasteboard }
+        Container.shared.pasteboard.register { [unowned self] in mainActorOnly { mockPasteboard } }
     }
 
     override func tearDown() {

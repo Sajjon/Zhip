@@ -1,7 +1,7 @@
 //
 // MIT License
 //
-// Copyright (c) 2018-2026 Open Zesame (https://github.com/OpenZesame)
+// Copyright (c) 2018-2026 Alexander Cyon (https://github.com/sajjon)
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -30,6 +30,7 @@ import XCTest
 /// Each test follows Arrange-Act-Assert with one-line arrange/act/assert where
 /// possible.  The underlying `SecurePersistence` and `Preferences` are in-memory
 /// so tests are fully hermetic.
+@MainActor
 final class DefaultPincodeUseCaseTests: XCTestCase {
     private var preferences: Preferences!
     private var secureStore: SecurePersistence!

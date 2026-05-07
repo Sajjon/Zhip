@@ -5,7 +5,7 @@
 // code that imported Validator compiles unchanged after removing the dependency.
 
 import Foundation
-import SingleLineControllerCore
+import NanoViewControllerCore
 
 // MARK: - ValidationError
 

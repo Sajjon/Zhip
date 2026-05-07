@@ -1,7 +1,7 @@
 //
 // MIT License
 //
-// Copyright (c) 2018-2026 Open Zesame (https://github.com/OpenZesame)
+// Copyright (c) 2018-2026 Alexander Cyon (https://github.com/sajjon)
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -25,8 +25,8 @@
 @testable import AppFeature
 import Combine
 import Foundation
-import SingleLineControllerController
-import SingleLineControllerSceneViews
+import NanoViewControllerController
+import NanoViewControllerSceneViews
 import XCTest
 
 /// Tests for `SettingsViewModel`.
@@ -34,6 +34,7 @@ import XCTest
 /// Covers the lazy sections-on-viewWillAppear population, the pincode-vs-no-pincode
 /// branch in the first section, the footer text, close-settings navigation, and
 /// item-selection navigation to the step stored on the tapped cell.
+@MainActor
 final class SettingsViewModelTests: XCTestCase {
     private var cancellables: Set<AnyCancellable> = []
     private var selectedIndexPath: PassthroughSubject<IndexPath, Never>!
@@ -66,7 +67,7 @@ final class SettingsViewModelTests: XCTestCase {
         fakeController.viewWillAppearSubject.send(())
 
         XCTAssertEqual(latest.count, 4)
-        XCTAssertEqual(latest.map(\.items.count), [1, 3, 3, 2])
+        XCTAssertEqual(latest.map(\.items.count), [1, 3, 1, 2])
     }
 
     func test_sections_withoutConfiguredPincode_firstItemIsSetPincode() {

@@ -1,7 +1,7 @@
 //
 // MIT License
 //
-// Copyright (c) 2018-2026 Open Zesame (https://github.com/OpenZesame)
+// Copyright (c) 2018-2026 Alexander Cyon (https://github.com/sajjon)
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -24,12 +24,13 @@
 
 import Combine
 import Foundation
-import SingleLineControllerController
+import NanoViewControllerController
+import NanoViewControllerCore
 
 // MARK: - User action and navigation steps
 
 /// Outcomes the privacy-gate screen surfaces to its parent coordinator.
-public enum EnsureThatYouAreNotBeingWatchedUserAction {
+public enum EnsureThatYouAreNotBeingWatchedUserAction: Sendable {
     /// User tapped "I understand" — proceed to wallet creation.
     case understand
     /// User tapped the cancel "X" — abort and return to chooser.

@@ -1,7 +1,7 @@
 //
 // MIT License
 //
-// Copyright (c) 2018-2026 Open Zesame (https://github.com/OpenZesame)
+// Copyright (c) 2018-2026 Alexander Cyon (https://github.com/sajjon)
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -61,7 +61,7 @@ public extension Address {
 ///
 /// Used as the data shape for QR codes, deep links, and pre-filled send-screen state.
 /// Distinct from `Zesame.Transaction` (which is a fully-formed signed payload).
-public struct TransactionIntent: Codable, Equatable {
+public struct TransactionIntent: Codable, Equatable, Sendable {
     /// Destination address of the would-be transaction.
     public let to: Address
 
@@ -170,7 +170,7 @@ private extension Amount {
     /// Best-effort parse of a Qa-denominated amount string into an `Amount`.
     /// Returns `nil` for both "no input" and "unparsable input" — callers
     /// here treat both as "no pre-filled amount".
-    public static func fromQa(optionalString: String?) -> Amount? {
+    static func fromQa(optionalString: String?) -> Amount? {
         guard let qaAmountString = optionalString else { return nil }
         return try? Amount(qa: qaAmountString)
     }

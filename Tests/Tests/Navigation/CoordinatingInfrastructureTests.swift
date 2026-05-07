@@ -1,7 +1,7 @@
 //
 // MIT License
 //
-// Copyright (c) 2018-2026 Open Zesame (https://github.com/OpenZesame)
+// Copyright (c) 2018-2026 Alexander Cyon (https://github.com/sajjon)
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -25,15 +25,16 @@
 @testable import AppFeature
 import Combine
 import Factory
-import SingleLineControllerController
-import SingleLineControllerCore
-import SingleLineControllerNavigation
+import NanoViewControllerController
+import NanoViewControllerCore
+import NanoViewControllerNavigation
 import UIKit
 import XCTest
 
 /// Covers shared Coordinating extensions: stack management, navigation-stack
 /// queries, debug printing, and UINavigationController helpers that back
 /// `replaceAllScenes` / `popToRootViewController`.
+@MainActor
 final class CoordinatingInfrastructureTests: XCTestCase {
     private var mockTransactions: MockTransactionsUseCase!
     private var mockWallet: MockWalletUseCase!
@@ -44,9 +45,9 @@ final class CoordinatingInfrastructureTests: XCTestCase {
         mockTransactions = MockTransactionsUseCase()
         mockWallet = MockWalletUseCase()
         mockPincode = MockPincodeUseCase()
-        Container.shared.transactionsUseCase.register { [unowned self] in mockTransactions }
-        Container.shared.walletStorageUseCase.register { [unowned self] in mockWallet }
-        Container.shared.pincodeUseCase.register { [unowned self] in mockPincode }
+        Container.shared.transactionsUseCase.register { [unowned self] in mainActorOnly { mockTransactions } }
+        Container.shared.walletStorageUseCase.register { [unowned self] in mainActorOnly { mockWallet } }
+        Container.shared.pincodeUseCase.register { [unowned self] in mainActorOnly { mockPincode } }
     }
 
     override func tearDown() {

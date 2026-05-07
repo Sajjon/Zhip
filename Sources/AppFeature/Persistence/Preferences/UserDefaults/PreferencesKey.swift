@@ -1,7 +1,7 @@
 //
 // MIT License
 //
-// Copyright (c) 2018-2026 Open Zesame (https://github.com/OpenZesame)
+// Copyright (c) 2018-2026 Alexander Cyon (https://github.com/sajjon)
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -32,12 +32,6 @@ public enum PreferencesKey: String, KeyConvertible {
     case hasRunAppBefore
     /// User accepted the Terms of Service screen during onboarding.
     case hasAcceptedTermsOfService
-    /// User accepted the "we use a custom ECC implementation" warning.
-    case hasAcceptedCustomECCWarning
-    /// User answered the crash-reporting opt-in prompt (`true`/`false` is in `hasAcceptedCrashReporting`).
-    case hasAnsweredCrashReportingQuestion
-    /// User opted in to crash reporting.
-    case hasAcceptedCrashReporting
     /// User explicitly chose "skip pincode setup" — suppresses the prompt on subsequent launches.
     case skipPincodeSetup
     /// User confirmed they have backed up the wallet they generated through

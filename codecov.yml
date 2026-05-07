@@ -1,0 +1,20 @@
+# Codecov configuration — see https://docs.codecov.com/docs/codecov-yaml
+#
+# Coverage gate policy:
+#   * project — fail the PR if the overall project coverage drops below 95%.
+#   * patch   — disabled. We deliberately do NOT enforce a per-PR diff
+#               threshold; some PRs are pure refactors / docs / build-config
+#               where there's nothing meaningful to cover, and a hard patch
+#               gate produces noise without adding signal. The project gate
+#               above already prevents net regressions.
+
+coverage:
+  status:
+    project:
+      default:
+        # Fail if total coverage falls under this floor.
+        target: 95%
+        # Allow a 0.5pp jitter so flakey simulator runs don't break green.
+        threshold: 0.5%
+    # Disable the per-PR diff gate.
+    patch: off

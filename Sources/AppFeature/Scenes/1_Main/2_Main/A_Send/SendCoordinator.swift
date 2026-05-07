@@ -1,7 +1,7 @@
 //
 // MIT License
 //
-// Copyright (c) 2018-2026 Open Zesame (https://github.com/OpenZesame)
+// Copyright (c) 2018-2026 Alexander Cyon (https://github.com/sajjon)
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -24,14 +24,14 @@
 
 import Combine
 import Factory
-import SingleLineControllerCombine
-import SingleLineControllerDIPrimitives
-import SingleLineControllerNavigation
+import NanoViewControllerCombine
+import NanoViewControllerDIPrimitives
+import NanoViewControllerNavigation
 import UIKit
 import Zesame
 
 /// Outcome the Send sub-flow surfaces to its parent (`MainCoordinator`).
-public enum SendCoordinatorNavigationStep {
+public enum SendCoordinatorNavigationStep: Sendable {
     /// Send flow finished. `fetchBalance: true` means a transaction was
     /// successfully signed and broadcast — Main should refetch the balance.
     case finish(fetchBalance: Bool)

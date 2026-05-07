@@ -1,7 +1,7 @@
 //
 // MIT License
 //
-// Copyright (c) 2018-2026 Open Zesame (https://github.com/OpenZesame)
+// Copyright (c) 2018-2026 Alexander Cyon (https://github.com/sajjon)
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -24,13 +24,13 @@
 
 import Combine
 import Factory
-import SingleLineControllerNavigation
+import NanoViewControllerNavigation
 import UIKit
-import Zesame
+ import Zesame
 
 /// Outcomes the create-new-wallet sub-flow surfaces to its parent
 /// (`ChooseWalletCoordinator`).
-public enum CreateNewWalletCoordinatorNavigationStep {
+public enum CreateNewWalletCoordinatorNavigationStep: Sendable {
     /// User completed all three steps (privacy gate → password → backup) and
     /// produced a `Wallet` ready to persist.
     case create(wallet: Wallet)

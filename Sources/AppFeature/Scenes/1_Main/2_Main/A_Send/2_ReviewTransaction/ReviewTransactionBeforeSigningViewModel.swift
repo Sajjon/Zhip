@@ -1,7 +1,7 @@
 //
 // MIT License
 //
-// Copyright (c) 2018-2026 Open Zesame (https://github.com/OpenZesame)
+// Copyright (c) 2018-2026 Alexander Cyon (https://github.com/sajjon)
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -24,12 +24,13 @@
 
 import Combine
 import Foundation
-import SingleLineControllerCombine
-import SingleLineControllerController
-import Zesame
+import NanoViewControllerCombine
+import NanoViewControllerCore
+import NanoViewControllerController
+ import Zesame
 
 /// Outcome of step 2 of Send.
-public enum ReviewTransactionBeforeSigningUserAction {
+public enum ReviewTransactionBeforeSigningUserAction: Sendable {
     /// User checked "I have reviewed" and tapped accept; payment forwarded to signing.
     case acceptPaymentProceedWithSigning(Payment)
 }

@@ -1,7 +1,7 @@
 //
 // MIT License
 //
-// Copyright (c) 2018-2026 Open Zesame (https://github.com/OpenZesame)
+// Copyright (c) 2018-2026 Alexander Cyon (https://github.com/sajjon)
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -25,14 +25,15 @@
 @testable import AppFeature
 import Combine
 import Factory
-import SingleLineControllerController
-import SingleLineControllerDIPrimitives
+import NanoViewControllerController
+import NanoViewControllerDIPrimitives
 import UIKit
 import XCTest
 
 /// Drives each `SettingsCoordinator` navigation branch so every case in
 /// `toSettings`'s big switch is exercised. Modal presentations run against a
 /// real `UIWindow` so the presentation path doesn't silently no-op.
+@MainActor
 final class SettingsCoordinatorTests: XCTestCase {
     private var window: UIWindow!
     private var navigationController: NavigationBarLayoutingNavigationController!
@@ -52,13 +53,13 @@ final class SettingsCoordinatorTests: XCTestCase {
         mockPincode = MockPincodeUseCase()
         mockOnboarding = MockOnboardingUseCase()
         mockUrlOpener = MockUrlOpener()
-        Container.shared.transactionsUseCase.register { [unowned self] in mockTransactions }
-        Container.shared.walletStorageUseCase.register { [unowned self] in mockWallet }
-        Container.shared.pincodeUseCase.register { [unowned self] in mockPincode }
-        Container.shared.onboardingUseCase.register { [unowned self] in mockOnboarding }
-        Container.shared.urlOpener.register { [unowned self] in mockUrlOpener }
+        Container.shared.transactionsUseCase.register { [unowned self] in mainActorOnly { mockTransactions } }
+        Container.shared.walletStorageUseCase.register { [unowned self] in mainActorOnly { mockWallet } }
+        Container.shared.pincodeUseCase.register { [unowned self] in mainActorOnly { mockPincode } }
+        Container.shared.onboardingUseCase.register { [unowned self] in mainActorOnly { mockOnboarding } }
+        Container.shared.urlOpener.register { [unowned self] in mainActorOnly { mockUrlOpener } }
         navigationController = NavigationBarLayoutingNavigationController()
-        window = UIWindow(frame: .init(x: 0, y: 0, width: 320, height: 480))
+        window = TestWindowFactory.make(frame: .init(x: 0, y: 0, width: 320, height: 480))
         window.rootViewController = navigationController
         window.makeKeyAndVisible()
         sut = SettingsCoordinator(navigationController: navigationController)
@@ -166,18 +167,6 @@ final class SettingsCoordinatorTests: XCTestCase {
         let scene = startAndGetScene()
 
         fire(.readTermsOfService, on: scene)
-    }
-
-    func test_changeAnalyticsPermissions_presentsModalWithoutCrashing() {
-        let scene = startAndGetScene()
-
-        fire(.changeAnalyticsPermissions, on: scene)
-    }
-
-    func test_readCustomECCWarning_presentsModalWithoutCrashing() {
-        let scene = startAndGetScene()
-
-        fire(.readCustomECCWarning, on: scene)
     }
 
     // MARK: - Section 3 (wallet)

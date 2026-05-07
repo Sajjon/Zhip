@@ -1,7 +1,7 @@
 //
 // MIT License
 //
-// Copyright (c) 2018-2026 Open Zesame (https://github.com/OpenZesame)
+// Copyright (c) 2018-2026 Alexander Cyon (https://github.com/sajjon)
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -25,17 +25,17 @@
 import Combine
 import Factory
 import Foundation
-import SingleLineControllerCombine
-import SingleLineControllerController
-import SingleLineControllerCore
-import SingleLineControllerDIPrimitives
+import NanoViewControllerCombine
+import NanoViewControllerController
+import NanoViewControllerCore
+import NanoViewControllerDIPrimitives
 import UIKit
 import Zesame
 
 // MARK: - User action and navigation steps
 
 /// Outcomes of step 4 of Send.
-public enum PollTransactionStatusUserAction {
+public enum PollTransactionStatusUserAction: Sendable {
     /// User tapped Skip — close before the receipt resolves.
     case skip
     /// Receipt resolved (or user tapped done) — close + trigger balance refetch.
@@ -101,9 +101,13 @@ public final class PollTransactionStatusViewModel: BaseViewModel<
             input.fromView.copyTransactionIdTrigger
                 .sink { [weak self, pasteboard] in
                     guard let self else { return }
-                    pasteboard.copy(transactionId)
-                    input.fromController.toastSubject
-                        .send(Toast(String(localized: .PollTransaction.copiedTransactionId)))
+                    // pasteboard.copy + Toast init are @MainActor — the
+                    // Combine sink closure is @Sendable so we hop explicitly.
+                    mainActorOnly {
+                        pasteboard.copy(self.transactionId)
+                        input.fromController.toastSubject
+                            .send(Toast(String(localized: .PollTransaction.copiedTransactionId)))
+                    }
                 },
 
             input.fromView.skipWaitingOrDoneTrigger.withLatestFrom(hasReceivedReceipt) { $1 }

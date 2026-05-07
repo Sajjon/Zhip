@@ -1,7 +1,7 @@
 //
 // MIT License
 //
-// Copyright (c) 2018-2026 Open Zesame (https://github.com/OpenZesame)
+// Copyright (c) 2018-2026 Alexander Cyon (https://github.com/sajjon)
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -25,12 +25,13 @@
 @testable import AppFeature
 import Combine
 import Factory
-import SingleLineControllerController
+import NanoViewControllerController
 import UIKit
 import XCTest
 
 /// Drives the `SetPincodeCoordinator` flow: ChoosePincode → ConfirmNewPincode
 /// on selection, or straight to `.setPincode` on skip from either stage.
+@MainActor
 final class SetPincodeCoordinatorTests: XCTestCase {
     private var window: UIWindow!
     private var navigationController: NavigationBarLayoutingNavigationController!
@@ -41,9 +42,9 @@ final class SetPincodeCoordinatorTests: XCTestCase {
     override func setUp() {
         super.setUp()
         mockPincode = MockPincodeUseCase()
-        Container.shared.pincodeUseCase.register { [unowned self] in mockPincode }
+        Container.shared.pincodeUseCase.register { [unowned self] in mainActorOnly { mockPincode } }
         navigationController = NavigationBarLayoutingNavigationController()
-        window = UIWindow(frame: .init(x: 0, y: 0, width: 320, height: 480))
+        window = TestWindowFactory.make(frame: .init(x: 0, y: 0, width: 320, height: 480))
         window.rootViewController = navigationController
         window.makeKeyAndVisible()
         sut = SetPincodeCoordinator(

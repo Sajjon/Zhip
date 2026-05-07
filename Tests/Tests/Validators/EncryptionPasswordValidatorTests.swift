@@ -1,6 +1,7 @@
 @testable import AppFeature
 import XCTest
 
+@MainActor
 final class EncryptionPasswordValidatorTests: XCTestCase {
     func test_newWallet_mismatch_returnsPasswordsDoesNotMatch() {
         let sut = EncryptionPasswordValidator(mode: .newOrRestorePrivateKey)

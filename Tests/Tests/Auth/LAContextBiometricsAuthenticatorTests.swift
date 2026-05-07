@@ -1,7 +1,7 @@
 //
 // MIT License
 //
-// Copyright (c) 2018-2026 Open Zesame (https://github.com/OpenZesame)
+// Copyright (c) 2018-2026 Alexander Cyon (https://github.com/sajjon)
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -30,6 +30,7 @@ import XCTest
 /// `canEvaluatePolicy(.deviceOwnerAuthenticationWithBiometrics)` returns
 /// `false`, so the guard path fires and `authenticate()` resolves to `false`
 /// without ever triggering a real Face ID / Touch ID prompt.
+@MainActor
 final class LAContextBiometricsAuthenticatorTests: XCTestCase {
     private var cancellables: Set<AnyCancellable> = []
 

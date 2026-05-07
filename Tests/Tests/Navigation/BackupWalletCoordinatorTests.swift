@@ -1,7 +1,7 @@
 //
 // MIT License
 //
-// Copyright (c) 2018-2026 Open Zesame (https://github.com/OpenZesame)
+// Copyright (c) 2018-2026 Alexander Cyon (https://github.com/sajjon)
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -25,13 +25,14 @@
 @testable import AppFeature
 import Combine
 import Factory
-import SingleLineControllerController
+import NanoViewControllerController
 import UIKit
 import XCTest
 import Zesame
 
 /// Drives each `BackupWalletUserAction` branch of
 /// `BackupWalletCoordinator` so all four navigation handlers run.
+@MainActor
 final class BackupWalletCoordinatorTests: XCTestCase {
     private var window: UIWindow!
     private var navigationController: NavigationBarLayoutingNavigationController!
@@ -46,9 +47,9 @@ final class BackupWalletCoordinatorTests: XCTestCase {
         let wallet = TestWalletFactory.makeWallet()
         mockWallet.storedWallet = wallet
         walletSubject = CurrentValueSubject<AppFeature.Wallet, Never>(wallet)
-        Container.shared.walletStorageUseCase.register { [unowned self] in mockWallet }
+        Container.shared.walletStorageUseCase.register { [unowned self] in mainActorOnly { mockWallet } }
         navigationController = NavigationBarLayoutingNavigationController()
-        window = UIWindow(frame: .init(x: 0, y: 0, width: 320, height: 480))
+        window = TestWindowFactory.make(frame: .init(x: 0, y: 0, width: 320, height: 480))
         window.rootViewController = navigationController
         window.makeKeyAndVisible()
         sut = BackupWalletCoordinator(

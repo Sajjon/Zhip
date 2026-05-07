@@ -2,6 +2,7 @@
 import XCTest
 import Zesame
 
+@MainActor
 final class AmountValidatorTests: XCTestCase {
     func test_validate_validZilAmountString_returnsValid() {
         let sut = AmountValidator<Amount>()

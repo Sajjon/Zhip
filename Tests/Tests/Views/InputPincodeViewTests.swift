@@ -1,11 +1,12 @@
 @testable import AppFeature
 import Combine
 import Factory
-import SingleLineControllerCombine
-import SingleLineControllerDIPrimitives
+import NanoViewControllerCombine
+import NanoViewControllerDIPrimitives
 import UIKit
 import XCTest
 
+@MainActor
 final class InputPincodeViewTests: XCTestCase {
     private var cancellables: Set<AnyCancellable> = []
     private var mockHaptic: MockHapticFeedback!
@@ -13,7 +14,7 @@ final class InputPincodeViewTests: XCTestCase {
     override func setUp() {
         super.setUp()
         mockHaptic = MockHapticFeedback()
-        Container.shared.hapticFeedback.register { [unowned self] in mockHaptic }
+        Container.shared.hapticFeedback.register { [unowned self] in mainActorOnly { mockHaptic } }
     }
 
     override func tearDown() {

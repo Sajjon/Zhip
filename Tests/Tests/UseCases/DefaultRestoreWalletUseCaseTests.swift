@@ -1,7 +1,7 @@
 //
 // MIT License
 //
-// Copyright (c) 2018-2026 Open Zesame (https://github.com/OpenZesame)
+// Copyright (c) 2018-2026 Alexander Cyon (https://github.com/sajjon)
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -30,6 +30,7 @@ import Zesame
 
 /// Tests that `DefaultRestoreWalletUseCase` maps the `KeyRestoration` case to
 /// the correct `Wallet.Origin` and forwards to the injected service.
+@MainActor
 final class DefaultRestoreWalletUseCaseTests: XCTestCase {
     private var cancellables: Set<AnyCancellable> = []
     private var mockService: MockZilliqaServiceReactive!
@@ -37,7 +38,7 @@ final class DefaultRestoreWalletUseCaseTests: XCTestCase {
     override func setUp() {
         super.setUp()
         mockService = MockZilliqaServiceReactive()
-        Container.shared.zilliqaService.register { [unowned self] in mockService }
+        Container.shared.zilliqaService.register { [unowned self] in mainActorOnly { mockService } }
     }
 
     override func tearDown() {

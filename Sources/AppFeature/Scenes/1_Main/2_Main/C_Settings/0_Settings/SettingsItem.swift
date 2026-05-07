@@ -1,7 +1,7 @@
 //
 // MIT License
 //
-// Copyright (c) 2018-2026 Open Zesame (https://github.com/OpenZesame)
+// Copyright (c) 2018-2026 Alexander Cyon (https://github.com/sajjon)
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -37,7 +37,14 @@ public protocol CellModel {
 
 /// Cell model that, when tapped, navigates to a typed `Destination` value.
 /// Used in Settings to wrap each row's `SettingsNavigation` step.
-public struct NavigatingCellModel<Destination> {
+public struct NavigatingCellModel<Destination>: @unchecked Sendable {
+    // `@unchecked Sendable` because `UITableViewCell.AccessoryType` (UIKit
+    // enum) and `UIImage?` are not declared `Sendable` upstream, but both
+    // are immutable value types in practice. The cell model itself is
+    // built once on `viewWillAppear` (main actor) and only read across
+    // the publisher boundary into a diffable data source — never mutated
+    // post-construction. Removal plan: drop `@unchecked` once UIKit's
+    // value-type enums and `UIImage` gain native `Sendable` conformance.
     /// The navigation step the row emits when tapped.
     public let destination: Destination
     /// Trailing accessory — defaults to `.disclosureIndicator`.

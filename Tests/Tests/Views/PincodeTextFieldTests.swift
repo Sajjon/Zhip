@@ -1,7 +1,7 @@
 //
 // MIT License
 //
-// Copyright (c) 2018-2026 Open Zesame (https://github.com/OpenZesame)
+// Copyright (c) 2018-2026 Alexander Cyon (https://github.com/sajjon)
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -24,10 +24,11 @@
 
 @testable import AppFeature
 import Combine
-import SingleLineControllerCore
+import NanoViewControllerCore
 import UIKit
 import XCTest
 
+@MainActor
 final class PincodeTextFieldTests: XCTestCase {
     private var cancellables: Set<AnyCancellable> = []
 
@@ -189,6 +190,7 @@ final class PincodeTextFieldTests: XCTestCase {
 
 // MARK: - String.isBackspace
 
+@MainActor
 final class StringIsBackspaceTests: XCTestCase {
     func test_nonBackspaceString_isNotBackspace() {
         XCTAssertFalse("abc".isBackspace)

@@ -1,7 +1,7 @@
 //
 // MIT License
 //
-// Copyright (c) 2018-2026 Open Zesame (https://github.com/OpenZesame)
+// Copyright (c) 2018-2026 Alexander Cyon (https://github.com/sajjon)
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -25,12 +25,15 @@
 import Factory
 import Foundation
 import KeychainSwift
-import SingleLineControllerDIPrimitives
+import NanoViewControllerDIPrimitives
 import Zesame
 
 /// The Zilliqa network this build targets. Currently wired to `.mainnet`. When we
 /// add staging/testnet builds this will move into a build-configuration driven
 /// registration on `Container.shared.zilliqaService`.
+///
+/// `Network` gains `Sendable` retroactively in `Concurrency/Sendable+Zesame.swift`,
+/// so this `let`-bound global needs no concurrency escape hatch.
 let network: Network = .mainnet
 
 extension KeyValueStore where KeyType == PreferencesKey {
@@ -72,7 +75,7 @@ public extension Container {
     /// to install a fresh handler per test (Factory's `register` shadows
     /// `.singleton`).
     var deepLinkHandler: Factory<DeepLinkHandler> {
-        self { DeepLinkHandler() }.singleton
+        self { mainActorOnly { DeepLinkHandler() } }.singleton
     }
 
     /// Plays bundled sound effects. Tests register a no-op so unit tests never
@@ -84,7 +87,11 @@ public extension Container {
     /// Abstracts `UIPasteboard.general`. Tests register a `MockPasteboard` so
     /// unit tests never mutate the real simulator pasteboard.
     var pasteboard: Factory<Pasteboard> {
-        self { DefaultPasteboard() }.singleton
+        // `DefaultPasteboard.init` is `@MainActor` (wraps UIPasteboard);
+        // Factory's resolver is `@Sendable` so we hop via `assumeIsolated`.
+        // Container singletons are always resolved from the main thread in
+        // this app, so the assumption holds.
+        self { mainActorOnly { DefaultPasteboard() } }.singleton
     }
 
     /// Abstracts `LAContext` biometric authentication. Tests register a mock
@@ -95,7 +102,7 @@ public extension Container {
 
     /// QR code encoder/decoder. Stateless, so a fresh instance per resolve is
     /// fine. Tests can register a stub when they want to observe encode/decode
-    /// calls without hitting `EFQRCode`.
+    /// calls without hitting CoreImage.
     var qrCoder: Factory<QRCoding> {
         self { QRCoder() }
     }
@@ -104,7 +111,9 @@ public extension Container {
     /// unit tests never trigger a real OS-level URL open (which can hang the
     /// iOS simulator runloop).
     var urlOpener: Factory<UrlOpener> {
-        self { DefaultUrlOpener() }.singleton
+        // See `pasteboard` above for why `assumeIsolated` — DefaultUrlOpener
+        // wraps UIApplication and is therefore main-actor-isolated.
+        self { mainActorOnly { DefaultUrlOpener() } }.singleton
     }
 
     /// Abstracts delayed main-queue dispatch (`asyncAfter`). Tests register
@@ -112,7 +121,7 @@ public extension Container {
     /// next main-queue cycle, so timer-driven flows run in milliseconds
     /// instead of seconds.
     var clock: Factory<Clock> {
-        self { MainQueueClock() }.singleton
+        self { mainActorOnly { MainQueueClock() } }.singleton
     }
 
     /// Abstracts immediate main-thread scheduling (the Combine
@@ -121,7 +130,7 @@ public extension Container {
     /// synchronously so coordinator tests can assert on navigation side
     /// effects without pumping the runloop.
     var mainScheduler: Factory<MainScheduler> {
-        self { DispatchMainScheduler() }.singleton
+        self { mainActorOnly { DispatchMainScheduler() } }.singleton
     }
 
     /// Loads bundled HTML files into attributed strings. Production uses
@@ -135,7 +144,9 @@ public extension Container {
     /// Abstracts `UINotificationFeedbackGenerator`. Tests register a mock so
     /// unit tests never trigger real device vibrations.
     var hapticFeedback: Factory<HapticFeedback> {
-        self { DefaultHapticFeedback() }.singleton
+        // See `pasteboard` above — DefaultHapticFeedback wraps a
+        // UINotificationFeedbackGenerator and is main-actor-isolated.
+        self { mainActorOnly { DefaultHapticFeedback() } }.singleton
     }
 
     /// Abstracts "what time is it now" so timestamp-dependent logic

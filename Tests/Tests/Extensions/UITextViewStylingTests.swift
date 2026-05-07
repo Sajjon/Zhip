@@ -2,6 +2,7 @@
 import UIKit
 import XCTest
 
+@MainActor
 final class UITextViewStylingTests: XCTestCase {
     // MARK: - apply
 

@@ -1,7 +1,7 @@
 //
 // MIT License
 //
-// Copyright (c) 2018-2026 Open Zesame (https://github.com/OpenZesame)
+// Copyright (c) 2018-2026 Alexander Cyon (https://github.com/sajjon)
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -41,31 +41,6 @@ final class MockOnboardingUseCase: OnboardingUseCase {
 
     func didAcceptTermsOfService() {
         didAcceptTermsOfServiceCallCount += 1
-    }
-
-    // MARK: - Custom ECC Warning
-
-    /// Value returned from `hasAcceptedCustomECCWarning`. Mutable so tests can seed.
-    var hasAcceptedCustomECCWarning: Bool = false
-
-    /// Number of times `didAcceptCustomECCWarning()` was invoked.
-    private(set) var didAcceptCustomECCWarningCallCount = 0
-
-    func didAcceptCustomECCWarning() {
-        didAcceptCustomECCWarningCallCount += 1
-    }
-
-    // MARK: - Crash reporting
-
-    /// Value returned from `hasAnsweredCrashReportingQuestion`. Mutable so tests can seed.
-    var hasAnsweredCrashReportingQuestion: Bool = false
-
-    /// The `acceptsCrashReporting` value from the most recent invocation, or `nil`
-    /// if the method was never called.
-    private(set) var lastAnsweredCrashReportingValue: Bool?
-
-    func answeredCrashReportingQuestion(acceptsCrashReporting: Bool) {
-        lastAnsweredCrashReportingValue = acceptsCrashReporting
     }
 
     // MARK: - Pincode prompt

@@ -1,7 +1,7 @@
 //
 // MIT License
 //
-// Copyright (c) 2018-2026 Open Zesame (https://github.com/OpenZesame)
+// Copyright (c) 2018-2026 Alexander Cyon (https://github.com/sajjon)
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -30,6 +30,7 @@ import Zesame
 
 /// Tests that `DefaultExtractKeyPairUseCase` forwards to the injected service
 /// and surfaces its `KeyPair` result.
+@MainActor
 final class DefaultExtractKeyPairUseCaseTests: XCTestCase {
     private var cancellables: Set<AnyCancellable> = []
     private var mockService: MockZilliqaServiceReactive!
@@ -37,7 +38,7 @@ final class DefaultExtractKeyPairUseCaseTests: XCTestCase {
     override func setUp() {
         super.setUp()
         mockService = MockZilliqaServiceReactive()
-        Container.shared.zilliqaService.register { [unowned self] in mockService }
+        Container.shared.zilliqaService.register { [unowned self] in mainActorOnly { mockService } }
     }
 
     override func tearDown() {
@@ -51,7 +52,7 @@ final class DefaultExtractKeyPairUseCaseTests: XCTestCase {
         let privateKey = try PrivateKey(
             rawRepresentation: Data(hex: "0E891B9DFF485000C7D1DC22ECF3A583CC50328684321D61947A86E57CF6C638")
         )
-        let keyPair = try KeyPair(private: privateKey)
+        let keyPair = KeyPair(private: privateKey)
         mockService.extractKeyPairResult = .success(keyPair)
         let keystore = TestWalletFactory.makeWallet().wallet.keystore
         let sut = DefaultExtractKeyPairUseCase()
@@ -74,7 +75,7 @@ final class DefaultExtractKeyPairUseCaseTests: XCTestCase {
         let privateKey = try PrivateKey(
             rawRepresentation: Data(hex: "0E891B9DFF485000C7D1DC22ECF3A583CC50328684321D61947A86E57CF6C638")
         )
-        let keyPair = try KeyPair(private: privateKey)
+        let keyPair = KeyPair(private: privateKey)
         mockService.extractKeyPairResult = .success(keyPair)
         let wallet = TestWalletFactory.makeWallet()
         let sut = DefaultExtractKeyPairUseCase()

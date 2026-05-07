@@ -1,8 +1,9 @@
 @testable import AppFeature
 import Combine
-import SingleLineControllerController
+import NanoViewControllerController
 import XCTest
 
+@MainActor
 final class EnsureThatYouAreNotBeingWatchedViewModelTests: XCTestCase {
     private var cancellables: Set<AnyCancellable> = []
     private var understandTrigger: PassthroughSubject<Void, Never>!

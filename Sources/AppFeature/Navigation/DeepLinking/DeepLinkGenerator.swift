@@ -1,7 +1,7 @@
 //
 // MIT License
 //
-// Copyright (c) 2018-2026 Open Zesame (https://github.com/OpenZesame)
+// Copyright (c) 2018-2026 Alexander Cyon (https://github.com/sajjon)
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -23,7 +23,7 @@
 //
 
 import Foundation
-import SingleLineControllerCore
+import NanoViewControllerCore
 
 /// Builds outgoing `zhip.app` HTTPS URLs that, when opened, re-enter the app via
 /// the deep-link handler. Exists behind a protocol so coordinators depend on the

@@ -1,7 +1,7 @@
 //
 // MIT License
 //
-// Copyright (c) 2018-2026 Open Zesame (https://github.com/OpenZesame)
+// Copyright (c) 2018-2026 Alexander Cyon (https://github.com/sajjon)
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -25,7 +25,7 @@
 @testable import AppFeature
 import Combine
 import Factory
-import SingleLineControllerController
+import NanoViewControllerController
 import UIKit
 import XCTest
 import Zesame
@@ -33,6 +33,7 @@ import Zesame
 /// Drives `CreateNewWalletCoordinator` routing:
 /// EnsureThatYouAreNotBeingWatched → CreateNewWallet → BackupWallet
 /// (via the child coordinator chain).
+@MainActor
 final class CreateNewWalletCoordinatorTests: XCTestCase {
     private var window: UIWindow!
     private var navigationController: NavigationBarLayoutingNavigationController!
@@ -48,10 +49,10 @@ final class CreateNewWalletCoordinatorTests: XCTestCase {
         // `hasConfirmedNewWalletBackup` flag write doesn't leak into real
         // UserDefaults during the test.
         preferences = TestStoreFactory.makePreferences()
-        Container.shared.walletStorageUseCase.register { [unowned self] in mockWallet }
-        Container.shared.preferences.register { [unowned self] in preferences }
+        Container.shared.walletStorageUseCase.register { [unowned self] in mainActorOnly { mockWallet } }
+        Container.shared.preferences.register { [unowned self] in mainActorOnly { preferences } }
         navigationController = NavigationBarLayoutingNavigationController()
-        window = UIWindow(frame: .init(x: 0, y: 0, width: 320, height: 480))
+        window = TestWindowFactory.make(frame: .init(x: 0, y: 0, width: 320, height: 480))
         window.rootViewController = navigationController
         window.makeKeyAndVisible()
         sut = CreateNewWalletCoordinator(navigationController: navigationController)

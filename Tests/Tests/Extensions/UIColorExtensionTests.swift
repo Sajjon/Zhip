@@ -2,6 +2,7 @@
 import UIKit
 import XCTest
 
+@MainActor
 final class UIColorExtensionTests: XCTestCase {
     func test_defaultText_isWhite() {
         XCTAssertEqual(UIColor.defaultText, .white)

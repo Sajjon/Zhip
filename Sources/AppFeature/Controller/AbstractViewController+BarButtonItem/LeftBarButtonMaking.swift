@@ -1,7 +1,7 @@
 // MIT License — Copyright (c) 2018-2026 Open Zesame
 
 import Foundation
-import SingleLineControllerController
+import NanoViewControllerController
 
 /// Zhip-side refinement of the package's `LeftBarButtonContentMaking` —
 /// adopters declare which `BarButton` case they want; the default extension

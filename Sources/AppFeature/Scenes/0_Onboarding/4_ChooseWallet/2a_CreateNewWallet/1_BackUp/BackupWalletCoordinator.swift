@@ -1,7 +1,7 @@
 //
 // MIT License
 //
-// Copyright (c) 2018-2026 Open Zesame (https://github.com/OpenZesame)
+// Copyright (c) 2018-2026 Alexander Cyon (https://github.com/sajjon)
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -25,14 +25,14 @@
 import Combine
 import Factory
 import Foundation
-import SingleLineControllerCombine
-import SingleLineControllerCore
-import SingleLineControllerNavigation
+import NanoViewControllerCombine
+import NanoViewControllerCore
+import NanoViewControllerNavigation
 import UIKit
 import Zesame
 
 /// Outcomes the backup sub-flow surfaces to its parent.
-public enum BackupWalletCoordinatorNavigationStep {
+public enum BackupWalletCoordinatorNavigationStep: Sendable {
     /// User confirmed they have backed up their wallet.
     case backUp
     /// User cancelled out of the backup flow (only available in `.cancellable` mode).

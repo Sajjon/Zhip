@@ -1,7 +1,7 @@
 //
 // MIT License
 //
-// Copyright (c) 2018-2026 Open Zesame (https://github.com/OpenZesame)
+// Copyright (c) 2018-2026 Alexander Cyon (https://github.com/sajjon)
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -25,7 +25,7 @@
 @testable import AppFeature
 import Combine
 import Factory
-import SingleLineControllerController
+import NanoViewControllerController
 import XCTest
 import Zesame
 
@@ -34,6 +34,7 @@ import Zesame
 /// Covers the segment-controlled headerLabel, the `isRestoreButtonEnabled` gating on
 /// a non-nil key restoration, and the restore path which calls the use case and
 /// emits `.restoreWallet`.
+@MainActor
 final class RestoreWalletViewModelTests: XCTestCase {
     private var cancellables: Set<AnyCancellable> = []
     private var segmentSubject: CurrentValueSubject<RestoreWalletViewModel.InputFromView.Segment, Never>!
@@ -51,7 +52,7 @@ final class RestoreWalletViewModelTests: XCTestCase {
         restoreTrigger = PassthroughSubject<Void, Never>()
         fakeController = FakeInputFromController()
         mockWallet = MockWalletUseCase()
-        Container.shared.restoreWalletUseCase.register { [unowned self] in mockWallet }
+        Container.shared.restoreWalletUseCase.register { [unowned self] in mainActorOnly { mockWallet } }
     }
 
     override func tearDown() {

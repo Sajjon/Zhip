@@ -1,7 +1,7 @@
 //
 // MIT License
 //
-// Copyright (c) 2018-2026 Open Zesame (https://github.com/OpenZesame)
+// Copyright (c) 2018-2026 Alexander Cyon (https://github.com/sajjon)
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -125,7 +125,7 @@ public extension WalletEncryptionPassword {
 public extension WalletEncryptionPassword {
     /// Which length policy a password should be validated against.
     /// Different wallet origins have different minimum lengths.
-    enum Mode: CaseIterable {
+    enum Mode: CaseIterable, Sendable {
         /// Strict app-side policy used when generating a new wallet or restoring
         /// from a raw private key (8 chars min).
         case newOrRestorePrivateKey
@@ -153,7 +153,7 @@ private extension Wallet.Origin {
     /// Maps wallet provenance to the corresponding password policy.
     /// Kept `private` so the only public entry point is
     /// `WalletEncryptionPassword.modeFrom(wallet:)`.
-    public var passwordMode: WalletEncryptionPassword.Mode {
+    var passwordMode: WalletEncryptionPassword.Mode {
         switch self {
         case .generatedByThisApp, .importedPrivateKey: .newOrRestorePrivateKey
         case .importedKeystore: .restoreKeystore
@@ -166,7 +166,7 @@ private extension Wallet.Origin {
 private extension Wallet {
     /// Convenience: skip straight from a `Wallet` to its password mode without
     /// going through `wallet.origin.passwordMode` at every call site.
-    public var passwordMode: WalletEncryptionPassword.Mode {
+    var passwordMode: WalletEncryptionPassword.Mode {
         origin.passwordMode
     }
 }

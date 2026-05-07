@@ -1,7 +1,7 @@
 //
 // MIT License
 //
-// Copyright (c) 2018-2026 Open Zesame (https://github.com/OpenZesame)
+// Copyright (c) 2018-2026 Alexander Cyon (https://github.com/sajjon)
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -24,7 +24,7 @@
 
 @testable import AppFeature
 import Combine
-import SingleLineControllerController
+import NanoViewControllerController
 import XCTest
 
 /// Tests for the (tiny) `WelcomeViewModel`.
@@ -32,6 +32,7 @@ import XCTest
 /// The ViewModel has no dependencies and one responsibility: forward the
 /// `startTrigger` to `navigator.next(.start)`. The test drives the input subject
 /// and asserts that the navigator emits the expected step.
+@MainActor
 final class WelcomeViewModelTests: XCTestCase {
     private var cancellables: Set<AnyCancellable> = []
 

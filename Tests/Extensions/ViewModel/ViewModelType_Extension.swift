@@ -1,7 +1,7 @@
 //
 // MIT License
 //
-// Copyright (c) 2018-2019 Open Zesame (https://github.com/OpenZesame)
+// Copyright (c) 2018-2019 Alexander Cyon (https://github.com/sajjon)
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -25,8 +25,8 @@
 @testable import AppFeature
 import Combine
 import Foundation
-import SingleLineControllerController
-import SingleLineControllerCore
+import NanoViewControllerController
+import NanoViewControllerCore
 
 extension ViewModelType where Input: InputType, Self.Input.FromController == InputFromController {
     func transform(inputFromView: Input.FromView) -> OutputVM {

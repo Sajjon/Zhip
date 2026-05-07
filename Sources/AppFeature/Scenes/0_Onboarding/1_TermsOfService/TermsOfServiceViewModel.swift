@@ -1,7 +1,7 @@
 //
 // MIT License
 //
-// Copyright (c) 2018-2026 Open Zesame (https://github.com/OpenZesame)
+// Copyright (c) 2018-2026 Alexander Cyon (https://github.com/sajjon)
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -24,13 +24,14 @@
 
 import Combine
 import Foundation
-import SingleLineControllerCombine
-import SingleLineControllerController
+import NanoViewControllerCombine
+import NanoViewControllerCore
+import NanoViewControllerController
 
 // MARK: TermsOfServiceNavigation
 
 /// Outcomes the Terms of Service screen surfaces to its parent coordinator.
-public enum TermsOfServiceNavigation {
+public enum TermsOfServiceNavigation: Sendable {
     /// User scrolled to the bottom and tapped "Accept".
     case acceptTermsOfService
     /// User tapped the right bar-button "Done" — only available in the

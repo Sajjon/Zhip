@@ -1,7 +1,7 @@
 //
 // MIT License
 //
-// Copyright (c) 2018-2026 Open Zesame (https://github.com/OpenZesame)
+// Copyright (c) 2018-2026 Alexander Cyon (https://github.com/sajjon)
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -28,7 +28,7 @@ import Foundation
 ///
 /// New deep-link types should be added as new cases here, with a matching entry
 /// in `DeepLink.Path` and parsing logic in the URL initializer below.
-public enum DeepLink {
+public enum DeepLink: Sendable {
     /// `https://zhip.app/send?to=...&amount=...` — pre-fills the Send screen.
     case send(TransactionIntent)
 }

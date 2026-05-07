@@ -2,6 +2,7 @@
 import XCTest
 import Zesame
 
+@MainActor
 final class GasPriceValidatorTests: XCTestCase {
     private let sut = GasPriceValidator()
 
