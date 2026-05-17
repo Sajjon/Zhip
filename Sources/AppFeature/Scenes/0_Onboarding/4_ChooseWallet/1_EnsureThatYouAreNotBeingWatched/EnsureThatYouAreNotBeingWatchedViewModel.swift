@@ -26,6 +26,7 @@ import Combine
 import Foundation
 import NanoViewControllerController
 import NanoViewControllerCore
+import NanoViewControllerNavigation
 
 // MARK: - User action and navigation steps
 
@@ -41,31 +42,27 @@ public enum EnsureThatYouAreNotBeingWatchedUserAction: Sendable {
 
 /// Wires the cancel bar-button and the understand CTA to navigation steps.
 /// No `Publishers` — the screen is entirely static.
-public final class EnsureThatYouAreNotBeingWatchedViewModel: BaseViewModel<
-    EnsureThatYouAreNotBeingWatchedUserAction,
+public final class EnsureThatYouAreNotBeingWatchedViewModel: AbstractViewModel<
     EnsureThatYouAreNotBeingWatchedViewModel.InputFromView,
-    EnsureThatYouAreNotBeingWatchedViewModel.Publishers
+    EnsureThatYouAreNotBeingWatchedViewModel.Publishers,
+    EnsureThatYouAreNotBeingWatchedUserAction
 > {
     /// Wires both inputs (cancel bar-button + understand CTA) directly to navigator steps.
     override public func transform(input: Input) -> Output<Publishers, NavigationStep> {
-        func userDid(_ userAction: NavigationStep) {
-            navigator.next(userAction)
-        }
+        let navigator = Navigator<NavigationStep>()
 
         // MARK: Navigate
-
-        [
-            input.fromController.leftBarButtonTrigger
-                .sink { userDid(.cancel) },
-
-            input.fromView.understandTrigger
-                .sink { userDid(.understand) },
-        ].forEach { $0.store(in: &cancellables) }
 
         return Output(
             publishers: Publishers(),
             navigation: navigator.navigation
-        )
+        ) {
+            input.fromController.leftBarButtonTrigger
+                .sink { [navigator] in navigator.next(.cancel) }
+
+            input.fromView.understandTrigger
+                .sink { [navigator] in navigator.next(.understand) }
+        }
     }
 }
 

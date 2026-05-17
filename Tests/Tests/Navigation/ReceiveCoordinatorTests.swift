@@ -87,7 +87,8 @@ final class ReceiveCoordinatorTests: XCTestCase {
         sut.navigator.navigation.sink { received = $0 }.store(in: &cancellables)
         let receive = try XCTUnwrap(top(as: Receive.self))
 
-        receive.viewModel.navigator.next(.finish)
+        // `.finish` is wired to the right-bar button.
+        receive.rightBarButtonSubject.send(())
         drainRunLoop()
 
         if case .finish = received { } else {
@@ -98,10 +99,10 @@ final class ReceiveCoordinatorTests: XCTestCase {
     func test_requestTransaction_presentsShareSheetWithoutCrashing() throws {
         sut.start()
         let receive = try XCTUnwrap(top(as: Receive.self))
-        let address = try Address(string: "e3090a1309DfAC40352d03dEc6cCD9cAd213e76B")
-        let intent = TransactionIntent(to: address)
 
-        receive.viewModel.navigator.next(.requestTransaction(intent))
+        // Tap the "Request payment" button — second UIButton in `ReceiveView`
+        // (`copyMyAddressButton`, then `requestPaymentButton`).
+        try tapButton(at: 1, in: receive.view)
         drainRunLoop()
         // UIActivityViewController presented; we just verify the branch ran.
     }

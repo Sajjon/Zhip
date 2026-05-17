@@ -28,6 +28,7 @@ import Foundation
 import NanoViewControllerCombine
 import NanoViewControllerController
 import NanoViewControllerCore
+import NanoViewControllerNavigation
 import Validation
  import Zesame
 
@@ -44,10 +45,10 @@ public enum SignTransactionUserAction: Sendable {
 /// View model for step 3 of Send. Validates the password against the saved
 /// keystore and (on tap) runs the sign+broadcast use case. Errors are tracked
 /// so wrong-password feedback flips the floating-label field red.
-public final class SignTransactionViewModel: BaseViewModel<
-    SignTransactionUserAction,
+public final class SignTransactionViewModel: AbstractViewModel<
     SignTransactionViewModel.InputFromView,
-    SignTransactionViewModel.Publishers
+    SignTransactionViewModel.Publishers,
+    SignTransactionUserAction
 > {
     /// Use case that signs the payment with the keystore-derived private key and broadcasts.
     @Injected(\.sendTransactionUseCase) private var sendTransactionUseCase: SendTransactionUseCase
@@ -78,18 +79,19 @@ public final class SignTransactionViewModel: BaseViewModel<
     /// pop the user out of Send instead of trapping. Defense in depth — Send
     /// should not normally be reachable without a wallet.
     override public func transform(input: Input) -> Output<Publishers, NavigationStep> {
-        func userDid(_ userAction: NavigationStep) {
-            navigator.next(userAction)
-        }
+        let navigator = Navigator<NavigationStep>()
 
         guard let _wallet = walletStorageUseCase.loadWallet() else {
-            // Schedule the navigation pulse on the next runloop tick so the
-            // coordinator's subscription is in place before we emit.
-            input.fromController.viewDidLoad
-                .first()
-                .sink { _ in userDid(.walletUnavailable) }
-                .store(in: &cancellables)
-            return inertOutput()
+            return Output(
+                publishers: Self.inertPublishers(),
+                navigation: navigator.navigation
+            ) {
+                // Schedule the navigation pulse on the next runloop tick so the
+                // coordinator's subscription is in place before we emit.
+                input.fromController.viewDidLoad
+                    .first()
+                    .sink { [navigator] _ in navigator.next(.walletUnavailable) }
+            }
         }
         let _payment = payment
 
@@ -126,18 +128,6 @@ public final class SignTransactionViewModel: BaseViewModel<
             .prepend(false)
             .eraseToAnyPublisher()
 
-        [
-            input.fromView.signAndSendTrigger
-                .withLatestFrom(encryptionPassword)
-                .flatMapLatest {
-                    self.sendTransactionUseCase.sendTransaction(for: _payment, wallet: _wallet, encryptionPassword: $0)
-                        .trackActivity(activityIndicator)
-                        .trackError(errorTracker)
-                        .replaceErrorWithEmpty()
-                }
-                .sink { userDid(.sign($0)) },
-        ].forEach { $0.store(in: &cancellables) }
-
         let encryptionPasswordValidation = // map `editingChanged` to `editingDidBegin`
             input.fromView.encryptionPassword.mapToVoid().map { true }
             .merge(with: input.fromView.isEditingEncryptionPassword).withLatestFrom(encryptionPasswordValidationValue) {
@@ -157,6 +147,8 @@ public final class SignTransactionViewModel: BaseViewModel<
             .removeDuplicates()
             .eraseToAnyPublisher()
 
+        let sendTransactionUseCase = sendTransactionUseCase
+
         return Output(
             publishers: Publishers(
                 isSignButtonEnabled: isSignButtonEnabled,
@@ -165,22 +157,30 @@ public final class SignTransactionViewModel: BaseViewModel<
                 inputBecomeFirstResponder: input.fromController.viewDidAppear
             ),
             navigation: navigator.navigation
-        )
+        ) {
+            input.fromView.signAndSendTrigger
+                .withLatestFrom(encryptionPassword)
+                .flatMapLatest {
+                    sendTransactionUseCase.sendTransaction(for: _payment, wallet: _wallet, encryptionPassword: $0)
+                        .trackActivity(activityIndicator)
+                        .trackError(errorTracker)
+                        .replaceErrorWithEmpty()
+                }
+                .sink { [navigator] in navigator.next(.sign($0)) }
+        }
     }
 
     /// Static, no-op publisher bag returned when the wallet has been removed
     /// out from under us. Coordinator pops the Send modal immediately after
     /// observing `.walletUnavailable`, so these placeholder publishers are
-    /// only briefly attached.
-    private func inertOutput() -> Output<Publishers, NavigationStep> {
-        Output(
-            publishers: Publishers(
-                isSignButtonEnabled: Just(false).eraseToAnyPublisher(),
-                isSignButtonLoading: Just(false).eraseToAnyPublisher(),
-                encryptionPasswordValidation: Just(.empty).eraseToAnyPublisher(),
-                inputBecomeFirstResponder: Empty().eraseToAnyPublisher()
-            ),
-            navigation: navigator.navigation
+    /// only briefly attached. `static` because it depends on no instance state —
+    /// the navigator is now local to `transform(input:)`.
+    private static func inertPublishers() -> Publishers {
+        Publishers(
+            isSignButtonEnabled: Just(false).eraseToAnyPublisher(),
+            isSignButtonLoading: Just(false).eraseToAnyPublisher(),
+            encryptionPasswordValidation: Just(.empty).eraseToAnyPublisher(),
+            inputBecomeFirstResponder: Empty().eraseToAnyPublisher()
         )
     }
 }

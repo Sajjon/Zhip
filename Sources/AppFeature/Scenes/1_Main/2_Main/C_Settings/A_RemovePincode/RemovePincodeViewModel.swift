@@ -27,6 +27,7 @@ import Foundation
 import NanoViewControllerCombine
 import NanoViewControllerController
 import NanoViewControllerCore
+import NanoViewControllerNavigation
 import Validation
 
 // MARK: - RemovePincodeUserAction
@@ -43,10 +44,10 @@ public enum RemovePincodeUserAction: Sendable {
 
 /// View model for the pincode-removal modal. Mirrors the unlock-screen pattern:
 /// auto-fires removal as soon as the entered pincode matches the saved one.
-public final class RemovePincodeViewModel: BaseViewModel<
-    RemovePincodeUserAction,
+public final class RemovePincodeViewModel: AbstractViewModel<
     RemovePincodeViewModel.InputFromView,
-    RemovePincodeViewModel.Publishers
+    RemovePincodeViewModel.Publishers,
+    RemovePincodeUserAction
 > {
     /// Used to read the current pincode for comparison + delete on success.
     private let useCase: PincodeUseCase
@@ -66,9 +67,7 @@ public final class RemovePincodeViewModel: BaseViewModel<
     /// Wires real-time pincode comparison; on first match, deletes the pincode
     /// and emits `.removePincode`. Cancel bar-button emits `.cancelPincodeRemoval`.
     override public func transform(input: Input) -> Output<Publishers, NavigationStep> {
-        func userDid(_ userAction: NavigationStep) {
-            navigator.next(userAction)
-        }
+        let navigator = Navigator<NavigationStep>()
 
         let validator = InputValidator(existingPincode: pincode)
 
@@ -77,26 +76,24 @@ public final class RemovePincodeViewModel: BaseViewModel<
                 validator.validate(unconfirmedPincode: $0)
             }.eraseToAnyPublisher()
 
-        [
-            input.fromController.leftBarButtonTrigger
-                .sink { userDid(.cancelPincodeRemoval) },
-
-            // First valid match wires straight to delete-then-emit.
-            pincodeValidationValue.filter(\.isValid)
-                .mapToVoid()
-                .sink { [weak useCase] in
-                    useCase?.deletePincode()
-                    userDid(.removePincode)
-                },
-        ].forEach { $0.store(in: &cancellables) }
-
         return Output(
             publishers: Publishers(
                 inputBecomeFirstResponder: input.fromController.viewDidAppear,
                 pincodeValidation: pincodeValidationValue.map(\.validation).eraseToAnyPublisher()
             ),
             navigation: navigator.navigation
-        )
+        ) {
+            input.fromController.leftBarButtonTrigger
+                .sink { [navigator] in navigator.next(.cancelPincodeRemoval) }
+
+            // First valid match wires straight to delete-then-emit.
+            pincodeValidationValue.filter(\.isValid)
+                .mapToVoid()
+                .sink { [navigator, useCase] in
+                    useCase.deletePincode()
+                    navigator.next(.removePincode)
+                }
+        }
     }
 }
 

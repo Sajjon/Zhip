@@ -90,7 +90,11 @@ final class SetPincodeCoordinatorTests: XCTestCase {
         sut.start()
         let choose = try XCTUnwrap(top(as: ChoosePincode.self))
 
-        try choose.viewModel.navigator.next(.chosePincode(makePincode()))
+        // Enter a 4-digit pincode and tap Done. The done button is the lone
+        // UIButton in `ChoosePincodeView`; `pincode.filterNil()` gates the
+        // tap so we must enter before tapping.
+        try enterPincode(makePincode(), in: choose.view)
+        try tapButton(at: 0, in: choose.view)
         drainRunLoop()
 
         XCTAssertTrue(top(as: ConfirmNewPincode.self) != nil)
@@ -102,7 +106,8 @@ final class SetPincodeCoordinatorTests: XCTestCase {
         sut.navigator.navigation.sink { received = $0 }.store(in: &cancellables)
         let choose = try XCTUnwrap(top(as: ChoosePincode.self))
 
-        choose.viewModel.navigator.next(.skip)
+        // Skip is wired to the right-bar button.
+        choose.rightBarButtonSubject.send(())
         drainRunLoop()
 
         XCTAssertTrue(mockPincode.skipSettingUpPincodeCallCount > 0)
@@ -115,13 +120,19 @@ final class SetPincodeCoordinatorTests: XCTestCase {
 
     func test_confirmPincodeConfirm_bubblesSetPincode() throws {
         sut.start()
-        try top(as: ChoosePincode.self)?.viewModel.navigator.next(.chosePincode(makePincode()))
+        let choose = try XCTUnwrap(top(as: ChoosePincode.self))
+        try enterPincode(makePincode(), in: choose.view)
+        try tapButton(at: 0, in: choose.view) // done
         drainRunLoop()
         var received: SetPincodeCoordinatorNavigationStep?
         sut.navigator.navigation.sink { received = $0 }.store(in: &cancellables)
         let confirm = try XCTUnwrap(top(as: ConfirmNewPincode.self))
 
-        confirm.viewModel.navigator.next(.confirmPincode)
+        // Re-enter the same pincode, tick the "I've backed up" checkbox,
+        // then tap the confirm button (lone UIButton in `ConfirmNewPincodeView`).
+        try enterPincode(makePincode(), in: confirm.view)
+        try setCheckbox(on: true, in: confirm.view)
+        try tapButton(at: 0, in: confirm.view)
         drainRunLoop()
 
         if case .setPincode = received { } else {
@@ -131,13 +142,16 @@ final class SetPincodeCoordinatorTests: XCTestCase {
 
     func test_confirmPincodeSkip_bubblesSetPincodeAndCallsSkip() throws {
         sut.start()
-        try top(as: ChoosePincode.self)?.viewModel.navigator.next(.chosePincode(makePincode()))
+        let choose = try XCTUnwrap(top(as: ChoosePincode.self))
+        try enterPincode(makePincode(), in: choose.view)
+        try tapButton(at: 0, in: choose.view)
         drainRunLoop()
         var received: SetPincodeCoordinatorNavigationStep?
         sut.navigator.navigation.sink { received = $0 }.store(in: &cancellables)
         let confirm = try XCTUnwrap(top(as: ConfirmNewPincode.self))
 
-        confirm.viewModel.navigator.next(.skip)
+        // Skip wired to the right-bar button.
+        confirm.rightBarButtonSubject.send(())
         drainRunLoop()
 
         XCTAssertTrue(mockPincode.skipSettingUpPincodeCallCount > 0)

@@ -26,6 +26,7 @@
 import Combine
 import Factory
 import NanoViewControllerController
+import NanoViewControllerCore
 import XCTest
 
 /// Tests for `ReceiveViewModel`.
@@ -72,9 +73,9 @@ final class ReceiveViewModelTests: XCTestCase {
     }
 
     func test_rightBarButton_emitsFinish() {
-        let sut = makeSUT()
+        let (_, output) = makeSUT()
         var observed: ReceiveUserAction?
-        sut.navigator.navigation.sink { observed = $0 }.store(in: &cancellables)
+        output.navigation.sink { observed = $0 }.store(in: &cancellables)
 
         fakeController.rightBarButtonTriggerSubject.send(())
 
@@ -84,9 +85,9 @@ final class ReceiveViewModelTests: XCTestCase {
     }
 
     func test_shareTrigger_emitsRequestTransaction() {
-        let sut = makeSUT()
+        let (_, output) = makeSUT()
         var observed: ReceiveUserAction?
-        sut.navigator.navigation.sink { observed = $0 }.store(in: &cancellables)
+        output.navigation.sink { observed = $0 }.store(in: &cancellables)
 
         // Zero-amount transaction is always valid — just trigger a share.
         shareSubject.send(())
@@ -97,16 +98,19 @@ final class ReceiveViewModelTests: XCTestCase {
     }
 
     func test_receivingAddress_matchesWalletAddress() {
-        let sut = makeSUT()
+        let (_, output) = makeSUT()
         var receivedAddress: String?
-        let output = sut.transform(input: makeInput())
         output.publishers.receivingAddress.sink { receivedAddress = $0 }.store(in: &cancellables)
 
         XCTAssertEqual(receivedAddress, mockWallet.storedWallet?.bech32Address.asString)
     }
 
     func test_copyMyAddressTrigger_copiesAddressAndEmitsToast() {
-        _ = makeSUT()
+        // Retain `output` (and therefore its `cancellables`) for the lifetime
+        // of the test — `Output.cancellables` is what keeps the `.sink` on
+        // `copyMyAddressTrigger` alive. Discarding the tuple would also drop
+        // the subscription and the copy/toast side effects would never fire.
+        let (_, output) = makeSUT()
         var emittedToast: Toast?
         fakeController.toastSubject.sink { emittedToast = $0 }.store(in: &cancellables)
 
@@ -114,12 +118,13 @@ final class ReceiveViewModelTests: XCTestCase {
 
         XCTAssertEqual(mockPasteboard.copiedString, mockWallet.storedWallet?.bech32Address.asString)
         XCTAssertNotNil(emittedToast)
+        _ = output // keep alive
     }
 
-    private func makeSUT() -> ReceiveViewModel {
+    private func makeSUT() -> (ReceiveViewModel, Output<ReceiveViewModel.Publishers, ReceiveViewModel.NavigationStep>) {
         let sut = ReceiveViewModel()
-        _ = sut.transform(input: makeInput())
-        return sut
+        let output = sut.transform(input: makeInput())
+        return (sut, output)
     }
 
     private func makeInput() -> ReceiveViewModel.Input {

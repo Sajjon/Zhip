@@ -36,11 +36,18 @@ import Zesame
 final class RestoreWalletCoordinatorTests: XCTestCase {
     private var window: UIWindow!
     private var navigationController: NavigationBarLayoutingNavigationController!
+    private var mockWallet: MockWalletUseCase!
     private var cancellables: Set<AnyCancellable> = []
     private var sut: RestoreWalletCoordinator!
 
     override func setUp() {
         super.setUp()
+        // Register the mocked wallet use case so the `RestoreWalletViewModel`'s
+        // `restoreWalletUseCase` resolves to a fake that emits a wallet
+        // synchronously instead of running real keystore derivation.
+        mockWallet = MockWalletUseCase()
+        Container.shared.walletStorageUseCase.register { [unowned self] in mainActorOnly { mockWallet } }
+        Container.shared.restoreWalletUseCase.register { [unowned self] in mainActorOnly { mockWallet } }
         navigationController = NavigationBarLayoutingNavigationController()
         window = TestWindowFactory.make(frame: .init(x: 0, y: 0, width: 320, height: 480))
         window.rootViewController = navigationController
@@ -56,6 +63,7 @@ final class RestoreWalletCoordinatorTests: XCTestCase {
         window = nil
         navigationController = nil
         Container.shared.manager.reset()
+        mockWallet = nil
         super.tearDown()
     }
 
@@ -80,7 +88,7 @@ final class RestoreWalletCoordinatorTests: XCTestCase {
         sut.start()
         let ensure = try XCTUnwrap(top(as: EnsureThatYouAreNotBeingWatched.self))
 
-        ensure.viewModel.navigator.next(.understand)
+        try tapButton(at: 0, in: ensure.view) // "I understand"
         drainRunLoop()
 
         XCTAssertTrue(top(as: RestoreWallet.self) != nil)
@@ -92,7 +100,8 @@ final class RestoreWalletCoordinatorTests: XCTestCase {
         sut.navigator.navigation.sink { received = $0 }.store(in: &cancellables)
         let ensure = try XCTUnwrap(top(as: EnsureThatYouAreNotBeingWatched.self))
 
-        ensure.viewModel.navigator.next(.cancel)
+        // `.cancel` is wired to the left-bar button.
+        ensure.leftBarButtonSubject.send(())
         drainRunLoop()
 
         if case .cancel = received { } else {
@@ -104,14 +113,29 @@ final class RestoreWalletCoordinatorTests: XCTestCase {
 
     func test_restoreWallet_bubblesFinishedRestoring() throws {
         sut.start()
-        top(as: EnsureThatYouAreNotBeingWatched.self)?.viewModel.navigator.next(.understand)
+        let ensure = try XCTUnwrap(top(as: EnsureThatYouAreNotBeingWatched.self))
+        try tapButton(at: 0, in: ensure.view) // "I understand"
         drainRunLoop()
         var received: RestoreWalletCoordinatorNavigationStep?
         sut.navigator.navigation.sink { received = $0 }.store(in: &cancellables)
         let restore = try XCTUnwrap(top(as: RestoreWallet.self))
-        let wallet = TestWalletFactory.makeWallet()
+        // Seed the mock so the restore use case returns this wallet (`MockWalletUseCase.restoreWalletResult`).
+        mockWallet.restoreWalletResult = .success(TestWalletFactory.makeWallet(origin: .importedKeystore))
 
-        restore.viewModel.navigator.next(.restoreWallet(wallet))
+        // Default segment is "private key" — fill its three fields with valid
+        // inputs and tap the restore button. The private-key field expects
+        // a 32-byte hex string (64 chars); the two password fields must
+        // match and be ≥ 8 chars.
+        let privateKeyHex = "0E891B9DFF485000C7D1DC22ECF3A583CC50328684321D61947A86E57CF6C638"
+        // The view hierarchy contains `RestoreUsingPrivateKeyView`'s three
+        // `FloatingLabelTextField`s; private key is the first.
+        try setText(privateKeyHex, in: restore.view, ofType: FloatingLabelTextField.self, at: 0)
+        try setText("apabanan123", in: restore.view, ofType: FloatingLabelTextField.self, at: 1)
+        try setText("apabanan123", in: restore.view, ofType: FloatingLabelTextField.self, at: 2)
+        // The restore CTA at the bottom of `RestoreWalletView` is a `ButtonWithSpinner`
+        // — pick it specifically so the inner "Show" button on the private-key
+        // field doesn't accidentally claim index 0.
+        try tapControl(ButtonWithSpinner.self, at: 0, in: restore.view)
         drainRunLoop()
 
         if case .finishedRestoring = received { } else {

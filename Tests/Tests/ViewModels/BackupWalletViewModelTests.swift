@@ -78,9 +78,9 @@ final class BackupWalletViewModelTests: XCTestCase {
 
     func test_cancellable_leftBarButton_emitsCancelOrDismiss() {
         let sut = makeSUT(mode: .cancellable)
-        _ = sut.transform(input: makeInput())
+        let output = sut.transform(input: makeInput())
         var observed: BackupWalletUserAction?
-        sut.navigator.navigation.sink { observed = $0 }.store(in: &cancellables)
+        output.navigation.sink { observed = $0 }.store(in: &cancellables)
 
         fakeController.leftBarButtonTriggerSubject.send(())
 
@@ -91,9 +91,9 @@ final class BackupWalletViewModelTests: XCTestCase {
 
     func test_dismissable_rightBarButton_emitsCancelOrDismiss() {
         let sut = makeSUT(mode: .dismissable)
-        _ = sut.transform(input: makeInput())
+        let output = sut.transform(input: makeInput())
         var observed: BackupWalletUserAction?
-        sut.navigator.navigation.sink { observed = $0 }.store(in: &cancellables)
+        output.navigation.sink { observed = $0 }.store(in: &cancellables)
 
         fakeController.rightBarButtonTriggerSubject.send(())
 
@@ -104,9 +104,9 @@ final class BackupWalletViewModelTests: XCTestCase {
 
     func test_revealKeystoreTrigger_emitsRevealKeystore() {
         let sut = makeSUT()
-        _ = sut.transform(input: makeInput())
+        let output = sut.transform(input: makeInput())
         var observed: BackupWalletUserAction?
-        sut.navigator.navigation.sink { observed = $0 }.store(in: &cancellables)
+        output.navigation.sink { observed = $0 }.store(in: &cancellables)
 
         revealKeystore.send(())
 
@@ -117,9 +117,9 @@ final class BackupWalletViewModelTests: XCTestCase {
 
     func test_revealPrivateKeyTrigger_emitsRevealPrivateKey() {
         let sut = makeSUT()
-        _ = sut.transform(input: makeInput())
+        let output = sut.transform(input: makeInput())
         var observed: BackupWalletUserAction?
-        sut.navigator.navigation.sink { observed = $0 }.store(in: &cancellables)
+        output.navigation.sink { observed = $0 }.store(in: &cancellables)
 
         revealPrivateKey.send(())
 
@@ -132,9 +132,9 @@ final class BackupWalletViewModelTests: XCTestCase {
 
     func test_doneTrigger_withoutAgreement_doesNotEmit() {
         let sut = makeSUT()
-        _ = sut.transform(input: makeInput())
+        let output = sut.transform(input: makeInput())
         var observed: BackupWalletUserAction?
-        sut.navigator.navigation.sink { observed = $0 }.store(in: &cancellables)
+        output.navigation.sink { observed = $0 }.store(in: &cancellables)
 
         isUnderstandsRisk.send(false)
         doneTrigger.send(())
@@ -144,9 +144,9 @@ final class BackupWalletViewModelTests: XCTestCase {
 
     func test_doneTrigger_withAgreement_emitsBackupWallet() {
         let sut = makeSUT()
-        _ = sut.transform(input: makeInput())
+        let output = sut.transform(input: makeInput())
         var observed: BackupWalletUserAction?
-        sut.navigator.navigation.sink { observed = $0 }.store(in: &cancellables)
+        output.navigation.sink { observed = $0 }.store(in: &cancellables)
 
         isUnderstandsRisk.send(true)
         doneTrigger.send(())
@@ -160,7 +160,7 @@ final class BackupWalletViewModelTests: XCTestCase {
 
     func test_copyKeystoreTrigger_writesKeystoreJSONToPasteboardAndSendsToast() {
         let sut = makeSUT()
-        _ = sut.transform(input: makeInput())
+        let output = sut.transform(input: makeInput())
         var toasts: [Toast] = []
         fakeController.toastSubject.sink { toasts.append($0) }.store(in: &cancellables)
 

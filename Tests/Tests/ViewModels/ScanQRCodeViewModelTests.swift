@@ -25,6 +25,7 @@
 @testable import AppFeature
 import Combine
 import NanoViewControllerController
+import NanoViewControllerCore
 import XCTest
 
 /// Tests for `ScanQRCodeViewModel`.
@@ -52,9 +53,9 @@ final class ScanQRCodeViewModelTests: XCTestCase {
     }
 
     func test_scannedValidBech32Address_emitsScanQRContainingTransaction() {
-        let sut = makeSUT()
+        let (_, output) = makeSUT()
         var observed: ScanQRCodeUserAction?
-        sut.navigator.navigation.sink { observed = $0 }.store(in: &cancellables)
+        output.navigation.sink { observed = $0 }.store(in: &cancellables)
 
         scannedSubject.send("zil175grxdeqchwnc0qghj8qsh5vnqwww353msqj82")
 
@@ -64,9 +65,9 @@ final class ScanQRCodeViewModelTests: XCTestCase {
     }
 
     func test_scannedZilliqaPrefixStripped() {
-        let sut = makeSUT()
+        let (_, output) = makeSUT()
         var observed: ScanQRCodeUserAction?
-        sut.navigator.navigation.sink { observed = $0 }.store(in: &cancellables)
+        output.navigation.sink { observed = $0 }.store(in: &cancellables)
 
         scannedSubject.send("zilliqa://zil175grxdeqchwnc0qghj8qsh5vnqwww353msqj82")
 
@@ -76,11 +77,11 @@ final class ScanQRCodeViewModelTests: XCTestCase {
     }
 
     func test_nilScannedString_emitsToast() {
-        let sut = makeSUT()
+        let (_, output) = makeSUT()
         var toastedCount = 0
         fakeController.toastSubject.sink { _ in toastedCount += 1 }.store(in: &cancellables)
         var observed: ScanQRCodeUserAction?
-        sut.navigator.navigation.sink { observed = $0 }.store(in: &cancellables)
+        output.navigation.sink { observed = $0 }.store(in: &cancellables)
 
         scannedSubject.send(nil)
 
@@ -89,11 +90,11 @@ final class ScanQRCodeViewModelTests: XCTestCase {
     }
 
     func test_invalidScanString_emitsToast() {
-        let sut = makeSUT()
+        let (_, output) = makeSUT()
         var toastedCount = 0
         fakeController.toastSubject.sink { _ in toastedCount += 1 }.store(in: &cancellables)
         var observed: ScanQRCodeUserAction?
-        sut.navigator.navigation.sink { observed = $0 }.store(in: &cancellables)
+        output.navigation.sink { observed = $0 }.store(in: &cancellables)
 
         scannedSubject.send("completely-nonsense")
 
@@ -102,9 +103,9 @@ final class ScanQRCodeViewModelTests: XCTestCase {
     }
 
     func test_leftBarButton_emitsCancel() {
-        let sut = makeSUT()
+        let (_, output) = makeSUT()
         var observed: ScanQRCodeUserAction?
-        sut.navigator.navigation.sink { observed = $0 }.store(in: &cancellables)
+        output.navigation.sink { observed = $0 }.store(in: &cancellables)
 
         fakeController.leftBarButtonTriggerSubject.send(())
 
@@ -113,13 +114,13 @@ final class ScanQRCodeViewModelTests: XCTestCase {
         }
     }
 
-    private func makeSUT() -> ScanQRCodeViewModel {
+    private func makeSUT() -> (ScanQRCodeViewModel, Output<ScanQRCodeViewModel.Publishers, ScanQRCodeViewModel.NavigationStep>) {
         let sut = ScanQRCodeViewModel()
         let input = ScanQRCodeViewModel.Input(
             fromView: .init(scannedQrCodeString: scannedSubject.eraseToAnyPublisher()),
             fromController: fakeController.makeInput()
         )
-        _ = sut.transform(input: input)
-        return sut
+        let output = sut.transform(input: input)
+        return (sut, output)
     }
 }

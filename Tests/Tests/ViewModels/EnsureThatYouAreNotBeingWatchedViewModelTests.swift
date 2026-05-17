@@ -1,6 +1,7 @@
 @testable import AppFeature
 import Combine
 import NanoViewControllerController
+import NanoViewControllerCore
 import XCTest
 
 @MainActor
@@ -23,9 +24,9 @@ final class EnsureThatYouAreNotBeingWatchedViewModelTests: XCTestCase {
     }
 
     func test_understandTrigger_emitsUnderstand() {
-        let sut = makeSUT()
+        let (_, output) = makeSUT()
         var observed: EnsureThatYouAreNotBeingWatchedUserAction?
-        sut.navigator.navigation.sink { observed = $0 }.store(in: &cancellables)
+        output.navigation.sink { observed = $0 }.store(in: &cancellables)
 
         understandTrigger.send(())
 
@@ -35,9 +36,9 @@ final class EnsureThatYouAreNotBeingWatchedViewModelTests: XCTestCase {
     }
 
     func test_leftBarButtonTrigger_emitsCancel() {
-        let sut = makeSUT()
+        let (_, output) = makeSUT()
         var observed: EnsureThatYouAreNotBeingWatchedUserAction?
-        sut.navigator.navigation.sink { observed = $0 }.store(in: &cancellables)
+        output.navigation.sink { observed = $0 }.store(in: &cancellables)
 
         fakeController.leftBarButtonTriggerSubject.send(())
 
@@ -46,7 +47,7 @@ final class EnsureThatYouAreNotBeingWatchedViewModelTests: XCTestCase {
         }
     }
 
-    private func makeSUT() -> EnsureThatYouAreNotBeingWatchedViewModel {
+    private func makeSUT() -> (EnsureThatYouAreNotBeingWatchedViewModel, Output<EnsureThatYouAreNotBeingWatchedViewModel.Publishers, EnsureThatYouAreNotBeingWatchedViewModel.NavigationStep>) {
         let sut = EnsureThatYouAreNotBeingWatchedViewModel()
         let input = EnsureThatYouAreNotBeingWatchedViewModel.Input(
             fromView: .init(
@@ -54,7 +55,7 @@ final class EnsureThatYouAreNotBeingWatchedViewModelTests: XCTestCase {
             ),
             fromController: fakeController.makeInput()
         )
-        _ = sut.transform(input: input)
-        return sut
+        let output = sut.transform(input: input)
+        return (sut, output)
     }
 }

@@ -28,6 +28,7 @@ import Foundation
 import NanoViewControllerCombine
 import NanoViewControllerController
 import NanoViewControllerCore
+import NanoViewControllerNavigation
 import Validation
 import Zesame
 
@@ -43,7 +44,8 @@ private let encryptionPasswordMode: WalletEncryptionPassword.Mode = .newOrRestor
 /// The set of outcomes the user can produce on the "create new wallet" screen.
 ///
 /// Emitted to the parent coordinator (`CreateNewWalletCoordinator`) via the
-/// `BaseViewModel.navigator` stepper so the coordinator can advance or dismiss the flow.
+/// `Navigator<NavigationStep>` created in `transform(input:)` so the coordinator
+/// can advance or dismiss the flow.
 public enum CreateNewWalletUserAction: Sendable {
     /// User confirmed a valid password and a fresh `Wallet` was successfully generated.
     /// - Parameter Wallet: The newly created wallet, ready to be persisted by the coordinator.
@@ -62,10 +64,10 @@ public enum CreateNewWalletUserAction: Sendable {
 /// 3. On tap of "continue", invoke `CreateWalletUseCase` to derive a wallet from the password
 ///    and forward the result through `navigator` as a `.createWallet(_:)` step.
 /// 4. Forward the left bar-button tap as `.cancel`.
-public final class CreateNewWalletViewModel: BaseViewModel<
-    CreateNewWalletUserAction,
+public final class CreateNewWalletViewModel: AbstractViewModel<
     CreateNewWalletViewModel.InputFromView,
-    CreateNewWalletViewModel.Publishers
+    CreateNewWalletViewModel.Publishers,
+    CreateNewWalletUserAction
 > {
     /// Use case that performs the (CPU-intensive) keystore derivation from a plaintext password.
     /// Resolved lazily via Factory so tests can register a fast in-memory fake.
@@ -74,14 +76,10 @@ public final class CreateNewWalletViewModel: BaseViewModel<
     /// Wires UI inputs and controller-lifecycle inputs to the reactive `Publishers` consumed by the view.
     ///
     /// All side-effecting subscriptions (navigation, `createWallet` use-case invocation) are
-    /// eagerly stored in `cancellables` here; pure `Publishers` streams are returned and bound
-    /// by the view in `populate(with:)`.
+    /// expressed as `.sink { … }` statements in the returned `Output`'s trailing builder block;
+    /// pure `Publishers` streams are returned and bound by the view in `populate(with:)`.
     override public func transform(input: Input) -> Output<Publishers, NavigationStep> {
-        /// Local helper that pushes a navigation step onto the `BaseViewModel` navigator.
-        /// Kept as a nested function purely for readability of the call sites below.
-        func userDid(_ userAction: NavigationStep) {
-            navigator.next(userAction)
-        }
+        let navigator = Navigator<NavigationStep>()
 
         let unconfirmedPassword = input.fromView.newEncryptionPassword
         let confirmingPassword = input.fromView.confirmedNewEncryptionPassword
@@ -110,30 +108,6 @@ public final class CreateNewWalletViewModel: BaseViewModel<
 
         // Tracks the in-flight wallet-creation work so the button can show a spinner.
         let activityIndicator = ActivityIndicator()
-
-        [
-            // Cancel button → propagate as `.cancel` navigation step.
-            input.fromController.leftBarButtonTrigger
-                .sink { userDid(.cancel) },
-
-            // Continue button:
-            //   1. snapshot the latest *valid* password (may be nil → filterNil drops it),
-            //   2. flatMapLatest into the createWallet use case (cancels any prior in-flight),
-            //   3. track activity for the spinner,
-            //   4. swallow errors (UI surfaces them via toast elsewhere; we don't want
-            //      a single failure to terminate the upstream tap pipeline),
-            //   5. emit the resulting wallet as `.createWallet(_:)` to the coordinator.
-            input.fromView.createWalletTrigger
-                .withLatestFrom(confirmEncryptionPasswordValidationValue.map { $0.value?.validPassword }.filterNil()) {
-                    $1
-                }
-                .flatMapLatest {
-                    self.createWalletUseCase.createNewWallet(encryptionPassword: $0)
-                        .trackActivity(activityIndicator)
-                        .replaceErrorWithEmpty()
-                }
-                .sink { userDid(.createWallet($0)) },
-        ].forEach { $0.store(in: &cancellables) }
 
         // We want to *show* the validation error message only after the user has either
         // typed something OR finished editing the field — never on the very first render
@@ -193,7 +167,29 @@ public final class CreateNewWalletViewModel: BaseViewModel<
                 isButtonLoading: activityIndicator.asPublisher()
             ),
             navigation: navigator.navigation
-        )
+        ) {
+            // Cancel button → propagate as `.cancel` navigation step.
+            input.fromController.leftBarButtonTrigger
+                .sink { [navigator] in navigator.next(.cancel) }
+
+            // Continue button:
+            //   1. snapshot the latest *valid* password (may be nil → filterNil drops it),
+            //   2. flatMapLatest into the createWallet use case (cancels any prior in-flight),
+            //   3. track activity for the spinner,
+            //   4. swallow errors (UI surfaces them via toast elsewhere; we don't want
+            //      a single failure to terminate the upstream tap pipeline),
+            //   5. emit the resulting wallet as `.createWallet(_:)` to the coordinator.
+            input.fromView.createWalletTrigger
+                .withLatestFrom(confirmEncryptionPasswordValidationValue.map { $0.value?.validPassword }.filterNil()) {
+                    $1
+                }
+                .flatMapLatest { [createWalletUseCase] in
+                    createWalletUseCase.createNewWallet(encryptionPassword: $0)
+                        .trackActivity(activityIndicator)
+                        .replaceErrorWithEmpty()
+                }
+                .sink { [navigator] in navigator.next(.createWallet($0)) }
+        }
     }
 }
 

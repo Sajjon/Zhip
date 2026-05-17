@@ -110,9 +110,9 @@ final class SettingsViewModelTests: XCTestCase {
 
     func test_rightBarButton_emitsCloseSettings() {
         let sut = makeSUT()
-        _ = sut.transform(input: makeInput())
+        let output = sut.transform(input: makeInput())
         var observed: SettingsNavigation?
-        sut.navigator.navigation.sink { observed = $0 }.store(in: &cancellables)
+        output.navigation.sink { observed = $0 }.store(in: &cancellables)
 
         fakeController.rightBarButtonTriggerSubject.send(())
 
@@ -121,9 +121,9 @@ final class SettingsViewModelTests: XCTestCase {
 
     func test_selectedIndexPath_emitsItemDestination() {
         let sut = makeSUT()
-        _ = sut.transform(input: makeInput())
+        let output = sut.transform(input: makeInput())
         var observed: SettingsNavigation?
-        sut.navigator.navigation.sink { observed = $0 }.store(in: &cancellables)
+        output.navigation.sink { observed = $0 }.store(in: &cancellables)
 
         fakeController.viewWillAppearSubject.send(())
         selectedIndexPath.send(IndexPath(row: 1, section: 3))

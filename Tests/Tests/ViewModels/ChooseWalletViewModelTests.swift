@@ -1,6 +1,7 @@
 @testable import AppFeature
 import Combine
 import NanoViewControllerController
+import NanoViewControllerCore
 import XCTest
 
 @MainActor
@@ -26,9 +27,9 @@ final class ChooseWalletViewModelTests: XCTestCase {
     }
 
     func test_createNewWalletTrigger_emitsCreateNewWallet() {
-        let sut = makeSUT()
+        let (_, output) = makeSUT()
         var observed: ChooseWalletUserAction?
-        sut.navigator.navigation.sink { observed = $0 }.store(in: &cancellables)
+        output.navigation.sink { observed = $0 }.store(in: &cancellables)
 
         createNewTrigger.send(())
 
@@ -38,9 +39,9 @@ final class ChooseWalletViewModelTests: XCTestCase {
     }
 
     func test_restoreWalletTrigger_emitsRestoreWallet() {
-        let sut = makeSUT()
+        let (_, output) = makeSUT()
         var observed: ChooseWalletUserAction?
-        sut.navigator.navigation.sink { observed = $0 }.store(in: &cancellables)
+        output.navigation.sink { observed = $0 }.store(in: &cancellables)
 
         restoreTrigger.send(())
 
@@ -49,7 +50,7 @@ final class ChooseWalletViewModelTests: XCTestCase {
         }
     }
 
-    private func makeSUT() -> ChooseWalletViewModel {
+    private func makeSUT() -> (ChooseWalletViewModel, Output<ChooseWalletViewModel.Publishers, ChooseWalletUserAction>) {
         let sut = ChooseWalletViewModel()
         let input = ChooseWalletViewModel.Input(
             fromView: .init(
@@ -58,7 +59,7 @@ final class ChooseWalletViewModelTests: XCTestCase {
             ),
             fromController: fakeController.makeInput()
         )
-        _ = sut.transform(input: input)
-        return sut
+        let output = sut.transform(input: input)
+        return (sut, output)
     }
 }

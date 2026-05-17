@@ -28,6 +28,7 @@ import Foundation
 import NanoViewControllerCombine
 import NanoViewControllerController
 import NanoViewControllerCore
+import NanoViewControllerNavigation
 import Validation
  import Zesame
 
@@ -50,10 +51,10 @@ public enum PrepareTransactionUserAction: Sendable {
 /// - real-time per-field validation (recipient, amount, gas limit, gas price);
 /// - cross-field "sufficient funds" check;
 /// - pre-fill from inbound `TransactionIntent` (deep-link or QR scan).
-public final class PrepareTransactionViewModel: BaseViewModel<// swiftlint:disable:this type_body_length
-    PrepareTransactionUserAction,
+public final class PrepareTransactionViewModel: AbstractViewModel<// swiftlint:disable:this type_body_length
     PrepareTransactionViewModel.InputFromView,
-    PrepareTransactionViewModel.Publishers
+    PrepareTransactionViewModel.Publishers,
+    PrepareTransactionUserAction
 > {
     /// Network façade for balance + gas-price fetches.
     @Injected(\.transactionsUseCase) private var transactionUseCase: TransactionsUseCase
@@ -70,9 +71,7 @@ public final class PrepareTransactionViewModel: BaseViewModel<// swiftlint:disab
 
     // swiftlint:disable:next function_body_length
     override public func transform(input: Input) -> Output<Publishers, NavigationStep> {
-        func userIntends(to intention: NavigationStep) {
-            navigator.next(intention)
-        }
+        let navigator = Navigator<NavigationStep>()
 
         let wallet = walletStorageUseCase.wallet.filterNil().replaceErrorWithEmpty()
         let activityIndicator = ActivityIndicator()
@@ -244,18 +243,6 @@ public final class PrepareTransactionViewModel: BaseViewModel<// swiftlint:disab
             }
             .eraseToAnyPublisher()
 
-        // Setup navigation
-        [
-            input.fromController.rightBarButtonTrigger
-                .sink { userIntends(to: .cancel) },
-
-            input.fromView.scanQRTrigger
-                .sink { userIntends(to: .scanQRCode) },
-
-            input.fromView.toReviewTrigger.withLatestFrom(payment.filterNil())
-                .sink { userIntends(to: .reviewPayment($0)) },
-        ].forEach { $0.store(in: &cancellables) }
-
         // MARK: FORMATTING
 
         let formatter = AmountFormatter()
@@ -366,7 +353,17 @@ public final class PrepareTransactionViewModel: BaseViewModel<// swiftlint:disab
                 .eraseToAnyPublisher()
             ),
             navigation: navigator.navigation
-        )
+        ) {
+            // Setup navigation
+            input.fromController.rightBarButtonTrigger
+                .sink { [navigator] in navigator.next(.cancel) }
+
+            input.fromView.scanQRTrigger
+                .sink { [navigator] in navigator.next(.scanQRCode) }
+
+            input.fromView.toReviewTrigger.withLatestFrom(payment.filterNil())
+                .sink { [navigator] in navigator.next(.reviewPayment($0)) }
+        }
     }
 }
 

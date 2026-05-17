@@ -26,6 +26,7 @@
 import Combine
 import Factory
 import NanoViewControllerController
+import NanoViewControllerCore
 import XCTest
 
 /// Tests for `CreateNewWalletViewModel`.
@@ -75,9 +76,8 @@ final class CreateNewWalletViewModelTests: XCTestCase {
     // MARK: - isContinueButtonEnabled
 
     func test_continueButtonEnabled_requiresValidPasswordAndBackupCheckbox() {
-        let sut = makeSUT()
+        let (_, output) = makeSUT()
         var isEnabledEvents: [Bool] = []
-        let output = sut.transform(input: makeInput())
         output.publishers.isContinueButtonEnabled.sink { isEnabledEvents.append($0) }.store(in: &cancellables)
 
         // Passwords match and meet the minimum length, but backup not checked yet.
@@ -91,9 +91,8 @@ final class CreateNewWalletViewModelTests: XCTestCase {
     }
 
     func test_continueButtonEnabled_mismatchedPasswords_disablesButton() {
-        let sut = makeSUT()
+        let (_, output) = makeSUT()
         var isEnabledEvents: [Bool] = []
-        let output = sut.transform(input: makeInput())
         output.publishers.isContinueButtonEnabled.sink { isEnabledEvents.append($0) }.store(in: &cancellables)
 
         newPassword.send("apabanan123")
@@ -106,9 +105,9 @@ final class CreateNewWalletViewModelTests: XCTestCase {
     // MARK: - Navigation
 
     func test_createWalletTrigger_withValidPassword_callsUseCaseAndEmitsCreateWallet() {
-        let sut = makeSUT()
+        let (_, output) = makeSUT()
         var observed: CreateNewWalletUserAction?
-        sut.navigator.navigation.sink { observed = $0 }.store(in: &cancellables)
+        output.navigation.sink { observed = $0 }.store(in: &cancellables)
 
         newPassword.send("apabanan123")
         confirmedPassword.send("apabanan123")
@@ -123,9 +122,9 @@ final class CreateNewWalletViewModelTests: XCTestCase {
     }
 
     func test_leftBarButton_emitsCancel() {
-        let sut = makeSUT()
+        let (_, output) = makeSUT()
         var observed: CreateNewWalletUserAction?
-        sut.navigator.navigation.sink { observed = $0 }.store(in: &cancellables)
+        output.navigation.sink { observed = $0 }.store(in: &cancellables)
 
         fakeController.leftBarButtonTriggerSubject.send(())
 
@@ -136,10 +135,10 @@ final class CreateNewWalletViewModelTests: XCTestCase {
 
     // MARK: - Helpers
 
-    private func makeSUT() -> CreateNewWalletViewModel {
+    private func makeSUT() -> (CreateNewWalletViewModel, Output<CreateNewWalletViewModel.Publishers, CreateNewWalletViewModel.NavigationStep>) {
         let sut = CreateNewWalletViewModel()
-        _ = sut.transform(input: makeInput())
-        return sut
+        let output = sut.transform(input: makeInput())
+        return (sut, output)
     }
 
     private func makeInput() -> CreateNewWalletViewModel.Input {

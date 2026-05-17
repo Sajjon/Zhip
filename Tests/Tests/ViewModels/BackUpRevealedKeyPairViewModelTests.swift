@@ -81,7 +81,7 @@ final class BackUpRevealedKeyPairViewModelTests: XCTestCase {
 
     func test_copyPrivateKey_writesHexPrivateKeyToPasteboardAndSendsToast() {
         let sut = makeSUT()
-        _ = sut.transform(input: makeInput())
+        let output = sut.transform(input: makeInput())
         var toasts: [Toast] = []
         fakeController.toastSubject.sink { toasts.append($0) }.store(in: &cancellables)
 
@@ -93,7 +93,7 @@ final class BackUpRevealedKeyPairViewModelTests: XCTestCase {
 
     func test_copyPublicKey_writesHexPublicKeyToPasteboardAndSendsToast() {
         let sut = makeSUT()
-        _ = sut.transform(input: makeInput())
+        let output = sut.transform(input: makeInput())
         var toasts: [Toast] = []
         fakeController.toastSubject.sink { toasts.append($0) }.store(in: &cancellables)
 
@@ -105,9 +105,9 @@ final class BackUpRevealedKeyPairViewModelTests: XCTestCase {
 
     func test_rightBarButton_emitsFinish() {
         let sut = makeSUT()
-        _ = sut.transform(input: makeInput())
+        let output = sut.transform(input: makeInput())
         var observed: BackUpRevealedKeyPairUserAction?
-        sut.navigator.navigation.sink { observed = $0 }.store(in: &cancellables)
+        output.navigation.sink { observed = $0 }.store(in: &cancellables)
 
         fakeController.rightBarButtonTriggerSubject.send(())
 

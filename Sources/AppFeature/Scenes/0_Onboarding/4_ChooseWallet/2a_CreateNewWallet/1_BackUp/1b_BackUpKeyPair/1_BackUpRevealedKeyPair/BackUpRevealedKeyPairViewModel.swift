@@ -28,6 +28,7 @@ import NanoViewControllerCombine
 import NanoViewControllerCore
 import NanoViewControllerController
 import NanoViewControllerDIPrimitives
+import NanoViewControllerNavigation
 import UIKit
 import Zesame
 
@@ -38,10 +39,10 @@ public enum BackUpRevealedKeyPairUserAction: Sendable {
 }
 
 /// Renders a `KeyPair` as two hex strings + handles copy-to-pasteboard side effects.
-public final class BackUpRevealedKeyPairViewModel: BaseViewModel<
-    BackUpRevealedKeyPairUserAction,
+public final class BackUpRevealedKeyPairViewModel: AbstractViewModel<
     BackUpRevealedKeyPairViewModel.InputFromView,
-    BackUpRevealedKeyPairViewModel.Publishers
+    BackUpRevealedKeyPairViewModel.Publishers,
+    BackUpRevealedKeyPairUserAction
 > {
     /// System pasteboard wrapper — injected so tests can record copies.
     @Injected(\.pasteboard) private var pasteboard: Pasteboard
@@ -57,9 +58,7 @@ public final class BackUpRevealedKeyPairViewModel: BaseViewModel<
     /// Converts the key pair to hex strings, wires the right "Done" bar-button to
     /// `.finish`, and routes copy taps to pasteboard + toast.
     override public func transform(input: Input) -> Output<Publishers, NavigationStep> {
-        func userDid(_ step: NavigationStep) {
-            navigator.next(step)
-        }
+        let navigator = Navigator<NavigationStep>()
 
         let keyPair = Just(keyPair).eraseToAnyPublisher()
 
@@ -70,9 +69,15 @@ public final class BackUpRevealedKeyPairViewModel: BaseViewModel<
         let publicKeyUncompressed: AnyPublisher<String, Never> = keyPair.map(\.publicKey.x963Representation.asHex)
             .eraseToAnyPublisher()
 
-        [
+        return Output(
+            publishers: Publishers(
+                privateKey: privateKey,
+                publicKeyUncompressed: publicKeyUncompressed
+            ),
+            navigation: navigator.navigation
+        ) {
             input.fromController.rightBarButtonTrigger
-                .sink { userDid(.finish) },
+                .sink { [navigator] in navigator.next(.finish) }
 
             // Private key is the most sensitive material in the app — write
             // it to the pasteboard with a 60s expiration so it does NOT sit
@@ -88,7 +93,7 @@ public final class BackUpRevealedKeyPairViewModel: BaseViewModel<
                         input.fromController.toastSubject
                             .send(Toast(String(localized: .BackUpRevealedKeyPair.copiedPrivateKey)))
                     }
-                },
+                }
 
             // Public key isn't sensitive but pair the same expiration for
             // consistency on this screen — anything copied here is in the
@@ -100,16 +105,8 @@ public final class BackUpRevealedKeyPairViewModel: BaseViewModel<
                         input.fromController.toastSubject
                             .send(Toast(String(localized: .BackUpRevealedKeyPair.copiedPublicKey)))
                     }
-                },
-        ].forEach { $0.store(in: &cancellables) }
-
-        return Output(
-            publishers: Publishers(
-                privateKey: privateKey,
-                publicKeyUncompressed: publicKeyUncompressed
-            ),
-            navigation: navigator.navigation
-        )
+                }
+        }
     }
 }
 

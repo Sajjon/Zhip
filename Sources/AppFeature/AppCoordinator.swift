@@ -60,7 +60,7 @@ public final class AppCoordinator: BaseCoordinator<AppCoordinatorNavigationStep>
         let viewModel = UnlockAppWithPincodeViewModel()
         let scene = UnlockAppWithPincode(viewModel: viewModel)
 
-        scene.viewModel.navigator.navigation
+        scene.navigation
             .sinkOnMain { [weak self] userDid in
                 switch userDid {
                 case .unlockApp:

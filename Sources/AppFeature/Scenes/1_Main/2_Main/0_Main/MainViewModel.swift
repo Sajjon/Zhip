@@ -28,6 +28,7 @@ import Foundation
 import NanoViewControllerCombine
 import NanoViewControllerController
 import NanoViewControllerCore
+import NanoViewControllerNavigation
 import Zesame
 
 // MARK: - MainUserAction
@@ -47,10 +48,10 @@ public enum MainUserAction: Sendable {
 /// View model for the wallet hub. Manages three independent triggers that
 /// fire a balance refetch (initial load, pull-to-refresh, post-send refresh)
 /// and surfaces formatted balance + freshness label to the view.
-public final class MainViewModel: BaseViewModel<
-    MainUserAction,
+public final class MainViewModel: AbstractViewModel<
     MainViewModel.InputFromView,
-    MainViewModel.Publishers
+    MainViewModel.Publishers,
+    MainUserAction
 > {
     /// Network + cache façade for balance/gas-price calls.
     @Injected(\.transactionsUseCase) private var transactionUseCase: TransactionsUseCase
@@ -71,9 +72,7 @@ public final class MainViewModel: BaseViewModel<
     /// Composes the three refetch triggers, runs the balance use case,
     /// caches the result, and surfaces formatted balance + freshness.
     override public func transform(input: Input) -> Output<Publishers, NavigationStep> {
-        func userIntends(to intention: NavigationStep) {
-            navigator.next(intention)
-        }
+        let navigator = Navigator<NavigationStep>()
 
         let wallet = walletStorageUseCase.wallet.filterNil().replaceErrorWithEmpty()
 
@@ -115,20 +114,6 @@ public final class MainViewModel: BaseViewModel<
         let _cachedBalance: Amount = transactionUseCase.cachedBalance ?? 0
         let latestBalanceOrZero = latestBalanceAndNonce.map(\.balance).prepend(_cachedBalance)
 
-        [
-            input.fromController.rightBarButtonTrigger
-                .sink { userIntends(to: .goToSettings) },
-
-            input.fromView.sendTrigger
-                .sink { userIntends(to: .send) },
-
-            input.fromView.receiveTrigger
-                .sink { userIntends(to: .receive) },
-
-            // Pre-warm the gas-price cache so the Send screen has a value ready.
-            transactionUseCase.getMinimumGasPrice().sink(receiveCompletion: { _ in }, receiveValue: { _ in }),
-        ].forEach { $0.store(in: &cancellables) }
-
         let formatter = AmountFormatter()
 
         let refreshControlLastUpdatedTitle: AnyPublisher<String, Never> = balanceWasUpdatedAt.map {
@@ -143,7 +128,19 @@ public final class MainViewModel: BaseViewModel<
                 refreshControlLastUpdatedTitle: refreshControlLastUpdatedTitle
             ),
             navigation: navigator.navigation
-        )
+        ) {
+            input.fromController.rightBarButtonTrigger
+                .sink { [navigator] in navigator.next(.goToSettings) }
+
+            input.fromView.sendTrigger
+                .sink { [navigator] in navigator.next(.send) }
+
+            input.fromView.receiveTrigger
+                .sink { [navigator] in navigator.next(.receive) }
+
+            // Pre-warm the gas-price cache so the Send screen has a value ready.
+            transactionUseCase.getMinimumGasPrice().sink(receiveCompletion: { _ in }, receiveValue: { _ in })
+        }
     }
 }
 

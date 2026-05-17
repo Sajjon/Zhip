@@ -81,9 +81,9 @@ final class ReviewTransactionBeforeSigningViewModelTests: XCTestCase {
 
     func test_proceedTrigger_emitsAcceptPaymentWithPayment() {
         let sut = makeSUT()
-        _ = sut.transform(input: makeInput())
+        let output = sut.transform(input: makeInput())
         var observed: ReviewTransactionBeforeSigningUserAction?
-        sut.navigator.navigation.sink { observed = $0 }.store(in: &cancellables)
+        output.navigation.sink { observed = $0 }.store(in: &cancellables)
 
         proceedTrigger.send(())
 

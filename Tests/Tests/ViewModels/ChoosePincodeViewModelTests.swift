@@ -25,6 +25,7 @@
 @testable import AppFeature
 import Combine
 import NanoViewControllerController
+import NanoViewControllerCore
 import XCTest
 
 /// Tests for `ChoosePincodeViewModel`.
@@ -56,9 +57,9 @@ final class ChoosePincodeViewModelTests: XCTestCase {
     func test_doneTrigger_withEnteredPincode_emitsChosePincode() throws {
         // Arrange
         let pin = try Pincode(digits: [.one, .two, .three, .four])
-        let sut = makeSUT()
+        let (_, output) = makeSUT()
         var observed: ChoosePincodeUserAction?
-        sut.navigator.navigation.sink { observed = $0 }.store(in: &cancellables)
+        output.navigation.sink { observed = $0 }.store(in: &cancellables)
         pincodeInput.send(pin)
 
         // Act
@@ -73,9 +74,9 @@ final class ChoosePincodeViewModelTests: XCTestCase {
 
     func test_rightBarButton_emitsSkip() {
         // Arrange
-        let sut = makeSUT()
+        let (_, output) = makeSUT()
         var observed: ChoosePincodeUserAction?
-        sut.navigator.navigation.sink { observed = $0 }.store(in: &cancellables)
+        output.navigation.sink { observed = $0 }.store(in: &cancellables)
 
         // Act
         fakeController.rightBarButtonTriggerSubject.send(())
@@ -86,7 +87,7 @@ final class ChoosePincodeViewModelTests: XCTestCase {
         }
     }
 
-    private func makeSUT() -> ChoosePincodeViewModel {
+    private func makeSUT() -> (ChoosePincodeViewModel, Output<ChoosePincodeViewModel.Publishers, ChoosePincodeViewModel.NavigationStep>) {
         let sut = ChoosePincodeViewModel()
         let input = ChoosePincodeViewModel.Input(
             fromView: .init(
@@ -95,7 +96,7 @@ final class ChoosePincodeViewModelTests: XCTestCase {
             ),
             fromController: fakeController.makeInput()
         )
-        _ = sut.transform(input: input)
-        return sut
+        let output = sut.transform(input: input)
+        return (sut, output)
     }
 }

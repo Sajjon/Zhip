@@ -27,6 +27,7 @@ import Foundation
 import NanoViewControllerCombine
 import NanoViewControllerController
 import NanoViewControllerCore
+import NanoViewControllerNavigation
 
 // MARK: - User action and navigation steps
 
@@ -44,27 +45,15 @@ public enum ConfirmWalletRemovalUserAction: Sendable {
 /// emits `.cancel`, confirm-tap emits `.confirm`, button gated on the checkbox.
 /// The destructive wipe lives in `SettingsCoordinator.toChooseWallet()` so the
 /// dismiss animation can finish before the data is gone.
-public final class ConfirmWalletRemovalViewModel: BaseViewModel<
-    ConfirmWalletRemovalUserAction,
+public final class ConfirmWalletRemovalViewModel: AbstractViewModel<
     ConfirmWalletRemovalViewModel.InputFromView,
-    ConfirmWalletRemovalViewModel.Publishers
+    ConfirmWalletRemovalViewModel.Publishers,
+    ConfirmWalletRemovalUserAction
 > {
     /// Wires cancel + confirm taps to navigation steps; gates the confirm
     /// button on the "I have backed up" checkbox.
     override public func transform(input: Input) -> Output<Publishers, NavigationStep> {
-        func userDid(_ userAction: NavigationStep) {
-            navigator.next(userAction)
-        }
-
-        // MARK: Navigate
-
-        [
-            input.fromController.leftBarButtonTrigger
-                .sink { userDid(.cancel) },
-
-            input.fromView.confirmTrigger
-                .sink { userDid(.confirm) },
-        ].forEach { $0.store(in: &cancellables) }
+        let navigator = Navigator<NavigationStep>()
 
         // MARK: Return output
 
@@ -73,7 +62,15 @@ public final class ConfirmWalletRemovalViewModel: BaseViewModel<
                 isConfirmButtonEnabled: input.fromView.isWalletBackedUpCheckboxChecked
             ),
             navigation: navigator.navigation
-        )
+        ) {
+            // MARK: Navigate
+
+            input.fromController.leftBarButtonTrigger
+                .sink { [navigator] in navigator.next(.cancel) }
+
+            input.fromView.confirmTrigger
+                .sink { [navigator] in navigator.next(.confirm) }
+        }
     }
 }
 

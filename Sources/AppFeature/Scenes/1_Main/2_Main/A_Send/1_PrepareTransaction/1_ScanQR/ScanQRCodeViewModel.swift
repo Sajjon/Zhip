@@ -27,6 +27,7 @@ import Foundation
 import NanoViewControllerCombine
 import NanoViewControllerCore
 import NanoViewControllerController
+import NanoViewControllerNavigation
 import Zesame
 
 // MARK: - User action and navigation steps
@@ -46,10 +47,10 @@ public enum ScanQRCodeUserAction: Sendable {
 ///
 /// Accepts both raw JSON-payload QRs and ones prefixed with `zilliqa://`
 /// (the QR scheme other Zilliqa wallets emit).
-public final class ScanQRCodeViewModel: BaseViewModel<
-    ScanQRCodeUserAction,
+public final class ScanQRCodeViewModel: AbstractViewModel<
     ScanQRCodeViewModel.InputFromView,
-    ScanQRCodeViewModel.Publishers
+    ScanQRCodeViewModel.Publishers,
+    ScanQRCodeUserAction
 > {
     /// Result type for the scan→decode pipeline.
     typealias ScannedQRResult = Result<TransactionIntent, Swift.Error>
@@ -61,9 +62,7 @@ public final class ScanQRCodeViewModel: BaseViewModel<
     /// Decodes scanned strings, strips an optional `zilliqa://` prefix, and
     /// surfaces the resulting `TransactionIntent` (or cancel on bar-button tap).
     override public func transform(input: Input) -> Output<Publishers, NavigationStep> {
-        func userDid(_ userAction: NavigationStep) {
-            navigator.next(userAction)
-        }
+        let navigator = Navigator<NavigationStep>()
 
         let transactionIntentResult: AnyPublisher<ScannedQRResult, Never> = input.fromView.scannedQrCodeString.map {
             guard var stringFromQR = $0 else {
@@ -82,33 +81,33 @@ public final class ScanQRCodeViewModel: BaseViewModel<
             }
         }.eraseToAnyPublisher()
 
-        // MARK: Navigate
-
-        [
-            input.fromController.leftBarButtonTrigger
-                .sink { userDid(.cancel) },
-
-            transactionIntentResult.sink { [weak self] in
-                switch $0 {
-                case .failure:
-                    let toast = Toast(
-                        String(localized: .ScanQRCode.incompatibleQRTitle),
-                        dismissing: .manual(dismissButtonTitle: String(localized: .ScanQRCode.dismiss))
-                    ) {
-                        self?.startScanningSubject.send(())
-                    }
-                    input.fromController.toastSubject.send(toast)
-                case let .success(transactionIntent): userDid(.scanQRContainingTransaction(transactionIntent))
-                }
-            },
-        ].forEach { $0.store(in: &cancellables) }
+        let startScanningSubject = startScanningSubject
 
         return Output(
             publishers: Publishers(
                 startScanning: startScanningSubject.replaceErrorWithEmpty().eraseToAnyPublisher()
             ),
             navigation: navigator.navigation
-        )
+        ) {
+            // MARK: Navigate
+
+            input.fromController.leftBarButtonTrigger
+                .sink { [navigator] in navigator.next(.cancel) }
+
+            transactionIntentResult.sink { [navigator, startScanningSubject] in
+                switch $0 {
+                case .failure:
+                    let toast = Toast(
+                        String(localized: .ScanQRCode.incompatibleQRTitle),
+                        dismissing: .manual(dismissButtonTitle: String(localized: .ScanQRCode.dismiss))
+                    ) {
+                        startScanningSubject.send(())
+                    }
+                    input.fromController.toastSubject.send(toast)
+                case let .success(transactionIntent): navigator.next(.scanQRContainingTransaction(transactionIntent))
+                }
+            }
+        }
     }
 }
 

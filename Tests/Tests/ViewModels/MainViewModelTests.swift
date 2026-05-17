@@ -75,9 +75,9 @@ final class MainViewModelTests: XCTestCase {
 
     func test_rightBarButton_emitsGoToSettings() {
         let sut = makeSUT()
-        _ = sut.transform(input: makeInput())
+        let output = sut.transform(input: makeInput())
         var observed: MainUserAction?
-        sut.navigator.navigation.sink { observed = $0 }.store(in: &cancellables)
+        output.navigation.sink { observed = $0 }.store(in: &cancellables)
 
         fakeController.rightBarButtonTriggerSubject.send(())
 
@@ -86,9 +86,9 @@ final class MainViewModelTests: XCTestCase {
 
     func test_sendTrigger_emitsSend() {
         let sut = makeSUT()
-        _ = sut.transform(input: makeInput())
+        let output = sut.transform(input: makeInput())
         var observed: MainUserAction?
-        sut.navigator.navigation.sink { observed = $0 }.store(in: &cancellables)
+        output.navigation.sink { observed = $0 }.store(in: &cancellables)
 
         sendTrigger.send(())
 
@@ -97,9 +97,9 @@ final class MainViewModelTests: XCTestCase {
 
     func test_receiveTrigger_emitsReceive() {
         let sut = makeSUT()
-        _ = sut.transform(input: makeInput())
+        let output = sut.transform(input: makeInput())
         var observed: MainUserAction?
-        sut.navigator.navigation.sink { observed = $0 }.store(in: &cancellables)
+        output.navigation.sink { observed = $0 }.store(in: &cancellables)
 
         receiveTrigger.send(())
 
@@ -108,7 +108,7 @@ final class MainViewModelTests: XCTestCase {
 
     func test_transform_callsGetMinimumGasPrice() {
         let sut = makeSUT()
-        _ = sut.transform(input: makeInput())
+        let output = sut.transform(input: makeInput())
 
         XCTAssertEqual(mockTransactions.getMinimumGasPriceCallCount, 1)
     }

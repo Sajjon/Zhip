@@ -110,7 +110,8 @@ final class MainCoordinatorTests: XCTestCase {
     func test_deeplinkedTransaction_whenChildAlreadyPresented_isNoOp() throws {
         sut.start()
         let main = try XCTUnwrap(top(as: Main.self))
-        main.viewModel.navigator.next(.send)
+        // Tap "Send" — first ImageAboveLabelButton in MainView.
+        try tapButton(at: 0, in: main.view)
         drainRunLoop()
         let childCountBefore = sut.childCoordinators.count
 
@@ -127,7 +128,8 @@ final class MainCoordinatorTests: XCTestCase {
         sut.start()
         let main = try XCTUnwrap(top(as: Main.self))
 
-        main.viewModel.navigator.next(.send)
+        // Tap "Send" — first ImageAboveLabelButton in MainView.
+        try tapButton(at: 0, in: main.view)
         drainRunLoop()
 
         XCTAssertTrue(sut.childCoordinators.contains { $0 is SendCoordinator })
@@ -137,7 +139,8 @@ final class MainCoordinatorTests: XCTestCase {
         sut.start()
         let main = try XCTUnwrap(top(as: Main.self))
 
-        main.viewModel.navigator.next(.receive)
+        // Tap "Receive" — second ImageAboveLabelButton in MainView.
+        try tapButton(at: 1, in: main.view)
         drainRunLoop()
 
         XCTAssertTrue(sut.childCoordinators.contains { $0 is ReceiveCoordinator })
@@ -147,7 +150,8 @@ final class MainCoordinatorTests: XCTestCase {
         sut.start()
         let main = try XCTUnwrap(top(as: Main.self))
 
-        main.viewModel.navigator.next(.goToSettings)
+        // Settings is wired to the right-bar-button trigger.
+        main.rightBarButtonSubject.send(())
         drainRunLoop()
 
         XCTAssertTrue(sut.childCoordinators.contains { $0 is SettingsCoordinator })
@@ -162,7 +166,7 @@ final class MainCoordinatorTests: XCTestCase {
     func test_sendFinish_dismissesSendChildCoordinator() throws {
         sut.start()
         let main = try XCTUnwrap(top(as: Main.self))
-        main.viewModel.navigator.next(.send)
+        try tapButton(at: 0, in: main.view)
         drainRunLoop()
         let send = try firstChild(as: SendCoordinator.self)
 
@@ -175,7 +179,7 @@ final class MainCoordinatorTests: XCTestCase {
     func test_sendFinish_withoutBalanceFetching_dismissesSendChildCoordinator() throws {
         sut.start()
         let main = try XCTUnwrap(top(as: Main.self))
-        main.viewModel.navigator.next(.send)
+        try tapButton(at: 0, in: main.view)
         drainRunLoop()
         let send = try firstChild(as: SendCoordinator.self)
 
@@ -188,7 +192,7 @@ final class MainCoordinatorTests: XCTestCase {
     func test_receiveFinish_dismissesReceiveChildCoordinator() throws {
         sut.start()
         let main = try XCTUnwrap(top(as: Main.self))
-        main.viewModel.navigator.next(.receive)
+        try tapButton(at: 1, in: main.view)
         drainRunLoop()
         let receive = try firstChild(as: ReceiveCoordinator.self)
 
@@ -201,7 +205,7 @@ final class MainCoordinatorTests: XCTestCase {
     func test_settingsCloseSettings_dismissesSettingsChildCoordinator() throws {
         sut.start()
         let main = try XCTUnwrap(top(as: Main.self))
-        main.viewModel.navigator.next(.goToSettings)
+        main.rightBarButtonSubject.send(())
         drainRunLoop()
         let settings = try firstChild(as: SettingsCoordinator.self)
 
@@ -214,7 +218,7 @@ final class MainCoordinatorTests: XCTestCase {
     func test_settingsRemoveWallet_bubblesRemoveWalletNavigationStep() throws {
         sut.start()
         let main = try XCTUnwrap(top(as: Main.self))
-        main.viewModel.navigator.next(.goToSettings)
+        main.rightBarButtonSubject.send(())
         drainRunLoop()
         let settings = try firstChild(as: SettingsCoordinator.self)
         var received: MainCoordinatorNavigationStep?

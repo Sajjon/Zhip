@@ -85,12 +85,34 @@ final class SettingsCoordinatorTests: XCTestCase {
 
     private func startAndGetScene() -> Settings {
         sut.start()
+        drainRunLoop() // allow `viewWillAppear` → sections snapshot to apply
         // swiftlint:disable:next force_cast
         return navigationController.viewControllers.first as! Settings
     }
 
-    private func fire(_ step: SettingsNavigation, on scene: Settings) {
-        scene.viewModel.navigator.next(step)
+    /// Drives one of the `SettingsNavigation` cases by simulating a real row
+    /// selection in the underlying table view (or, for `.closeSettings`,
+    /// the right-bar button) — the navigator is no longer stored on the
+    /// ViewModel, so injection through `.next(step)` is impossible.
+    private func fire(_ step: SettingsNavigation, on scene: Settings) throws {
+        switch step {
+        case .closeSettings:
+            scene.rightBarButtonSubject.send(())
+        case .removePincode, .setPincode:
+            try selectTableRow(section: 0, row: 0, in: scene.view)
+        case .starUsOnGithub:
+            try selectTableRow(section: 1, row: 0, in: scene.view)
+        case .reportIssueOnGithub:
+            try selectTableRow(section: 1, row: 1, in: scene.view)
+        case .acknowledgments:
+            try selectTableRow(section: 1, row: 2, in: scene.view)
+        case .readTermsOfService:
+            try selectTableRow(section: 2, row: 0, in: scene.view)
+        case .backupWallet:
+            try selectTableRow(section: 3, row: 0, in: scene.view)
+        case .removeWallet:
+            try selectTableRow(section: 3, row: 1, in: scene.view)
+        }
         drainRunLoop()
     }
 
@@ -105,12 +127,12 @@ final class SettingsCoordinatorTests: XCTestCase {
 
     // MARK: - navigation-bar
 
-    func test_closeSettings_bubblesToParentNavigator() {
+    func test_closeSettings_bubblesToParentNavigator() throws {
         let scene = startAndGetScene()
         var received: SettingsCoordinatorNavigationStep?
         sut.navigator.navigation.sink { received = $0 }.store(in: &cancellables)
 
-        fire(.closeSettings, on: scene)
+        try fire(.closeSettings, on: scene)
 
         if case .closeSettings = received { } else {
             XCTFail("expected .closeSettings, got \(String(describing: received))")
@@ -119,43 +141,43 @@ final class SettingsCoordinatorTests: XCTestCase {
 
     // MARK: - Section 0 (pincode)
 
-    func test_removePincode_presentsModalWithoutCrashing() {
+    func test_removePincode_presentsModalWithoutCrashing() throws {
         mockPincode.pincode = try? Pincode(digits: [Digit.zero, .one, .two, .three])
         let scene = startAndGetScene()
 
-        fire(.removePincode, on: scene)
+        try fire(.removePincode, on: scene)
     }
 
-    func test_setPincode_presentsModalCoordinatorWithoutCrashing() {
+    func test_setPincode_presentsModalCoordinatorWithoutCrashing() throws {
         let scene = startAndGetScene()
 
-        fire(.setPincode, on: scene)
+        try fire(.setPincode, on: scene)
     }
 
     // MARK: - Section 1 (github / acknowledgments)
 
-    func test_starUsOnGithub_invokesOpenUrl() {
+    func test_starUsOnGithub_invokesOpenUrl() throws {
         let scene = startAndGetScene()
 
-        fire(.starUsOnGithub, on: scene)
+        try fire(.starUsOnGithub, on: scene)
 
         XCTAssertEqual(mockUrlOpener.openInvocations.count, 1)
         XCTAssertEqual(mockUrlOpener.lastOpenedUrl?.absoluteString, githubUrlString)
     }
 
-    func test_reportIssueOnGithub_invokesOpenUrl() {
+    func test_reportIssueOnGithub_invokesOpenUrl() throws {
         let scene = startAndGetScene()
 
-        fire(.reportIssueOnGithub, on: scene)
+        try fire(.reportIssueOnGithub, on: scene)
 
         XCTAssertEqual(mockUrlOpener.openInvocations.count, 1)
         XCTAssertEqual(mockUrlOpener.lastOpenedUrl?.absoluteString, "\(githubUrlString)/issues/new")
     }
 
-    func test_acknowledgments_invokesOpenUrl() {
+    func test_acknowledgments_invokesOpenUrl() throws {
         let scene = startAndGetScene()
 
-        fire(.acknowledgments, on: scene)
+        try fire(.acknowledgments, on: scene)
 
         XCTAssertEqual(mockUrlOpener.openInvocations.count, 1)
         XCTAssertEqual(mockUrlOpener.lastOpenedUrl?.absoluteString, UIApplication.openSettingsURLString)
@@ -163,33 +185,33 @@ final class SettingsCoordinatorTests: XCTestCase {
 
     // MARK: - Section 2 (legal / privacy)
 
-    func test_readTermsOfService_presentsModalWithoutCrashing() {
+    func test_readTermsOfService_presentsModalWithoutCrashing() throws {
         let scene = startAndGetScene()
 
-        fire(.readTermsOfService, on: scene)
+        try fire(.readTermsOfService, on: scene)
     }
 
     // MARK: - Section 3 (wallet)
 
-    func test_backupWallet_presentsModalCoordinatorWithoutCrashing() {
+    func test_backupWallet_presentsModalCoordinatorWithoutCrashing() throws {
         let scene = startAndGetScene()
 
-        fire(.backupWallet, on: scene)
+        try fire(.backupWallet, on: scene)
     }
 
-    func test_removeWallet_presentsConfirmationModal() {
+    func test_removeWallet_presentsConfirmationModal() throws {
         let scene = startAndGetScene()
 
-        fire(.removeWallet, on: scene)
+        try fire(.removeWallet, on: scene)
     }
 
-    func test_confirmWalletRemoval_confirm_emitsRemoveWalletAndClearsState() {
+    func test_confirmWalletRemoval_confirm_emitsRemoveWalletAndClearsState() throws {
         let scene = startAndGetScene()
         let removeWalletEmitted = expectation(description: "removeWallet emitted")
         sut.navigator.navigation.sink { step in
             if case .removeWallet = step { removeWalletEmitted.fulfill() }
         }.store(in: &cancellables)
-        fire(.removeWallet, on: scene)
+        try fire(.removeWallet, on: scene)
         drainRunLoop()
 
         guard
@@ -201,7 +223,9 @@ final class SettingsCoordinatorTests: XCTestCase {
             )
         }
 
-        modal.viewModel.navigator.next(.confirm)
+        // Drive the confirm path: tick the "I have backed up" checkbox + tap Confirm.
+        try setCheckbox(on: true, in: modal.view)
+        try tapButton(at: 0, in: modal.view) // confirmButton
 
         wait(for: [removeWalletEmitted], timeout: 10)
         XCTAssertEqual(mockTransactions.deleteCachedBalanceCallCount, 1)

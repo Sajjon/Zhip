@@ -100,7 +100,8 @@ final class DecryptKeystoreCoordinatorTests: XCTestCase {
         sut.navigator.navigation.sink { received = $0 }.store(in: &cancellables)
         let decrypt = try XCTUnwrap(top(as: DecryptKeystoreToRevealKeyPair.self))
 
-        decrypt.viewModel.navigator.next(.dismiss)
+        // `.dismiss` is wired to the right-bar button.
+        decrypt.rightBarButtonSubject.send(())
         drainRunLoop()
 
         if case .dismiss = received { } else {
@@ -111,9 +112,12 @@ final class DecryptKeystoreCoordinatorTests: XCTestCase {
     func test_decryptKeystoreRevealing_pushesBackUpRevealedKeyPair() throws {
         sut.start()
         let decrypt = try XCTUnwrap(top(as: DecryptKeystoreToRevealKeyPair.self))
-        let keyPair = try makeKeyPair()
 
-        decrypt.viewModel.navigator.next(.decryptKeystoreReavealing(keyPair: keyPair))
+        // Enter the test wallet's password and tap reveal — `extractKeyPairUseCase`
+        // is mocked on `MockWalletUseCase`, which derives a real key pair from
+        // the test wallet's keystore.
+        try setText(TestWalletFactory.testPassword, in: decrypt.view, ofType: FloatingLabelTextField.self, at: 0)
+        try tapButton(at: 0, in: decrypt.view) // revealButton (lone UIButton subclass)
         drainRunLoop()
 
         XCTAssertTrue(top(as: BackUpRevealedKeyPair.self) != nil)
@@ -134,13 +138,16 @@ final class DecryptKeystoreCoordinatorTests: XCTestCase {
     func test_backUpRevealedFinish_bubblesBackingUpKeyPair() throws {
         sut.start()
         let decrypt = try XCTUnwrap(top(as: DecryptKeystoreToRevealKeyPair.self))
-        try decrypt.viewModel.navigator.next(.decryptKeystoreReavealing(keyPair: makeKeyPair()))
+        // Drive through decrypt by entering the test password + tapping reveal.
+        try setText(TestWalletFactory.testPassword, in: decrypt.view, ofType: FloatingLabelTextField.self, at: 0)
+        try tapButton(at: 0, in: decrypt.view)
         drainRunLoop()
         var received: DecryptKeystoreCoordinatorNavigationStep?
         sut.navigator.navigation.sink { received = $0 }.store(in: &cancellables)
         let backUp = try XCTUnwrap(top(as: BackUpRevealedKeyPair.self))
 
-        backUp.viewModel.navigator.next(.finish)
+        // `.finish` is wired to the right-bar button.
+        backUp.rightBarButtonSubject.send(())
         drainRunLoop()
 
         if case .backingUpKeyPair = received { } else {

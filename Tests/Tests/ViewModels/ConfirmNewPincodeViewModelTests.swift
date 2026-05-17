@@ -25,6 +25,7 @@
 @testable import AppFeature
 import Combine
 import NanoViewControllerController
+import NanoViewControllerCore
 import XCTest
 
 /// Tests for `ConfirmNewPincodeViewModel`.
@@ -63,9 +64,9 @@ final class ConfirmNewPincodeViewModelTests: XCTestCase {
     }
 
     func test_matchingPincodeAndBackedUp_confirms() {
-        let sut = makeSUT()
+        let (_, output) = makeSUT()
         var observed: ConfirmNewPincodeUserAction?
-        sut.navigator.navigation.sink { observed = $0 }.store(in: &cancellables)
+        output.navigation.sink { observed = $0 }.store(in: &cancellables)
 
         pincodeInput.send(unconfirmed)
         isBackedUpSubject.send(true)
@@ -79,9 +80,9 @@ final class ConfirmNewPincodeViewModelTests: XCTestCase {
     }
 
     func test_mismatchedPincode_doesNotConfirm() throws {
-        let sut = makeSUT()
+        let (_, output) = makeSUT()
         var observed: ConfirmNewPincodeUserAction?
-        sut.navigator.navigation.sink { observed = $0 }.store(in: &cancellables)
+        output.navigation.sink { observed = $0 }.store(in: &cancellables)
 
         let wrong = try Pincode(digits: [.nine, .nine, .nine, .nine])
         pincodeInput.send(wrong)
@@ -92,9 +93,9 @@ final class ConfirmNewPincodeViewModelTests: XCTestCase {
     }
 
     func test_rightBarButton_emitsSkip() {
-        let sut = makeSUT()
+        let (_, output) = makeSUT()
         var observed: ConfirmNewPincodeUserAction?
-        sut.navigator.navigation.sink { observed = $0 }.store(in: &cancellables)
+        output.navigation.sink { observed = $0 }.store(in: &cancellables)
 
         fakeController.rightBarButtonTriggerSubject.send(())
 
@@ -104,7 +105,7 @@ final class ConfirmNewPincodeViewModelTests: XCTestCase {
     }
 
     func test_isConfirmEnabled_requiresBothPincodeAndBackedUp() {
-        let sut = makeSUT()
+        let sut = ConfirmNewPincodeViewModel(useCase: mockUseCase, confirm: unconfirmed)
         var isEnabled: [Bool] = []
         let output = sut.transform(input: ConfirmNewPincodeViewModel.Input(
             fromView: .init(
@@ -126,7 +127,7 @@ final class ConfirmNewPincodeViewModelTests: XCTestCase {
         XCTAssertTrue(isEnabled.contains(true), "Should become enabled once pin matches and backup is checked")
     }
 
-    private func makeSUT() -> ConfirmNewPincodeViewModel {
+    private func makeSUT() -> (ConfirmNewPincodeViewModel, Output<ConfirmNewPincodeViewModel.Publishers, ConfirmNewPincodeViewModel.NavigationStep>) {
         let sut = ConfirmNewPincodeViewModel(useCase: mockUseCase, confirm: unconfirmed)
         let input = ConfirmNewPincodeViewModel.Input(
             fromView: .init(
@@ -136,7 +137,7 @@ final class ConfirmNewPincodeViewModelTests: XCTestCase {
             ),
             fromController: fakeController.makeInput()
         )
-        _ = sut.transform(input: input)
-        return sut
+        let output = sut.transform(input: input)
+        return (sut, output)
     }
 }

@@ -28,6 +28,7 @@ import Foundation
 import NanoViewControllerCombine
 import NanoViewControllerController
 import NanoViewControllerCore
+import NanoViewControllerNavigation
 import Validation
 
 // MARK: - UnlockAppWithPincodeUserAction
@@ -45,10 +46,10 @@ public enum UnlockAppWithPincodeUserAction: Sendable {
 /// Two unlock paths share the `.unlockApp` outcome:
 /// 1. Pincode entry that matches the saved pincode.
 /// 2. Successful Face/Touch ID prompt fired automatically on `viewDidAppear`.
-public final class UnlockAppWithPincodeViewModel: BaseViewModel<
-    UnlockAppWithPincodeUserAction,
+public final class UnlockAppWithPincodeViewModel: AbstractViewModel<
     UnlockAppWithPincodeViewModel.InputFromView,
-    UnlockAppWithPincodeViewModel.Publishers
+    UnlockAppWithPincodeViewModel.Publishers,
+    UnlockAppWithPincodeUserAction
 > {
     /// Read-only pincode access for comparison.
     @Injected(\.pincodeUseCase) private var pincodeUseCase: PincodeUseCase
@@ -67,9 +68,7 @@ public final class UnlockAppWithPincodeViewModel: BaseViewModel<
     /// Wires real-time pincode comparison + biometric prompt; either path
     /// succeeding fires `.unlockApp`.
     override public func transform(input: Input) -> Output<Publishers, NavigationStep> {
-        func userDid(_ userAction: NavigationStep) {
-            navigator.next(userAction)
-        }
+        let navigator = Navigator<NavigationStep>()
 
         let validator = InputValidator(existingPincode: pincode)
 
@@ -91,19 +90,6 @@ public final class UnlockAppWithPincodeViewModel: BaseViewModel<
         // the screen (rotation, app-switcher, etc.) re-triggers it.
         let unlockUsingBiometricsTrigger = input.fromController.viewDidAppear.prefix(1)
 
-        [
-            // `.first()` so only the *first* unlock signal is honoured — without
-            // it, biometrics succeeding while the user was mid-pincode entry
-            // would fire `userDid(.unlockApp)` twice and double-trigger the
-            // navigation transition. The biometric prompt fires on
-            // viewDidAppear (not willAppear) so the system alert isn't
-            // competing with our presentation animation.
-            pincodeValidationValue.filter(\.isValid).mapToVoid()
-                .merge(with: unlockUsingBiometricsTrigger.flatMapLatest { unlockUsingBiometrics() })
-                .first()
-                .sinkOnMain { userDid(.unlockApp) },
-        ].forEach { $0.store(in: &cancellables) }
-
         return Output(
             publishers: Publishers(
                 // Focus on viewWillAppear so the keyboard is up before the screen is fully visible.
@@ -111,7 +97,18 @@ public final class UnlockAppWithPincodeViewModel: BaseViewModel<
                 pincodeValidation: pincodeValidationValue.map(\.validation).eraseToAnyPublisher()
             ),
             navigation: navigator.navigation
-        )
+        ) {
+            // `.first()` so only the *first* unlock signal is honoured — without
+            // it, biometrics succeeding while the user was mid-pincode entry
+            // would fire `navigator.next(.unlockApp)` twice and double-trigger the
+            // navigation transition. The biometric prompt fires on
+            // viewDidAppear (not willAppear) so the system alert isn't
+            // competing with our presentation animation.
+            pincodeValidationValue.filter(\.isValid).mapToVoid()
+                .merge(with: unlockUsingBiometricsTrigger.flatMapLatest { unlockUsingBiometrics() })
+                .first()
+                .sinkOnMain { [navigator] in navigator.next(.unlockApp) }
+        }
     }
 }
 

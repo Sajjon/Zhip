@@ -94,7 +94,8 @@ final class BackupWalletCoordinatorTests: XCTestCase {
         sut.navigator.navigation.sink { received = $0 }.store(in: &cancellables)
         let backup = try XCTUnwrap(top(as: BackupWallet.self))
 
-        backup.viewModel.navigator.next(.cancelOrDismiss)
+        // `.cancellable` mode wires cancel to the left-bar button.
+        backup.leftBarButtonSubject.send(())
         drainRunLoop()
 
         if case .cancel = received { } else {
@@ -108,7 +109,11 @@ final class BackupWalletCoordinatorTests: XCTestCase {
         sut.navigator.navigation.sink { received = $0 }.store(in: &cancellables)
         let backup = try XCTUnwrap(top(as: BackupWallet.self))
 
-        backup.viewModel.navigator.next(.backupWallet)
+        // Done CTA is gated on the "I have backed up" checkbox — tick it first,
+        // then tap the Done button (the 4th UIButton in BackupWalletView's
+        // depth-first hierarchy: revealPrivateKey, revealKeystore, copyKeystore, done).
+        try setCheckbox(on: true, in: backup.view)
+        try tapButton(at: 3, in: backup.view)
         drainRunLoop()
 
         if case .backUp = received { } else {
@@ -120,7 +125,8 @@ final class BackupWalletCoordinatorTests: XCTestCase {
         sut.start()
         let backup = try XCTUnwrap(top(as: BackupWallet.self))
 
-        backup.viewModel.navigator.next(.revealKeystore)
+        // Tap "Reveal keystore" — 2nd UIButton (after revealPrivateKey).
+        try tapButton(at: 1, in: backup.view)
         drainRunLoop()
         // Modal presented; presence on navigationController.presentedViewController proves path ran.
     }
@@ -129,7 +135,8 @@ final class BackupWalletCoordinatorTests: XCTestCase {
         sut.start()
         let backup = try XCTUnwrap(top(as: BackupWallet.self))
 
-        backup.viewModel.navigator.next(.revealPrivateKey)
+        // Tap "Reveal private key" — 1st UIButton in BackupWalletView.
+        try tapButton(at: 0, in: backup.view)
         drainRunLoop()
 
         XCTAssertTrue(sut.childCoordinators.contains { $0 is DecryptKeystoreCoordinator })
@@ -155,7 +162,7 @@ final class BackupWalletCoordinatorTests: XCTestCase {
     func test_decryptKeystoreBackingUpKeyPair_dismissesChildCoordinator() throws {
         sut.start()
         let backup = try XCTUnwrap(top(as: BackupWallet.self))
-        backup.viewModel.navigator.next(.revealPrivateKey)
+        try tapButton(at: 0, in: backup.view) // revealPrivateKey
         drainRunLoop()
         let decrypt = try firstChild(as: DecryptKeystoreCoordinator.self)
 
@@ -168,7 +175,7 @@ final class BackupWalletCoordinatorTests: XCTestCase {
     func test_decryptKeystoreDismiss_dismissesChildCoordinator() throws {
         sut.start()
         let backup = try XCTUnwrap(top(as: BackupWallet.self))
-        backup.viewModel.navigator.next(.revealPrivateKey)
+        try tapButton(at: 0, in: backup.view) // revealPrivateKey
         drainRunLoop()
         let decrypt = try firstChild(as: DecryptKeystoreCoordinator.self)
 
@@ -181,7 +188,7 @@ final class BackupWalletCoordinatorTests: XCTestCase {
     func test_revealKeystoreFinished_dismissesModalScene() throws {
         sut.start()
         let backup = try XCTUnwrap(top(as: BackupWallet.self))
-        backup.viewModel.navigator.next(.revealKeystore)
+        try tapButton(at: 1, in: backup.view) // revealKeystore
         drainRunLoop()
         guard let presentedNav = navigationController.presentedViewController as? UINavigationController,
               let backUp = presentedNav.viewControllers.first as? BackUpKeystore
@@ -190,7 +197,8 @@ final class BackupWalletCoordinatorTests: XCTestCase {
             return
         }
 
-        backUp.viewModel.navigator.next(.finished)
+        // `BackUpKeystore` uses a "Finished" right-bar button.
+        backUp.rightBarButtonSubject.send(())
         drainRunLoop()
         // Dismissal ran; no crash.
     }

@@ -28,6 +28,7 @@ import NanoViewControllerCombine
 import NanoViewControllerCore
 import NanoViewControllerController
 import NanoViewControllerDIPrimitives
+import NanoViewControllerNavigation
 import UIKit
 import Validation
  import Zesame
@@ -47,10 +48,10 @@ public enum ReceiveUserAction: Sendable {
 /// View model for the Receive screen. Renders the wallet's bech32 address as a
 /// QR code, handles the optional "request amount" field, and produces the
 /// `TransactionIntent` consumed by the coordinator's share-sheet helper.
-public final class ReceiveViewModel: BaseViewModel<
-    ReceiveUserAction,
+public final class ReceiveViewModel: AbstractViewModel<
     ReceiveViewModel.InputFromView,
-    ReceiveViewModel.Publishers
+    ReceiveViewModel.Publishers,
+    ReceiveUserAction
 > {
     /// Source of the wallet whose address is shown.
     @Injected(\.walletStorageUseCase) private var walletStorageUseCase: WalletStorageUseCase
@@ -62,9 +63,7 @@ public final class ReceiveViewModel: BaseViewModel<
     /// Wires the address QR generation, amount validation, copy-to-pasteboard
     /// behavior, and the request-payment hand-off to the coordinator.
     override public func transform(input: Input) -> Output<Publishers, NavigationStep> {
-        func userDid(_ userAction: NavigationStep) {
-            navigator.next(userAction)
-        }
+        let navigator = Navigator<NavigationStep>()
 
         let wallet = walletStorageUseCase.wallet.filterNil().replaceErrorWithEmpty()
 
@@ -98,24 +97,6 @@ public final class ReceiveViewModel: BaseViewModel<
 
         let receivingAddress: AnyPublisher<String, Never> = wallet.map(\.bech32Address.asString).eraseToAnyPublisher()
 
-        [
-            input.fromController.rightBarButtonTrigger
-                .sink { userDid(.finish) },
-
-            input.fromView.copyMyAddressTrigger.withLatestFrom(receivingAddress)
-                .sink { [pasteboard] address in
-                    // pasteboard.copy + Toast init are @MainActor — the
-                    // Combine sink closure is @Sendable so we hop explicitly.
-                    mainActorOnly {
-                        pasteboard.copy(address)
-                        input.fromController.toastSubject.send(Toast(String(localized: .Receive.copiedAddress)))
-                    }
-                },
-
-            input.fromView.shareTrigger.withLatestFrom(transactionToReceive)
-                .sink { userDid(.requestTransaction($0)) },
-        ].forEach { $0.store(in: &cancellables) }
-
         return Output(
             publishers: Publishers(
                 receivingAddress: receivingAddress,
@@ -125,7 +106,23 @@ public final class ReceiveViewModel: BaseViewModel<
                 qrImage: qrImage
             ),
             navigation: navigator.navigation
-        )
+        ) {
+            input.fromController.rightBarButtonTrigger
+                .sink { [navigator] in navigator.next(.finish) }
+
+            input.fromView.copyMyAddressTrigger.withLatestFrom(receivingAddress)
+                .sink { [pasteboard] address in
+                    // pasteboard.copy + Toast init are @MainActor — the
+                    // Combine sink closure is @Sendable so we hop explicitly.
+                    mainActorOnly {
+                        pasteboard.copy(address)
+                        input.fromController.toastSubject.send(Toast(String(localized: .Receive.copiedAddress)))
+                    }
+                }
+
+            input.fromView.shareTrigger.withLatestFrom(transactionToReceive)
+                .sink { [navigator] in navigator.next(.requestTransaction($0)) }
+        }
     }
 }
 

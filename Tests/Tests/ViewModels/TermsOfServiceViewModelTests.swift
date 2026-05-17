@@ -25,6 +25,7 @@
 @testable import AppFeature
 import Combine
 import NanoViewControllerController
+import NanoViewControllerCore
 import XCTest
 
 /// Tests for `TermsOfServiceViewModel`.
@@ -61,9 +62,9 @@ final class TermsOfServiceViewModelTests: XCTestCase {
 
     func test_didAcceptTerms_callsUseCaseAndEmitsAccept() {
         // Arrange
-        let sut = makeSUT(isDismissible: false)
+        let (_, output) = makeSUT(isDismissible: false)
         var observed: TermsOfServiceNavigation?
-        sut.navigator.navigation.sink { observed = $0 }.store(in: &cancellables)
+        output.navigation.sink { observed = $0 }.store(in: &cancellables)
 
         // Act
         didAcceptTerms.send(())
@@ -79,9 +80,9 @@ final class TermsOfServiceViewModelTests: XCTestCase {
 
     func test_rightBarButton_emitsDismiss_whenDismissible() {
         // Arrange
-        let sut = makeSUT(isDismissible: true)
+        let (_, output) = makeSUT(isDismissible: true)
         var observed: TermsOfServiceNavigation?
-        sut.navigator.navigation.sink { observed = $0 }.store(in: &cancellables)
+        output.navigation.sink { observed = $0 }.store(in: &cancellables)
 
         // Act
         fakeController.rightBarButtonTriggerSubject.send(())
@@ -94,9 +95,9 @@ final class TermsOfServiceViewModelTests: XCTestCase {
 
     func test_rightBarButton_isIgnored_whenNotDismissible() {
         // Arrange
-        let sut = makeSUT(isDismissible: false)
+        let (_, output) = makeSUT(isDismissible: false)
         var observed: TermsOfServiceNavigation?
-        sut.navigator.navigation.sink { observed = $0 }.store(in: &cancellables)
+        output.navigation.sink { observed = $0 }.store(in: &cancellables)
 
         // Act
         fakeController.rightBarButtonTriggerSubject.send(())
@@ -107,7 +108,7 @@ final class TermsOfServiceViewModelTests: XCTestCase {
 
     // MARK: - Helpers
 
-    private func makeSUT(isDismissible: Bool) -> TermsOfServiceViewModel {
+    private func makeSUT(isDismissible: Bool) -> (TermsOfServiceViewModel, Output<TermsOfServiceViewModel.Publishers, TermsOfServiceViewModel.NavigationStep>) {
         let sut = TermsOfServiceViewModel(useCase: useCase, isDismissible: isDismissible)
         let input = TermsOfServiceViewModel.Input(
             fromView: .init(
@@ -116,7 +117,7 @@ final class TermsOfServiceViewModelTests: XCTestCase {
             ),
             fromController: fakeController.makeInput()
         )
-        _ = sut.transform(input: input)
-        return sut
+        let output = sut.transform(input: input)
+        return (sut, output)
     }
 }

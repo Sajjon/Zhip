@@ -117,9 +117,9 @@ final class PrepareTransactionViewModelTests: XCTestCase {
 
     func test_rightBarButton_emitsCancel() {
         let sut = makeSUT()
-        _ = sut.transform(input: makeInput())
+        let output = sut.transform(input: makeInput())
         var observed: PrepareTransactionUserAction?
-        sut.navigator.navigation.sink { observed = $0 }.store(in: &cancellables)
+        output.navigation.sink { observed = $0 }.store(in: &cancellables)
 
         fakeController.rightBarButtonTriggerSubject.send(())
 
@@ -130,9 +130,9 @@ final class PrepareTransactionViewModelTests: XCTestCase {
 
     func test_scanQRTrigger_emitsScanQRCode() {
         let sut = makeSUT()
-        _ = sut.transform(input: makeInput())
+        let output = sut.transform(input: makeInput())
         var observed: PrepareTransactionUserAction?
-        sut.navigator.navigation.sink { observed = $0 }.store(in: &cancellables)
+        output.navigation.sink { observed = $0 }.store(in: &cancellables)
 
         scanQRTrigger.send(())
 
@@ -225,9 +225,9 @@ final class PrepareTransactionViewModelTests: XCTestCase {
 
     func test_validToReviewTrigger_emitsReviewPaymentWithPayment() {
         let sut = makeSUT()
-        _ = sut.transform(input: makeInput())
+        let output = sut.transform(input: makeInput())
         var observed: PrepareTransactionUserAction?
-        sut.navigator.navigation.sink { observed = $0 }.store(in: &cancellables)
+        output.navigation.sink { observed = $0 }.store(in: &cancellables)
 
         recipientAddress.send(validAddress)
         amountToSend.send("1")

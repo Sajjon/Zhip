@@ -26,6 +26,7 @@ import Combine
 import Foundation
 import NanoViewControllerController
 import NanoViewControllerCore
+import NanoViewControllerNavigation
 
 // MARK: - User action and navigation steps
 
@@ -39,29 +40,26 @@ public enum WelcomeUserAction: Sendable {
 ///
 /// The scene has a single job: forward the `startTrigger` to the onboarding
 /// coordinator as `.start`.
-public final class WelcomeViewModel: BaseViewModel<
-    WelcomeUserAction,
+public final class WelcomeViewModel: AbstractViewModel<
     WelcomeViewModel.InputFromView,
-    WelcomeViewModel.Publishers
+    WelcomeViewModel.Publishers,
+    WelcomeUserAction
 > {
-    /// Wires `startTrigger` → `navigator.next(.start)`. Returns an empty `Publishers`
-    /// because the welcome scene has no ViewModel-driven UI state.
+    /// Wires `startTrigger` → `navigator.next(.start)`. Returns an empty
+    /// `Publishers` because the welcome scene has no ViewModel-driven UI
+    /// state. The navigator lives only for the duration of `transform`'s
+    /// captures — its publisher is handed to the returned `Output`, and the
+    /// scene-controller retains the subscription via `Output.cancellables`.
     override public func transform(input: Input) -> Output<Publishers, NavigationStep> {
-        func userIntends(to userAction: NavigationStep) {
-            navigator.next(userAction)
-        }
-
-        // MARK: Navigate
-
-        [
-            input.fromView.startTrigger
-                .sink { userIntends(to: .start) },
-        ].forEach { $0.store(in: &cancellables) }
+        let navigator = Navigator<NavigationStep>()
 
         return Output(
             publishers: Publishers(),
             navigation: navigator.navigation
-        )
+        ) {
+            input.fromView.startTrigger
+                .sink { [navigator] in navigator.next(.start) }
+        }
     }
 }
 

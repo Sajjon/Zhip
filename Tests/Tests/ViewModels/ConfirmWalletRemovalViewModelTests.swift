@@ -25,6 +25,7 @@
 @testable import AppFeature
 import Combine
 import NanoViewControllerController
+import NanoViewControllerCore
 import XCTest
 
 /// Tests for `ConfirmWalletRemovalViewModel`.
@@ -54,9 +55,9 @@ final class ConfirmWalletRemovalViewModelTests: XCTestCase {
     }
 
     func test_leftBarButton_emitsCancel() {
-        let sut = makeSUT()
+        let (_, output) = makeSUT()
         var observed: ConfirmWalletRemovalUserAction?
-        sut.navigator.navigation.sink { observed = $0 }.store(in: &cancellables)
+        output.navigation.sink { observed = $0 }.store(in: &cancellables)
 
         fakeController.leftBarButtonTriggerSubject.send(())
 
@@ -66,9 +67,9 @@ final class ConfirmWalletRemovalViewModelTests: XCTestCase {
     }
 
     func test_confirmTrigger_emitsConfirm() {
-        let sut = makeSUT()
+        let (_, output) = makeSUT()
         var observed: ConfirmWalletRemovalUserAction?
-        sut.navigator.navigation.sink { observed = $0 }.store(in: &cancellables)
+        output.navigation.sink { observed = $0 }.store(in: &cancellables)
 
         confirmTrigger.send(())
 
@@ -89,10 +90,10 @@ final class ConfirmWalletRemovalViewModelTests: XCTestCase {
         XCTAssertEqual(events, [false, true, false])
     }
 
-    private func makeSUT() -> ConfirmWalletRemovalViewModel {
+    private func makeSUT() -> (ConfirmWalletRemovalViewModel, Output<ConfirmWalletRemovalViewModel.Publishers, ConfirmWalletRemovalViewModel.NavigationStep>) {
         let sut = ConfirmWalletRemovalViewModel()
-        _ = sut.transform(input: makeInput())
-        return sut
+        let output = sut.transform(input: makeInput())
+        return (sut, output)
     }
 
     private func makeInput() -> ConfirmWalletRemovalViewModel.Input {
