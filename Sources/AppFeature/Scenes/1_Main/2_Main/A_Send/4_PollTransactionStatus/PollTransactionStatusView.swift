@@ -68,13 +68,13 @@ public final class PollTransactionStatusView: ScrollableStackViewOwner {
 extension PollTransactionStatusView: ViewModelled {
     public typealias ViewModel = PollTransactionStatusViewModel
 
-    public func populate(with viewModel: PollTransactionStatusViewModel.Output) -> [AnyCancellable] {
-        let vibrateSuccessTrigger = viewModel.isSeeTxDetailsEnabled
+    public func populate(with publishers: PollTransactionStatusViewModel.Publishers) -> [AnyCancellable] {
+        let vibrateSuccessTrigger = publishers.isSeeTxDetailsEnabled
 
         return [
-            viewModel.skipWaitingOrDoneButtonTitle --> skipWaitingOrDoneButton.titleBinder(for: .normal),
-            viewModel.isSeeTxDetailsEnabled --> seeTxDetailsWhenAvailableButton.isEnabledBinder,
-            viewModel.isSeeTxDetailsButtonLoading --> seeTxDetailsWhenAvailableButton.isLoadingBinder,
+            publishers.skipWaitingOrDoneButtonTitle --> skipWaitingOrDoneButton.titleBinder(for: .normal),
+            publishers.isSeeTxDetailsEnabled --> seeTxDetailsWhenAvailableButton.isEnabledBinder,
+            publishers.isSeeTxDetailsButtonLoading --> seeTxDetailsWhenAvailableButton.isLoadingBinder,
             vibrateSuccessTrigger.sink { [weak self] finishedPolling in
                 if !finishedPolling {
                     self?.playSound()

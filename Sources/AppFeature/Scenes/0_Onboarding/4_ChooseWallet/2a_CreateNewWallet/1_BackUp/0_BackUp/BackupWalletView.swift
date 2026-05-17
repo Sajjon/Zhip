@@ -94,10 +94,10 @@ extension BackupWalletView: ViewModelled {
 
     /// Binds visibility (Settings mode hides the confirm group) and the
     /// done-button enabled state (gated on the checkbox).
-    public func populate(with viewModel: ViewModel.Output) -> [AnyCancellable] {
+    public func populate(with publishers: ViewModel.Publishers) -> [AnyCancellable] {
         [
-            viewModel.isHaveSecurelyBackedUpViewsVisible --> haveSecurelyBackedUpViews.isVisibleBinder,
-            viewModel.isDoneButtonEnabled --> doneButton.isEnabledBinder,
+            publishers.isHaveSecurelyBackedUpViewsVisible --> haveSecurelyBackedUpViews.isVisibleBinder,
+            publishers.isDoneButtonEnabled --> doneButton.isEnabledBinder,
         ]
     }
 

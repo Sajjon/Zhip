@@ -117,9 +117,9 @@ final class PrepareTransactionViewModelTests: XCTestCase {
 
     func test_rightBarButton_emitsCancel() {
         let sut = makeSUT()
-        _ = sut.transform(input: makeInput())
+        let output = sut.transform(input: makeInput())
         var observed: PrepareTransactionUserAction?
-        sut.navigator.navigation.sink { observed = $0 }.store(in: &cancellables)
+        output.navigation.sink { observed = $0 }.store(in: &cancellables)
 
         fakeController.rightBarButtonTriggerSubject.send(())
 
@@ -130,9 +130,9 @@ final class PrepareTransactionViewModelTests: XCTestCase {
 
     func test_scanQRTrigger_emitsScanQRCode() {
         let sut = makeSUT()
-        _ = sut.transform(input: makeInput())
+        let output = sut.transform(input: makeInput())
         var observed: PrepareTransactionUserAction?
-        sut.navigator.navigation.sink { observed = $0 }.store(in: &cancellables)
+        output.navigation.sink { observed = $0 }.store(in: &cancellables)
 
         scanQRTrigger.send(())
 
@@ -147,7 +147,7 @@ final class PrepareTransactionViewModelTests: XCTestCase {
         let sut = makeSUT()
         let output = sut.transform(input: makeInput())
         var balance: String?
-        output.balance.sink { balance = $0 }.store(in: &cancellables)
+        output.publishers.balance.sink { balance = $0 }.store(in: &cancellables)
 
         XCTAssertNotNil(balance)
         XCTAssertFalse((balance ?? "").isEmpty)
@@ -159,7 +159,7 @@ final class PrepareTransactionViewModelTests: XCTestCase {
         let sut = makeSUT()
         let output = sut.transform(input: makeInput())
         var validations: [AnyValidation] = []
-        output.recipientAddressValidation.sink { validations.append($0) }.store(in: &cancellables)
+        output.publishers.recipientAddressValidation.sink { validations.append($0) }.store(in: &cancellables)
 
         recipientAddress.send("not-an-address")
         didEndEditingRecipient.send(())
@@ -171,7 +171,7 @@ final class PrepareTransactionViewModelTests: XCTestCase {
         let sut = makeSUT()
         let output = sut.transform(input: makeInput())
         var validations: [AnyValidation] = []
-        output.recipientAddressValidation.sink { validations.append($0) }.store(in: &cancellables)
+        output.publishers.recipientAddressValidation.sink { validations.append($0) }.store(in: &cancellables)
 
         recipientAddress.send(validAddress)
 
@@ -182,7 +182,7 @@ final class PrepareTransactionViewModelTests: XCTestCase {
         let sut = makeSUT()
         let output = sut.transform(input: makeInput())
         var emitted: String?
-        output.recipient.sink { emitted = $0 }.store(in: &cancellables)
+        output.publishers.recipient.sink { emitted = $0 }.store(in: &cancellables)
 
         recipientAddress.send(validAddress)
 
@@ -199,7 +199,7 @@ final class PrepareTransactionViewModelTests: XCTestCase {
         let sut = makeSUT()
         let output = sut.transform(input: makeInput())
         var validations: [AnyValidation] = []
-        output.recipientAddressValidation.sink { validations.append($0) }.store(in: &cancellables)
+        output.publishers.recipientAddressValidation.sink { validations.append($0) }.store(in: &cancellables)
 
         scannedOrDeeplinked.send(intent)
 
@@ -212,7 +212,7 @@ final class PrepareTransactionViewModelTests: XCTestCase {
         let sut = makeSUT()
         let output = sut.transform(input: makeInput())
         var states: [Bool] = []
-        output.isReviewButtonEnabled.sink { states.append($0) }.store(in: &cancellables)
+        output.publishers.isReviewButtonEnabled.sink { states.append($0) }.store(in: &cancellables)
 
         recipientAddress.send(validAddress)
         amountToSend.send("1")
@@ -225,9 +225,9 @@ final class PrepareTransactionViewModelTests: XCTestCase {
 
     func test_validToReviewTrigger_emitsReviewPaymentWithPayment() {
         let sut = makeSUT()
-        _ = sut.transform(input: makeInput())
+        let output = sut.transform(input: makeInput())
         var observed: PrepareTransactionUserAction?
-        sut.navigator.navigation.sink { observed = $0 }.store(in: &cancellables)
+        output.navigation.sink { observed = $0 }.store(in: &cancellables)
 
         recipientAddress.send(validAddress)
         amountToSend.send("1")
@@ -246,7 +246,7 @@ final class PrepareTransactionViewModelTests: XCTestCase {
         let sut = makeSUT()
         let output = sut.transform(input: makeInput())
         var placeholder: String?
-        output.gasLimitPlaceholder.sink { placeholder = $0 }.store(in: &cancellables)
+        output.publishers.gasLimitPlaceholder.sink { placeholder = $0 }.store(in: &cancellables)
 
         XCTAssertFalse((placeholder ?? "").isEmpty)
     }
@@ -255,7 +255,7 @@ final class PrepareTransactionViewModelTests: XCTestCase {
         let sut = makeSUT()
         let output = sut.transform(input: makeInput())
         var placeholder: String?
-        output.gasPricePlaceholder.sink { placeholder = $0 }.store(in: &cancellables)
+        output.publishers.gasPricePlaceholder.sink { placeholder = $0 }.store(in: &cancellables)
 
         XCTAssertFalse((placeholder ?? "").isEmpty)
     }
@@ -264,7 +264,7 @@ final class PrepareTransactionViewModelTests: XCTestCase {
         let sut = makeSUT()
         let output = sut.transform(input: makeInput())
         var placeholder: String?
-        output.amountPlaceholder.sink { placeholder = $0 }.store(in: &cancellables)
+        output.publishers.amountPlaceholder.sink { placeholder = $0 }.store(in: &cancellables)
 
         XCTAssertFalse((placeholder ?? "").isEmpty)
     }
@@ -273,7 +273,7 @@ final class PrepareTransactionViewModelTests: XCTestCase {
         let sut = makeSUT()
         let output = sut.transform(input: makeInput())
         var cost: String?
-        output.costOfTransaction.sink { cost = $0 }.store(in: &cancellables)
+        output.publishers.costOfTransaction.sink { cost = $0 }.store(in: &cancellables)
 
         gasLimit.send(GasLimit.minimum.description)
         gasPrice.send("1000000")
@@ -288,7 +288,7 @@ final class PrepareTransactionViewModelTests: XCTestCase {
         let sut = makeSUT()
         let output = sut.transform(input: makeInput())
         var amounts: [String?] = []
-        output.amount.sink { amounts.append($0) }.store(in: &cancellables)
+        output.publishers.amount.sink { amounts.append($0) }.store(in: &cancellables)
 
         gasLimit.send(GasLimit.minimum.description)
         gasPrice.send("1000000")

@@ -27,6 +27,7 @@ import Factory
 import NanoViewControllerCombine
 import NanoViewControllerController
 import NanoViewControllerCore
+import NanoViewControllerNavigation
 import Validation
 import Zesame
 
@@ -44,20 +45,18 @@ public enum RestoreWalletNavigation: Sendable {
 /// dispatches the resulting `KeyRestoration` payload to `RestoreWalletUseCase`,
 /// and surfaces validation errors back to the UI via the `keystoreRestorationError`
 /// publisher.
-public final class RestoreWalletViewModel: BaseViewModel<
-    RestoreWalletNavigation,
+public final class RestoreWalletViewModel: AbstractViewModel<
     RestoreWalletViewModel.InputFromView,
-    RestoreWalletViewModel.Output
+    RestoreWalletViewModel.Publishers,
+    RestoreWalletNavigation
 > {
     /// Use case that decrypts the keystore or derives a wallet from a private key.
     @Injected(\.restoreWalletUseCase) private var restoreWalletUseCase: RestoreWalletUseCase
 
     /// Wires segment-driven payload selection, restore-button gating, and
     /// the (cancellable) restore use-case call. Detail in inline comments.
-    override public func transform(input: Input) -> Output {
-        func userIntends(to intention: NavigationStep) {
-            navigator.next(intention)
-        }
+    override public func transform(input: Input) -> Output<Publishers, NavigationStep> {
+        let navigator = Navigator<NavigationStep>()
 
         // Spinner shared between the in-flight use-case call and the CTA.
         let activityIndicator = ActivityIndicator()
@@ -85,21 +84,6 @@ public final class RestoreWalletViewModel: BaseViewModel<
         // a typed `AnyValidation` (wrong-password / bad-format) on the keystore field.
         let errorTracker = ErrorTracker()
 
-        [
-            input.fromView.restoreTrigger.withLatestFrom(keyRestoration.filterNil()) { $1 }
-                // flatMapLatest cancels any in-flight restore when the user taps again —
-                // useful if scrypt is mid-decryption with the wrong password.
-                .flatMapLatest { [weak self] restoration -> AnyPublisher<Wallet, Never> in
-                    guard let self else { return Empty().eraseToAnyPublisher() }
-                    return restoreWalletUseCase.restoreWallet(from: restoration)
-                        .trackActivity(activityIndicator)
-                        .trackError(errorTracker)
-                        .replaceErrorWithEmpty()
-                        .eraseToAnyPublisher()
-                }
-                .sink { userIntends(to: .restoreWallet($0)) },
-        ].forEach { $0.store(in: &cancellables) }
-
         // Funnel any tracked use-case error through the keystore-error mapper
         // so the view can flip the keystore field red and force-redirect the
         // segment. Sources the projection from `ErrorTracker.compactMap`
@@ -111,12 +95,28 @@ public final class RestoreWalletViewModel: BaseViewModel<
             .eraseToAnyPublisher()
 
         return Output(
-            headerLabel: headerLabel,
-            // Restore CTA enabled iff the active sub-view has produced a non-nil payload.
-            isRestoreButtonEnabled: keyRestoration.map { $0 != nil }.eraseToAnyPublisher(),
-            isRestoring: activityIndicator.asPublisher(),
-            keystoreRestorationError: keystoreRestorationError
-        )
+            publishers: Publishers(
+                headerLabel: headerLabel,
+                // Restore CTA enabled iff the active sub-view has produced a non-nil payload.
+                isRestoreButtonEnabled: keyRestoration.map { $0 != nil }.eraseToAnyPublisher(),
+                isRestoring: activityIndicator.asPublisher(),
+                keystoreRestorationError: keystoreRestorationError
+            ),
+            navigation: navigator.navigation
+        ) {
+            input.fromView.restoreTrigger.withLatestFrom(keyRestoration.filterNil()) { $1 }
+                // flatMapLatest cancels any in-flight restore when the user taps again —
+                // useful if scrypt is mid-decryption with the wrong password.
+                .flatMapLatest { [weak self] restoration -> AnyPublisher<Wallet, Never> in
+                    guard let self else { return Empty().eraseToAnyPublisher() }
+                    return restoreWalletUseCase.restoreWallet(from: restoration)
+                        .trackActivity(activityIndicator)
+                        .trackError(errorTracker)
+                        .replaceErrorWithEmpty()
+                        .eraseToAnyPublisher()
+                }
+                .sink { [navigator] in navigator.next(.restoreWallet($0)) }
+        }
     }
 }
 
@@ -142,7 +142,7 @@ public extension RestoreWalletViewModel {
     }
 
     /// Reactive bindings the view installs.
-    struct Output {
+    struct Publishers {
         /// Drives `headerLabel.textBinder` based on the selected segment.
         let headerLabel: AnyPublisher<String, Never>
         /// Drives `restoreWalletButton.isEnabledBinder`.

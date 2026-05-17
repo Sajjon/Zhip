@@ -29,6 +29,7 @@ import NanoViewControllerCombine
 import NanoViewControllerController
 import NanoViewControllerCore
 import NanoViewControllerDIPrimitives
+import NanoViewControllerNavigation
 import UIKit
 import Zesame
 
@@ -51,10 +52,10 @@ public enum PollTransactionStatusUserAction: Sendable {
 /// View model for step 4 of Send. Polls the network for the transaction receipt
 /// (linear backoff, 20 attempts), routes user actions (skip/copy/view details),
 /// and surfaces a loading-indicator while the poll is in flight.
-public final class PollTransactionStatusViewModel: BaseViewModel<
-    PollTransactionStatusUserAction,
+public final class PollTransactionStatusViewModel: AbstractViewModel<
     PollTransactionStatusViewModel.InputFromView,
-    PollTransactionStatusViewModel.Output
+    PollTransactionStatusViewModel.Publishers,
+    PollTransactionStatusUserAction
 > {
     /// Receipt-polling use case.
     @Injected(\.transactionReceiptUseCase) private var transactionReceiptUseCase: TransactionReceiptUseCase
@@ -71,10 +72,8 @@ public final class PollTransactionStatusViewModel: BaseViewModel<
 
     /// Wires the polling pipeline, the three user actions (skip/copy/view), and
     /// the activity-indicator-driven button states.
-    override public func transform(input: Input) -> Output {
-        func userDid(_ userAction: NavigationStep) {
-            navigator.next(userAction)
-        }
+    override public func transform(input: Input) -> Output<Publishers, NavigationStep> {
+        let navigator = Navigator<NavigationStep>()
 
         let activityTracker = ActivityIndicator()
 
@@ -83,54 +82,55 @@ public final class PollTransactionStatusViewModel: BaseViewModel<
             polling: .twentyTimesLinearBackoff
         )
         .trackActivity(activityTracker)
-        .handleEvents(receiveCompletion: { completion in
+        .handleEvents(receiveCompletion: { [navigator] completion in
             if case let .failure(error) = completion,
                let zError = error as? Zesame.Error,
                case .api(.timeout) = zError
             {
-                userDid(.waitUntilTimeout)
+                navigator.next(.waitUntilTimeout)
             }
         })
 
         let hasReceivedReceipt: AnyPublisher<Bool, Never> = receipt.mapToVoid().replaceErrorWithEmpty().map { true }
             .prepend(false).eraseToAnyPublisher()
 
-        // MARK: Navigate
-
-        [
-            input.fromView.copyTransactionIdTrigger
-                .sink { [weak self, pasteboard] in
-                    guard let self else { return }
-                    // pasteboard.copy + Toast init are @MainActor — the
-                    // Combine sink closure is @Sendable so we hop explicitly.
-                    mainActorOnly {
-                        pasteboard.copy(self.transactionId)
-                        input.fromController.toastSubject
-                            .send(Toast(String(localized: .PollTransaction.copiedTransactionId)))
-                    }
-                },
-
-            input.fromView.skipWaitingOrDoneTrigger.withLatestFrom(hasReceivedReceipt) { $1 }
-                .sink { hasReceivedReceipt in
-                    let action: NavigationStep = hasReceivedReceipt ? .dismiss : .skip
-                    userDid(action)
-
-                },
-
-            input.fromView.seeTxDetails.withLatestFrom(receipt.replaceErrorWithEmpty()) {
-                $1
-            }.sink { userDid(.viewTransactionDetailsInBrowser(id: $0.transactionId)) },
-        ].forEach { $0.store(in: &cancellables) }
+        let transactionId = transactionId
 
         // MARK: Return output
 
         return Output(
-            skipWaitingOrDoneButtonTitle: hasReceivedReceipt
-                .map { $0 ? String(localized: .PollTransaction.done) : String(localized: .PollTransaction.skipWaiting) }
-                .eraseToAnyPublisher(),
-            isSeeTxDetailsEnabled: hasReceivedReceipt,
-            isSeeTxDetailsButtonLoading: activityTracker.asPublisher()
-        )
+            publishers: Publishers(
+                skipWaitingOrDoneButtonTitle: hasReceivedReceipt
+                    .map { $0 ? String(localized: .PollTransaction.done) : String(localized: .PollTransaction.skipWaiting) }
+                    .eraseToAnyPublisher(),
+                isSeeTxDetailsEnabled: hasReceivedReceipt,
+                isSeeTxDetailsButtonLoading: activityTracker.asPublisher()
+            ),
+            navigation: navigator.navigation
+        ) {
+            // MARK: Navigate
+
+            input.fromView.copyTransactionIdTrigger
+                .sink { [pasteboard] in
+                    // pasteboard.copy + Toast init are @MainActor — the
+                    // Combine sink closure is @Sendable so we hop explicitly.
+                    mainActorOnly {
+                        pasteboard.copy(transactionId)
+                        input.fromController.toastSubject
+                            .send(Toast(String(localized: .PollTransaction.copiedTransactionId)))
+                    }
+                }
+
+            input.fromView.skipWaitingOrDoneTrigger.withLatestFrom(hasReceivedReceipt) { $1 }
+                .sink { [navigator] hasReceivedReceipt in
+                    let action: NavigationStep = hasReceivedReceipt ? .dismiss : .skip
+                    navigator.next(action)
+                }
+
+            input.fromView.seeTxDetails.withLatestFrom(receipt.replaceErrorWithEmpty()) {
+                $1
+            }.sink { [navigator] in navigator.next(.viewTransactionDetailsInBrowser(id: $0.transactionId)) }
+        }
     }
 }
 
@@ -141,7 +141,7 @@ public extension PollTransactionStatusViewModel {
         let seeTxDetails: AnyPublisher<Void, Never>
     }
 
-    struct Output {
+    struct Publishers {
         let skipWaitingOrDoneButtonTitle: AnyPublisher<String, Never>
         let isSeeTxDetailsEnabled: AnyPublisher<Bool, Never>
         let isSeeTxDetailsButtonLoading: AnyPublisher<Bool, Never>

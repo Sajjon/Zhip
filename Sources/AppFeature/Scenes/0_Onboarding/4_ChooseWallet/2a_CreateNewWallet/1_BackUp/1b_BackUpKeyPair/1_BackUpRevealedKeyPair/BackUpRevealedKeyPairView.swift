@@ -67,10 +67,10 @@ extension BackUpRevealedKeyPairView: ViewModelled {
     public typealias ViewModel = BackUpRevealedKeyPairViewModel
 
     /// Routes the private/public key strings into their respective titled views.
-    public func populate(with viewModel: ViewModel.Output) -> [AnyCancellable] {
+    public func populate(with publishers: ViewModel.Publishers) -> [AnyCancellable] {
         [
-            viewModel.privateKey --> privateKeyTextView.valueBinder,
-            viewModel.publicKeyUncompressed --> publicKeyUncompressedTextView.valueBinder,
+            publishers.privateKey --> privateKeyTextView.valueBinder,
+            publishers.publicKeyUncompressed --> publicKeyUncompressedTextView.valueBinder,
         ]
     }
 

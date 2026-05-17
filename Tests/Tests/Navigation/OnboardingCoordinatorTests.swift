@@ -96,7 +96,7 @@ final class OnboardingCoordinatorTests: XCTestCase {
         sut.start()
         let welcome = try XCTUnwrap(top(as: Welcome.self))
 
-        welcome.viewModel.navigator.next(.start)
+        try tapButton(at: 0, in: welcome.view) // start button
         drainRunLoop()
 
         XCTAssertTrue(top(as: TermsOfService.self) != nil)
@@ -107,7 +107,7 @@ final class OnboardingCoordinatorTests: XCTestCase {
         sut.start()
         let welcome = try XCTUnwrap(top(as: Welcome.self))
 
-        welcome.viewModel.navigator.next(.start)
+        try tapButton(at: 0, in: welcome.view) // start button
         drainRunLoop()
 
         XCTAssertTrue(sut.childCoordinators.contains { $0 is ChooseWalletCoordinator })
@@ -120,7 +120,7 @@ final class OnboardingCoordinatorTests: XCTestCase {
         sut.start()
         let welcome = try XCTUnwrap(top(as: Welcome.self))
 
-        welcome.viewModel.navigator.next(.start)
+        try tapButton(at: 0, in: welcome.view) // start button
         drainRunLoop()
 
         XCTAssertTrue(sut.childCoordinators.contains { $0 is SetPincodeCoordinator })
@@ -135,7 +135,7 @@ final class OnboardingCoordinatorTests: XCTestCase {
         sut.navigator.navigation.sink { received = $0 }.store(in: &cancellables)
         let welcome = try XCTUnwrap(top(as: Welcome.self))
 
-        welcome.viewModel.navigator.next(.start)
+        try tapButton(at: 0, in: welcome.view) // start button
         drainRunLoop()
 
         if case .finishOnboarding = received {} else {
@@ -148,11 +148,11 @@ final class OnboardingCoordinatorTests: XCTestCase {
     func test_termsOfServiceAccept_startsChooseWalletChild() throws {
         sut.start()
         let welcome = try XCTUnwrap(top(as: Welcome.self))
-        welcome.viewModel.navigator.next(.start)
+        try tapButton(at: 0, in: welcome.view) // start button
         drainRunLoop()
         let terms = try XCTUnwrap(top(as: TermsOfService.self))
 
-        terms.viewModel.navigator.next(.acceptTermsOfService)
+        try tapButton(at: 0, in: terms.view) // acceptTermsButton
         drainRunLoop()
 
         XCTAssertTrue(sut.childCoordinators.contains { $0 is ChooseWalletCoordinator })
@@ -169,7 +169,7 @@ final class OnboardingCoordinatorTests: XCTestCase {
         mockOnboarding.shouldPromptUserToChosePincode = true
         sut.start()
         let welcome = try XCTUnwrap(top(as: Welcome.self))
-        welcome.viewModel.navigator.next(.start)
+        try tapButton(at: 0, in: welcome.view) // start button
         drainRunLoop()
         let chooseWallet = try firstChild(as: ChooseWalletCoordinator.self)
 
@@ -187,7 +187,7 @@ final class OnboardingCoordinatorTests: XCTestCase {
         mockOnboarding.shouldPromptUserToChosePincode = true
         sut.start()
         let welcome = try XCTUnwrap(top(as: Welcome.self))
-        welcome.viewModel.navigator.next(.start)
+        try tapButton(at: 0, in: welcome.view) // start button
         drainRunLoop()
         let setPin = try firstChild(as: SetPincodeCoordinator.self)
         var received: OnboardingCoordinatorNavigationStep?

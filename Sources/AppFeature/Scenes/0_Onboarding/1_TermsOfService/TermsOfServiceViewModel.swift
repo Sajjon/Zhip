@@ -27,6 +27,7 @@ import Foundation
 import NanoViewControllerCombine
 import NanoViewControllerCore
 import NanoViewControllerController
+import NanoViewControllerNavigation
 
 // MARK: TermsOfServiceNavigation
 
@@ -48,10 +49,10 @@ public enum TermsOfServiceNavigation: Sendable {
 ///    enabled only after the user scrolls to the bottom.
 /// 2. **Settings modal** — `isDismissible = true`. A right bar-button "Done"
 ///    appears so the user can close the modal; the accept button is hidden.
-public final class TermsOfServiceViewModel: BaseViewModel<
-    TermsOfServiceNavigation,
+public final class TermsOfServiceViewModel: AbstractViewModel<
     TermsOfServiceViewModel.InputFromView,
-    TermsOfServiceViewModel.Output
+    TermsOfServiceViewModel.Publishers,
+    TermsOfServiceNavigation
 > {
     /// Records the Terms acceptance flag in `Preferences`.
     private let useCase: OnboardingUseCase
@@ -69,10 +70,8 @@ public final class TermsOfServiceViewModel: BaseViewModel<
     /// - "did accept" → record acceptance + emit `.acceptTermsOfService`.
     /// - For the dismissible variant: install a "Done" right bar-button that
     ///   emits `.dismiss`.
-    override public func transform(input: Input) -> Output {
-        func userDid(_ userAction: NavigationStep) {
-            navigator.next(userAction)
-        }
+    override public func transform(input: Input) -> Output<Publishers, NavigationStep> {
+        let navigator = Navigator<NavigationStep>()
 
         // Once the user reaches the bottom, the button stays enabled — no
         // need to track scroll position continuously.
@@ -83,23 +82,27 @@ public final class TermsOfServiceViewModel: BaseViewModel<
             // Settings-modal context: install a "Done" right-bar button so the
             // user can close the modal without accepting (they've already accepted earlier).
             input.fromController.rightBarButtonContentSubject.onBarButton(.done)
-            input.fromController.rightBarButtonTrigger
-                .sink { userDid(.dismiss) }.store(in: &cancellables)
         }
 
-        [
-            input.fromView.didAcceptTerms.sink { [weak self] in
-                // Persist *first* so re-entering onboarding from a kill picks up the new state.
-                self?.useCase.didAcceptTermsOfService()
-                userDid(.acceptTermsOfService)
-            },
-        ].forEach { $0.store(in: &cancellables) }
-
         return Output(
-            // Hide the accept button in the dismissible (Settings-modal) variant.
-            isAcceptButtonVisible: Just(!isDismissible).eraseToAnyPublisher(),
-            isAcceptButtonEnabled: isAcceptButtonEnabled
-        )
+            publishers: Publishers(
+                // Hide the accept button in the dismissible (Settings-modal) variant.
+                isAcceptButtonVisible: Just(!isDismissible).eraseToAnyPublisher(),
+                isAcceptButtonEnabled: isAcceptButtonEnabled
+            ),
+            navigation: navigator.navigation
+        ) {
+            if isDismissible {
+                input.fromController.rightBarButtonTrigger
+                    .sink { [navigator] in navigator.next(.dismiss) }
+            }
+
+            input.fromView.didAcceptTerms.sink { [navigator, useCase] in
+                // Persist *first* so re-entering onboarding from a kill picks up the new state.
+                useCase.didAcceptTermsOfService()
+                navigator.next(.acceptTermsOfService)
+            }
+        }
     }
 }
 
@@ -113,7 +116,7 @@ public extension TermsOfServiceViewModel {
     }
 
     /// Reactive bindings the view installs.
-    struct Output {
+    struct Publishers {
         /// Drives `acceptTermsButton.isVisibleBinder`.
         let isAcceptButtonVisible: AnyPublisher<Bool, Never>
         /// Drives `acceptTermsButton.isEnabledBinder`.

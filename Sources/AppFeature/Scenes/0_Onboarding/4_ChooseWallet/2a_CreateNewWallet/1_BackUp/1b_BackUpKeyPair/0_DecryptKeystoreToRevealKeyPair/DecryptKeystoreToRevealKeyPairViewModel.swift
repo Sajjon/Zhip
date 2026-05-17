@@ -27,6 +27,7 @@ import Factory
 import NanoViewControllerCombine
 import NanoViewControllerController
 import NanoViewControllerCore
+import NanoViewControllerNavigation
 import Validation
 import Zesame
 
@@ -42,10 +43,10 @@ public enum DecryptKeystoreToRevealKeyPairUserAction: Sendable {
 ///
 /// The actual scrypt/PBKDF2 work happens in `ExtractKeyPairUseCase` — this
 /// view-model just orchestrates validation, activity tracking, and error handling.
-public final class DecryptKeystoreToRevealKeyPairViewModel: BaseViewModel<
-    DecryptKeystoreToRevealKeyPairUserAction,
+public final class DecryptKeystoreToRevealKeyPairViewModel: AbstractViewModel<
     DecryptKeystoreToRevealKeyPairViewModel.InputFromView,
-    DecryptKeystoreToRevealKeyPairViewModel.Output
+    DecryptKeystoreToRevealKeyPairViewModel.Publishers,
+    DecryptKeystoreToRevealKeyPairUserAction
 > {
     /// Use case that performs the (CPU-intensive) keystore decryption.
     @Injected(\.extractKeyPairUseCase) private var extractKeyPairUseCase: ExtractKeyPairUseCase
@@ -59,10 +60,8 @@ public final class DecryptKeystoreToRevealKeyPairViewModel: BaseViewModel<
     }
 
     /// Wires validation, decryption, and lifecycle. Detail in inline comments below.
-    override public func transform(input: Input) -> Output {
-        func userDid(_ step: NavigationStep) {
-            navigator.next(step)
-        }
+    override public func transform(input: Input) -> Output<Publishers, NavigationStep> {
+        let navigator = Navigator<NavigationStep>()
 
         // Spinner + error tracker shared with the use-case call below so the
         // floating-label field flips to red on `incorrectPassword` and the
@@ -85,30 +84,6 @@ public final class DecryptKeystoreToRevealKeyPairViewModel: BaseViewModel<
         // Strip down to just the validated password string for use-case consumption.
         let encryptionPassword = encryptionPasswordValidationValue.map { $0.value?.validPassword }.filterNil()
 
-        [
-            input.fromController.rightBarButtonTrigger
-                .sink { userDid(.dismiss) },
-
-            input.fromView.revealTrigger
-                .withLatestFrom(
-                    wallet.combineLatest(encryptionPassword).eraseToAnyPublisher()
-                ) { (_: Void, pair: (Wallet, String)) -> (wallet: Wallet, password: String) in
-                    (wallet: pair.0, password: pair.1)
-                }
-                // flatMapLatest (not flatMap) so a second tap while the first
-                // decryption is still running cancels the in-flight call —
-                // the user expects only the most recent attempt to surface.
-                .flatMapLatest { [weak self] input -> AnyPublisher<KeyPair, Never> in
-                    guard let self else { return Empty().eraseToAnyPublisher() }
-                    return extractKeyPairUseCase.extractKeyPairFrom(wallet: input.wallet, encryptedBy: input.password)
-                        .trackActivity(activityIndicator)
-                        .trackError(errorTracker)
-                        .replaceErrorWithEmpty()
-                        .eraseToAnyPublisher()
-                }
-                .sink { userDid(.decryptKeystoreReavealing(keyPair: $0)) },
-        ].forEach { $0.store(in: &cancellables) }
-
         // map `editingChanged` to `editingDidBegin`
         let encryptionPasswordEditingTrigger = input.fromView.encryptionPassword.mapToVoid().map { true }
             .merge(with: input.fromView.isEditingEncryptionPassword)
@@ -129,10 +104,34 @@ public final class DecryptKeystoreToRevealKeyPairViewModel: BaseViewModel<
             }
 
         return Output(
-            encryptionPasswordValidation: encryptionPasswordValidation,
-            isRevealButtonEnabled: encryptionPasswordValidationValue.map(\.isValid).eraseToAnyPublisher(),
-            isRevealButtonLoading: activityIndicator.asPublisher()
-        )
+            publishers: Publishers(
+                encryptionPasswordValidation: encryptionPasswordValidation,
+                isRevealButtonEnabled: encryptionPasswordValidationValue.map(\.isValid).eraseToAnyPublisher(),
+                isRevealButtonLoading: activityIndicator.asPublisher()
+            ),
+            navigation: navigator.navigation
+        ) {
+            input.fromController.rightBarButtonTrigger
+                .sink { [navigator] in navigator.next(.dismiss) }
+
+            input.fromView.revealTrigger
+                .withLatestFrom(
+                    wallet.combineLatest(encryptionPassword).eraseToAnyPublisher()
+                ) { (_: Void, pair: (Wallet, String)) -> (wallet: Wallet, password: String) in
+                    (wallet: pair.0, password: pair.1)
+                }
+                // flatMapLatest (not flatMap) so a second tap while the first
+                // decryption is still running cancels the in-flight call —
+                // the user expects only the most recent attempt to surface.
+                .flatMapLatest { [extractKeyPairUseCase] input -> AnyPublisher<KeyPair, Never> in
+                    extractKeyPairUseCase.extractKeyPairFrom(wallet: input.wallet, encryptedBy: input.password)
+                        .trackActivity(activityIndicator)
+                        .trackError(errorTracker)
+                        .replaceErrorWithEmpty()
+                        .eraseToAnyPublisher()
+                }
+                .sink { [navigator] in navigator.next(.decryptKeystoreReavealing(keyPair: $0)) }
+        }
     }
 }
 
@@ -148,7 +147,7 @@ public extension DecryptKeystoreToRevealKeyPairViewModel {
     }
 
     /// Reactive bindings the view installs.
-    struct Output {
+    struct Publishers {
         /// Drives `encryptionPasswordField.validationBinder`.
         let encryptionPasswordValidation: AnyPublisher<AnyValidation, Never>
         /// Drives the reveal button's enabled state.

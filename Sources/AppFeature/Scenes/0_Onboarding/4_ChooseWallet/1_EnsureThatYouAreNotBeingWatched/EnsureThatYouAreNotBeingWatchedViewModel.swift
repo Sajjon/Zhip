@@ -26,6 +26,7 @@ import Combine
 import Foundation
 import NanoViewControllerController
 import NanoViewControllerCore
+import NanoViewControllerNavigation
 
 // MARK: - User action and navigation steps
 
@@ -40,29 +41,28 @@ public enum EnsureThatYouAreNotBeingWatchedUserAction: Sendable {
 // MARK: - EnsureThatYouAreNotBeingWatchedViewModel
 
 /// Wires the cancel bar-button and the understand CTA to navigation steps.
-/// No `Output` — the screen is entirely static.
-public final class EnsureThatYouAreNotBeingWatchedViewModel: BaseViewModel<
-    EnsureThatYouAreNotBeingWatchedUserAction,
+/// No `Publishers` — the screen is entirely static.
+public final class EnsureThatYouAreNotBeingWatchedViewModel: AbstractViewModel<
     EnsureThatYouAreNotBeingWatchedViewModel.InputFromView,
-    EnsureThatYouAreNotBeingWatchedViewModel.Output
+    EnsureThatYouAreNotBeingWatchedViewModel.Publishers,
+    EnsureThatYouAreNotBeingWatchedUserAction
 > {
     /// Wires both inputs (cancel bar-button + understand CTA) directly to navigator steps.
-    override public func transform(input: Input) -> Output {
-        func userDid(_ userAction: NavigationStep) {
-            navigator.next(userAction)
-        }
+    override public func transform(input: Input) -> Output<Publishers, NavigationStep> {
+        let navigator = Navigator<NavigationStep>()
 
         // MARK: Navigate
 
-        [
+        return Output(
+            publishers: Publishers(),
+            navigation: navigator.navigation
+        ) {
             input.fromController.leftBarButtonTrigger
-                .sink { userDid(.cancel) },
+                .sink { [navigator] in navigator.next(.cancel) }
 
             input.fromView.understandTrigger
-                .sink { userDid(.understand) },
-        ].forEach { $0.store(in: &cancellables) }
-
-        return Output()
+                .sink { [navigator] in navigator.next(.understand) }
+        }
     }
 }
 
@@ -74,5 +74,5 @@ public extension EnsureThatYouAreNotBeingWatchedViewModel {
     }
 
     /// No outputs — entirely static screen.
-    struct Output {}
+    struct Publishers {}
 }

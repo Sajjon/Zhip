@@ -69,11 +69,11 @@ extension ConfirmNewPincodeView: ViewModelled {
 
     /// Binds focus on appear, validation feedback (red box on mismatch),
     /// and the confirm-button enabled state.
-    public func populate(with viewModel: ConfirmNewPincodeViewModel.Output) -> [AnyCancellable] {
+    public func populate(with publishers: ConfirmNewPincodeViewModel.Publishers) -> [AnyCancellable] {
         [
-            viewModel.inputBecomeFirstResponder --> inputPincodeView.becomeFirstResponderBinder,
-            viewModel.pincodeValidation --> inputPincodeView.validationBinder,
-            viewModel.isConfirmPincodeEnabled --> confirmPincodeButton.isEnabledBinder,
+            publishers.inputBecomeFirstResponder --> inputPincodeView.becomeFirstResponderBinder,
+            publishers.pincodeValidation --> inputPincodeView.validationBinder,
+            publishers.isConfirmPincodeEnabled --> confirmPincodeButton.isEnabledBinder,
         ]
     }
 }

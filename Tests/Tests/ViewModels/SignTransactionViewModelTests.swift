@@ -84,7 +84,7 @@ final class SignTransactionViewModelTests: XCTestCase {
         let sut = makeSUT()
         let output = sut.transform(input: makeInput())
         var states: [Bool] = []
-        output.isSignButtonEnabled.sink { states.append($0) }.store(in: &cancellables)
+        output.publishers.isSignButtonEnabled.sink { states.append($0) }.store(in: &cancellables)
 
         encryptionPassword.send(TestWalletFactory.testPassword)
         isEditingEncryptionPassword.send(false)
@@ -104,9 +104,9 @@ final class SignTransactionViewModelTests: XCTestCase {
         mockTransactions.sendTransactionResult = .success(response)
 
         let sut = makeSUT()
-        _ = sut.transform(input: makeInput())
+        let output = sut.transform(input: makeInput())
         var observed: SignTransactionUserAction?
-        sut.navigator.navigation.sink { observed = $0 }.store(in: &cancellables)
+        output.navigation.sink { observed = $0 }.store(in: &cancellables)
 
         encryptionPassword.send(TestWalletFactory.testPassword)
         signAndSendTrigger.send(())

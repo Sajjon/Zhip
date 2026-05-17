@@ -25,16 +25,14 @@
 import Foundation
 import NanoViewControllerController
 
-/// `SceneController` glue for the revealed-keypair display screen.
-public final class BackUpRevealedKeyPair: Scene<BackUpRevealedKeyPairView> {}
-
-public extension BackUpRevealedKeyPair {
-    /// keep same title as previous scene
-    static let title = String(localized: .DecryptKeystore.title)
-}
-
-/// Done button on the right + suppress the back arrow so the user can't
-/// re-enter the password screen and accidentally cause a redundant decrypt.
-extension BackUpRevealedKeyPair: RightBarButtonMaking, BackButtonHiding {
-    public static let makeRight: BarButton = .done
+/// `NanoViewController` glue for the revealed-keypair display screen. Done
+/// button on the right + back arrow suppressed so the user can't re-enter
+/// the password screen and accidentally cause a redundant decrypt. Title is
+/// inherited verbatim from the previous "decrypt keystore" scene.
+public final class BackUpRevealedKeyPair: NanoViewController<BackUpRevealedKeyPairView>, ControllerConfigProviding {
+    public static let config = ControllerConfig(
+        titleKey: .DecryptKeystore.title,
+        hidesBackButton: true,
+        rightBarButton: BarButton.done.content
+    )
 }

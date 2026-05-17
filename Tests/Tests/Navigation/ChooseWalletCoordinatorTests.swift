@@ -85,7 +85,8 @@ final class ChooseWalletCoordinatorTests: XCTestCase {
         sut.start()
         let choose = try XCTUnwrap(top(as: ChooseWallet.self))
 
-        choose.viewModel.navigator.next(.createNewWallet)
+        // Tap the "Create new wallet" button (1st UIButton in ChooseWalletView).
+        try tapButton(at: 0, in: choose.view)
         drainRunLoop()
 
         XCTAssertTrue(sut.childCoordinators.contains { $0 is CreateNewWalletCoordinator })
@@ -95,7 +96,8 @@ final class ChooseWalletCoordinatorTests: XCTestCase {
         sut.start()
         let choose = try XCTUnwrap(top(as: ChooseWallet.self))
 
-        choose.viewModel.navigator.next(.restoreWallet)
+        // Tap the "Restore wallet" button (2nd UIButton in ChooseWalletView).
+        try tapButton(at: 1, in: choose.view)
         drainRunLoop()
 
         XCTAssertTrue(sut.childCoordinators.contains { $0 is RestoreWalletCoordinator })
@@ -119,7 +121,7 @@ final class ChooseWalletCoordinatorTests: XCTestCase {
         // assertion.
         sut.start()
         let choose = try XCTUnwrap(top(as: ChooseWallet.self))
-        choose.viewModel.navigator.next(.createNewWallet)
+        try tapButton(at: 0, in: choose.view)
         drainRunLoop()
         let create = try firstChild(as: CreateNewWalletCoordinator.self)
         var received: ChooseWalletCoordinatorNavigationStep?
@@ -137,7 +139,7 @@ final class ChooseWalletCoordinatorTests: XCTestCase {
     func test_createNewWalletCancel_doesNotSaveWallet() throws {
         sut.start()
         let choose = try XCTUnwrap(top(as: ChooseWallet.self))
-        choose.viewModel.navigator.next(.createNewWallet)
+        try tapButton(at: 0, in: choose.view)
         drainRunLoop()
         let create = try firstChild(as: CreateNewWalletCoordinator.self)
         var received: ChooseWalletCoordinatorNavigationStep?
@@ -153,7 +155,7 @@ final class ChooseWalletCoordinatorTests: XCTestCase {
     func test_restoreWalletFinishedRestoring_savesWalletAndEmitsFinishStep() throws {
         sut.start()
         let choose = try XCTUnwrap(top(as: ChooseWallet.self))
-        choose.viewModel.navigator.next(.restoreWallet)
+        try tapButton(at: 1, in: choose.view)
         drainRunLoop()
         let restore = try firstChild(as: RestoreWalletCoordinator.self)
         var received: ChooseWalletCoordinatorNavigationStep?
@@ -172,7 +174,7 @@ final class ChooseWalletCoordinatorTests: XCTestCase {
     func test_restoreWalletCancel_doesNotSaveWallet() throws {
         sut.start()
         let choose = try XCTUnwrap(top(as: ChooseWallet.self))
-        choose.viewModel.navigator.next(.restoreWallet)
+        try tapButton(at: 1, in: choose.view)
         drainRunLoop()
         let restore = try firstChild(as: RestoreWalletCoordinator.self)
         var received: ChooseWalletCoordinatorNavigationStep?
@@ -184,4 +186,5 @@ final class ChooseWalletCoordinatorTests: XCTestCase {
         XCTAssertNil(mockWallet.storedWallet)
         XCTAssertNil(received)
     }
+
 }

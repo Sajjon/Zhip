@@ -25,16 +25,13 @@
 import NanoViewControllerController
 import UIKit
 
-/// `SceneController` glue for the pincode chooser screen.
-public final class ChoosePincode: Scene<ChoosePincodeView> {}
-
-/// Localized navigation title.
-public extension ChoosePincode {
-    static let title = String(localized: .ChoosePincode.title)
-}
-
-/// Right "Skip" bar-button + suppress the back arrow — this is an opt-in
-/// onboarding step but the only "back" path is via skip, not the nav stack.
-extension ChoosePincode: RightBarButtonMaking, BackButtonHiding {
-    public static let makeRight = BarButton.skip
+/// `NanoViewController` glue for the pincode chooser screen. Right "Skip"
+/// bar-button + back-arrow suppressed — this is an opt-in onboarding step
+/// but the only "back" path is via skip, not the nav stack.
+public final class ChoosePincode: NanoViewController<ChoosePincodeView>, ControllerConfigProviding {
+    public static let config = ControllerConfig(
+        titleKey: .ChoosePincode.title,
+        hidesBackButton: true,
+        rightBarButton: BarButton.skip.content
+    )
 }

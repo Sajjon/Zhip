@@ -25,10 +25,7 @@
 import Foundation
 import NanoViewControllerController
 
-/// `SceneController` glue for the wallet-restore screen.
-public final class RestoreWallet: Scene<RestoreWalletView> {}
-
-/// Localized navigation title.
-public extension RestoreWallet {
-    static let title = String(localized: .RestoreWallet.title)
+/// `NanoViewController` glue for the wallet-restore screen.
+public final class RestoreWallet: NanoViewController<RestoreWalletView>, ControllerConfigProviding {
+    public static let config = ControllerConfig(titleKey: .RestoreWallet.title)
 }

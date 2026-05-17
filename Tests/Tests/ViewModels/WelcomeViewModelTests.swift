@@ -49,10 +49,10 @@ final class WelcomeViewModelTests: XCTestCase {
             fromView: .init(startTrigger: startTrigger.eraseToAnyPublisher()),
             fromController: FakeInputFromController().makeInput()
         )
-        _ = sut.transform(input: input)
+        let output = sut.transform(input: input)
 
         var observed: WelcomeUserAction?
-        sut.navigator.navigation.sink { observed = $0 }.store(in: &cancellables)
+        output.navigation.sink { observed = $0 }.store(in: &cancellables)
 
         // Act
         startTrigger.send(())

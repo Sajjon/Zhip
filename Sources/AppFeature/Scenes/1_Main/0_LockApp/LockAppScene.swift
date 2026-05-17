@@ -32,8 +32,10 @@ import UIKit
 /// switcher snapshot — the snapshot would otherwise expose the user's balance
 /// and address in the multitasking carousel.
 ///
-/// Doesn't subclass `Scene<View>` because it has no view-model — purely static.
-public final class LockAppScene: AbstractController {
+/// Doesn't subclass `NanoViewController<View>` because it has no view-model —
+/// purely static. A plain `UIViewController` is sufficient since the scene
+/// has no navigation bar, no bar buttons, and no reactive bindings.
+public final class LockAppScene: UIViewController {
     /// Container hosting the three-layer parallax aurora illustration.
     private lazy var motionEffectAuroraImageView = UIView()
     /// Centered app-name label drawn over the aurora.

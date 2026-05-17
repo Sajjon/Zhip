@@ -25,13 +25,9 @@
 import NanoViewControllerController
 import UIKit
 
-/// `SceneController` glue for the "create new vs restore existing" wallet
-/// chooser screen.
-public final class ChooseWallet: Scene<ChooseWalletView> {}
-
-/// Full-bleed planet parallax background, so the navigation bar stays hidden.
-extension ChooseWallet: NavigationBarLayoutOwner {
-    public var navigationBarLayout: NavigationBarLayout {
-        .hidden
-    }
+/// `NanoViewController` glue for the "create new vs restore existing" wallet
+/// chooser screen. Full-bleed planet parallax background, so the navigation
+/// bar stays hidden.
+public final class ChooseWallet: NanoViewController<ChooseWalletView>, ControllerConfigProviding {
+    public static let config = ControllerConfig(navigationBarLayout: .hidden)
 }

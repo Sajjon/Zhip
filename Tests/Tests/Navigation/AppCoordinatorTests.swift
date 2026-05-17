@@ -237,7 +237,7 @@ final class AppCoordinatorTests: XCTestCase {
         XCTAssertTrue(sut.childCoordinators.contains { $0 is OnboardingCoordinator })
     }
 
-    func test_unlockSceneUnlockApp_restoresMainNavigationStack() {
+    func test_unlockSceneUnlockApp_restoresMainNavigationStack() throws {
         _ = makeCoordinator(hasWallet: true, hasPincode: true)
         sut.start()
         // Wait for the unlock scene to be presented.
@@ -257,7 +257,12 @@ final class AppCoordinatorTests: XCTestCase {
         }
         let setCountBefore = setRootCallCount
 
-        unlock.viewModel.navigator.next(.unlockApp)
+        // Enter the pincode that was stored in `makeCoordinator(..., hasPincode: true)`
+        // (digits [0,1,2,3]). Matching the stored pincode drives the
+        // `pincodeValidation` chain to `.valid`, which emits `.unlockApp` on
+        // the view-model's navigator.
+        let correctPincode = try XCTUnwrap(try? Pincode(digits: [Digit.zero, .one, .two, .three]))
+        try enterPincode(correctPincode, in: unlock.view)
         drainRunLoop()
 
         XCTAssertGreaterThan(setRootCallCount, setCountBefore)

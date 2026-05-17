@@ -25,15 +25,11 @@
 import NanoViewControllerController
 import UIKit
 
-/// `SceneController` glue for the keystore-reveal modal.
-public final class BackUpKeystore: Scene<BackUpKeystoreView> {}
-
-/// Localized navigation title.
-public extension BackUpKeystore {
-    static let title = String(localized: .BackUpKeystore.title)
-}
-
-/// Right "Done" bar button — closes the modal once the user has copied/saved the keystore.
-extension BackUpKeystore: RightBarButtonMaking {
-    public static let makeRight: BarButton = .done
+/// `NanoViewController` glue for the keystore-reveal modal. The right "Done"
+/// bar button closes the modal once the user has copied/saved the keystore.
+public final class BackUpKeystore: NanoViewController<BackUpKeystoreView>, ControllerConfigProviding {
+    public static let config = ControllerConfig(
+        titleKey: .BackUpKeystore.title,
+        rightBarButton: BarButton.done.content
+    )
 }

@@ -43,7 +43,7 @@ let package = Package(
         // Reactive-MVVM scaffolding extracted from this repo (was the
         // `SingleLineController*` modules). Pinned to a tagged release;
         // bump as new tags ship.
-        .package(url: "https://github.com/Sajjon/NanoViewController", exact: "0.1.4"),
+        .package(url: "https://github.com/Sajjon/NanoViewController", branch: "transform_result_builder"),
         // Third-party SPM deps consumed by AppFeature. Versions mirror the
         // Zhip.xcodeproj's previous package references.
         .package(url: "https://github.com/OpenZesame/Zesame", from: "2.1.1"),

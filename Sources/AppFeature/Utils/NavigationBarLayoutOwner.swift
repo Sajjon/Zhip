@@ -48,9 +48,10 @@ public extension NavigationBarLayout {
         )
     }
 
-    /// App-wide fallback layout used by controllers that don't conform to `NavigationBarLayoutOwner`.
-    /// Read by the package's nav controller from arbitrary contexts; in practice
-    /// it's only mutated (if ever) at app init on the main thread.
+    /// App-wide fallback layout used by controllers that don't supply their
+    /// own ``NanoViewControllerController/ControllerConfig/navigationBarLayout``.
+    /// Read by the package's nav controller from arbitrary contexts; in
+    /// practice it's only mutated (if ever) at app init on the main thread.
     @MainActor
     static var `default`: NavigationBarLayout = .opaque
 

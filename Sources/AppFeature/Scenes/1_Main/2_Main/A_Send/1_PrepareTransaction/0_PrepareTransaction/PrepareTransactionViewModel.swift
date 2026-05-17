@@ -28,6 +28,7 @@ import Foundation
 import NanoViewControllerCombine
 import NanoViewControllerController
 import NanoViewControllerCore
+import NanoViewControllerNavigation
 import Validation
  import Zesame
 
@@ -50,10 +51,10 @@ public enum PrepareTransactionUserAction: Sendable {
 /// - real-time per-field validation (recipient, amount, gas limit, gas price);
 /// - cross-field "sufficient funds" check;
 /// - pre-fill from inbound `TransactionIntent` (deep-link or QR scan).
-public final class PrepareTransactionViewModel: BaseViewModel<// swiftlint:disable:this type_body_length
-    PrepareTransactionUserAction,
+public final class PrepareTransactionViewModel: AbstractViewModel<// swiftlint:disable:this type_body_length
     PrepareTransactionViewModel.InputFromView,
-    PrepareTransactionViewModel.Output
+    PrepareTransactionViewModel.Publishers,
+    PrepareTransactionUserAction
 > {
     /// Network façade for balance + gas-price fetches.
     @Injected(\.transactionsUseCase) private var transactionUseCase: TransactionsUseCase
@@ -69,10 +70,8 @@ public final class PrepareTransactionViewModel: BaseViewModel<// swiftlint:disab
     }
 
     // swiftlint:disable:next function_body_length
-    override public func transform(input: Input) -> Output {
-        func userIntends(to intention: NavigationStep) {
-            navigator.next(intention)
-        }
+    override public func transform(input: Input) -> Output<Publishers, NavigationStep> {
+        let navigator = Navigator<NavigationStep>()
 
         let wallet = walletStorageUseCase.wallet.filterNil().replaceErrorWithEmpty()
         let activityIndicator = ActivityIndicator()
@@ -214,7 +213,7 @@ public final class PrepareTransactionViewModel: BaseViewModel<// swiftlint:disab
         let amountBoundByBalance: AnyPublisher<Amount?, Never> = amountValidationValue.map(\.value)
             .eraseToAnyPublisher()
 
-        let amountValidationErrorTrigger: AnyPublisher<Void, Never> = Publishers.Merge3(
+        let amountValidationErrorTrigger: AnyPublisher<Void, Never> = Combine.Publishers.Merge3(
             input.fromView.didEndEditingAmount,
             scannedOrDeeplinkedTransaction.mapToVoid(),
             gasPriceValidationValue.mapToVoid()
@@ -243,18 +242,6 @@ public final class PrepareTransactionViewModel: BaseViewModel<// swiftlint:disab
                 }
             }
             .eraseToAnyPublisher()
-
-        // Setup navigation
-        [
-            input.fromController.rightBarButtonTrigger
-                .sink { userIntends(to: .cancel) },
-
-            input.fromView.scanQRTrigger
-                .sink { userIntends(to: .scanQRCode) },
-
-            input.fromView.toReviewTrigger.withLatestFrom(payment.filterNil())
-                .sink { userIntends(to: .reviewPayment($0)) },
-        ].forEach { $0.store(in: &cancellables) }
 
         // MARK: FORMATTING
 
@@ -321,49 +308,62 @@ public final class PrepareTransactionViewModel: BaseViewModel<// swiftlint:disab
             .eraseToAnyPublisher()
 
         return Output(
-            refreshControlLastUpdatedTitle: refreshControlLastUpdatedTitle,
-            isFetchingBalance: activityIndicator.asPublisher(),
-            isReviewButtonEnabled: isReviewButtonEnabled,
-            balance: balanceFormatted,
+            publishers: Publishers(
+                refreshControlLastUpdatedTitle: refreshControlLastUpdatedTitle,
+                isFetchingBalance: activityIndicator.asPublisher(),
+                isReviewButtonEnabled: isReviewButtonEnabled,
+                balance: balanceFormatted,
 
-            recipient: recipientFormatted,
-            recipientAddressValidation: recipientValidation,
+                recipient: recipientFormatted,
+                recipientAddressValidation: recipientValidation,
 
-            amountPlaceholder: Just(String(localized: .PrepareTransaction.amountField(unit: Unit.zil.displayName)))
-                .eraseToAnyPublisher(),
-            amount: setAmountInViewOnlyByExternalTrigger,
-            amountValidation: amountValidation,
+                amountPlaceholder: Just(String(localized: .PrepareTransaction.amountField(unit: Unit.zil.displayName)))
+                    .eraseToAnyPublisher(),
+                amount: setAmountInViewOnlyByExternalTrigger,
+                amountValidation: amountValidation,
 
-            gasLimitMeasuredInLi: gasLimitFormatted,
-            gasLimitPlaceholder: gasLimitPlaceholder,
-            gasLimitValidation: gasLimitValidation,
+                gasLimitMeasuredInLi: gasLimitFormatted,
+                gasLimitPlaceholder: gasLimitPlaceholder,
+                gasLimitValidation: gasLimitValidation,
 
-            gasPriceMeasuredInLi: gasPriceFormatted,
-            gasPricePlaceholder: gasPricePlaceholder,
-            gasPriceValidation: gasPriceValidation,
+                gasPriceMeasuredInLi: gasPriceFormatted,
+                gasPricePlaceholder: gasPricePlaceholder,
+                gasPriceValidation: gasPriceValidation,
 
-            costOfTransaction: gasLimit.combineLatest(gasPrice).eraseToAnyPublisher().flatMapLatest {
-                (gl: GasLimit?, gp: GasPrice?) -> AnyPublisher<String?, Never> in
-                guard let gasLimit = gl else {
-                    return AnyPublisher<String?, Never>.just(nil)
+                costOfTransaction: gasLimit.combineLatest(gasPrice).eraseToAnyPublisher().flatMapLatest {
+                    (gl: GasLimit?, gp: GasPrice?) -> AnyPublisher<String?, Never> in
+                    guard let gasLimit = gl else {
+                        return AnyPublisher<String?, Never>.just(nil)
+                    }
+                    guard let gasPrice = gp else {
+                        return AnyPublisher<String?, Never>.just(nil)
+                    }
+                    return
+                        // The `eraseToAnyPublisher()` here is load-bearing — without
+                        // it, Swift's overload resolution sees two viable
+                        // `compactMap` overloads (the tuple-arg version on `Just<(_, _)>`
+                        // and the standard Publisher one) and emits an ambiguity
+                        // error. Erasing first collapses to the Publisher overload.
+                        Just((gasPrice, gasLimit)).eraseToAnyPublisher()
+                        .compactMap { try? Payment.estimatedTotalTransactionFee(gasPrice: $0, gasLimit: $1) }
+                        .map { formatter.format(amount: $0, in: .zil, formatThousands: true, showUnit: true) }
+                        .map { String(localized: .PrepareTransaction.transactionFeeLabel(fee: $0)) }
+                        .eraseToAnyPublisher()
                 }
-                guard let gasPrice = gp else {
-                    return AnyPublisher<String?, Never>.just(nil)
-                }
-                return
-                    // The `eraseToAnyPublisher()` here is load-bearing — without
-                    // it, Swift's overload resolution sees two viable
-                    // `compactMap` overloads (the tuple-arg version on `Just<(_, _)>`
-                    // and the standard Publisher one) and emits an ambiguity
-                    // error. Erasing first collapses to the Publisher overload.
-                    Just((gasPrice, gasLimit)).eraseToAnyPublisher()
-                    .compactMap { try? Payment.estimatedTotalTransactionFee(gasPrice: $0, gasLimit: $1) }
-                    .map { formatter.format(amount: $0, in: .zil, formatThousands: true, showUnit: true) }
-                    .map { String(localized: .PrepareTransaction.transactionFeeLabel(fee: $0)) }
-                    .eraseToAnyPublisher()
-            }
-            .eraseToAnyPublisher()
-        )
+                .eraseToAnyPublisher()
+            ),
+            navigation: navigator.navigation
+        ) {
+            // Setup navigation
+            input.fromController.rightBarButtonTrigger
+                .sink { [navigator] in navigator.next(.cancel) }
+
+            input.fromView.scanQRTrigger
+                .sink { [navigator] in navigator.next(.scanQRCode) }
+
+            input.fromView.toReviewTrigger.withLatestFrom(payment.filterNil())
+                .sink { [navigator] in navigator.next(.reviewPayment($0)) }
+        }
     }
 }
 
@@ -387,7 +387,7 @@ public extension PrepareTransactionViewModel {
         let didEndEditingGasPrice: AnyPublisher<Void, Never>
     }
 
-    struct Output {
+    struct Publishers {
         let refreshControlLastUpdatedTitle: AnyPublisher<String, Never>
         let isFetchingBalance: AnyPublisher<Bool, Never>
         let isReviewButtonEnabled: AnyPublisher<Bool, Never>

@@ -65,10 +65,10 @@ extension ChoosePincodeView: ViewModelled {
 
     /// Binds focus + button-enabled state — view-model auto-focuses on
     /// `viewWillAppear` so the keyboard is up by the time the user sees the screen.
-    public func populate(with viewModel: ChoosePincodeViewModel.Output) -> [AnyCancellable] {
+    public func populate(with publishers: ChoosePincodeViewModel.Publishers) -> [AnyCancellable] {
         [
-            viewModel.inputBecomeFirstResponder --> inputPincodeView.becomeFirstResponderBinder,
-            viewModel.isDoneButtonEnabled --> doneButton.isEnabledBinder,
+            publishers.inputBecomeFirstResponder --> inputPincodeView.becomeFirstResponderBinder,
+            publishers.isDoneButtonEnabled --> doneButton.isEnabledBinder,
         ]
     }
 }

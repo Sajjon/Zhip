@@ -103,9 +103,9 @@ extension ScanQRCodeView: ViewModelled {
         )
     }
 
-    public func populate(with viewModel: ScanQRCodeViewModel.Output) -> [AnyCancellable] {
+    public func populate(with publishers: ScanQRCodeViewModel.Publishers) -> [AnyCancellable] {
         [
-            viewModel.startScanning.sink { [weak self] in
+            publishers.startScanning.sink { [weak self] in
                 self?.reader.startScanning()
             },
         ]

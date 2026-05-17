@@ -25,15 +25,12 @@
 import NanoViewControllerController
 import UIKit
 
-/// `SceneController` glue for the receive screen.
-public final class Receive: Scene<ReceiveView> {}
-
-/// Hide the back arrow; "Done" is the only exit.
-extension Receive: BackButtonHiding {
-    public static let title = String(localized: .Receive.title)
-}
-
-/// Right "Done" bar-button — closes the modal.
-extension Receive: RightBarButtonMaking {
-    public static let makeRight: BarButton = .done
+/// `NanoViewController` glue for the receive screen. Back arrow hidden;
+/// right "Done" bar-button is the only exit.
+public final class Receive: NanoViewController<ReceiveView>, ControllerConfigProviding {
+    public static let config = ControllerConfig(
+        titleKey: .Receive.title,
+        hidesBackButton: true,
+        rightBarButton: BarButton.done.content
+    )
 }

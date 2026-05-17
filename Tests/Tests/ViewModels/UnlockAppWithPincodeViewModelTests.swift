@@ -70,10 +70,10 @@ final class UnlockAppWithPincodeViewModelTests: XCTestCase {
 
     func test_correctPincode_emitsUnlockApp() {
         let sut = makeSUT()
-        _ = sut.transform(input: makeInput())
+        let output = sut.transform(input: makeInput())
         var observed: UnlockAppWithPincodeUserAction?
         let expectation = expectation(description: "unlockApp emitted")
-        sut.navigator.navigation.sink {
+        output.navigation.sink {
             observed = $0
             expectation.fulfill()
         }.store(in: &cancellables)
@@ -88,9 +88,9 @@ final class UnlockAppWithPincodeViewModelTests: XCTestCase {
 
     func test_incorrectPincode_doesNotEmitUnlockApp() throws {
         let sut = makeSUT()
-        _ = sut.transform(input: makeInput())
+        let output = sut.transform(input: makeInput())
         var observed: UnlockAppWithPincodeUserAction?
-        sut.navigator.navigation.sink { observed = $0 }.store(in: &cancellables)
+        output.navigation.sink { observed = $0 }.store(in: &cancellables)
 
         let wrong = try Pincode(digits: [.nine, .nine, .nine, .nine])
         pincodeSubject.send(wrong)
@@ -102,7 +102,7 @@ final class UnlockAppWithPincodeViewModelTests: XCTestCase {
         let sut = makeSUT()
         let output = sut.transform(input: makeInput())
         var validations: [AnyValidation] = []
-        output.pincodeValidation.sink { validations.append($0) }.store(in: &cancellables)
+        output.publishers.pincodeValidation.sink { validations.append($0) }.store(in: &cancellables)
 
         let wrong = try Pincode(digits: [.zero, .zero, .zero, .zero])
         pincodeSubject.send(wrong)
@@ -114,7 +114,7 @@ final class UnlockAppWithPincodeViewModelTests: XCTestCase {
         let sut = makeSUT()
         let output = sut.transform(input: makeInput())
         var validations: [AnyValidation] = []
-        output.pincodeValidation.sink { validations.append($0) }.store(in: &cancellables)
+        output.publishers.pincodeValidation.sink { validations.append($0) }.store(in: &cancellables)
 
         pincodeSubject.send(existingPincode)
 
@@ -125,7 +125,7 @@ final class UnlockAppWithPincodeViewModelTests: XCTestCase {
 
     func test_viewDidAppear_triggersBiometricsAuthenticator() {
         let sut = makeSUT()
-        _ = sut.transform(input: makeInput())
+        let output = sut.transform(input: makeInput())
 
         fakeController.viewDidAppearSubject.send(())
 
@@ -135,10 +135,10 @@ final class UnlockAppWithPincodeViewModelTests: XCTestCase {
     func test_biometricsSuccess_emitsUnlockApp() {
         mockBiometrics.result = true
         let sut = makeSUT()
-        _ = sut.transform(input: makeInput())
+        let output = sut.transform(input: makeInput())
         let expectation = expectation(description: "unlockApp emitted")
         var observed: UnlockAppWithPincodeUserAction?
-        sut.navigator.navigation.sink {
+        output.navigation.sink {
             observed = $0
             expectation.fulfill()
         }.store(in: &cancellables)
@@ -154,9 +154,9 @@ final class UnlockAppWithPincodeViewModelTests: XCTestCase {
     func test_biometricsFailure_doesNotEmitUnlockApp() {
         mockBiometrics.result = false
         let sut = makeSUT()
-        _ = sut.transform(input: makeInput())
+        let output = sut.transform(input: makeInput())
         var observed: UnlockAppWithPincodeUserAction?
-        sut.navigator.navigation.sink { observed = $0 }.store(in: &cancellables)
+        output.navigation.sink { observed = $0 }.store(in: &cancellables)
 
         fakeController.viewDidAppearSubject.send(())
         let expectation = expectation(description: "drain")

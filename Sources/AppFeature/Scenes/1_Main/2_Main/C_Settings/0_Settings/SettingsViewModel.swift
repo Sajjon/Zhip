@@ -27,6 +27,7 @@ import Foundation
 import NanoViewControllerCombine
 import NanoViewControllerController
 import NanoViewControllerCore
+import NanoViewControllerNavigation
 import NanoViewControllerSceneViews
 import UIKit
 import Zesame
@@ -65,10 +66,10 @@ public enum SettingsNavigation: Sendable {
 /// `SettingsItem` arrays and routes selections to the matching `NavigationStep`.
 /// Re-emits the matrix on every `viewWillAppear` so the pincode row reflects
 /// the current "has pincode" state when the user returns from a sub-flow.
-public final class SettingsViewModel: BaseViewModel<
-    SettingsNavigation,
+public final class SettingsViewModel: AbstractViewModel<
     SettingsViewModel.InputFromView,
-    SettingsViewModel.Output
+    SettingsViewModel.Publishers,
+    SettingsNavigation
 > {
     /// Used to gate the pincode row (set vs remove) on the current pincode state.
     private let useCase: PincodeUseCase
@@ -80,10 +81,8 @@ public final class SettingsViewModel: BaseViewModel<
 
     /// Wires the section emission, row-tap → navigation step, and the
     /// done bar-button → close.
-    override public func transform(input: Input) -> Output {
-        func userWantsToNavigate(to intention: NavigationStep) {
-            navigator.next(intention)
-        }
+    override public func transform(input: Input) -> Output<Publishers, NavigationStep> {
+        let navigator = Navigator<NavigationStep>()
 
         let sections: AnyPublisher<[SectionModel<Void, SettingsItem>], Never> = input.fromController.viewWillAppear
             .map { [weak self] _ in self?.makeSections() ?? [] }
@@ -95,19 +94,20 @@ public final class SettingsViewModel: BaseViewModel<
             }
             .eraseToAnyPublisher()
 
-        [
-            input.fromController.rightBarButtonTrigger
-                .sink { userWantsToNavigate(to: .closeSettings) },
-
-            selectedCell.sink {
-                userWantsToNavigate(to: $0.destination)
-            },
-        ].forEach { $0.store(in: &cancellables) }
-
         return Output(
-            sections: sections,
-            footerText: .just(appVersionString)
-        )
+            publishers: Publishers(
+                sections: sections,
+                footerText: .just(appVersionString)
+            ),
+            navigation: navigator.navigation
+        ) {
+            input.fromController.rightBarButtonTrigger
+                .sink { [navigator] in navigator.next(.closeSettings) }
+
+            selectedCell.sink { [navigator] in
+                navigator.next($0.destination)
+            }
+        }
     }
 }
 
@@ -119,7 +119,7 @@ public extension SettingsViewModel {
     }
 
     /// Reactive bindings the view installs.
-    struct Output {
+    struct Publishers {
         /// Drives the diffable data source.
         let sections: AnyPublisher<[SectionModel<Void, SettingsItem>], Never>
         /// "AppName vX.Y.Z (build) — network: …" footer text.

@@ -27,6 +27,7 @@ import Foundation
 import NanoViewControllerCombine
 import NanoViewControllerCore
 import NanoViewControllerController
+import NanoViewControllerNavigation
 import Validation
 
 // MARK: - ConfirmNewPincodeUserAction
@@ -44,10 +45,10 @@ public enum ConfirmNewPincodeUserAction: Sendable {
 /// View model for the pincode confirmation step. Validates the re-entered
 /// pincode against the one picked in the previous step; on success persists
 /// it via `PincodeUseCase` and emits `.confirmPincode`.
-public final class ConfirmNewPincodeViewModel: BaseViewModel<
-    ConfirmNewPincodeUserAction,
+public final class ConfirmNewPincodeViewModel: AbstractViewModel<
     ConfirmNewPincodeViewModel.InputFromView,
-    ConfirmNewPincodeViewModel.Output
+    ConfirmNewPincodeViewModel.Publishers,
+    ConfirmNewPincodeUserAction
 > {
     /// Used to persist the confirmed pincode.
     private let useCase: PincodeUseCase
@@ -62,10 +63,8 @@ public final class ConfirmNewPincodeViewModel: BaseViewModel<
 
     /// Wires real-time validation, the confirm-tap (persists + emits), the
     /// skip-tap, and the (matches && checkbox-checked) gate for the CTA.
-    override public func transform(input: Input) -> Output {
-        func userDid(_ step: NavigationStep) {
-            navigator.next(step)
-        }
+    override public func transform(input: Input) -> Output<Publishers, NavigationStep> {
+        let navigator = Navigator<NavigationStep>()
 
         let validator = InputValidator(existingPincode: unconfirmedPincode)
 
@@ -78,22 +77,23 @@ public final class ConfirmNewPincodeViewModel: BaseViewModel<
                 isPincodeValid && isBackedUpChecked
             }.eraseToAnyPublisher()
 
-        [
+        return Output(
+            publishers: Publishers(
+                pincodeValidation: pincodeValidationValue.map(\.validation).eraseToAnyPublisher(),
+                isConfirmPincodeEnabled: isConfirmPincodeEnabled,
+                inputBecomeFirstResponder: input.fromController.viewDidAppear
+            ),
+            navigation: navigator.navigation
+        ) {
             input.fromView.confirmedTrigger.withLatestFrom(pincodeValidationValue.map(\.value).filterNil())
-                .sink { [weak self] in
-                    self?.useCase.userChoose(pincode: $0)
-                    userDid(.confirmPincode)
-                },
+                .sink { [navigator, useCase] pincode in
+                    useCase.userChoose(pincode: pincode)
+                    navigator.next(.confirmPincode)
+                }
 
             input.fromController.rightBarButtonTrigger
-                .sink { userDid(.skip) },
-        ].forEach { $0.store(in: &cancellables) }
-
-        return Output(
-            pincodeValidation: pincodeValidationValue.map(\.validation).eraseToAnyPublisher(),
-            isConfirmPincodeEnabled: isConfirmPincodeEnabled,
-            inputBecomeFirstResponder: input.fromController.viewDidAppear
-        )
+                .sink { [navigator] in navigator.next(.skip) }
+        }
     }
 }
 
@@ -109,7 +109,7 @@ public extension ConfirmNewPincodeViewModel {
     }
 
     /// Reactive bindings the view installs.
-    struct Output {
+    struct Publishers {
         /// Drives the pincode input's validation styling.
         let pincodeValidation: AnyPublisher<AnyValidation, Never>
         /// Drives the confirm-button enabled state — true iff matching && checked.

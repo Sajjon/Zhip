@@ -53,9 +53,9 @@ extension BackUpKeystoreView: ViewModelled {
     public typealias ViewModel = BackUpKeystoreViewModel
 
     /// Routes the JSON-encoded keystore string into the text view.
-    public func populate(with viewModel: BackUpKeystoreViewModel.Output) -> [AnyCancellable] {
+    public func populate(with publishers: BackUpKeystoreViewModel.Publishers) -> [AnyCancellable] {
         [
-            viewModel.keystore --> keystoreTextView.textBinder,
+            publishers.keystore --> keystoreTextView.textBinder,
         ]
     }
 

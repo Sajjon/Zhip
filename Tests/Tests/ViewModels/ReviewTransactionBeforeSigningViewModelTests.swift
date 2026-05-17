@@ -70,7 +70,7 @@ final class ReviewTransactionBeforeSigningViewModelTests: XCTestCase {
         let sut = makeSUT()
         let output = sut.transform(input: makeInput())
         var states: [Bool] = []
-        output.isHasReviewedNowProceedWithSigningButtonEnabled
+        output.publishers.isHasReviewedNowProceedWithSigningButtonEnabled
             .sink { states.append($0) }.store(in: &cancellables)
 
         hasReviewed.send(true)
@@ -81,9 +81,9 @@ final class ReviewTransactionBeforeSigningViewModelTests: XCTestCase {
 
     func test_proceedTrigger_emitsAcceptPaymentWithPayment() {
         let sut = makeSUT()
-        _ = sut.transform(input: makeInput())
+        let output = sut.transform(input: makeInput())
         var observed: ReviewTransactionBeforeSigningUserAction?
-        sut.navigator.navigation.sink { observed = $0 }.store(in: &cancellables)
+        output.navigation.sink { observed = $0 }.store(in: &cancellables)
 
         proceedTrigger.send(())
 
@@ -99,8 +99,8 @@ final class ReviewTransactionBeforeSigningViewModelTests: XCTestCase {
         let output = sut.transform(input: makeInput())
         var legacy: String?
         var bech32: String?
-        output.recipientLegacyAddress.sink { legacy = $0 }.store(in: &cancellables)
-        output.recipientBech32Address.sink { bech32 = $0 }.store(in: &cancellables)
+        output.publishers.recipientLegacyAddress.sink { legacy = $0 }.store(in: &cancellables)
+        output.publishers.recipientBech32Address.sink { bech32 = $0 }.store(in: &cancellables)
 
         XCTAssertEqual(legacy, payment.recipient.asString)
         XCTAssertNotNil(bech32)
@@ -113,9 +113,9 @@ final class ReviewTransactionBeforeSigningViewModelTests: XCTestCase {
         var amount: String?
         var fee: String?
         var total: String?
-        output.amountToPay.sink { amount = $0 }.store(in: &cancellables)
-        output.paymentFee.sink { fee = $0 }.store(in: &cancellables)
-        output.totalCost.sink { total = $0 }.store(in: &cancellables)
+        output.publishers.amountToPay.sink { amount = $0 }.store(in: &cancellables)
+        output.publishers.paymentFee.sink { fee = $0 }.store(in: &cancellables)
+        output.publishers.totalCost.sink { total = $0 }.store(in: &cancellables)
 
         XCTAssertFalse((amount ?? "").isEmpty)
         XCTAssertFalse((fee ?? "").isEmpty)

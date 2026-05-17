@@ -25,6 +25,7 @@
 @testable import AppFeature
 import Combine
 import NanoViewControllerController
+import NanoViewControllerCore
 import XCTest
 
 /// Tests for `RemovePincodeViewModel`.
@@ -58,9 +59,9 @@ final class RemovePincodeViewModelTests: XCTestCase {
     }
 
     func test_leftBarButton_emitsCancelPincodeRemoval() {
-        let sut = makeSUT()
+        let (_, output) = makeSUT()
         var observed: RemovePincodeUserAction?
-        sut.navigator.navigation.sink { observed = $0 }.store(in: &cancellables)
+        output.navigation.sink { observed = $0 }.store(in: &cancellables)
 
         fakeController.leftBarButtonTriggerSubject.send(())
 
@@ -70,9 +71,9 @@ final class RemovePincodeViewModelTests: XCTestCase {
     }
 
     func test_correctPincodeEntered_deletesPincodeAndEmitsRemovePincode() {
-        let sut = makeSUT()
+        let (_, output) = makeSUT()
         var observed: RemovePincodeUserAction?
-        sut.navigator.navigation.sink { observed = $0 }.store(in: &cancellables)
+        output.navigation.sink { observed = $0 }.store(in: &cancellables)
 
         pincodeInput.send(existingPin)
 
@@ -83,9 +84,9 @@ final class RemovePincodeViewModelTests: XCTestCase {
     }
 
     func test_wrongPincodeEntered_doesNotRemove() throws {
-        let sut = makeSUT()
+        let (_, output) = makeSUT()
         var observed: RemovePincodeUserAction?
-        sut.navigator.navigation.sink { observed = $0 }.store(in: &cancellables)
+        output.navigation.sink { observed = $0 }.store(in: &cancellables)
 
         let wrongPin = try Pincode(digits: [.nine, .nine, .nine, .nine])
         pincodeInput.send(wrongPin)
@@ -94,13 +95,13 @@ final class RemovePincodeViewModelTests: XCTestCase {
         XCTAssertNil(observed)
     }
 
-    private func makeSUT() -> RemovePincodeViewModel {
+    private func makeSUT() -> (RemovePincodeViewModel, Output<RemovePincodeViewModel.Publishers, RemovePincodeViewModel.NavigationStep>) {
         let sut = RemovePincodeViewModel(useCase: mockUseCase)
         let input = RemovePincodeViewModel.Input(
             fromView: .init(pincode: pincodeInput.eraseToAnyPublisher()),
             fromController: fakeController.makeInput()
         )
-        _ = sut.transform(input: input)
-        return sut
+        let output = sut.transform(input: input)
+        return (sut, output)
     }
 }

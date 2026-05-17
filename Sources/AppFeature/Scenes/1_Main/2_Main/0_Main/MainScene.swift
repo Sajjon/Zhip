@@ -26,17 +26,22 @@ import Foundation
 import NanoViewControllerController
 import UIKit
 
-/// `SceneController` glue for the wallet hub screen.
-public final class Main: Scene<MainView> {}
-
-/// Right-bar settings cog icon — taps fire `goToSettings` on the view-model.
-extension Main: RightBarButtonContentMaking {
-    public static let makeRightContent = BarButtonContent(image: UIImage(resource: .settings))
-}
-
-/// Translucent navigation bar so the parallax aurora background bleeds under it.
-extension Main: NavigationBarLayoutOwner {
-    public var navigationBarLayout: NavigationBarLayout {
-        .translucent
+/// `NanoViewController` glue for the wallet hub screen.
+///
+/// * Right-bar settings cog icon — taps fire `goToSettings` on the view-model.
+/// * Translucent navigation bar so the parallax aurora background bleeds
+///   under it.
+///
+/// The translucent bar layout reads brand defaults that are `@MainActor`-
+/// isolated, so the config is computed via an `@MainActor` accessor instead
+/// of a stored `static let` (the initialiser expression would otherwise be
+/// evaluated off-main during static-let lazy init).
+public final class Main: NanoViewController<MainView>, ControllerConfigProviding {
+    @MainActor
+    public static var config: ControllerConfig {
+        ControllerConfig(
+            rightBarButton: BarButtonContent(image: UIImage(resource: .settings)),
+            navigationBarLayout: .translucent
+        )
     }
 }

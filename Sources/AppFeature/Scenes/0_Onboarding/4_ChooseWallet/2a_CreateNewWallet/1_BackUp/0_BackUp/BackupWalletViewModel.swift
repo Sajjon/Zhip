@@ -28,6 +28,7 @@ import NanoViewControllerCombine
 import NanoViewControllerController
 import NanoViewControllerCore
 import NanoViewControllerDIPrimitives
+import NanoViewControllerNavigation
 import UIKit
 import Zesame
 
@@ -50,10 +51,10 @@ public enum BackupWalletUserAction: Sendable {
 /// View model for the backup hub. Drives two presentation contexts:
 /// - `.cancellable` (post-create): cancel-X bar button + done CTA + checkbox.
 /// - `.dismissable` (Settings revisit): done bar button + no CTA / checkbox.
-public final class BackupWalletViewModel: BaseViewModel<
-    BackupWalletUserAction,
+public final class BackupWalletViewModel: AbstractViewModel<
     BackupWalletViewModel.InputFromView,
-    BackupWalletViewModel.Output
+    BackupWalletViewModel.Publishers,
+    BackupWalletUserAction
 > {
     /// System pasteboard wrapper — injected so tests can record copies.
     @Injected(\.pasteboard) private var pasteboard: Pasteboard
@@ -84,26 +85,40 @@ public final class BackupWalletViewModel: BaseViewModel<
     /// - Copy-keystore tap → pasteboard + toast.
     /// - Reveal taps → matching navigation steps.
     /// - Done tap *gated* on the "I've backed up" checkbox via `withLatestFrom`.
-    override public func transform(input: Input) -> Output {
-        func userDid(_ userAction: NavigationStep) {
-            navigator.next(userAction)
-        }
+    override public func transform(input: Input) -> Output<Publishers, NavigationStep> {
+        let navigator = Navigator<NavigationStep>()
 
         let isUnderstandsRiskCheckboxChecked = input.fromView.isUnderstandsRiskCheckboxChecked
 
         // Bar-button setup depends on mode — Settings shows a "Done" button on
-        // the right; post-create shows a cancel "X" on the left.
+        // the right; post-create shows a cancel "X" on the left. The matching
+        // tap publisher is wired in the trailing builder block below.
         switch mode {
         case .dismissable: input.fromController.rightBarButtonContentSubject.onBarButton(.done)
-            input.fromController.rightBarButtonTrigger
-                .sink { userDid(.cancelOrDismiss) }.store(in: &cancellables)
-        case .cancellable:
-            input.fromController.leftBarButtonContentSubject.onBarButton(.cancel)
-            input.fromController.leftBarButtonTrigger
-                .sink { userDid(.cancelOrDismiss) }.store(in: &cancellables)
+        case .cancellable: input.fromController.leftBarButtonContentSubject.onBarButton(.cancel)
         }
 
-        [
+        let mode = mode
+
+        return Output(
+            publishers: Publishers(
+                // Confirm group only visible post-create — Settings hides it.
+                isHaveSecurelyBackedUpViewsVisible: AnyPublisher<Mode, Never>.just(mode).map { $0 == .cancellable }
+                    .eraseToAnyPublisher(),
+                isDoneButtonEnabled: isUnderstandsRiskCheckboxChecked
+            ),
+            navigation: navigator.navigation
+        ) {
+            // Mode-dependent bar-button tap → `.cancelOrDismiss` navigation step.
+            switch mode {
+            case .dismissable:
+                input.fromController.rightBarButtonTrigger
+                    .sink { [navigator] in navigator.next(.cancelOrDismiss) }
+            case .cancellable:
+                input.fromController.leftBarButtonTrigger
+                    .sink { [navigator] in navigator.next(.cancelOrDismiss) }
+            }
+
             // Copy-keystore: pull the *current* wallet's JSON via withLatestFrom
             // so the value is fresh at click-time (not at subscribe-time).
             // The keystore is encrypted with the user's password but we still
@@ -119,27 +134,20 @@ public final class BackupWalletViewModel: BaseViewModel<
                         pasteboard.copy(keystoreText, expiringAfter: SensitivePasteboard.expirationSeconds)
                         input.fromController.toastSubject.send(Toast(String(localized: .BackupWallet.copiedKeystore)))
                     }
-                },
+                }
 
             input.fromView.revealKeystoreTrigger
-                .sink { userDid(.revealKeystore) },
+                .sink { [navigator] in navigator.next(.revealKeystore) }
 
             input.fromView.revealPrivateKeyTrigger
-                .sink { userDid(.revealPrivateKey) },
+                .sink { [navigator] in navigator.next(.revealPrivateKey) }
 
             // Done-tap guarded by the "I have backed up" checkbox: tap fires,
             // we sample the latest checkbox state, drop the event if false.
             input.fromView.doneTrigger.withLatestFrom(isUnderstandsRiskCheckboxChecked)
                 .filter { $0 }.mapToVoid()
-                .sink { userDid(.backupWallet) },
-        ].forEach { $0.store(in: &cancellables) }
-
-        return Output(
-            // Confirm group only visible post-create — Settings hides it.
-            isHaveSecurelyBackedUpViewsVisible: AnyPublisher<Mode, Never>.just(mode).map { $0 == .cancellable }
-                .eraseToAnyPublisher(),
-            isDoneButtonEnabled: isUnderstandsRiskCheckboxChecked
-        )
+                .sink { [navigator] in navigator.next(.backupWallet) }
+        }
     }
 }
 
@@ -159,7 +167,7 @@ public extension BackupWalletViewModel {
     }
 
     /// Reactive bindings the view installs.
-    struct Output {
+    struct Publishers {
         /// Drives `haveSecurelyBackedUpViews.isVisibleBinder` (false in Settings mode).
         let isHaveSecurelyBackedUpViewsVisible: AnyPublisher<Bool, Never>
         /// Drives `doneButton.isEnabledBinder` — true once the checkbox is checked.

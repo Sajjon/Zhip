@@ -26,13 +26,15 @@ import Foundation
 import NanoViewControllerController
 import NanoViewControllerCore
 
-/// `SceneController` glue for the Terms of Service screen.
+/// `NanoViewController` glue for the Terms of Service screen.
 ///
 /// Used in two different presentation contexts: as a hidden-bar onboarding
 /// step (the Terms scrolls under a custom hero) and as a translucent-bar
 /// modal opened from Settings. Each context picks the navigation bar layout
-/// at construction time.
-public final class TermsOfService: Scene<TermsOfServiceView>, NavigationBarLayoutOwner {
+/// at construction time — the layout is stored and surfaced via the
+/// instance-level ``controllerConfig`` override (the static
+/// ``ControllerConfigProviding`` hook cannot read instance state).
+public final class TermsOfService: NanoViewController<TermsOfServiceView> {
     /// Per-presentation navigation bar layout (hidden during onboarding,
     /// translucent in the Settings modal).
     public let navigationBarLayout: NavigationBarLayout
@@ -44,13 +46,21 @@ public final class TermsOfService: Scene<TermsOfServiceView>, NavigationBarLayou
     }
 
     /// Convenience init used by the onboarding flow — defaults to a hidden bar.
-    required init(viewModel: ViewModel) {
+    public required init(viewModel: ViewModel) {
         navigationBarLayout = .hidden
         super.init(viewModel: viewModel)
     }
 
     /// Storyboards/xibs aren't used in this app.
-    required init?(coder _: NSCoder) {
+    @available(*, unavailable)
+    public required init?(coder _: NSCoder) {
         interfaceBuilderSucks
+    }
+
+    /// Instance-level chrome — reads the construction-time layout. Static
+    /// `ControllerConfigProviding.config` can't see instance state, so this
+    /// scene exposes its chrome via the overridable instance property instead.
+    override public var controllerConfig: ControllerConfig {
+        ControllerConfig(navigationBarLayout: navigationBarLayout)
     }
 }

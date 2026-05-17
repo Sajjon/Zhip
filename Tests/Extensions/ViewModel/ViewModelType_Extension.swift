@@ -28,8 +28,12 @@ import Foundation
 import NanoViewControllerController
 import NanoViewControllerCore
 
-extension ViewModelType where Input: InputType, Self.Input.FromController == InputFromController {
-    func transform(inputFromView: Input.FromView) -> OutputVM {
+extension ViewModelType {
+    /// Test helper: builds a synthetic `Input` from the view-side publishers
+    /// (no controller-driven publishers needed) and runs `transform`. Returns
+    /// the full `Output<Publishers, NavigationStep>` so tests can assert
+    /// against both the publisher bag and the navigation channel.
+    func transform(inputFromView: Input.FromView) -> Output<Publishers, NavigationStep> {
         let input = Input(fromView: inputFromView, fromController: .empty)
         return transform(input: input)
     }

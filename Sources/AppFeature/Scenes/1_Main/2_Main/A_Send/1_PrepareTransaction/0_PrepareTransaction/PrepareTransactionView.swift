@@ -74,26 +74,26 @@ public final class PrepareTransactionView: ScrollableStackViewOwner, PullToRefre
 extension PrepareTransactionView: ViewModelled {
     public typealias ViewModel = PrepareTransactionViewModel
 
-    public func populate(with viewModel: ViewModel.Output) -> [AnyCancellable] {
+    public func populate(with publishers: ViewModel.Publishers) -> [AnyCancellable] {
         [
-            viewModel.refreshControlLastUpdatedTitle --> pullToRefreshTitleBinder,
-            viewModel.isFetchingBalance --> isRefreshingBinder,
-            viewModel.amountPlaceholder --> amountToSendField.placeholderBinder,
-            viewModel.amount --> amountToSendField.textBinder,
-            viewModel.recipient --> recipientAddressField.textBinder,
-            viewModel.isReviewButtonEnabled --> toReviewButton.isEnabledBinder,
-            viewModel.balance --> balanceValueLabel.textBinder,
-            viewModel.recipientAddressValidation --> recipientAddressField.validationBinder,
-            viewModel.amountValidation --> amountToSendField.validationBinder,
+            publishers.refreshControlLastUpdatedTitle --> pullToRefreshTitleBinder,
+            publishers.isFetchingBalance --> isRefreshingBinder,
+            publishers.amountPlaceholder --> amountToSendField.placeholderBinder,
+            publishers.amount --> amountToSendField.textBinder,
+            publishers.recipient --> recipientAddressField.textBinder,
+            publishers.isReviewButtonEnabled --> toReviewButton.isEnabledBinder,
+            publishers.balance --> balanceValueLabel.textBinder,
+            publishers.recipientAddressValidation --> recipientAddressField.validationBinder,
+            publishers.amountValidation --> amountToSendField.validationBinder,
 
-            viewModel.gasLimitMeasuredInLi --> gasLimitField.textBinder,
-            viewModel.gasLimitPlaceholder --> gasLimitField.placeholderBinder,
-            viewModel.gasLimitValidation --> gasLimitField.validationBinder,
+            publishers.gasLimitMeasuredInLi --> gasLimitField.textBinder,
+            publishers.gasLimitPlaceholder --> gasLimitField.placeholderBinder,
+            publishers.gasLimitValidation --> gasLimitField.validationBinder,
 
-            viewModel.gasPriceMeasuredInLi --> gasPriceField.textBinder,
-            viewModel.gasPricePlaceholder --> gasPriceField.placeholderBinder,
-            viewModel.gasPriceValidation --> gasPriceField.validationBinder,
-            viewModel.costOfTransaction --> costOfTransactionLabel.textBinder,
+            publishers.gasPriceMeasuredInLi --> gasPriceField.textBinder,
+            publishers.gasPricePlaceholder --> gasPriceField.placeholderBinder,
+            publishers.gasPriceValidation --> gasPriceField.validationBinder,
+            publishers.costOfTransaction --> costOfTransactionLabel.textBinder,
         ]
     }
 

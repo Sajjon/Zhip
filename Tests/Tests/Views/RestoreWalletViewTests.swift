@@ -52,14 +52,14 @@ final class RestoreWalletViewTests: XCTestCase {
         let isRestoring = PassthroughSubject<Bool, Never>()
         let keystoreRestorationError = PassthroughSubject<AnyValidation, Never>()
 
-        let output = RestoreWalletViewModel.Output(
+        let publishers = RestoreWalletViewModel.Publishers(
             headerLabel: headerLabel.eraseToAnyPublisher(),
             isRestoreButtonEnabled: isRestoreButtonEnabled.eraseToAnyPublisher(),
             isRestoring: isRestoring.eraseToAnyPublisher(),
             keystoreRestorationError: keystoreRestorationError.eraseToAnyPublisher()
         )
 
-        view.populate(with: output).forEach { $0.store(in: &cancellables) }
+        view.populate(with: publishers).forEach { $0.store(in: &cancellables) }
 
         // Subscribe to selectedSegment to exercise the map-closure inside inputFromView.
         var observedSegments: [RestoreWalletViewModel.InputFromView.Segment] = []

@@ -64,7 +64,7 @@ final class BackUpKeystoreViewModelTests: XCTestCase {
         let sut = makeSUT()
         let output = sut.transform(input: makeInput())
         var lastKeystore: String?
-        output.keystore.sink { lastKeystore = $0 }.store(in: &cancellables)
+        output.publishers.keystore.sink { lastKeystore = $0 }.store(in: &cancellables)
 
         XCTAssertNotNil(lastKeystore)
         XCTAssertTrue(lastKeystore?.contains("\"version\"") == true)
@@ -72,7 +72,7 @@ final class BackUpKeystoreViewModelTests: XCTestCase {
 
     func test_copyTrigger_writesKeystoreToPasteboardAndSendsToast() {
         let sut = makeSUT()
-        _ = sut.transform(input: makeInput())
+        let output = sut.transform(input: makeInput())
         var toasts: [Toast] = []
         fakeController.toastSubject.sink { toasts.append($0) }.store(in: &cancellables)
 
@@ -86,9 +86,9 @@ final class BackUpKeystoreViewModelTests: XCTestCase {
 
     func test_rightBarButton_emitsFinished() {
         let sut = makeSUT()
-        _ = sut.transform(input: makeInput())
+        let output = sut.transform(input: makeInput())
         var observed: BackUpKeystoreUserAction?
-        sut.navigator.navigation.sink { observed = $0 }.store(in: &cancellables)
+        output.navigation.sink { observed = $0 }.store(in: &cancellables)
 
         fakeController.rightBarButtonTriggerSubject.send(())
 

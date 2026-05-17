@@ -71,7 +71,7 @@ final class PollTransactionStatusViewModelTests: XCTestCase {
 
     func test_copyTransactionId_writesIdToPasteboardAndSendsToast() {
         let sut = makeSUT()
-        _ = sut.transform(input: makeInput())
+        let output = sut.transform(input: makeInput())
         var toasts: [Toast] = []
         fakeController.toastSubject.sink { toasts.append($0) }.store(in: &cancellables)
 
@@ -83,9 +83,9 @@ final class PollTransactionStatusViewModelTests: XCTestCase {
 
     func test_skipBeforeReceipt_emitsSkip() {
         let sut = makeSUT()
-        _ = sut.transform(input: makeInput())
+        let output = sut.transform(input: makeInput())
         var observed: PollTransactionStatusUserAction?
-        sut.navigator.navigation.sink { observed = $0 }.store(in: &cancellables)
+        output.navigation.sink { observed = $0 }.store(in: &cancellables)
 
         skipTrigger.send(())
 
@@ -98,9 +98,9 @@ final class PollTransactionStatusViewModelTests: XCTestCase {
         let receipt = TransactionReceipt(id: txId, totalGasCost: 0)
         mockTransactions.receiptResult = .success(receipt)
         let sut = makeSUT()
-        _ = sut.transform(input: makeInput())
+        let output = sut.transform(input: makeInput())
         var observed: PollTransactionStatusUserAction?
-        sut.navigator.navigation.sink { observed = $0 }.store(in: &cancellables)
+        output.navigation.sink { observed = $0 }.store(in: &cancellables)
 
         skipTrigger.send(())
 
@@ -113,9 +113,9 @@ final class PollTransactionStatusViewModelTests: XCTestCase {
         let receipt = TransactionReceipt(id: txId, totalGasCost: 0)
         mockTransactions.receiptResult = .success(receipt)
         let sut = makeSUT()
-        _ = sut.transform(input: makeInput())
+        let output = sut.transform(input: makeInput())
         var observed: PollTransactionStatusUserAction?
-        sut.navigator.navigation.sink { observed = $0 }.store(in: &cancellables)
+        output.navigation.sink { observed = $0 }.store(in: &cancellables)
 
         seeTxDetails.send(())
 
@@ -131,7 +131,7 @@ final class PollTransactionStatusViewModelTests: XCTestCase {
         let sut = makeSUT()
         let output = sut.transform(input: makeInput())
         var titles: [String] = []
-        output.skipWaitingOrDoneButtonTitle.sink { titles.append($0) }.store(in: &cancellables)
+        output.publishers.skipWaitingOrDoneButtonTitle.sink { titles.append($0) }.store(in: &cancellables)
 
         XCTAssertGreaterThanOrEqual(titles.count, 2)
         XCTAssertNotEqual(titles.first, titles.last)

@@ -28,6 +28,7 @@ import NanoViewControllerCombine
 import NanoViewControllerCore
 import NanoViewControllerController
 import NanoViewControllerDIPrimitives
+import NanoViewControllerNavigation
 import UIKit
 import Zesame
 
@@ -39,10 +40,10 @@ public enum BackUpKeystoreUserAction: Sendable {
 
 /// View model for the keystore-reveal modal. Surfaces the pretty-printed
 /// keystore as a string and handles the copy-to-pasteboard side effect.
-public final class BackUpKeystoreViewModel: BaseViewModel<
-    BackUpKeystoreUserAction,
+public final class BackUpKeystoreViewModel: AbstractViewModel<
     BackUpKeystoreViewModel.InputFromView,
-    BackUpKeystoreViewModel.Output
+    BackUpKeystoreViewModel.Publishers,
+    BackUpKeystoreUserAction
 > {
     /// System pasteboard wrapper — injected so tests can record copies.
     @Injected(\.pasteboard) private var pasteboard: Pasteboard
@@ -58,16 +59,19 @@ public final class BackUpKeystoreViewModel: BaseViewModel<
     /// Wires:
     /// - Right bar-button → `.finished` navigation step.
     /// - Copy tap → `pasteboard.copy(...)` + toast confirmation.
-    override public func transform(input: Input) -> Output {
-        func userDid(_ step: NavigationStep) {
-            navigator.next(step)
-        }
+    override public func transform(input: Input) -> Output<Publishers, NavigationStep> {
+        let navigator = Navigator<NavigationStep>()
 
         let keystore: AnyPublisher<String, Never> = keystore.map(\.asPrettyPrintedJSONString).eraseToAnyPublisher()
 
-        [
+        return Output(
+            publishers: Publishers(
+                keystore: keystore
+            ),
+            navigation: navigator.navigation
+        ) {
             input.fromController.rightBarButtonTrigger
-                .sink { userDid(.finished) },
+                .sink { [navigator] in navigator.next(.finished) }
 
             // Pull the *current* keystore string at click-time via withLatestFrom
             // so we don't capture a stale value during init. Sensitive copy →
@@ -82,12 +86,8 @@ public final class BackUpKeystoreViewModel: BaseViewModel<
                         let toast = Toast(String(localized: .BackUpKeystore.copiedKeystore))
                         input.fromController.toastSubject.send(toast)
                     }
-                },
-        ].forEach { $0.store(in: &cancellables) }
-
-        return Output(
-            keystore: keystore
-        )
+                }
+        }
     }
 }
 
@@ -106,7 +106,7 @@ public extension BackUpKeystoreViewModel {
     }
 
     /// Reactive bindings the view installs.
-    struct Output {
+    struct Publishers {
         /// Drives `keystoreTextView.textBinder` with the pretty-printed JSON.
         let keystore: AnyPublisher<String, Never>
     }

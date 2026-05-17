@@ -25,14 +25,10 @@
 import NanoViewControllerController
 import UIKit
 
-/// `SceneController` glue for the welcome screen — purely declarative, all
-/// behaviour lives in `WelcomeView` + `WelcomeViewModel`.
-public final class Welcome: Scene<WelcomeView> {}
-
-/// Welcome is full-bleed (the spaceship motion-effect background runs to the
-/// edges) so we hide the navigation bar while it's on screen.
-extension Welcome: NavigationBarLayoutOwner {
-    public var navigationBarLayout: NavigationBarLayout {
-        .hidden
-    }
+/// `NanoViewController` glue for the welcome screen — purely declarative, all
+/// behaviour lives in `WelcomeView` + `WelcomeViewModel`. Full-bleed (the
+/// spaceship motion-effect background runs to the edges) so the navigation
+/// bar is hidden while the screen is on-screen.
+public final class Welcome: NanoViewController<WelcomeView>, ControllerConfigProviding {
+    public static let config = ControllerConfig(navigationBarLayout: .hidden)
 }

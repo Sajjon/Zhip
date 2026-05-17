@@ -75,9 +75,9 @@ final class MainViewModelTests: XCTestCase {
 
     func test_rightBarButton_emitsGoToSettings() {
         let sut = makeSUT()
-        _ = sut.transform(input: makeInput())
+        let output = sut.transform(input: makeInput())
         var observed: MainUserAction?
-        sut.navigator.navigation.sink { observed = $0 }.store(in: &cancellables)
+        output.navigation.sink { observed = $0 }.store(in: &cancellables)
 
         fakeController.rightBarButtonTriggerSubject.send(())
 
@@ -86,9 +86,9 @@ final class MainViewModelTests: XCTestCase {
 
     func test_sendTrigger_emitsSend() {
         let sut = makeSUT()
-        _ = sut.transform(input: makeInput())
+        let output = sut.transform(input: makeInput())
         var observed: MainUserAction?
-        sut.navigator.navigation.sink { observed = $0 }.store(in: &cancellables)
+        output.navigation.sink { observed = $0 }.store(in: &cancellables)
 
         sendTrigger.send(())
 
@@ -97,9 +97,9 @@ final class MainViewModelTests: XCTestCase {
 
     func test_receiveTrigger_emitsReceive() {
         let sut = makeSUT()
-        _ = sut.transform(input: makeInput())
+        let output = sut.transform(input: makeInput())
         var observed: MainUserAction?
-        sut.navigator.navigation.sink { observed = $0 }.store(in: &cancellables)
+        output.navigation.sink { observed = $0 }.store(in: &cancellables)
 
         receiveTrigger.send(())
 
@@ -108,7 +108,7 @@ final class MainViewModelTests: XCTestCase {
 
     func test_transform_callsGetMinimumGasPrice() {
         let sut = makeSUT()
-        _ = sut.transform(input: makeInput())
+        let output = sut.transform(input: makeInput())
 
         XCTAssertEqual(mockTransactions.getMinimumGasPriceCallCount, 1)
     }
@@ -117,7 +117,7 @@ final class MainViewModelTests: XCTestCase {
         let sut = makeSUT()
         let output = sut.transform(input: makeInput())
         var balance: String?
-        output.balance.sink { balance = $0 }.store(in: &cancellables)
+        output.publishers.balance.sink { balance = $0 }.store(in: &cancellables)
 
         XCTAssertNotNil(balance)
         XCTAssertFalse((balance ?? "").isEmpty)
@@ -127,7 +127,7 @@ final class MainViewModelTests: XCTestCase {
         let sut = makeSUT()
         let output = sut.transform(input: makeInput())
         // Subscribe so the latestBalanceAndNonce chain is active
-        output.balance.sink { _ in }.store(in: &cancellables)
+        output.publishers.balance.sink { _ in }.store(in: &cancellables)
         let baselineFetches = mockTransactions.getBalanceCallCount
 
         pullToRefresh.send(())

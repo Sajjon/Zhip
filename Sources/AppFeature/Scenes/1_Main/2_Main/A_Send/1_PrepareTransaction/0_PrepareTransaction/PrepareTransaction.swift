@@ -25,15 +25,13 @@
 import NanoViewControllerController
 import UIKit
 
-/// `SceneController` glue for the prepare-transaction screen (step 1 of Send).
-public final class PrepareTransaction: Scene<PrepareTransactionView> {}
-
-/// Localized title; back arrow hidden because cancel is the only "back" path.
-extension PrepareTransaction: BackButtonHiding {
-    public static let title = String(localized: .PrepareTransaction.title)
-}
-
-/// Right "Cancel" button — aborts the entire Send flow.
-extension PrepareTransaction: RightBarButtonMaking {
-    public static let makeRight: BarButton = .cancel
+/// `NanoViewController` glue for the prepare-transaction screen (step 1 of
+/// Send). Back arrow hidden because cancel is the only "back" path; right
+/// "Cancel" button aborts the entire Send flow.
+public final class PrepareTransaction: NanoViewController<PrepareTransactionView>, ControllerConfigProviding {
+    public static let config = ControllerConfig(
+        titleKey: .PrepareTransaction.title,
+        hidesBackButton: true,
+        rightBarButton: BarButton.cancel.content
+    )
 }

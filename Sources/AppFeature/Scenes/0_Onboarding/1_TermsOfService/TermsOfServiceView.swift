@@ -63,11 +63,11 @@ public final class TermsOfServiceView: ScrollableStackViewOwner {
 extension TermsOfServiceView: ViewModelled {
     public typealias ViewModel = TermsOfServiceViewModel
 
-    /// Binds the view-model's two `Output` publishers to the accept button's visibility and enabled state.
-    public func populate(with viewModel: ViewModel.Output) -> [AnyCancellable] {
+    /// Binds the view-model's two `Publishers` to the accept button's visibility and enabled state.
+    public func populate(with publishers: ViewModel.Publishers) -> [AnyCancellable] {
         [
-            viewModel.isAcceptButtonVisible --> acceptTermsButton.isVisibleBinder,
-            viewModel.isAcceptButtonEnabled --> acceptTermsButton.isEnabledBinder,
+            publishers.isAcceptButtonVisible --> acceptTermsButton.isVisibleBinder,
+            publishers.isAcceptButtonEnabled --> acceptTermsButton.isEnabledBinder,
         ]
     }
 

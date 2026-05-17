@@ -25,6 +25,7 @@
 import Combine
 import NanoViewControllerController
 import NanoViewControllerCore
+import NanoViewControllerNavigation
 
 // MARK: - ChooseWalletUserAction
 
@@ -39,27 +40,27 @@ public enum ChooseWalletUserAction: Sendable {
 // MARK: - ChooseWalletViewModel
 
 /// View model for the chooser screen. The screen has no UI state to bind —
-/// `Output` is empty — so `transform(input:)` only wires the two button taps
+/// `Publishers` is empty — so `transform(input:)` only wires the two button taps
 /// to navigation steps.
-public final class ChooseWalletViewModel: BaseViewModel<
-    ChooseWalletUserAction,
+public final class ChooseWalletViewModel: AbstractViewModel<
     ChooseWalletViewModel.InputFromView,
-    ChooseWalletViewModel.Output
+    ChooseWalletViewModel.Publishers,
+    ChooseWalletUserAction
 > {
-    /// Wires both button taps directly to navigator steps and returns an empty `Output`.
-    override public func transform(input: Input) -> Output {
-        func userIntends(to intention: NavigationStep) {
-            navigator.next(intention)
-        }
+    /// Wires both button taps directly to navigator steps and returns an empty `Publishers`.
+    override public func transform(input: Input) -> Output<Publishers, NavigationStep> {
+        let navigator = Navigator<NavigationStep>()
 
-        [
+        return Output(
+            publishers: Publishers(),
+            navigation: navigator.navigation
+        ) {
             input.fromView.createNewWalletTrigger
-                .sink { userIntends(to: .createNewWallet) },
+                .sink { [navigator] in navigator.next(.createNewWallet) }
 
             input.fromView.restoreWalletTrigger
-                .sink { userIntends(to: .restoreWallet) },
-        ].forEach { $0.store(in: &cancellables) }
-        return Output()
+                .sink { [navigator] in navigator.next(.restoreWallet) }
+        }
     }
 }
 
@@ -73,5 +74,5 @@ public extension ChooseWalletViewModel {
     }
 
     /// No outputs — the screen is entirely static.
-    struct Output {}
+    struct Publishers {}
 }

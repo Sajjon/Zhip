@@ -27,6 +27,7 @@ import Foundation
 import NanoViewControllerCombine
 import NanoViewControllerCore
 import NanoViewControllerController
+import NanoViewControllerNavigation
  import Zesame
 
 /// Outcome of step 2 of Send.
@@ -38,10 +39,10 @@ public enum ReviewTransactionBeforeSigningUserAction: Sendable {
 /// View model for step 2 of Send. Displays the prepared payment in human-readable
 /// form (formatted amounts, both legacy hex + bech32 recipient addresses) and
 /// gates the accept CTA on the "I have reviewed" checkbox.
-public final class ReviewTransactionBeforeSigningViewModel: BaseViewModel<
-    ReviewTransactionBeforeSigningUserAction,
+public final class ReviewTransactionBeforeSigningViewModel: AbstractViewModel<
     ReviewTransactionBeforeSigningViewModel.InputFromView,
-    ReviewTransactionBeforeSigningViewModel.Output
+    ReviewTransactionBeforeSigningViewModel.Publishers,
+    ReviewTransactionBeforeSigningUserAction
 > {
     /// The payment to display + forward.
     private let paymentToReview: Payment
@@ -53,17 +54,8 @@ public final class ReviewTransactionBeforeSigningViewModel: BaseViewModel<
 
     /// Wires the accept-tap (carries `paymentToReview` upstream) and formats
     /// the four displayed values (recipient hex/bech32, amount, fee, total).
-    override public func transform(input: Input) -> Output {
-        func userDid(_ userAction: NavigationStep) {
-            navigator.next(userAction)
-        }
-
-        // MARK: - Validate input
-
-        [
-            input.fromView.hasReviewedNowProceedWithSigningTrigger.map { self.paymentToReview }
-                .sink { userDid(.acceptPaymentProceedWithSigning($0)) },
-        ].forEach { $0.store(in: &cancellables) }
+    override public func transform(input: Input) -> Output<Publishers, NavigationStep> {
+        let navigator = Navigator<NavigationStep>()
 
         let payment = Just(paymentToReview).eraseToAnyPublisher()
         let recipientLegacyAddress = payment.map(\.recipient)
@@ -101,14 +93,22 @@ public final class ReviewTransactionBeforeSigningViewModel: BaseViewModel<
             )
         }
 
+        let paymentToReview = paymentToReview
+
         return Output(
-            isHasReviewedNowProceedWithSigningButtonEnabled: input.fromView.isHasReviewedPaymentCheckboxChecked,
-            recipientLegacyAddress: recipientLegacyAddress.map(\.asString).eraseToAnyPublisher(),
-            recipientBech32Address: recipientBech32Address.map(\.asString).eraseToAnyPublisher(),
-            amountToPay: amountToPay.eraseToAnyPublisher(),
-            paymentFee: paymentFee.eraseToAnyPublisher(),
-            totalCost: totalCost.eraseToAnyPublisher()
-        )
+            publishers: Publishers(
+                isHasReviewedNowProceedWithSigningButtonEnabled: input.fromView.isHasReviewedPaymentCheckboxChecked,
+                recipientLegacyAddress: recipientLegacyAddress.map(\.asString).eraseToAnyPublisher(),
+                recipientBech32Address: recipientBech32Address.map(\.asString).eraseToAnyPublisher(),
+                amountToPay: amountToPay.eraseToAnyPublisher(),
+                paymentFee: paymentFee.eraseToAnyPublisher(),
+                totalCost: totalCost.eraseToAnyPublisher()
+            ),
+            navigation: navigator.navigation
+        ) {
+            input.fromView.hasReviewedNowProceedWithSigningTrigger.map { paymentToReview }
+                .sink { [navigator] in navigator.next(.acceptPaymentProceedWithSigning($0)) }
+        }
     }
 }
 
@@ -118,7 +118,7 @@ public extension ReviewTransactionBeforeSigningViewModel {
         let hasReviewedNowProceedWithSigningTrigger: AnyPublisher<Void, Never>
     }
 
-    struct Output {
+    struct Publishers {
         let isHasReviewedNowProceedWithSigningButtonEnabled: AnyPublisher<Bool, Never>
         let recipientLegacyAddress: AnyPublisher<String, Never>
         let recipientBech32Address: AnyPublisher<String, Never>

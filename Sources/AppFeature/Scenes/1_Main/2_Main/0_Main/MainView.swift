@@ -80,11 +80,11 @@ extension MainView: ViewModelled {
 
     /// Binds fetching state → refresh-spinner, balance string → big number,
     /// and last-updated copy → the refresh control's title.
-    public func populate(with viewModel: MainViewModel.Output) -> [AnyCancellable] {
+    public func populate(with publishers: MainViewModel.Publishers) -> [AnyCancellable] {
         [
-            viewModel.isFetchingBalance --> isRefreshingBinder,
-            viewModel.balance --> balanceValueLabel.textBinder,
-            viewModel.refreshControlLastUpdatedTitle --> pullToRefreshTitleBinder,
+            publishers.isFetchingBalance --> isRefreshingBinder,
+            publishers.balance --> balanceValueLabel.textBinder,
+            publishers.refreshControlLastUpdatedTitle --> pullToRefreshTitleBinder,
         ]
     }
 }

@@ -27,6 +27,7 @@ import Foundation
 import NanoViewControllerCombine
 import NanoViewControllerController
 import NanoViewControllerCore
+import NanoViewControllerNavigation
 
 // MARK: - User action and navigation steps
 
@@ -44,33 +45,32 @@ public enum ConfirmWalletRemovalUserAction: Sendable {
 /// emits `.cancel`, confirm-tap emits `.confirm`, button gated on the checkbox.
 /// The destructive wipe lives in `SettingsCoordinator.toChooseWallet()` so the
 /// dismiss animation can finish before the data is gone.
-public final class ConfirmWalletRemovalViewModel: BaseViewModel<
-    ConfirmWalletRemovalUserAction,
+public final class ConfirmWalletRemovalViewModel: AbstractViewModel<
     ConfirmWalletRemovalViewModel.InputFromView,
-    ConfirmWalletRemovalViewModel.Output
+    ConfirmWalletRemovalViewModel.Publishers,
+    ConfirmWalletRemovalUserAction
 > {
     /// Wires cancel + confirm taps to navigation steps; gates the confirm
     /// button on the "I have backed up" checkbox.
-    override public func transform(input: Input) -> Output {
-        func userDid(_ userAction: NavigationStep) {
-            navigator.next(userAction)
-        }
-
-        // MARK: Navigate
-
-        [
-            input.fromController.leftBarButtonTrigger
-                .sink { userDid(.cancel) },
-
-            input.fromView.confirmTrigger
-                .sink { userDid(.confirm) },
-        ].forEach { $0.store(in: &cancellables) }
+    override public func transform(input: Input) -> Output<Publishers, NavigationStep> {
+        let navigator = Navigator<NavigationStep>()
 
         // MARK: Return output
 
         return Output(
-            isConfirmButtonEnabled: input.fromView.isWalletBackedUpCheckboxChecked
-        )
+            publishers: Publishers(
+                isConfirmButtonEnabled: input.fromView.isWalletBackedUpCheckboxChecked
+            ),
+            navigation: navigator.navigation
+        ) {
+            // MARK: Navigate
+
+            input.fromController.leftBarButtonTrigger
+                .sink { [navigator] in navigator.next(.cancel) }
+
+            input.fromView.confirmTrigger
+                .sink { [navigator] in navigator.next(.confirm) }
+        }
     }
 }
 
@@ -84,7 +84,7 @@ public extension ConfirmWalletRemovalViewModel {
     }
 
     /// Reactive bindings the view installs.
-    struct Output {
+    struct Publishers {
         /// Drives `confirmButton.isEnabledBinder`.
         let isConfirmButtonEnabled: AnyPublisher<Bool, Never>
     }

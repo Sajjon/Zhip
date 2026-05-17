@@ -58,11 +58,11 @@ extension DecryptKeystoreToRevealKeyPairView: ViewModelled {
 
     /// Binds validation feedback (color + remark), button loading spinner,
     /// and button enabled state to the password field + reveal button.
-    public func populate(with viewModel: ViewModel.Output) -> [AnyCancellable] {
+    public func populate(with publishers: ViewModel.Publishers) -> [AnyCancellable] {
         [
-            viewModel.encryptionPasswordValidation --> encryptionPasswordField.validationBinder,
-            viewModel.isRevealButtonLoading --> revealButton.isLoadingBinder,
-            viewModel.isRevealButtonEnabled --> revealButton.isEnabledBinder,
+            publishers.encryptionPasswordValidation --> encryptionPasswordField.validationBinder,
+            publishers.isRevealButtonLoading --> revealButton.isLoadingBinder,
+            publishers.isRevealButtonEnabled --> revealButton.isEnabledBinder,
         ]
     }
 

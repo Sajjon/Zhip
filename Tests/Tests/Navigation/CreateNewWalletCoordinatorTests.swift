@@ -50,6 +50,11 @@ final class CreateNewWalletCoordinatorTests: XCTestCase {
         // UserDefaults during the test.
         preferences = TestStoreFactory.makePreferences()
         Container.shared.walletStorageUseCase.register { [unowned self] in mainActorOnly { mockWallet } }
+        // Also register the create-wallet use case so the VM's
+        // `flatMapLatest { createWalletUseCase.createNewWallet(...) }` resolves
+        // to `MockWalletUseCase.createNewWallet`, which returns the mock's
+        // `createWalletResult` synchronously instead of running real KDF.
+        Container.shared.createWalletUseCase.register { [unowned self] in mainActorOnly { mockWallet } }
         Container.shared.preferences.register { [unowned self] in mainActorOnly { preferences } }
         navigationController = NavigationBarLayoutingNavigationController()
         window = TestWindowFactory.make(frame: .init(x: 0, y: 0, width: 320, height: 480))
@@ -92,7 +97,8 @@ final class CreateNewWalletCoordinatorTests: XCTestCase {
         sut.start()
         let ensure = try XCTUnwrap(top(as: EnsureThatYouAreNotBeingWatched.self))
 
-        ensure.viewModel.navigator.next(.understand)
+        // Tap "I understand" — the lone UIButton in EnsureThatYouAreNotBeingWatchedView.
+        try tapButton(at: 0, in: ensure.view)
         drainRunLoop()
 
         XCTAssertTrue(top(as: CreateNewWallet.self) != nil)
@@ -104,7 +110,8 @@ final class CreateNewWalletCoordinatorTests: XCTestCase {
         sut.navigator.navigation.sink { received = $0 }.store(in: &cancellables)
         let ensure = try XCTUnwrap(top(as: EnsureThatYouAreNotBeingWatched.self))
 
-        ensure.viewModel.navigator.next(.cancel)
+        // Cancel is wired to the left-bar button.
+        ensure.leftBarButtonSubject.send(())
         drainRunLoop()
 
         if case .cancel = received { } else {
@@ -116,13 +123,13 @@ final class CreateNewWalletCoordinatorTests: XCTestCase {
 
     func test_createWalletCancel_bubblesCancel() throws {
         sut.start()
-        top(as: EnsureThatYouAreNotBeingWatched.self)?.viewModel.navigator.next(.understand)
-        drainRunLoop()
+        try drivePast(EnsureThatYouAreNotBeingWatched.self)
         var received: CreateNewWalletCoordinatorNavigationStep?
         sut.navigator.navigation.sink { received = $0 }.store(in: &cancellables)
         let create = try XCTUnwrap(top(as: CreateNewWallet.self))
 
-        create.viewModel.navigator.next(.cancel)
+        // Cancel is wired to the left-bar button.
+        create.leftBarButtonSubject.send(())
         drainRunLoop()
 
         if case .cancel = received { } else {
@@ -132,11 +139,10 @@ final class CreateNewWalletCoordinatorTests: XCTestCase {
 
     func test_createWalletCreateWallet_pushesBackupWallet() throws {
         sut.start()
-        top(as: EnsureThatYouAreNotBeingWatched.self)?.viewModel.navigator.next(.understand)
-        drainRunLoop()
+        try drivePast(EnsureThatYouAreNotBeingWatched.self)
         let create = try XCTUnwrap(top(as: CreateNewWallet.self))
 
-        create.viewModel.navigator.next(.createWallet(TestWalletFactory.makeWallet()))
+        try drivePastCreateNewWallet(create)
         drainRunLoop()
 
         XCTAssertTrue(top(as: BackupWallet.self) != nil)
@@ -149,22 +155,24 @@ final class CreateNewWalletCoordinatorTests: XCTestCase {
         // private key. The backup-confirmed flag should be `false` until
         // the user finishes the BackupWalletCoordinator.
         sut.start()
-        top(as: EnsureThatYouAreNotBeingWatched.self)?.viewModel.navigator.next(.understand)
-        drainRunLoop()
+        try drivePast(EnsureThatYouAreNotBeingWatched.self)
         let create = try XCTUnwrap(top(as: CreateNewWallet.self))
-        let wallet = TestWalletFactory.makeWallet()
+        // Seed the mock so a specific wallet is returned from `createWalletUseCase`.
+        mockWallet.createWalletResult = .success(TestWalletFactory.makeWallet())
 
-        create.viewModel.navigator.next(.createWallet(wallet))
+        try drivePastCreateNewWallet(create)
         drainRunLoop()
 
         XCTAssertNotNil(mockWallet.storedWallet, "wallet must be persisted on creation, not deferred to backup confirm")
         XCTAssertTrue(preferences.isFalse(.hasConfirmedNewWalletBackup), "backup-confirmed flag must start false")
     }
 
-    func test_backupWalletBackUp_marksBackupConfirmed() {
-        let backup = driveToBackupWallet()
+    func test_backupWalletBackUp_marksBackupConfirmed() throws {
+        let backup = try driveToBackupWallet()
 
-        backup.viewModel.navigator.next(.backupWallet)
+        // Confirm the "I have backed up" checkbox + tap Done.
+        try setCheckbox(on: true, in: backup.view)
+        try tapButton(at: 3, in: backup.view) // done button (4th UIButton)
         drainRunLoop()
 
         XCTAssertTrue(
@@ -175,22 +183,48 @@ final class CreateNewWalletCoordinatorTests: XCTestCase {
 
     // MARK: - BackupWalletCoordinator completion branches
 
-    private func driveToBackupWallet() -> BackupWallet {
+    /// Walks the UI from the root screen (`EnsureThatYouAreNotBeingWatched`)
+    /// through `CreateNewWallet` and into `BackupWallet`, returning the
+    /// pushed scene so tests can drive its CTA next.
+    private func driveToBackupWallet() throws -> BackupWallet {
         sut.start()
-        top(as: EnsureThatYouAreNotBeingWatched.self)!.viewModel.navigator.next(.understand)
+        try drivePast(EnsureThatYouAreNotBeingWatched.self)
+        let create = try XCTUnwrap(top(as: CreateNewWallet.self))
+        try drivePastCreateNewWallet(create)
         drainRunLoop()
-        let create = top(as: CreateNewWallet.self)!
-        create.viewModel.navigator.next(.createWallet(TestWalletFactory.makeWallet()))
-        drainRunLoop()
-        return top(as: BackupWallet.self)!
+        return try XCTUnwrap(top(as: BackupWallet.self))
     }
 
-    func test_backupWalletBackUp_bubblesCreate() {
-        let backup = driveToBackupWallet()
+    /// Taps the lone "I understand" button on the
+    /// `EnsureThatYouAreNotBeingWatched` scene.
+    private func drivePast<T: UIViewController>(_: T.Type) throws {
+        let ensure = try XCTUnwrap(top(as: T.self))
+        try tapButton(at: 0, in: ensure.view)
+        drainRunLoop()
+    }
+
+    /// Fills both password fields with a matching 11-char password (≥ min
+    /// length 8), checks the backup-acknowledged checkbox, and taps the
+    /// continue button. Triggers the (mocked) `CreateWalletUseCase` which
+    /// returns the `TestWalletFactory` default via `MockWalletUseCase`.
+    private func drivePastCreateNewWallet(_ create: CreateNewWallet) throws {
+        // CreateNewWalletView has two FloatingLabelTextFields and one checkbox.
+        try setText("apabanan123", in: create.view, ofType: FloatingLabelTextField.self, at: 0)
+        try setText("apabanan123", in: create.view, ofType: FloatingLabelTextField.self, at: 1)
+        try setCheckbox(on: true, in: create.view)
+        // The continue button is a `ButtonWithSpinner` (a UIButton subclass) and
+        // the only button on the screen.
+        try tapButton(at: 0, in: create.view)
+    }
+
+    func test_backupWalletBackUp_bubblesCreate() throws {
+        let backup = try driveToBackupWallet()
         var received: CreateNewWalletCoordinatorNavigationStep?
         sut.navigator.navigation.sink { received = $0 }.store(in: &cancellables)
 
-        backup.viewModel.navigator.next(.backupWallet)
+        // Confirm backup checkbox + tap Done.
+        try setCheckbox(on: true, in: backup.view)
+        try tapButton(at: 3, in: backup.view)
         drainRunLoop()
 
         if case .create = received { } else {
@@ -198,12 +232,13 @@ final class CreateNewWalletCoordinatorTests: XCTestCase {
         }
     }
 
-    func test_backupWalletCancel_bubblesCancel() {
-        let backup = driveToBackupWallet()
+    func test_backupWalletCancel_bubblesCancel() throws {
+        let backup = try driveToBackupWallet()
         var received: CreateNewWalletCoordinatorNavigationStep?
         sut.navigator.navigation.sink { received = $0 }.store(in: &cancellables)
 
-        backup.viewModel.navigator.next(.cancelOrDismiss)
+        // `.cancelOrDismiss` in the cancellable mode is the left-bar button.
+        backup.leftBarButtonSubject.send(())
         drainRunLoop()
 
         if case .cancel = received { } else {

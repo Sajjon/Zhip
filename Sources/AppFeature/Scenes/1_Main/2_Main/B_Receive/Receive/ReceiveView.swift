@@ -64,12 +64,12 @@ public final class ReceiveView: ScrollableStackViewOwner {
 extension ReceiveView: ViewModelled {
     public typealias ViewModel = ReceiveViewModel
 
-    public func populate(with viewModel: ViewModel.Output) -> [AnyCancellable] {
+    public func populate(with publishers: ViewModel.Publishers) -> [AnyCancellable] {
         [
-            viewModel.receivingAddress --> addressValueTextView.textBinder,
-            viewModel.amountPlaceholder --> requestingAmountField.placeholderBinder,
-            viewModel.amountValidation --> requestingAmountField.validationBinder,
-            viewModel.qrImage --> qrImageView.imageBinder,
+            publishers.receivingAddress --> addressValueTextView.textBinder,
+            publishers.amountPlaceholder --> requestingAmountField.placeholderBinder,
+            publishers.amountValidation --> requestingAmountField.validationBinder,
+            publishers.qrImage --> qrImageView.imageBinder,
         ]
     }
 

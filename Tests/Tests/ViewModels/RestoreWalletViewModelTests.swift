@@ -26,6 +26,7 @@
 import Combine
 import Factory
 import NanoViewControllerController
+import NanoViewControllerCore
 import XCTest
 import Zesame
 
@@ -68,9 +69,12 @@ final class RestoreWalletViewModelTests: XCTestCase {
     }
 
     func test_restoreTrigger_withValidPrivateKey_emitsRestoreWallet() throws {
-        let sut = makeSUT()
+        // Hold `sut` for the test lifetime — `RestoreWalletViewModel.transform`
+        // captures `[weak self]` inside its `flatMapLatest`, so dropping the
+        // VM would short-circuit the restore use-case call before it ran.
+        let (sut, output) = makeSUT()
         var observed: RestoreWalletNavigation?
-        sut.navigator.navigation.sink { observed = $0 }.store(in: &cancellables)
+        output.navigation.sink { observed = $0 }.store(in: &cancellables)
 
         let privateKey = try PrivateKey(
             rawRepresentation: Data(hex: "0E891B9DFF485000C7D1DC22ECF3A583CC50328684321D61947A86E57CF6C638")
@@ -84,13 +88,13 @@ final class RestoreWalletViewModelTests: XCTestCase {
         guard case .restoreWallet = observed else {
             return XCTFail("Expected .restoreWallet, got \(String(describing: observed))")
         }
+        _ = sut
     }
 
     func test_isRestoreButtonEnabled_trueWhenRestorationProvided() throws {
-        let sut = makeSUT()
+        let (_, output) = makeSUT()
         var isEnabledEvents: [Bool] = []
-        let output = sut.transform(input: makeInput())
-        output.isRestoreButtonEnabled.sink { isEnabledEvents.append($0) }.store(in: &cancellables)
+        output.publishers.isRestoreButtonEnabled.sink { isEnabledEvents.append($0) }.store(in: &cancellables)
 
         XCTAssertEqual(isEnabledEvents.last, false)
 
@@ -105,20 +109,19 @@ final class RestoreWalletViewModelTests: XCTestCase {
     }
 
     func test_segmentChange_updatesHeaderLabel() {
-        let sut = makeSUT()
+        let (_, output) = makeSUT()
         var labels: [String] = []
-        let output = sut.transform(input: makeInput())
-        output.headerLabel.sink { labels.append($0) }.store(in: &cancellables)
+        output.publishers.headerLabel.sink { labels.append($0) }.store(in: &cancellables)
 
         segmentSubject.send(.keystore)
 
         XCTAssertGreaterThanOrEqual(labels.count, 2, "Expected a header label emission per segment change")
     }
 
-    private func makeSUT() -> RestoreWalletViewModel {
+    private func makeSUT() -> (RestoreWalletViewModel, Output<RestoreWalletViewModel.Publishers, RestoreWalletViewModel.NavigationStep>) {
         let sut = RestoreWalletViewModel()
-        _ = sut.transform(input: makeInput())
-        return sut
+        let output = sut.transform(input: makeInput())
+        return (sut, output)
     }
 
     private func makeInput() -> RestoreWalletViewModel.Input {
