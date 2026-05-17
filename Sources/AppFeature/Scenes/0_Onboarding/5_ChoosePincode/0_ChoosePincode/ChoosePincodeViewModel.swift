@@ -42,11 +42,11 @@ public enum ChoosePincodeUserAction: Sendable {
 public final class ChoosePincodeViewModel: BaseViewModel<
     ChoosePincodeUserAction,
     ChoosePincodeViewModel.InputFromView,
-    ChoosePincodeViewModel.Output
+    ChoosePincodeViewModel.Publishers
 > {
     /// Wires done-tap (with the latest entered pincode) and skip-tap; gates the
     /// done button on pincode-completeness; auto-focuses the input on appear.
-    override public func transform(input: Input) -> Output {
+    override public func transform(input: Input) -> Output<Publishers, NavigationStep> {
         func userDid(_ step: NavigationStep) {
             navigator.next(step)
         }
@@ -63,9 +63,12 @@ public final class ChoosePincodeViewModel: BaseViewModel<
         ].forEach { $0.store(in: &cancellables) }
 
         return Output(
-            // Auto-focus on viewWillAppear so the numeric keyboard is up immediately.
-            inputBecomeFirstResponder: input.fromController.viewWillAppear,
-            isDoneButtonEnabled: pincode.map { $0 != nil }.eraseToAnyPublisher()
+            publishers: Publishers(
+                // Auto-focus on viewWillAppear so the numeric keyboard is up immediately.
+                inputBecomeFirstResponder: input.fromController.viewWillAppear,
+                isDoneButtonEnabled: pincode.map { $0 != nil }.eraseToAnyPublisher()
+            ),
+            navigation: navigator.navigation
         )
     }
 }
@@ -80,7 +83,7 @@ public extension ChoosePincodeViewModel {
     }
 
     /// Reactive bindings the view installs.
-    struct Output {
+    struct Publishers {
         /// Pulses on `viewWillAppear` to put the pincode input in focus.
         let inputBecomeFirstResponder: AnyPublisher<Void, Never>
         /// Drives `doneButton.isEnabledBinder` — true once a complete pincode is entered.

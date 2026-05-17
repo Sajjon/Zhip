@@ -90,7 +90,7 @@ final class RestoreWalletViewModelTests: XCTestCase {
         let sut = makeSUT()
         var isEnabledEvents: [Bool] = []
         let output = sut.transform(input: makeInput())
-        output.isRestoreButtonEnabled.sink { isEnabledEvents.append($0) }.store(in: &cancellables)
+        output.publishers.isRestoreButtonEnabled.sink { isEnabledEvents.append($0) }.store(in: &cancellables)
 
         XCTAssertEqual(isEnabledEvents.last, false)
 
@@ -108,7 +108,7 @@ final class RestoreWalletViewModelTests: XCTestCase {
         let sut = makeSUT()
         var labels: [String] = []
         let output = sut.transform(input: makeInput())
-        output.headerLabel.sink { labels.append($0) }.store(in: &cancellables)
+        output.publishers.headerLabel.sink { labels.append($0) }.store(in: &cancellables)
 
         segmentSubject.send(.keystore)
 

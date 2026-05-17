@@ -41,7 +41,7 @@ public enum ReviewTransactionBeforeSigningUserAction: Sendable {
 public final class ReviewTransactionBeforeSigningViewModel: BaseViewModel<
     ReviewTransactionBeforeSigningUserAction,
     ReviewTransactionBeforeSigningViewModel.InputFromView,
-    ReviewTransactionBeforeSigningViewModel.Output
+    ReviewTransactionBeforeSigningViewModel.Publishers
 > {
     /// The payment to display + forward.
     private let paymentToReview: Payment
@@ -53,7 +53,7 @@ public final class ReviewTransactionBeforeSigningViewModel: BaseViewModel<
 
     /// Wires the accept-tap (carries `paymentToReview` upstream) and formats
     /// the four displayed values (recipient hex/bech32, amount, fee, total).
-    override public func transform(input: Input) -> Output {
+    override public func transform(input: Input) -> Output<Publishers, NavigationStep> {
         func userDid(_ userAction: NavigationStep) {
             navigator.next(userAction)
         }
@@ -102,12 +102,15 @@ public final class ReviewTransactionBeforeSigningViewModel: BaseViewModel<
         }
 
         return Output(
-            isHasReviewedNowProceedWithSigningButtonEnabled: input.fromView.isHasReviewedPaymentCheckboxChecked,
-            recipientLegacyAddress: recipientLegacyAddress.map(\.asString).eraseToAnyPublisher(),
-            recipientBech32Address: recipientBech32Address.map(\.asString).eraseToAnyPublisher(),
-            amountToPay: amountToPay.eraseToAnyPublisher(),
-            paymentFee: paymentFee.eraseToAnyPublisher(),
-            totalCost: totalCost.eraseToAnyPublisher()
+            publishers: Publishers(
+                isHasReviewedNowProceedWithSigningButtonEnabled: input.fromView.isHasReviewedPaymentCheckboxChecked,
+                recipientLegacyAddress: recipientLegacyAddress.map(\.asString).eraseToAnyPublisher(),
+                recipientBech32Address: recipientBech32Address.map(\.asString).eraseToAnyPublisher(),
+                amountToPay: amountToPay.eraseToAnyPublisher(),
+                paymentFee: paymentFee.eraseToAnyPublisher(),
+                totalCost: totalCost.eraseToAnyPublisher()
+            ),
+            navigation: navigator.navigation
         )
     }
 }
@@ -118,7 +121,7 @@ public extension ReviewTransactionBeforeSigningViewModel {
         let hasReviewedNowProceedWithSigningTrigger: AnyPublisher<Void, Never>
     }
 
-    struct Output {
+    struct Publishers {
         let isHasReviewedNowProceedWithSigningButtonEnabled: AnyPublisher<Bool, Never>
         let recipientLegacyAddress: AnyPublisher<String, Never>
         let recipientBech32Address: AnyPublisher<String, Never>

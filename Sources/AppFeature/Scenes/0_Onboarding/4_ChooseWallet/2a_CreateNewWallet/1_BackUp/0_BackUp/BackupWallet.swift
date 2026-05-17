@@ -25,10 +25,7 @@
 import Foundation
 import NanoViewControllerController
 
-/// `SceneController` glue for the wallet-backup hub screen.
-public final class BackupWallet: Scene<BackupWalletView> {}
-
-/// Localized navigation title.
-public extension BackupWallet {
-    static let title = String(localized: .BackupWallet.title)
+/// `NanoViewController` glue for the wallet-backup hub screen.
+public final class BackupWallet: NanoViewController<BackupWalletView>, ControllerConfigProviding {
+    public static let config = ControllerConfig(titleKey: .BackupWallet.title)
 }

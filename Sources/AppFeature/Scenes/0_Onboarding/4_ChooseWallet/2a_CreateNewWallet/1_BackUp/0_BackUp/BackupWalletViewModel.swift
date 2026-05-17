@@ -53,7 +53,7 @@ public enum BackupWalletUserAction: Sendable {
 public final class BackupWalletViewModel: BaseViewModel<
     BackupWalletUserAction,
     BackupWalletViewModel.InputFromView,
-    BackupWalletViewModel.Output
+    BackupWalletViewModel.Publishers
 > {
     /// System pasteboard wrapper — injected so tests can record copies.
     @Injected(\.pasteboard) private var pasteboard: Pasteboard
@@ -84,7 +84,7 @@ public final class BackupWalletViewModel: BaseViewModel<
     /// - Copy-keystore tap → pasteboard + toast.
     /// - Reveal taps → matching navigation steps.
     /// - Done tap *gated* on the "I've backed up" checkbox via `withLatestFrom`.
-    override public func transform(input: Input) -> Output {
+    override public func transform(input: Input) -> Output<Publishers, NavigationStep> {
         func userDid(_ userAction: NavigationStep) {
             navigator.next(userAction)
         }
@@ -135,10 +135,13 @@ public final class BackupWalletViewModel: BaseViewModel<
         ].forEach { $0.store(in: &cancellables) }
 
         return Output(
-            // Confirm group only visible post-create — Settings hides it.
-            isHaveSecurelyBackedUpViewsVisible: AnyPublisher<Mode, Never>.just(mode).map { $0 == .cancellable }
-                .eraseToAnyPublisher(),
-            isDoneButtonEnabled: isUnderstandsRiskCheckboxChecked
+            publishers: Publishers(
+                // Confirm group only visible post-create — Settings hides it.
+                isHaveSecurelyBackedUpViewsVisible: AnyPublisher<Mode, Never>.just(mode).map { $0 == .cancellable }
+                    .eraseToAnyPublisher(),
+                isDoneButtonEnabled: isUnderstandsRiskCheckboxChecked
+            ),
+            navigation: navigator.navigation
         )
     }
 }
@@ -159,7 +162,7 @@ public extension BackupWalletViewModel {
     }
 
     /// Reactive bindings the view installs.
-    struct Output {
+    struct Publishers {
         /// Drives `haveSecurelyBackedUpViews.isVisibleBinder` (false in Settings mode).
         let isHaveSecurelyBackedUpViewsVisible: AnyPublisher<Bool, Never>
         /// Drives `doneButton.isEnabledBinder` — true once the checkbox is checked.

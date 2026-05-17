@@ -64,7 +64,7 @@ final class BackUpKeystoreViewModelTests: XCTestCase {
         let sut = makeSUT()
         let output = sut.transform(input: makeInput())
         var lastKeystore: String?
-        output.keystore.sink { lastKeystore = $0 }.store(in: &cancellables)
+        output.publishers.keystore.sink { lastKeystore = $0 }.store(in: &cancellables)
 
         XCTAssertNotNil(lastKeystore)
         XCTAssertTrue(lastKeystore?.contains("\"version\"") == true)

@@ -57,10 +57,10 @@ extension SettingsView: ViewModelled {
 
     /// Routes the section snapshots into the diffable data source and the
     /// footer-text into the table footer.
-    public func populate(with viewModel: ViewModel.Output) -> [AnyCancellable] {
+    public func populate(with publishers: ViewModel.Publishers) -> [AnyCancellable] {
         [
-            viewModel.sections --> tableView.sections,
-            viewModel.footerText --> tableView.footerLabelBinder,
+            publishers.sections --> tableView.sections,
+            publishers.footerText --> tableView.footerLabelBinder,
         ]
     }
 

@@ -41,7 +41,7 @@ public enum BackUpRevealedKeyPairUserAction: Sendable {
 public final class BackUpRevealedKeyPairViewModel: BaseViewModel<
     BackUpRevealedKeyPairUserAction,
     BackUpRevealedKeyPairViewModel.InputFromView,
-    BackUpRevealedKeyPairViewModel.Output
+    BackUpRevealedKeyPairViewModel.Publishers
 > {
     /// System pasteboard wrapper — injected so tests can record copies.
     @Injected(\.pasteboard) private var pasteboard: Pasteboard
@@ -56,7 +56,7 @@ public final class BackUpRevealedKeyPairViewModel: BaseViewModel<
 
     /// Converts the key pair to hex strings, wires the right "Done" bar-button to
     /// `.finish`, and routes copy taps to pasteboard + toast.
-    override public func transform(input: Input) -> Output {
+    override public func transform(input: Input) -> Output<Publishers, NavigationStep> {
         func userDid(_ step: NavigationStep) {
             navigator.next(step)
         }
@@ -104,8 +104,11 @@ public final class BackUpRevealedKeyPairViewModel: BaseViewModel<
         ].forEach { $0.store(in: &cancellables) }
 
         return Output(
-            privateKey: privateKey,
-            publicKeyUncompressed: publicKeyUncompressed
+            publishers: Publishers(
+                privateKey: privateKey,
+                publicKeyUncompressed: publicKeyUncompressed
+            ),
+            navigation: navigator.navigation
         )
     }
 }
@@ -120,7 +123,7 @@ public extension BackUpRevealedKeyPairViewModel {
     }
 
     /// Reactive bindings the view installs.
-    struct Output {
+    struct Publishers {
         /// Hex-encoded private key — drives `privateKeyTextView.valueBinder`.
         let privateKey: AnyPublisher<String, Never>
         /// Hex-encoded uncompressed public key — drives `publicKeyUncompressedTextView.valueBinder`.

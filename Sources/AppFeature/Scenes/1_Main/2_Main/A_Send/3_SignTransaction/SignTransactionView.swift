@@ -50,12 +50,12 @@ public final class SignTransactionView: ScrollableStackViewOwner {
 extension SignTransactionView: ViewModelled {
     public typealias ViewModel = SignTransactionViewModel
 
-    public func populate(with viewModel: ViewModel.OutputVM) -> [AnyCancellable] {
+    public func populate(with publishers: ViewModel.Publishers) -> [AnyCancellable] {
         [
-            viewModel.inputBecomeFirstResponder --> encryptionPasswordField.becomeFirstResponderBinder,
-            viewModel.encryptionPasswordValidation --> encryptionPasswordField.validationBinder,
-            viewModel.isSignButtonEnabled --> signButton.isEnabledBinder,
-            viewModel.isSignButtonLoading --> signButton.isLoadingBinder,
+            publishers.inputBecomeFirstResponder --> encryptionPasswordField.becomeFirstResponderBinder,
+            publishers.encryptionPasswordValidation --> encryptionPasswordField.validationBinder,
+            publishers.isSignButtonEnabled --> signButton.isEnabledBinder,
+            publishers.isSignButtonLoading --> signButton.isLoadingBinder,
         ]
     }
 

@@ -39,8 +39,7 @@ extension Coordinating {
 
         func scenesFor(_ navCont: UIViewController?) -> String? {
             guard let navCont = navCont as? UINavigationController, !navCont.viewControllers.isEmpty else { return nil }
-            return navCont.viewControllers.compactMap { $0 as? AbstractController }.map(\.description)
-                .joined(separator: ", ")
+            return navCont.viewControllers.map(\.description).joined(separator: ", ")
         }
 
         let scenesString: String = {

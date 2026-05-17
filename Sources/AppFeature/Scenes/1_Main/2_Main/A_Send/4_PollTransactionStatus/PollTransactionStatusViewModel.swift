@@ -54,7 +54,7 @@ public enum PollTransactionStatusUserAction: Sendable {
 public final class PollTransactionStatusViewModel: BaseViewModel<
     PollTransactionStatusUserAction,
     PollTransactionStatusViewModel.InputFromView,
-    PollTransactionStatusViewModel.Output
+    PollTransactionStatusViewModel.Publishers
 > {
     /// Receipt-polling use case.
     @Injected(\.transactionReceiptUseCase) private var transactionReceiptUseCase: TransactionReceiptUseCase
@@ -71,7 +71,7 @@ public final class PollTransactionStatusViewModel: BaseViewModel<
 
     /// Wires the polling pipeline, the three user actions (skip/copy/view), and
     /// the activity-indicator-driven button states.
-    override public func transform(input: Input) -> Output {
+    override public func transform(input: Input) -> Output<Publishers, NavigationStep> {
         func userDid(_ userAction: NavigationStep) {
             navigator.next(userAction)
         }
@@ -125,11 +125,14 @@ public final class PollTransactionStatusViewModel: BaseViewModel<
         // MARK: Return output
 
         return Output(
-            skipWaitingOrDoneButtonTitle: hasReceivedReceipt
-                .map { $0 ? String(localized: .PollTransaction.done) : String(localized: .PollTransaction.skipWaiting) }
-                .eraseToAnyPublisher(),
-            isSeeTxDetailsEnabled: hasReceivedReceipt,
-            isSeeTxDetailsButtonLoading: activityTracker.asPublisher()
+            publishers: Publishers(
+                skipWaitingOrDoneButtonTitle: hasReceivedReceipt
+                    .map { $0 ? String(localized: .PollTransaction.done) : String(localized: .PollTransaction.skipWaiting) }
+                    .eraseToAnyPublisher(),
+                isSeeTxDetailsEnabled: hasReceivedReceipt,
+                isSeeTxDetailsButtonLoading: activityTracker.asPublisher()
+            ),
+            navigation: navigator.navigation
         )
     }
 }
@@ -141,7 +144,7 @@ public extension PollTransactionStatusViewModel {
         let seeTxDetails: AnyPublisher<Void, Never>
     }
 
-    struct Output {
+    struct Publishers {
         let skipWaitingOrDoneButtonTitle: AnyPublisher<String, Never>
         let isSeeTxDetailsEnabled: AnyPublisher<Bool, Never>
         let isSeeTxDetailsButtonLoading: AnyPublisher<Bool, Never>

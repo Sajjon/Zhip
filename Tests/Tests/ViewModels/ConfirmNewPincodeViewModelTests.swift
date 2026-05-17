@@ -114,7 +114,7 @@ final class ConfirmNewPincodeViewModelTests: XCTestCase {
             ),
             fromController: fakeController.makeInput()
         ))
-        output.isConfirmPincodeEnabled.sink { isEnabled.append($0) }.store(in: &cancellables)
+        output.publishers.isConfirmPincodeEnabled.sink { isEnabled.append($0) }.store(in: &cancellables)
 
         pincodeInput.send(unconfirmed)
         isBackedUpSubject.send(false)

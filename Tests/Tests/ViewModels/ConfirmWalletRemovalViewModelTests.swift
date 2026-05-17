@@ -81,7 +81,7 @@ final class ConfirmWalletRemovalViewModelTests: XCTestCase {
         let sut = ConfirmWalletRemovalViewModel()
         let output = sut.transform(input: makeInput())
         var events: [Bool] = []
-        output.isConfirmButtonEnabled.sink { events.append($0) }.store(in: &cancellables)
+        output.publishers.isConfirmButtonEnabled.sink { events.append($0) }.store(in: &cancellables)
 
         isBackedUp.send(true)
         isBackedUp.send(false)

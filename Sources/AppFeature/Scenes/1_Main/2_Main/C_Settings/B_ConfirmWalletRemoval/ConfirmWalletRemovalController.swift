@@ -25,16 +25,13 @@
 import NanoViewControllerController
 import UIKit
 
-/// `SceneController` glue for the wallet-removal confirmation modal — the last
-/// "are you sure?" before the destructive wipe.
-public final class ConfirmWalletRemoval: Scene<ConfirmWalletRemovalView> {}
-
-/// Localized navigation title.
-public extension ConfirmWalletRemoval {
-    static let title = String(localized: .ConfirmWalletRemoval.title)
-}
-
-/// Left "Cancel" bar-button — closes without removing.
-extension ConfirmWalletRemoval: LeftBarButtonMaking {
-    public static let makeLeft: BarButton = .cancel
+/// `NanoViewController` glue for the wallet-removal confirmation modal — the
+/// last "are you sure?" before the destructive wipe.
+public final class ConfirmWalletRemoval: NanoViewController<ConfirmWalletRemovalView>, ControllerConfigProviding {
+    /// Static chrome — navigation title and left "Cancel" bar-button that
+    /// closes the modal without removing.
+    public static let config = ControllerConfig(
+        titleKey: .ConfirmWalletRemoval.title,
+        leftBarButton: BarButton.cancel.content
+    )
 }

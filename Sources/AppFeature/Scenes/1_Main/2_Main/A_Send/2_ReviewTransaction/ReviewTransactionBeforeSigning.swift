@@ -25,11 +25,8 @@
 import Foundation
 import NanoViewControllerController
 
-/// `SceneController` glue for the review-transaction screen (step 2 of Send).
-/// Shows the prepared payment for the user to confirm before signing.
-public final class ReviewTransactionBeforeSigning: Scene<ReviewTransactionBeforeSigningView> {}
-
-/// Localized navigation title.
-public extension ReviewTransactionBeforeSigning {
-    static let title = String(localized: .ReviewTransaction.title)
+/// `NanoViewController` glue for the review-transaction screen (step 2 of
+/// Send). Shows the prepared payment for the user to confirm before signing.
+public final class ReviewTransactionBeforeSigning: NanoViewController<ReviewTransactionBeforeSigningView>, ControllerConfigProviding {
+    public static let config = ControllerConfig(titleKey: .ReviewTransaction.title)
 }

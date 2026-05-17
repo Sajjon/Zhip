@@ -47,7 +47,7 @@ public enum SignTransactionUserAction: Sendable {
 public final class SignTransactionViewModel: BaseViewModel<
     SignTransactionUserAction,
     SignTransactionViewModel.InputFromView,
-    SignTransactionViewModel.Output
+    SignTransactionViewModel.Publishers
 > {
     /// Use case that signs the payment with the keystore-derived private key and broadcasts.
     @Injected(\.sendTransactionUseCase) private var sendTransactionUseCase: SendTransactionUseCase
@@ -77,7 +77,7 @@ public final class SignTransactionViewModel: BaseViewModel<
     /// `.walletUnavailable` and return an inert output so the coordinator can
     /// pop the user out of Send instead of trapping. Defense in depth — Send
     /// should not normally be reachable without a wallet.
-    override public func transform(input: Input) -> Output {
+    override public func transform(input: Input) -> Output<Publishers, NavigationStep> {
         func userDid(_ userAction: NavigationStep) {
             navigator.next(userAction)
         }
@@ -89,12 +89,7 @@ public final class SignTransactionViewModel: BaseViewModel<
                 .first()
                 .sink { _ in userDid(.walletUnavailable) }
                 .store(in: &cancellables)
-            return Output(
-                isSignButtonEnabled: Just(false).eraseToAnyPublisher(),
-                isSignButtonLoading: Just(false).eraseToAnyPublisher(),
-                encryptionPasswordValidation: Just(.empty).eraseToAnyPublisher(),
-                inputBecomeFirstResponder: Empty().eraseToAnyPublisher()
-            )
+            return inertOutput()
         }
         let _payment = payment
 
@@ -163,10 +158,29 @@ public final class SignTransactionViewModel: BaseViewModel<
             .eraseToAnyPublisher()
 
         return Output(
-            isSignButtonEnabled: isSignButtonEnabled,
-            isSignButtonLoading: activityIndicator.asPublisher(),
-            encryptionPasswordValidation: encryptionPasswordValidation,
-            inputBecomeFirstResponder: input.fromController.viewDidAppear
+            publishers: Publishers(
+                isSignButtonEnabled: isSignButtonEnabled,
+                isSignButtonLoading: activityIndicator.asPublisher(),
+                encryptionPasswordValidation: encryptionPasswordValidation,
+                inputBecomeFirstResponder: input.fromController.viewDidAppear
+            ),
+            navigation: navigator.navigation
+        )
+    }
+
+    /// Static, no-op publisher bag returned when the wallet has been removed
+    /// out from under us. Coordinator pops the Send modal immediately after
+    /// observing `.walletUnavailable`, so these placeholder publishers are
+    /// only briefly attached.
+    private func inertOutput() -> Output<Publishers, NavigationStep> {
+        Output(
+            publishers: Publishers(
+                isSignButtonEnabled: Just(false).eraseToAnyPublisher(),
+                isSignButtonLoading: Just(false).eraseToAnyPublisher(),
+                encryptionPasswordValidation: Just(.empty).eraseToAnyPublisher(),
+                inputBecomeFirstResponder: Empty().eraseToAnyPublisher()
+            ),
+            navigation: navigator.navigation
         )
     }
 }
@@ -178,7 +192,7 @@ public extension SignTransactionViewModel {
         let signAndSendTrigger: AnyPublisher<Void, Never>
     }
 
-    struct Output {
+    struct Publishers {
         let isSignButtonEnabled: AnyPublisher<Bool, Never>
         let isSignButtonLoading: AnyPublisher<Bool, Never>
         let encryptionPasswordValidation: AnyPublisher<AnyValidation, Never>

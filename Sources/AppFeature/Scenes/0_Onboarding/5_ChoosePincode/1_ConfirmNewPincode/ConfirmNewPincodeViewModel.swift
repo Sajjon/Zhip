@@ -47,7 +47,7 @@ public enum ConfirmNewPincodeUserAction: Sendable {
 public final class ConfirmNewPincodeViewModel: BaseViewModel<
     ConfirmNewPincodeUserAction,
     ConfirmNewPincodeViewModel.InputFromView,
-    ConfirmNewPincodeViewModel.Output
+    ConfirmNewPincodeViewModel.Publishers
 > {
     /// Used to persist the confirmed pincode.
     private let useCase: PincodeUseCase
@@ -62,7 +62,7 @@ public final class ConfirmNewPincodeViewModel: BaseViewModel<
 
     /// Wires real-time validation, the confirm-tap (persists + emits), the
     /// skip-tap, and the (matches && checkbox-checked) gate for the CTA.
-    override public func transform(input: Input) -> Output {
+    override public func transform(input: Input) -> Output<Publishers, NavigationStep> {
         func userDid(_ step: NavigationStep) {
             navigator.next(step)
         }
@@ -90,9 +90,12 @@ public final class ConfirmNewPincodeViewModel: BaseViewModel<
         ].forEach { $0.store(in: &cancellables) }
 
         return Output(
-            pincodeValidation: pincodeValidationValue.map(\.validation).eraseToAnyPublisher(),
-            isConfirmPincodeEnabled: isConfirmPincodeEnabled,
-            inputBecomeFirstResponder: input.fromController.viewDidAppear
+            publishers: Publishers(
+                pincodeValidation: pincodeValidationValue.map(\.validation).eraseToAnyPublisher(),
+                isConfirmPincodeEnabled: isConfirmPincodeEnabled,
+                inputBecomeFirstResponder: input.fromController.viewDidAppear
+            ),
+            navigation: navigator.navigation
         )
     }
 }
@@ -109,7 +112,7 @@ public extension ConfirmNewPincodeViewModel {
     }
 
     /// Reactive bindings the view installs.
-    struct Output {
+    struct Publishers {
         /// Drives the pincode input's validation styling.
         let pincodeValidation: AnyPublisher<AnyValidation, Never>
         /// Drives the confirm-button enabled state — true iff matching && checked.

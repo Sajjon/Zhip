@@ -85,7 +85,7 @@ final class DecryptKeystoreToRevealKeyPairViewModelTests: XCTestCase {
         let sut = makeSUT()
         let output = sut.transform(input: makeInput())
         var states: [Bool] = []
-        output.isRevealButtonEnabled.sink { states.append($0) }.store(in: &cancellables)
+        output.publishers.isRevealButtonEnabled.sink { states.append($0) }.store(in: &cancellables)
 
         encryptionPassword.send("short")
         encryptionPassword.send(TestWalletFactory.testPassword)

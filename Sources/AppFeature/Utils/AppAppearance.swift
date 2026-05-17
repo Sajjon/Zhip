@@ -168,8 +168,9 @@ extension UINavigationBar {
 
 /// Configures the global `UINavigationBar.appearance()` so every nav bar in
 /// the app starts with our brand colors, opaque background, and clear shadow.
-/// Per-screen overrides happen via `NavigationBarLayoutOwner` in
-/// `NavigationBarLayout.swift`.
+/// Per-screen overrides happen via `ControllerConfig.navigationBarLayout`
+/// on individual `NanoViewController` subclasses (see
+/// `NavigationBarLayoutOwner.swift` for the brand-default factories).
 @MainActor
 private func setupNavigationBarAppearance() {
     let navBarAppearance = UINavigationBarAppearance()

@@ -40,14 +40,14 @@ public enum EnsureThatYouAreNotBeingWatchedUserAction: Sendable {
 // MARK: - EnsureThatYouAreNotBeingWatchedViewModel
 
 /// Wires the cancel bar-button and the understand CTA to navigation steps.
-/// No `Output` — the screen is entirely static.
+/// No `Publishers` — the screen is entirely static.
 public final class EnsureThatYouAreNotBeingWatchedViewModel: BaseViewModel<
     EnsureThatYouAreNotBeingWatchedUserAction,
     EnsureThatYouAreNotBeingWatchedViewModel.InputFromView,
-    EnsureThatYouAreNotBeingWatchedViewModel.Output
+    EnsureThatYouAreNotBeingWatchedViewModel.Publishers
 > {
     /// Wires both inputs (cancel bar-button + understand CTA) directly to navigator steps.
-    override public func transform(input: Input) -> Output {
+    override public func transform(input: Input) -> Output<Publishers, NavigationStep> {
         func userDid(_ userAction: NavigationStep) {
             navigator.next(userAction)
         }
@@ -62,7 +62,10 @@ public final class EnsureThatYouAreNotBeingWatchedViewModel: BaseViewModel<
                 .sink { userDid(.understand) },
         ].forEach { $0.store(in: &cancellables) }
 
-        return Output()
+        return Output(
+            publishers: Publishers(),
+            navigation: navigator.navigation
+        )
     }
 }
 
@@ -74,5 +77,5 @@ public extension EnsureThatYouAreNotBeingWatchedViewModel {
     }
 
     /// No outputs — entirely static screen.
-    struct Output {}
+    struct Publishers {}
 }

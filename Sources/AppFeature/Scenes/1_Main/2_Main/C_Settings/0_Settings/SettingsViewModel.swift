@@ -68,7 +68,7 @@ public enum SettingsNavigation: Sendable {
 public final class SettingsViewModel: BaseViewModel<
     SettingsNavigation,
     SettingsViewModel.InputFromView,
-    SettingsViewModel.Output
+    SettingsViewModel.Publishers
 > {
     /// Used to gate the pincode row (set vs remove) on the current pincode state.
     private let useCase: PincodeUseCase
@@ -80,7 +80,7 @@ public final class SettingsViewModel: BaseViewModel<
 
     /// Wires the section emission, row-tap → navigation step, and the
     /// done bar-button → close.
-    override public func transform(input: Input) -> Output {
+    override public func transform(input: Input) -> Output<Publishers, NavigationStep> {
         func userWantsToNavigate(to intention: NavigationStep) {
             navigator.next(intention)
         }
@@ -105,8 +105,11 @@ public final class SettingsViewModel: BaseViewModel<
         ].forEach { $0.store(in: &cancellables) }
 
         return Output(
-            sections: sections,
-            footerText: .just(appVersionString)
+            publishers: Publishers(
+                sections: sections,
+                footerText: .just(appVersionString)
+            ),
+            navigation: navigator.navigation
         )
     }
 }
@@ -119,7 +122,7 @@ public extension SettingsViewModel {
     }
 
     /// Reactive bindings the view installs.
-    struct Output {
+    struct Publishers {
         /// Drives the diffable data source.
         let sections: AnyPublisher<[SectionModel<Void, SettingsItem>], Never>
         /// "AppName vX.Y.Z (build) — network: …" footer text.

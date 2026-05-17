@@ -78,7 +78,7 @@ final class CreateNewWalletViewModelTests: XCTestCase {
         let sut = makeSUT()
         var isEnabledEvents: [Bool] = []
         let output = sut.transform(input: makeInput())
-        output.isContinueButtonEnabled.sink { isEnabledEvents.append($0) }.store(in: &cancellables)
+        output.publishers.isContinueButtonEnabled.sink { isEnabledEvents.append($0) }.store(in: &cancellables)
 
         // Passwords match and meet the minimum length, but backup not checked yet.
         newPassword.send("apabanan123")
@@ -94,7 +94,7 @@ final class CreateNewWalletViewModelTests: XCTestCase {
         let sut = makeSUT()
         var isEnabledEvents: [Bool] = []
         let output = sut.transform(input: makeInput())
-        output.isContinueButtonEnabled.sink { isEnabledEvents.append($0) }.store(in: &cancellables)
+        output.publishers.isContinueButtonEnabled.sink { isEnabledEvents.append($0) }.store(in: &cancellables)
 
         newPassword.send("apabanan123")
         confirmedPassword.send("different!")

@@ -47,14 +47,14 @@ public enum RestoreWalletNavigation: Sendable {
 public final class RestoreWalletViewModel: BaseViewModel<
     RestoreWalletNavigation,
     RestoreWalletViewModel.InputFromView,
-    RestoreWalletViewModel.Output
+    RestoreWalletViewModel.Publishers
 > {
     /// Use case that decrypts the keystore or derives a wallet from a private key.
     @Injected(\.restoreWalletUseCase) private var restoreWalletUseCase: RestoreWalletUseCase
 
     /// Wires segment-driven payload selection, restore-button gating, and
     /// the (cancellable) restore use-case call. Detail in inline comments.
-    override public func transform(input: Input) -> Output {
+    override public func transform(input: Input) -> Output<Publishers, NavigationStep> {
         func userIntends(to intention: NavigationStep) {
             navigator.next(intention)
         }
@@ -111,11 +111,14 @@ public final class RestoreWalletViewModel: BaseViewModel<
             .eraseToAnyPublisher()
 
         return Output(
-            headerLabel: headerLabel,
-            // Restore CTA enabled iff the active sub-view has produced a non-nil payload.
-            isRestoreButtonEnabled: keyRestoration.map { $0 != nil }.eraseToAnyPublisher(),
-            isRestoring: activityIndicator.asPublisher(),
-            keystoreRestorationError: keystoreRestorationError
+            publishers: Publishers(
+                headerLabel: headerLabel,
+                // Restore CTA enabled iff the active sub-view has produced a non-nil payload.
+                isRestoreButtonEnabled: keyRestoration.map { $0 != nil }.eraseToAnyPublisher(),
+                isRestoring: activityIndicator.asPublisher(),
+                keystoreRestorationError: keystoreRestorationError
+            ),
+            navigation: navigator.navigation
         )
     }
 }
@@ -142,7 +145,7 @@ public extension RestoreWalletViewModel {
     }
 
     /// Reactive bindings the view installs.
-    struct Output {
+    struct Publishers {
         /// Drives `headerLabel.textBinder` based on the selected segment.
         let headerLabel: AnyPublisher<String, Never>
         /// Drives `restoreWalletButton.isEnabledBinder`.

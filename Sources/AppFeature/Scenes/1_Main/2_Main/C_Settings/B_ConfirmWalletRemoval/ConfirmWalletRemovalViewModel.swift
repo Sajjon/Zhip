@@ -47,11 +47,11 @@ public enum ConfirmWalletRemovalUserAction: Sendable {
 public final class ConfirmWalletRemovalViewModel: BaseViewModel<
     ConfirmWalletRemovalUserAction,
     ConfirmWalletRemovalViewModel.InputFromView,
-    ConfirmWalletRemovalViewModel.Output
+    ConfirmWalletRemovalViewModel.Publishers
 > {
     /// Wires cancel + confirm taps to navigation steps; gates the confirm
     /// button on the "I have backed up" checkbox.
-    override public func transform(input: Input) -> Output {
+    override public func transform(input: Input) -> Output<Publishers, NavigationStep> {
         func userDid(_ userAction: NavigationStep) {
             navigator.next(userAction)
         }
@@ -69,7 +69,10 @@ public final class ConfirmWalletRemovalViewModel: BaseViewModel<
         // MARK: Return output
 
         return Output(
-            isConfirmButtonEnabled: input.fromView.isWalletBackedUpCheckboxChecked
+            publishers: Publishers(
+                isConfirmButtonEnabled: input.fromView.isWalletBackedUpCheckboxChecked
+            ),
+            navigation: navigator.navigation
         )
     }
 }
@@ -84,7 +87,7 @@ public extension ConfirmWalletRemovalViewModel {
     }
 
     /// Reactive bindings the view installs.
-    struct Output {
+    struct Publishers {
         /// Drives `confirmButton.isEnabledBinder`.
         let isConfirmButtonEnabled: AnyPublisher<Bool, Never>
     }

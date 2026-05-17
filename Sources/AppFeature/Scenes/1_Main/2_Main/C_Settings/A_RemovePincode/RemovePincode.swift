@@ -25,16 +25,12 @@
 import Foundation
 import NanoViewControllerController
 
-/// `SceneController` glue for the pincode-removal confirmation modal.
+/// `NanoViewController` glue for the pincode-removal confirmation modal.
 /// Auto-removes the pincode as soon as the user enters the matching one.
-public final class RemovePincode: Scene<RemovePincodeView> {}
-
-/// Localized navigation title.
-public extension RemovePincode {
-    static let title = String(localized: .RemovePincode.title)
-}
-
-/// Left "Cancel" bar-button — closes without removing.
-extension RemovePincode: LeftBarButtonMaking {
-    public static let makeLeft: BarButton = .cancel
+/// Left "Cancel" bar-button closes without removing.
+public final class RemovePincode: NanoViewController<RemovePincodeView>, ControllerConfigProviding {
+    public static let config = ControllerConfig(
+        titleKey: .RemovePincode.title,
+        leftBarButton: BarButton.cancel.content
+    )
 }

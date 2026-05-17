@@ -25,15 +25,12 @@
 import NanoViewControllerController
 import UIKit
 
-/// `SceneController` glue for the QR-code scanner side-trip from PrepareTransaction.
-public final class ScanQRCode: Scene<ScanQRCodeView> {}
-
-/// Localized navigation title.
-public extension ScanQRCode {
-    static let title = String(localized: .ScanQRCode.title)
-}
-
-/// Left "Cancel" bar-button — closes the scanner without picking a transaction.
-extension ScanQRCode: LeftBarButtonMaking {
-    public static let makeLeft: BarButton = .cancel
+/// `NanoViewController` glue for the QR-code scanner side-trip from
+/// PrepareTransaction. Left "Cancel" bar-button closes the scanner without
+/// picking a transaction.
+public final class ScanQRCode: NanoViewController<ScanQRCodeView>, ControllerConfigProviding {
+    public static let config = ControllerConfig(
+        titleKey: .ScanQRCode.title,
+        leftBarButton: BarButton.cancel.content
+    )
 }

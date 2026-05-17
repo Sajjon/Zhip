@@ -50,7 +50,7 @@ public enum MainUserAction: Sendable {
 public final class MainViewModel: BaseViewModel<
     MainUserAction,
     MainViewModel.InputFromView,
-    MainViewModel.Output
+    MainViewModel.Publishers
 > {
     /// Network + cache façade for balance/gas-price calls.
     @Injected(\.transactionsUseCase) private var transactionUseCase: TransactionsUseCase
@@ -70,7 +70,7 @@ public final class MainViewModel: BaseViewModel<
 
     /// Composes the three refetch triggers, runs the balance use case,
     /// caches the result, and surfaces formatted balance + freshness.
-    override public func transform(input: Input) -> Output {
+    override public func transform(input: Input) -> Output<Publishers, NavigationStep> {
         func userIntends(to intention: NavigationStep) {
             navigator.next(intention)
         }
@@ -83,7 +83,7 @@ public final class MainViewModel: BaseViewModel<
         //   - external (post-send) → updateBalanceTrigger
         //   - user-initiated → pullToRefreshTrigger
         //   - initial load → wallet emission
-        let fetchTrigger = Publishers.Merge3(
+        let fetchTrigger = Combine.Publishers.Merge3(
             updateBalanceTrigger,
             input.fromView.pullToRefreshTrigger,
             wallet.mapToVoid()
@@ -136,10 +136,13 @@ public final class MainViewModel: BaseViewModel<
         }.eraseToAnyPublisher()
 
         return Output(
-            isFetchingBalance: activityIndicator.asPublisher(),
-            balance: latestBalanceOrZero.map { formatter.format(amount: $0, in: .zil, formatThousands: true) }
-                .eraseToAnyPublisher(),
-            refreshControlLastUpdatedTitle: refreshControlLastUpdatedTitle
+            publishers: Publishers(
+                isFetchingBalance: activityIndicator.asPublisher(),
+                balance: latestBalanceOrZero.map { formatter.format(amount: $0, in: .zil, formatThousands: true) }
+                    .eraseToAnyPublisher(),
+                refreshControlLastUpdatedTitle: refreshControlLastUpdatedTitle
+            ),
+            navigation: navigator.navigation
         )
     }
 }
@@ -156,7 +159,7 @@ public extension MainViewModel {
     }
 
     /// Reactive bindings the view installs.
-    struct Output {
+    struct Publishers {
         /// Drives the pull-to-refresh spinner.
         let isFetchingBalance: AnyPublisher<Bool, Never>
         /// Pre-formatted balance string (ZIL, with thousands separator).

@@ -65,18 +65,18 @@ public enum CreateNewWalletUserAction: Sendable {
 public final class CreateNewWalletViewModel: BaseViewModel<
     CreateNewWalletUserAction,
     CreateNewWalletViewModel.InputFromView,
-    CreateNewWalletViewModel.Output
+    CreateNewWalletViewModel.Publishers
 > {
     /// Use case that performs the (CPU-intensive) keystore derivation from a plaintext password.
     /// Resolved lazily via Factory so tests can register a fast in-memory fake.
     @Injected(\.createWalletUseCase) private var createWalletUseCase: CreateWalletUseCase
 
-    /// Wires UI inputs and controller-lifecycle inputs to the reactive `Output` consumed by the view.
+    /// Wires UI inputs and controller-lifecycle inputs to the reactive `Publishers` consumed by the view.
     ///
     /// All side-effecting subscriptions (navigation, `createWallet` use-case invocation) are
-    /// eagerly stored in `cancellables` here; pure `Output` streams are returned and bound
+    /// eagerly stored in `cancellables` here; pure `Publishers` streams are returned and bound
     /// by the view in `populate(with:)`.
-    override public func transform(input: Input) -> Output {
+    override public func transform(input: Input) -> Output<Publishers, NavigationStep> {
         /// Local helper that pushes a navigation step onto the `BaseViewModel` navigator.
         /// Kept as a nested function purely for readability of the call sites below.
         func userDid(_ userAction: NavigationStep) {
@@ -178,18 +178,21 @@ public final class CreateNewWalletViewModel: BaseViewModel<
             }.eagerValidLazyErrorTurnedToEmptyOnEdit()
 
         return Output(
-            // Static placeholder text — wrapped in `Just` so the view can bind it
-            // through the same `-->` operator pipeline as the dynamic outputs.
-            // The minimum-length value is interpolated from the policy so the UI
-            // stays in sync with `WalletEncryptionPassword.Mode` if it ever changes.
-            encryptionPasswordPlaceholder: Just(String(localized: .CreateNewWallet
-                    .encryptionPasswordField(minLength: WalletEncryptionPassword
-                        .minimumLength(mode: encryptionPasswordMode))))
-                .eraseToAnyPublisher(),
-            encryptionPasswordValidation: encryptionPasswordValidation,
-            confirmEncryptionPasswordValidation: confirmEncryptionPasswordValidation,
-            isContinueButtonEnabled: isContinueButtonEnabled,
-            isButtonLoading: activityIndicator.asPublisher()
+            publishers: Publishers(
+                // Static placeholder text — wrapped in `Just` so the view can bind it
+                // through the same `-->` operator pipeline as the dynamic outputs.
+                // The minimum-length value is interpolated from the policy so the UI
+                // stays in sync with `WalletEncryptionPassword.Mode` if it ever changes.
+                encryptionPasswordPlaceholder: Just(String(localized: .CreateNewWallet
+                        .encryptionPasswordField(minLength: WalletEncryptionPassword
+                            .minimumLength(mode: encryptionPasswordMode))))
+                    .eraseToAnyPublisher(),
+                encryptionPasswordValidation: encryptionPasswordValidation,
+                confirmEncryptionPasswordValidation: confirmEncryptionPasswordValidation,
+                isContinueButtonEnabled: isContinueButtonEnabled,
+                isButtonLoading: activityIndicator.asPublisher()
+            ),
+            navigation: navigator.navigation
         )
     }
 }
@@ -216,7 +219,7 @@ public extension CreateNewWalletViewModel {
     }
 
     /// Reactive outputs delivered to `CreateNewWalletView.populate(with:)` for one-way binding.
-    struct Output {
+    struct Publishers {
         /// Fully-formatted placeholder text (with interpolated minimum length) for the password field.
         let encryptionPasswordPlaceholder: AnyPublisher<String, Never>
         /// Validation state to render on the primary password field (border colour, remark text, …).

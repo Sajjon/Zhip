@@ -46,7 +46,7 @@ public enum RemovePincodeUserAction: Sendable {
 public final class RemovePincodeViewModel: BaseViewModel<
     RemovePincodeUserAction,
     RemovePincodeViewModel.InputFromView,
-    RemovePincodeViewModel.Output
+    RemovePincodeViewModel.Publishers
 > {
     /// Used to read the current pincode for comparison + delete on success.
     private let useCase: PincodeUseCase
@@ -65,7 +65,7 @@ public final class RemovePincodeViewModel: BaseViewModel<
 
     /// Wires real-time pincode comparison; on first match, deletes the pincode
     /// and emits `.removePincode`. Cancel bar-button emits `.cancelPincodeRemoval`.
-    override public func transform(input: Input) -> RemovePincodeViewModel.Output {
+    override public func transform(input: Input) -> Output<Publishers, NavigationStep> {
         func userDid(_ userAction: NavigationStep) {
             navigator.next(userAction)
         }
@@ -91,8 +91,11 @@ public final class RemovePincodeViewModel: BaseViewModel<
         ].forEach { $0.store(in: &cancellables) }
 
         return Output(
-            inputBecomeFirstResponder: input.fromController.viewDidAppear,
-            pincodeValidation: pincodeValidationValue.map(\.validation).eraseToAnyPublisher()
+            publishers: Publishers(
+                inputBecomeFirstResponder: input.fromController.viewDidAppear,
+                pincodeValidation: pincodeValidationValue.map(\.validation).eraseToAnyPublisher()
+            ),
+            navigation: navigator.navigation
         )
     }
 }
@@ -105,7 +108,7 @@ public extension RemovePincodeViewModel {
     }
 
     /// Reactive bindings the view installs.
-    struct Output {
+    struct Publishers {
         /// Pulses on viewDidAppear to put the input in focus.
         let inputBecomeFirstResponder: AnyPublisher<Void, Never>
         /// Drives the input's validation styling.

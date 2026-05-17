@@ -25,15 +25,21 @@
 import NanoViewControllerController
 import UIKit
 
-/// `SceneController` glue for the receipt-polling screen (step 4 of Send).
-public final class PollTransactionStatus: Scene<PollTransactionStatusView> {}
-
-/// No back arrow — the user can either skip, view in browser, or wait for the receipt.
-extension PollTransactionStatus: BackButtonHiding {}
-
-/// Translucent bar — the screen has a celebratory hero illustration that bleeds under the bar.
-extension PollTransactionStatus: NavigationBarLayoutOwner {
-    public var navigationBarLayout: NavigationBarLayout {
-        .translucent
+/// `NanoViewController` glue for the receipt-polling screen (step 4 of Send).
+///
+/// * No back arrow — the user can either skip, view in browser, or wait for
+///   the receipt.
+/// * Translucent bar — the screen has a celebratory hero illustration that
+///   bleeds under the bar.
+///
+/// Translucent layout reads `@MainActor`-isolated brand defaults, so the
+/// config is exposed via an `@MainActor` accessor.
+public final class PollTransactionStatus: NanoViewController<PollTransactionStatusView>, ControllerConfigProviding {
+    @MainActor
+    public static var config: ControllerConfig {
+        ControllerConfig(
+            hidesBackButton: true,
+            navigationBarLayout: .translucent
+        )
     }
 }

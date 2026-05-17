@@ -57,9 +57,9 @@ extension ConfirmWalletRemovalView: ViewModelled {
     public typealias ViewModel = ConfirmWalletRemovalViewModel
 
     /// Binds the confirm-button enabled state to the view-model.
-    public func populate(with viewModel: ViewModel.Output) -> [AnyCancellable] {
+    public func populate(with publishers: ViewModel.Publishers) -> [AnyCancellable] {
         [
-            viewModel.isConfirmButtonEnabled --> confirmButton.isEnabledBinder,
+            publishers.isConfirmButtonEnabled --> confirmButton.isEnabledBinder,
         ]
     }
 

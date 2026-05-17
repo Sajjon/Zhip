@@ -45,7 +45,7 @@ public enum DecryptKeystoreToRevealKeyPairUserAction: Sendable {
 public final class DecryptKeystoreToRevealKeyPairViewModel: BaseViewModel<
     DecryptKeystoreToRevealKeyPairUserAction,
     DecryptKeystoreToRevealKeyPairViewModel.InputFromView,
-    DecryptKeystoreToRevealKeyPairViewModel.Output
+    DecryptKeystoreToRevealKeyPairViewModel.Publishers
 > {
     /// Use case that performs the (CPU-intensive) keystore decryption.
     @Injected(\.extractKeyPairUseCase) private var extractKeyPairUseCase: ExtractKeyPairUseCase
@@ -59,7 +59,7 @@ public final class DecryptKeystoreToRevealKeyPairViewModel: BaseViewModel<
     }
 
     /// Wires validation, decryption, and lifecycle. Detail in inline comments below.
-    override public func transform(input: Input) -> Output {
+    override public func transform(input: Input) -> Output<Publishers, NavigationStep> {
         func userDid(_ step: NavigationStep) {
             navigator.next(step)
         }
@@ -129,9 +129,12 @@ public final class DecryptKeystoreToRevealKeyPairViewModel: BaseViewModel<
             }
 
         return Output(
-            encryptionPasswordValidation: encryptionPasswordValidation,
-            isRevealButtonEnabled: encryptionPasswordValidationValue.map(\.isValid).eraseToAnyPublisher(),
-            isRevealButtonLoading: activityIndicator.asPublisher()
+            publishers: Publishers(
+                encryptionPasswordValidation: encryptionPasswordValidation,
+                isRevealButtonEnabled: encryptionPasswordValidationValue.map(\.isValid).eraseToAnyPublisher(),
+                isRevealButtonLoading: activityIndicator.asPublisher()
+            ),
+            navigation: navigator.navigation
         )
     }
 }
@@ -148,7 +151,7 @@ public extension DecryptKeystoreToRevealKeyPairViewModel {
     }
 
     /// Reactive bindings the view installs.
-    struct Output {
+    struct Publishers {
         /// Drives `encryptionPasswordField.validationBinder`.
         let encryptionPasswordValidation: AnyPublisher<AnyValidation, Never>
         /// Drives the reveal button's enabled state.

@@ -131,7 +131,7 @@ final class PollTransactionStatusViewModelTests: XCTestCase {
         let sut = makeSUT()
         let output = sut.transform(input: makeInput())
         var titles: [String] = []
-        output.skipWaitingOrDoneButtonTitle.sink { titles.append($0) }.store(in: &cancellables)
+        output.publishers.skipWaitingOrDoneButtonTitle.sink { titles.append($0) }.store(in: &cancellables)
 
         XCTAssertGreaterThanOrEqual(titles.count, 2)
         XCTAssertNotEqual(titles.first, titles.last)

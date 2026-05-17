@@ -178,13 +178,13 @@ final class BackupWalletViewModelTests: XCTestCase {
         let sutCancellable = makeSUT(mode: .cancellable)
         let outCancellable = sutCancellable.transform(input: makeInput())
         var cancellableVisible: Bool?
-        outCancellable.isHaveSecurelyBackedUpViewsVisible.sink { cancellableVisible = $0 }
+        outCancellable.publishers.isHaveSecurelyBackedUpViewsVisible.sink { cancellableVisible = $0 }
             .store(in: &cancellables)
 
         let sutDismissable = makeSUT(mode: .dismissable)
         let outDismissable = sutDismissable.transform(input: makeInput())
         var dismissableVisible: Bool?
-        outDismissable.isHaveSecurelyBackedUpViewsVisible.sink { dismissableVisible = $0 }
+        outDismissable.publishers.isHaveSecurelyBackedUpViewsVisible.sink { dismissableVisible = $0 }
             .store(in: &cancellables)
 
         XCTAssertEqual(cancellableVisible, true)

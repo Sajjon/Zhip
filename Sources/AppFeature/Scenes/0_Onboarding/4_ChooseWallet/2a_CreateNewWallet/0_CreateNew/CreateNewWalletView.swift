@@ -79,17 +79,17 @@ extension CreateNewWalletView: ViewModelled {
     /// Concrete view-model type the project's `SceneController` will instantiate and bind.
     public typealias ViewModel = CreateNewWalletViewModel
 
-    /// Binds each of the view-model's `Output` publishers to the corresponding UI binder.
+    /// Binds each of the view-model's `Publishers` to the corresponding UI binder.
     ///
     /// The returned cancellables are owned by the `SceneController` for the screen's lifetime;
     /// returning them (rather than `.store(in:)`-ing here) keeps lifecycle ownership in one place.
-    public func populate(with output: ViewModel.Output) -> [AnyCancellable] {
+    public func populate(with publishers: ViewModel.Publishers) -> [AnyCancellable] {
         [
-            output.encryptionPasswordPlaceholder --> encryptionPasswordField.placeholderBinder,
-            output.encryptionPasswordValidation --> encryptionPasswordField.validationBinder,
-            output.confirmEncryptionPasswordValidation --> confirmEncryptionPasswordField.validationBinder,
-            output.isContinueButtonEnabled --> continueButton.isEnabledBinder,
-            output.isButtonLoading --> continueButton.isLoadingBinder,
+            publishers.encryptionPasswordPlaceholder --> encryptionPasswordField.placeholderBinder,
+            publishers.encryptionPasswordValidation --> encryptionPasswordField.validationBinder,
+            publishers.confirmEncryptionPasswordValidation --> confirmEncryptionPasswordField.validationBinder,
+            publishers.isContinueButtonEnabled --> continueButton.isEnabledBinder,
+            publishers.isButtonLoading --> continueButton.isLoadingBinder,
         ]
     }
 

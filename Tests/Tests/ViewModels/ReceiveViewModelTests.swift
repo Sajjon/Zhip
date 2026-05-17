@@ -100,7 +100,7 @@ final class ReceiveViewModelTests: XCTestCase {
         let sut = makeSUT()
         var receivedAddress: String?
         let output = sut.transform(input: makeInput())
-        output.receivingAddress.sink { receivedAddress = $0 }.store(in: &cancellables)
+        output.publishers.receivingAddress.sink { receivedAddress = $0 }.store(in: &cancellables)
 
         XCTAssertEqual(receivedAddress, mockWallet.storedWallet?.bech32Address.asString)
     }

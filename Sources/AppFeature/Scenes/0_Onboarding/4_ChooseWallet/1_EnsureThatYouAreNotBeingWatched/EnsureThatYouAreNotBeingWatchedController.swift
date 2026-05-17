@@ -25,13 +25,11 @@
 import NanoViewControllerController
 import UIKit
 
-/// `SceneController` glue for the privacy-warning gate that appears between
+/// `NanoViewController` glue for the privacy-warning gate that appears between
 /// "Create new wallet" and the actual wallet-generation step. Cancellable so
-/// the user can back out without committing to a fresh wallet.
-public final class EnsureThatYouAreNotBeingWatched: Scene<EnsureThatYouAreNotBeingWatchedView> {}
-
-/// Provides the cancel "X" left bar-button — the navigation back-arrow is
-/// suppressed in this flow because tapping it could leak partial state.
-extension EnsureThatYouAreNotBeingWatched: LeftBarButtonMaking {
-    public static let makeLeft: BarButton = .cancel
+/// the user can back out without committing to a fresh wallet. The cancel
+/// "X" left bar-button replaces the navigation back-arrow because tapping
+/// "back" could leak partial state.
+public final class EnsureThatYouAreNotBeingWatched: NanoViewController<EnsureThatYouAreNotBeingWatchedView>, ControllerConfigProviding {
+    public static let config = ControllerConfig(leftBarButton: BarButton.cancel.content)
 }

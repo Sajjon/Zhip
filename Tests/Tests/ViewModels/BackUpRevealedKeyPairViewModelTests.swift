@@ -72,8 +72,8 @@ final class BackUpRevealedKeyPairViewModelTests: XCTestCase {
         let output = sut.transform(input: makeInput())
         var privateKey: String?
         var publicKey: String?
-        output.privateKey.sink { privateKey = $0 }.store(in: &cancellables)
-        output.publicKeyUncompressed.sink { publicKey = $0 }.store(in: &cancellables)
+        output.publishers.privateKey.sink { privateKey = $0 }.store(in: &cancellables)
+        output.publishers.publicKeyUncompressed.sink { publicKey = $0 }.store(in: &cancellables)
 
         XCTAssertEqual(privateKey, keyPair.privateKey.rawRepresentation.asHex)
         XCTAssertEqual(publicKey, keyPair.publicKey.x963Representation.asHex)

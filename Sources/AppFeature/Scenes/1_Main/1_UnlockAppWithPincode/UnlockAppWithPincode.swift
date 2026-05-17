@@ -25,10 +25,7 @@
 import Foundation
 import NanoViewControllerController
 
-/// `SceneController` glue for the pincode-unlock screen.
-public final class UnlockAppWithPincode: Scene<UnlockAppWithPincodeView> {}
-
-/// Localized navigation title.
-public extension UnlockAppWithPincode {
-    static let title = String(localized: .UnlockApp.title)
+/// `NanoViewController` glue for the pincode-unlock screen.
+public final class UnlockAppWithPincode: NanoViewController<UnlockAppWithPincodeView>, ControllerConfigProviding {
+    public static let config = ControllerConfig(titleKey: .UnlockApp.title)
 }

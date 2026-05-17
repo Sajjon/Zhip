@@ -49,7 +49,7 @@ public enum ScanQRCodeUserAction: Sendable {
 public final class ScanQRCodeViewModel: BaseViewModel<
     ScanQRCodeUserAction,
     ScanQRCodeViewModel.InputFromView,
-    ScanQRCodeViewModel.Output
+    ScanQRCodeViewModel.Publishers
 > {
     /// Result type for the scan→decode pipeline.
     typealias ScannedQRResult = Result<TransactionIntent, Swift.Error>
@@ -60,7 +60,7 @@ public final class ScanQRCodeViewModel: BaseViewModel<
 
     /// Decodes scanned strings, strips an optional `zilliqa://` prefix, and
     /// surfaces the resulting `TransactionIntent` (or cancel on bar-button tap).
-    override public func transform(input: Input) -> Output {
+    override public func transform(input: Input) -> Output<Publishers, NavigationStep> {
         func userDid(_ userAction: NavigationStep) {
             navigator.next(userAction)
         }
@@ -104,7 +104,10 @@ public final class ScanQRCodeViewModel: BaseViewModel<
         ].forEach { $0.store(in: &cancellables) }
 
         return Output(
-            startScanning: startScanningSubject.replaceErrorWithEmpty().eraseToAnyPublisher()
+            publishers: Publishers(
+                startScanning: startScanningSubject.replaceErrorWithEmpty().eraseToAnyPublisher()
+            ),
+            navigation: navigator.navigation
         )
     }
 }
@@ -114,7 +117,7 @@ public extension ScanQRCodeViewModel {
         let scannedQrCodeString: AnyPublisher<String?, Never>
     }
 
-    struct Output {
+    struct Publishers {
         let startScanning: AnyPublisher<Void, Never>
     }
 }

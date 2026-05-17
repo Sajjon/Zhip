@@ -51,10 +51,10 @@ extension RemovePincodeView: ViewModelled {
     public typealias ViewModel = RemovePincodeViewModel
 
     /// Binds focus on appear + validation styling on the pincode input.
-    public func populate(with viewModel: ViewModel.Output) -> [AnyCancellable] {
+    public func populate(with publishers: ViewModel.Publishers) -> [AnyCancellable] {
         [
-            viewModel.inputBecomeFirstResponder --> inputPincodeView.becomeFirstResponderBinder,
-            viewModel.pincodeValidation --> inputPincodeView.validationBinder,
+            publishers.inputBecomeFirstResponder --> inputPincodeView.becomeFirstResponderBinder,
+            publishers.pincodeValidation --> inputPincodeView.validationBinder,
         ]
     }
 

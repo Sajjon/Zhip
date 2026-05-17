@@ -42,11 +42,11 @@ public enum WelcomeUserAction: Sendable {
 public final class WelcomeViewModel: BaseViewModel<
     WelcomeUserAction,
     WelcomeViewModel.InputFromView,
-    WelcomeViewModel.Output
+    WelcomeViewModel.Publishers
 > {
-    /// Wires `startTrigger` → `navigator.next(.start)`. Returns an empty `Output`
+    /// Wires `startTrigger` → `navigator.next(.start)`. Returns an empty `Publishers`
     /// because the welcome scene has no ViewModel-driven UI state.
-    override public func transform(input: Input) -> WelcomeViewModel.Output {
+    override public func transform(input: Input) -> Output<Publishers, NavigationStep> {
         func userIntends(to userAction: NavigationStep) {
             navigator.next(userAction)
         }
@@ -58,7 +58,10 @@ public final class WelcomeViewModel: BaseViewModel<
                 .sink { userIntends(to: .start) },
         ].forEach { $0.store(in: &cancellables) }
 
-        return Output()
+        return Output(
+            publishers: Publishers(),
+            navigation: navigator.navigation
+        )
     }
 }
 
@@ -70,5 +73,5 @@ public extension WelcomeViewModel {
     }
 
     /// No outputs — the scene is entirely static until the user taps Start.
-    struct Output {}
+    struct Publishers {}
 }

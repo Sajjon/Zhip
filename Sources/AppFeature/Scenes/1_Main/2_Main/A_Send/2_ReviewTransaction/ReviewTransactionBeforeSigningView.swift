@@ -78,15 +78,15 @@ extension ReviewTransactionBeforeSigningView: ViewModelled {
         )
     }
 
-    public func populate(with viewModel: ViewModel.Output) -> [AnyCancellable] {
+    public func populate(with publishers: ViewModel.Publishers) -> [AnyCancellable] {
         [
-            viewModel.isHasReviewedNowProceedWithSigningButtonEnabled --> acceptPaymentProceedToSigningButton
+            publishers.isHasReviewedNowProceedWithSigningButtonEnabled --> acceptPaymentProceedToSigningButton
                 .isEnabledBinder,
-            viewModel.recipientBech32Address --> recipientBech32AddressView.valueBinder,
-            viewModel.recipientLegacyAddress --> recipientLegacyAddressView.valueBinder,
-            viewModel.amountToPay --> amountToSendView.valueBinder,
-            viewModel.paymentFee --> transactionFeeView.valueBinder,
-            viewModel.totalCost --> totalCostOfTransactionView.valueBinder,
+            publishers.recipientBech32Address --> recipientBech32AddressView.valueBinder,
+            publishers.recipientLegacyAddress --> recipientLegacyAddressView.valueBinder,
+            publishers.amountToPay --> amountToSendView.valueBinder,
+            publishers.paymentFee --> transactionFeeView.valueBinder,
+            publishers.totalCost --> totalCostOfTransactionView.valueBinder,
         ]
     }
 }

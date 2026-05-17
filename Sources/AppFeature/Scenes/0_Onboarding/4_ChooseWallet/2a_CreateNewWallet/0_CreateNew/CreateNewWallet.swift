@@ -25,15 +25,10 @@
 import Foundation
 import NanoViewControllerController
 
-/// `SceneController` glue for the password-entry step of wallet creation.
-public final class CreateNewWallet: Scene<CreateNewWalletView> {}
-
-/// Localized navigation title — set by `SceneController` via `TitledScene`.
-public extension CreateNewWallet {
-    static let title = String(localized: .CreateNewWallet.title)
-}
-
-/// Provides the cancel "X" left bar-button.
-extension CreateNewWallet: LeftBarButtonMaking {
-    public static let makeLeft: BarButton = .cancel
+/// `NanoViewController` glue for the password-entry step of wallet creation.
+public final class CreateNewWallet: NanoViewController<CreateNewWalletView>, ControllerConfigProviding {
+    public static let config = ControllerConfig(
+        titleKey: .CreateNewWallet.title,
+        leftBarButton: BarButton.cancel.content
+    )
 }

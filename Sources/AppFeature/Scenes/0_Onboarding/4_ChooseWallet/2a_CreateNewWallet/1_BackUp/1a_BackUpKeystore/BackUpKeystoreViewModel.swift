@@ -42,7 +42,7 @@ public enum BackUpKeystoreUserAction: Sendable {
 public final class BackUpKeystoreViewModel: BaseViewModel<
     BackUpKeystoreUserAction,
     BackUpKeystoreViewModel.InputFromView,
-    BackUpKeystoreViewModel.Output
+    BackUpKeystoreViewModel.Publishers
 > {
     /// System pasteboard wrapper — injected so tests can record copies.
     @Injected(\.pasteboard) private var pasteboard: Pasteboard
@@ -58,7 +58,7 @@ public final class BackUpKeystoreViewModel: BaseViewModel<
     /// Wires:
     /// - Right bar-button → `.finished` navigation step.
     /// - Copy tap → `pasteboard.copy(...)` + toast confirmation.
-    override public func transform(input: Input) -> Output {
+    override public func transform(input: Input) -> Output<Publishers, NavigationStep> {
         func userDid(_ step: NavigationStep) {
             navigator.next(step)
         }
@@ -86,7 +86,10 @@ public final class BackUpKeystoreViewModel: BaseViewModel<
         ].forEach { $0.store(in: &cancellables) }
 
         return Output(
-            keystore: keystore
+            publishers: Publishers(
+                keystore: keystore
+            ),
+            navigation: navigator.navigation
         )
     }
 }
@@ -106,7 +109,7 @@ public extension BackUpKeystoreViewModel {
     }
 
     /// Reactive bindings the view installs.
-    struct Output {
+    struct Publishers {
         /// Drives `keystoreTextView.textBinder` with the pretty-printed JSON.
         let keystore: AnyPublisher<String, Never>
     }

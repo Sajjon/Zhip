@@ -25,16 +25,12 @@
 import Foundation
 import NanoViewControllerController
 
-/// `SceneController` glue for the password-gate that decrypts the keystore
-/// and reveals the underlying private key + address.
-public final class DecryptKeystoreToRevealKeyPair: Scene<DecryptKeystoreToRevealKeyPairView> {}
-
-/// Localized navigation title.
-public extension DecryptKeystoreToRevealKeyPair {
-    static let title = String(localized: .DecryptKeystore.title)
-}
-
-/// Right "Done" bar button — used as the dismiss action when entering from a modal.
-extension DecryptKeystoreToRevealKeyPair: RightBarButtonMaking {
-    public static let makeRight: BarButton = .done
+/// `NanoViewController` glue for the password-gate that decrypts the keystore
+/// and reveals the underlying private key + address. The right "Done" bar
+/// button is the dismiss action when entering from a modal.
+public final class DecryptKeystoreToRevealKeyPair: NanoViewController<DecryptKeystoreToRevealKeyPairView>, ControllerConfigProviding {
+    public static let config = ControllerConfig(
+        titleKey: .DecryptKeystore.title,
+        rightBarButton: BarButton.done.content
+    )
 }

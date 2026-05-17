@@ -25,6 +25,7 @@
 import Foundation
 import NanoViewControllerController
 
-/// `SceneController` glue for the sign-transaction screen (step 3 of Send).
-/// Re-prompts for the wallet password and runs the actual signing + broadcast.
-public final class SignTransaction: Scene<SignTransactionView> {}
+/// `NanoViewController` glue for the sign-transaction screen (step 3 of
+/// Send). Re-prompts for the wallet password and runs the actual signing +
+/// broadcast.
+public final class SignTransaction: NanoViewController<SignTransactionView> {}

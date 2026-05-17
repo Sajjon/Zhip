@@ -55,10 +55,10 @@ extension UnlockAppWithPincodeView: ViewModelled {
     public typealias ViewModel = UnlockAppWithPincodeViewModel
 
     /// Binds focus on appear + validation styling on the pincode input.
-    public func populate(with viewModel: UnlockAppWithPincodeViewModel.Output) -> [AnyCancellable] {
+    public func populate(with publishers: UnlockAppWithPincodeViewModel.Publishers) -> [AnyCancellable] {
         [
-            viewModel.inputBecomeFirstResponder --> inputPincodeView.becomeFirstResponderBinder,
-            viewModel.pincodeValidation --> inputPincodeView.validationBinder,
+            publishers.inputBecomeFirstResponder --> inputPincodeView.becomeFirstResponderBinder,
+            publishers.pincodeValidation --> inputPincodeView.validationBinder,
         ]
     }
 

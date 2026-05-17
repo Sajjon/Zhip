@@ -102,7 +102,7 @@ final class UnlockAppWithPincodeViewModelTests: XCTestCase {
         let sut = makeSUT()
         let output = sut.transform(input: makeInput())
         var validations: [AnyValidation] = []
-        output.pincodeValidation.sink { validations.append($0) }.store(in: &cancellables)
+        output.publishers.pincodeValidation.sink { validations.append($0) }.store(in: &cancellables)
 
         let wrong = try Pincode(digits: [.zero, .zero, .zero, .zero])
         pincodeSubject.send(wrong)
@@ -114,7 +114,7 @@ final class UnlockAppWithPincodeViewModelTests: XCTestCase {
         let sut = makeSUT()
         let output = sut.transform(input: makeInput())
         var validations: [AnyValidation] = []
-        output.pincodeValidation.sink { validations.append($0) }.store(in: &cancellables)
+        output.publishers.pincodeValidation.sink { validations.append($0) }.store(in: &cancellables)
 
         pincodeSubject.send(existingPincode)
 

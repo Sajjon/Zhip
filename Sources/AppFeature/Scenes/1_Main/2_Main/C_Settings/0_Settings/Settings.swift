@@ -25,15 +25,11 @@
 import NanoViewControllerController
 import UIKit
 
-/// `SceneController` glue for the Settings hub (table-view).
-public final class Settings: Scene<SettingsView> {}
-
-/// Localized navigation title.
-public extension Settings {
-    static let title = String(localized: .Settings.title)
-}
-
-/// Right "Done" bar-button — closes the modal.
-extension Settings: RightBarButtonMaking {
-    public static let makeRight: BarButton = .done
+/// `NanoViewController` glue for the Settings hub (table-view). Right "Done"
+/// bar-button closes the modal.
+public final class Settings: NanoViewController<SettingsView>, ControllerConfigProviding {
+    public static let config = ControllerConfig(
+        titleKey: .Settings.title,
+        rightBarButton: BarButton.done.content
+    )
 }

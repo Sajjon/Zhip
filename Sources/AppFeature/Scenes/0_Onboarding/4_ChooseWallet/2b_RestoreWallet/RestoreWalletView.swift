@@ -106,12 +106,12 @@ extension RestoreWalletView: ViewModelled {
 
     /// Binds header text, button loading/enabled states, and the keystore-error
     /// "soft-redirect" binder (see `keystoreRestorationValidatino` below).
-    public func populate(with viewModel: ViewModel.Output) -> [AnyCancellable] {
+    public func populate(with publishers: ViewModel.Publishers) -> [AnyCancellable] {
         [
-            viewModel.headerLabel --> headerLabel.textBinder,
-            viewModel.isRestoring --> restoreWalletButton.isLoadingBinder,
-            viewModel.isRestoreButtonEnabled --> restoreWalletButton.isEnabledBinder,
-            viewModel.keystoreRestorationError --> keystoreRestorationValidatino,
+            publishers.headerLabel --> headerLabel.textBinder,
+            publishers.isRestoring --> restoreWalletButton.isLoadingBinder,
+            publishers.isRestoreButtonEnabled --> restoreWalletButton.isEnabledBinder,
+            publishers.keystoreRestorationError --> keystoreRestorationValidatino,
         ]
     }
 

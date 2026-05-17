@@ -50,7 +50,7 @@ public enum ReceiveUserAction: Sendable {
 public final class ReceiveViewModel: BaseViewModel<
     ReceiveUserAction,
     ReceiveViewModel.InputFromView,
-    ReceiveViewModel.Output
+    ReceiveViewModel.Publishers
 > {
     /// Source of the wallet whose address is shown.
     @Injected(\.walletStorageUseCase) private var walletStorageUseCase: WalletStorageUseCase
@@ -61,7 +61,7 @@ public final class ReceiveViewModel: BaseViewModel<
 
     /// Wires the address QR generation, amount validation, copy-to-pasteboard
     /// behavior, and the request-payment hand-off to the coordinator.
-    override public func transform(input: Input) -> Output {
+    override public func transform(input: Input) -> Output<Publishers, NavigationStep> {
         func userDid(_ userAction: NavigationStep) {
             navigator.next(userAction)
         }
@@ -117,11 +117,14 @@ public final class ReceiveViewModel: BaseViewModel<
         ].forEach { $0.store(in: &cancellables) }
 
         return Output(
-            receivingAddress: receivingAddress,
-            amountPlaceholder: Just(String(localized: .Receive.requestAmountField(unit: Unit.zil.name)))
-                .eraseToAnyPublisher(),
-            amountValidation: amountValidation,
-            qrImage: qrImage
+            publishers: Publishers(
+                receivingAddress: receivingAddress,
+                amountPlaceholder: Just(String(localized: .Receive.requestAmountField(unit: Unit.zil.name)))
+                    .eraseToAnyPublisher(),
+                amountValidation: amountValidation,
+                qrImage: qrImage
+            ),
+            navigation: navigator.navigation
         )
     }
 }
@@ -135,7 +138,7 @@ public extension ReceiveViewModel {
         let shareTrigger: AnyPublisher<Void, Never>
     }
 
-    struct Output {
+    struct Publishers {
         let receivingAddress: AnyPublisher<String, Never>
         let amountPlaceholder: AnyPublisher<String, Never>
         let amountValidation: AnyPublisher<AnyValidation, Never>

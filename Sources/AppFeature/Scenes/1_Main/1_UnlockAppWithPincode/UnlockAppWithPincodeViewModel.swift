@@ -48,7 +48,7 @@ public enum UnlockAppWithPincodeUserAction: Sendable {
 public final class UnlockAppWithPincodeViewModel: BaseViewModel<
     UnlockAppWithPincodeUserAction,
     UnlockAppWithPincodeViewModel.InputFromView,
-    UnlockAppWithPincodeViewModel.Output
+    UnlockAppWithPincodeViewModel.Publishers
 > {
     /// Read-only pincode access for comparison.
     @Injected(\.pincodeUseCase) private var pincodeUseCase: PincodeUseCase
@@ -66,7 +66,7 @@ public final class UnlockAppWithPincodeViewModel: BaseViewModel<
 
     /// Wires real-time pincode comparison + biometric prompt; either path
     /// succeeding fires `.unlockApp`.
-    override public func transform(input: Input) -> Output {
+    override public func transform(input: Input) -> Output<Publishers, NavigationStep> {
         func userDid(_ userAction: NavigationStep) {
             navigator.next(userAction)
         }
@@ -105,9 +105,12 @@ public final class UnlockAppWithPincodeViewModel: BaseViewModel<
         ].forEach { $0.store(in: &cancellables) }
 
         return Output(
-            // Focus on viewWillAppear so the keyboard is up before the screen is fully visible.
-            inputBecomeFirstResponder: input.fromController.viewWillAppear,
-            pincodeValidation: pincodeValidationValue.map(\.validation).eraseToAnyPublisher()
+            publishers: Publishers(
+                // Focus on viewWillAppear so the keyboard is up before the screen is fully visible.
+                inputBecomeFirstResponder: input.fromController.viewWillAppear,
+                pincodeValidation: pincodeValidationValue.map(\.validation).eraseToAnyPublisher()
+            ),
+            navigation: navigator.navigation
         )
     }
 }
@@ -120,7 +123,7 @@ public extension UnlockAppWithPincodeViewModel {
     }
 
     /// Reactive bindings the view installs.
-    struct Output {
+    struct Publishers {
         /// Pulses on viewWillAppear to put the input in focus.
         let inputBecomeFirstResponder: AnyPublisher<Void, Never>
         /// Drives the input's validation styling.

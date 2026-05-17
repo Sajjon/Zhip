@@ -62,7 +62,7 @@ final class SettingsViewModelTests: XCTestCase {
         let sut = makeSUT()
         let output = sut.transform(input: makeInput())
         var latest: [SectionModel<Void, SettingsItem>] = []
-        output.sections.sink { latest = $0 }.store(in: &cancellables)
+        output.publishers.sections.sink { latest = $0 }.store(in: &cancellables)
 
         fakeController.viewWillAppearSubject.send(())
 
@@ -75,7 +75,7 @@ final class SettingsViewModelTests: XCTestCase {
         let sut = makeSUT()
         let output = sut.transform(input: makeInput())
         var latest: [SectionModel<Void, SettingsItem>] = []
-        output.sections.sink { latest = $0 }.store(in: &cancellables)
+        output.publishers.sections.sink { latest = $0 }.store(in: &cancellables)
 
         fakeController.viewWillAppearSubject.send(())
 
@@ -88,7 +88,7 @@ final class SettingsViewModelTests: XCTestCase {
         let sut = makeSUT()
         let output = sut.transform(input: makeInput())
         var latest: [SectionModel<Void, SettingsItem>] = []
-        output.sections.sink { latest = $0 }.store(in: &cancellables)
+        output.publishers.sections.sink { latest = $0 }.store(in: &cancellables)
 
         fakeController.viewWillAppearSubject.send(())
 
@@ -101,7 +101,7 @@ final class SettingsViewModelTests: XCTestCase {
         let sut = makeSUT()
         let output = sut.transform(input: makeInput())
         var footer: String?
-        output.footerText.sink { footer = $0 }.store(in: &cancellables)
+        output.publishers.footerText.sink { footer = $0 }.store(in: &cancellables)
 
         XCTAssertFalse((footer ?? "").isEmpty)
     }

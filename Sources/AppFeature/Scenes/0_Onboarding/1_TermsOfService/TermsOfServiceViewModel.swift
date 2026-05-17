@@ -51,7 +51,7 @@ public enum TermsOfServiceNavigation: Sendable {
 public final class TermsOfServiceViewModel: BaseViewModel<
     TermsOfServiceNavigation,
     TermsOfServiceViewModel.InputFromView,
-    TermsOfServiceViewModel.Output
+    TermsOfServiceViewModel.Publishers
 > {
     /// Records the Terms acceptance flag in `Preferences`.
     private let useCase: OnboardingUseCase
@@ -69,7 +69,7 @@ public final class TermsOfServiceViewModel: BaseViewModel<
     /// - "did accept" → record acceptance + emit `.acceptTermsOfService`.
     /// - For the dismissible variant: install a "Done" right bar-button that
     ///   emits `.dismiss`.
-    override public func transform(input: Input) -> Output {
+    override public func transform(input: Input) -> Output<Publishers, NavigationStep> {
         func userDid(_ userAction: NavigationStep) {
             navigator.next(userAction)
         }
@@ -96,9 +96,12 @@ public final class TermsOfServiceViewModel: BaseViewModel<
         ].forEach { $0.store(in: &cancellables) }
 
         return Output(
-            // Hide the accept button in the dismissible (Settings-modal) variant.
-            isAcceptButtonVisible: Just(!isDismissible).eraseToAnyPublisher(),
-            isAcceptButtonEnabled: isAcceptButtonEnabled
+            publishers: Publishers(
+                // Hide the accept button in the dismissible (Settings-modal) variant.
+                isAcceptButtonVisible: Just(!isDismissible).eraseToAnyPublisher(),
+                isAcceptButtonEnabled: isAcceptButtonEnabled
+            ),
+            navigation: navigator.navigation
         )
     }
 }
@@ -113,7 +116,7 @@ public extension TermsOfServiceViewModel {
     }
 
     /// Reactive bindings the view installs.
-    struct Output {
+    struct Publishers {
         /// Drives `acceptTermsButton.isVisibleBinder`.
         let isAcceptButtonVisible: AnyPublisher<Bool, Never>
         /// Drives `acceptTermsButton.isEnabledBinder`.

@@ -117,7 +117,7 @@ final class MainViewModelTests: XCTestCase {
         let sut = makeSUT()
         let output = sut.transform(input: makeInput())
         var balance: String?
-        output.balance.sink { balance = $0 }.store(in: &cancellables)
+        output.publishers.balance.sink { balance = $0 }.store(in: &cancellables)
 
         XCTAssertNotNil(balance)
         XCTAssertFalse((balance ?? "").isEmpty)
@@ -127,7 +127,7 @@ final class MainViewModelTests: XCTestCase {
         let sut = makeSUT()
         let output = sut.transform(input: makeInput())
         // Subscribe so the latestBalanceAndNonce chain is active
-        output.balance.sink { _ in }.store(in: &cancellables)
+        output.publishers.balance.sink { _ in }.store(in: &cancellables)
         let baselineFetches = mockTransactions.getBalanceCallCount
 
         pullToRefresh.send(())

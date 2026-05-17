@@ -39,15 +39,15 @@ public enum ChooseWalletUserAction: Sendable {
 // MARK: - ChooseWalletViewModel
 
 /// View model for the chooser screen. The screen has no UI state to bind —
-/// `Output` is empty — so `transform(input:)` only wires the two button taps
+/// `Publishers` is empty — so `transform(input:)` only wires the two button taps
 /// to navigation steps.
 public final class ChooseWalletViewModel: BaseViewModel<
     ChooseWalletUserAction,
     ChooseWalletViewModel.InputFromView,
-    ChooseWalletViewModel.Output
+    ChooseWalletViewModel.Publishers
 > {
-    /// Wires both button taps directly to navigator steps and returns an empty `Output`.
-    override public func transform(input: Input) -> Output {
+    /// Wires both button taps directly to navigator steps and returns an empty `Publishers`.
+    override public func transform(input: Input) -> Output<Publishers, NavigationStep> {
         func userIntends(to intention: NavigationStep) {
             navigator.next(intention)
         }
@@ -59,7 +59,10 @@ public final class ChooseWalletViewModel: BaseViewModel<
             input.fromView.restoreWalletTrigger
                 .sink { userIntends(to: .restoreWallet) },
         ].forEach { $0.store(in: &cancellables) }
-        return Output()
+        return Output(
+            publishers: Publishers(),
+            navigation: navigator.navigation
+        )
     }
 }
 
@@ -73,5 +76,5 @@ public extension ChooseWalletViewModel {
     }
 
     /// No outputs — the screen is entirely static.
-    struct Output {}
+    struct Publishers {}
 }
